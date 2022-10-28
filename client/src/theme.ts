@@ -5,24 +5,24 @@ import { red } from '@mui/material/colors';
 const theme = createTheme({
 	palette: {
 		background: {
-			default: "#fcfcfc"
+			default: '#fcfcfc'
 		},
 		primary: {
-			main: '#1976d2',
+			main: '#1976d2'
 		},
 		secondary: {
-			main: '#ffffff',
+			main: '#ffffff'
 		},
 		error: {
-			main: red.A400,
-		},
-	},
+			main: red.A400
+		}
+	}
 });
 
 export const themeLight = createTheme({
 	palette: {
 		background: {
-			default: "#e4f0e2"
+			default: '#e4f0e2'
 		}
 	}
 });
@@ -30,10 +30,10 @@ export const themeLight = createTheme({
 export const themeDark = createTheme({
 	palette: {
 		background: {
-			default: "#222222"
+			default: '#222222'
 		},
 		text: {
-			primary: "#ffffff"
+			primary: '#ffffff'
 		}
 	}
 });
