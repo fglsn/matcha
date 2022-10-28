@@ -21,6 +21,7 @@ remove container:
 	docker rm <ID>
 
 links:
+https://node-postgres.com/features/pooling#single-query
 https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h
 https://www.npmjs.com/package/db-migrate
 https://github.com/db-migrate/node-db-migrate#readme

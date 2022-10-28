@@ -16,7 +16,7 @@ const connectDb = async () => {
 	try {
 		const res = await pool.query('select 1 + 1');
 		console.log(res);
-		// await pool.end();
+		await pool.end();
 	} catch (error) {
 		console.log(error);
 	}
