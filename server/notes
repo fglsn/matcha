@@ -1,3 +1,7 @@
+install docker client && pgAdmin/datagrip (I used datagrip on a school mac)
+
+FOR DOCKER ON SCHOOL MACS: 
+https://dashboard.hive.fi/topics/81/messages?cursus_id=1
 
 after installing docker client:
 	docker-compose -h
@@ -16,7 +20,7 @@ remove container:
 	docker stop <ID>
 	docker rm <ID>
 
-todo: install docker && pgAdmin
-
+links:
+https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h
 https://www.npmjs.com/package/db-migrate
 https://github.com/db-migrate/node-db-migrate#readme
