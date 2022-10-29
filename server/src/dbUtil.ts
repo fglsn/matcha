@@ -5,6 +5,4 @@ function getString(value: unknown): string {
 	throw 'Expected value to be string, got: ' + value;
 }
 
-export {
-	getString
-};
+export { getString };

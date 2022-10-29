@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response, } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import userRouter from './routes/users';
 import cors from 'cors';
 
@@ -18,10 +18,15 @@ app.get('/ping', (_req, res) => {
 
 app.use('/api/users', userRouter);
 
-app.use(function (_err: unknown, _req: Request, res: Response, _next: NextFunction) {
-    res.status(500).json({
-        error: 'Unexpected error: ' + _err,
-    });
+app.use(function (
+	_err: unknown,
+	_req: Request,
+	res: Response,
+	_next: NextFunction
+) {
+	res.status(500).json({
+		error: 'Unexpected error: ' + _err
+	});
 });
 
 app.listen(PORT, () => {
