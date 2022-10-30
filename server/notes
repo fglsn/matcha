@@ -1,0 +1,10 @@
+
+Username may be composed of letters, numbers, apostrophes, commas, and hyphens.
+
+Password may be composed of letters, numbers, spaces, and any of the following characters: ~ ` ! @ # $ % ^ & * ( ) - _ = + [ ] { } \ | ; : ' " , < . > / ?.
+
+Spaces before and after will be ignored.
+
+Username and password are not case sensitive.
+
+Username should begin with a letter.
