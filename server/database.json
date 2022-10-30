@@ -6,7 +6,6 @@
 		"host": "localhost",
 		"database": "matcha",
 		"port": "5432",
-		"ssl": "true",
 		"schema": "public"
 	},
 	"sql-file": true

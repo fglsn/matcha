@@ -1,28 +1,38 @@
-install docker client && pgAdmin/datagrip (I used datagrip on a school mac)
+**Initial Setup**
+  
+install docker client && pgAdmin/datagrip  
 
-FOR DOCKER ON SCHOOL MACS: 
-https://dashboard.hive.fi/topics/81/messages?cursus_id=1
+FOR DOCKER ON SCHOOL MACS:  
+https://dashboard.hive.fi/topics/81/messages?cursus_id=1  
+  
+after installing docker client:  
+	docker-compose -h  
+	cd server/  
+  
+run all setted up containers in background:  
+	docker-compose up -d  
 
-after installing docker client:
-	docker-compose -h
-	cd server/
+connect to postgres:  
+	psql postgresql://localhost:5432/matcha -U postgres  
+  
+show all containers to get an ID:  
+	docker ps  
+  
+remove container:  
+	docker stop <ID>  
+	docker rm <ID>  
+  
+**Migrations**
+  
+To create new migration run:  
+npm run migration:create --  <migrationName>  
 
-run all setted up containers in background:
-	docker-compose up -d
-
-connect to postgres:
-	psql postgresql://localhost:5432/matcha -U postgres
-
-show all containers to get an ID:
-	docker ps 
-
-remove container: 
-	docker stop <ID>
-	docker rm <ID>
-
-links:
-https://node-postgres.com/features/pooling#single-query
-https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h
-https://www.npmjs.com/package/db-migrate
-https://github.com/db-migrate/node-db-migrate#readme
-https://db-migrate.readthedocs.io/en/latest/
+Run migration:  
+npm run migrate  
+  
+links:  
+https://node-postgres.com/features/pooling#single-query  
+https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h  
+https://www.npmjs.com/package/db-migrate  
+https://github.com/db-migrate/node-db-migrate#readme  
+https://db-migrate.readthedocs.io/en/latest/  

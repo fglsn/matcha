@@ -1,10 +1,49 @@
-**express-async-handler**
-middleware added for handling missed errors on async functions 
-every endpoint should be wrapped with asyncHandler();
-https://www.npmjs.com/package/express-async-handler
+**Initial Setup**
+  
+install docker client && pgAdmin/datagrip  
 
+FOR DOCKER ON SCHOOL MACS:  
+https://dashboard.hive.fi/topics/81/messages?cursus_id=1  
+  
+after installing docker client:  
+	docker-compose -h  
+	cd server/  
+  
+run all setted up containers in background:  
+	docker-compose up -d  
 
-**db-migrate**
-Database migration framework for node.js
-Basic usage: db-migrate [up|down|reset|create|db] [[dbname/]migrationName|all] [options]
-https://db-migrate.readthedocs.io/en/latest/
+connect to postgres:  
+	psql postgresql://localhost:5432/matcha -U postgres  
+  
+show all containers to get an ID:  
+	docker ps  
+  
+remove container:  
+	docker stop <ID>  
+	docker rm <ID>  
+  
+**Migrations**
+  
+To create new migration run:  
+npm run migration:create --  <migrationName>  
+
+Run migration:  
+npm run migrate  
+  
+links:  
+https://node-postgres.com/features/pooling#single-query  
+https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h  
+https://www.npmjs.com/package/db-migrate  
+https://github.com/db-migrate/node-db-migrate#readme  
+https://db-migrate.readthedocs.io/en/latest/  
+  
+**express-async-handler**  
+middleware added for handling missed errors on async functions  
+every endpoint should be wrapped with asyncHandler();  
+https://www.npmjs.com/package/express-async-handler  
+  
+  
+**db-migrate**  
+Database migration framework for node.js  
+Basic usage: db-migrate [up|down|reset|create|db] [[dbname/]migrationName|all] [options]  
+https://db-migrate.readthedocs.io/en/latest/  

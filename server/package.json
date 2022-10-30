@@ -10,7 +10,8 @@
 		"lint": "eslint --ext .ts .",
 		"start": "node build/index.js",
 		"prettier": "prettier --config .prettierrc '**/*.ts' --write",
-		"migration:create": "node node_modules/db-migrate/bin/db-migrate create -e local"
+		"migration:create": "node node_modules/db-migrate/bin/db-migrate create -e local",
+		"migrate": "db-migrate up -e local"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.12",
