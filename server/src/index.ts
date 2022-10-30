@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import userRouter from './routes/users';
 import cors from 'cors';
 
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(cors());
 

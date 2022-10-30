@@ -37,6 +37,11 @@ Run migration:
 Run test migration:  
 &emsp; `npm run migrate:test`  
   
+to run one test, use for.ex:  
+&emsp; `npm test -- tests/user_api.test.js`  
+or  
+&emsp; `npm test -- -t 'test desc/name'`  
+  
 links:  
 https://node-postgres.com/features/pooling#single-query  
 https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h  
