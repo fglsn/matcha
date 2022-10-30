@@ -1,6 +1,6 @@
 import { describe, expect } from '@jest/globals';
 import request from 'supertest';
-import { app } from '../index';
+import { app } from '../app';
 
 describe('GET / - a simple endpoint', () => {
 	it('basic request to /ping', async () => {

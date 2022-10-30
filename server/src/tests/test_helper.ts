@@ -1,13 +1,13 @@
 import { User, NewUser } from '../types';
 
-const initialUsers: User[] = [
+export const initialUsers: User[] = [
 	{
 		id: 0,
 		username: 'ilona',
 		email: 'ilona@test.com',
 		password: '12345',
 		firstname: 'ilona',
-		surname: 'shakurova'
+		lastname: 'shakurova'
 	},
 	{
 		id: 1,
@@ -15,7 +15,7 @@ const initialUsers: User[] = [
 		email: 'test@test.com',
 		password: '12345',
 		firstname: 'nametest',
-		surname: 'surnametest'
+		lastname: 'surnametest'
 	},
 	{
 		id: 2,
@@ -23,19 +23,14 @@ const initialUsers: User[] = [
 		email: 'test2@test.com',
 		password: '12345',
 		firstname: 'nametest2',
-		surname: 'surnametest2'
+		lastname: 'surnametest2'
 	}
 ];
 
-const newUser: NewUser = {
+export const newUser: NewUser = {
 	username: 'ilona',
 	email: 'ilona@test.com',
-	password: '12345',
+	password: 'Test!111',
 	firstname: 'ilona',
-	surname: 'shakurova'
-};
-
-module.exports = {
-	initialUsers,
-	newUser
+	lastname: 'shakurova'
 };

@@ -7,4 +7,4 @@ create table users
 	firstname varchar not null,
 	surname varchar not null,
 	created_at timestamptz not null default now()
-)
+);
