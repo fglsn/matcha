@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { DB_PORT, DB_NAME } from "./utils/config";
+import { DB_PORT, DB_NAME } from './utils/config';
 
 const pool = new Pool({
 	user: 'postgres',
