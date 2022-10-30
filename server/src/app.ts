@@ -18,6 +18,7 @@ app.use('/api/users', userRouter);
 
 // Error handler for unexpected async errors
 app.use(function (_err: unknown, _req: Request, res: Response, _next: NextFunction) {
+	//todo if error = validationError => res.satus(400).json(...)
 	res.status(500).json({
 		error: 'Unexpected error: ' + _err
 	});
