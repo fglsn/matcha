@@ -4,6 +4,7 @@ import { getAllUsers } from '../repositories/userRepository';
 
 const router = express.Router();
 
+//temp route
 router.get(
 	'/',
 	asyncHandler(async (_req, res) => {

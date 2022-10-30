@@ -1,7 +1,7 @@
 import { User } from '../types';
 
 import pool from '../db';
-import { getNumber, getString } from '../dbUtil';
+import { getNumber, getString } from '../dbUtils';
 
 const getAllUsers = async (): Promise<User[]> => {
 	const res = await pool.query('SELECT * FROM users');
@@ -10,7 +10,7 @@ const getAllUsers = async (): Promise<User[]> => {
 			id: getNumber(row['id']),
 			username: getString(row['username']),
 			email: getString(row['email']),
-			password: getString(row['password_hash']),
+			passwordHash: getString(row['password_hash']),
 			firstname: getString(row['firstname']),
 			lastname: getString(row['surname'])
 		};

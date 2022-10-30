@@ -1,10 +1,10 @@
-export type User = {
-	id: number;
+export type BaseUser = {
 	username: string;
 	email: string;
-	password: string;
 	firstname: string;
 	lastname: string;
 };
 
-export type NewUser = Omit<User, 'id'>;
+export type User = BaseUser & { id: number; passwordHash: string };
+
+export type NewUser = BaseUser & { passwordPlain: string };

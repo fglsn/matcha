@@ -19,6 +19,7 @@ const lastname = 'Testoff';
 describe('user creation', () => {
 	beforeEach(async () => {
 		await clearUsers();
+		// await addNewUser(newUser);
 	});
 
 	test('creation succeeds with a new valid payload', async () => {
@@ -45,13 +46,13 @@ describe('user creation', () => {
 		[{ username, email, password, firstname }, 'Missing last name'],
 
 		[{ username: 'tes', email, password, firstname, lastname }, 'Username is too short'],
-		[{ username: 'testtesttesttesttesttest', email, password, firstname, lastname }, 'Username is too long'], //24chars
+		[{ username: 'testtesttesttesttestte', email, password, firstname, lastname }, 'Username is too long'], //22chars
 		[{ username: 'tes<3>', email, password, firstname, lastname }, 'Invalid username'],
 		[{ username: 'te st', email, password, firstname, lastname }, 'Invalid username'],
 		[{ username: 'te	st', email, password, firstname, lastname }, 'Invalid username'],
 		[{ username: 'te{st', email, password, firstname, lastname }, 'Invalid username'],
 
-		[{ username, email: '', password, firstname, lastname }, 'Invalid email'],
+		[{ username, email: ' ', password, firstname, lastname }, 'Missing email'],
 		[{ username, email: 'testtest.com', password, firstname, lastname }, 'Invalid email'],
 		[{ username, email: '@test.com', password, firstname, lastname }, 'Invalid email'],
 		[{ username, email: '@test.com', password, firstname, lastname }, 'Invalid email'],
@@ -68,18 +69,28 @@ describe('user creation', () => {
 		[{ username, email, password: 'Test11111', firstname, lastname }, 'Weak password'],
 
 		[{ username, email, password, firstname: 'testtesttesttesttesttest', lastname }, 'First name is too long'], //24
-		[{ username, email, password, firstname: ' ', lastname }, 'Invalid firstname'],
+		[{ username, email, password, firstname: ' ', lastname }, 'Missing firstname'],
 		[{ username, email, password, firstname: '123', lastname }, 'Invalid firstname'],
 		[{ username, email, password, firstname: '<Test>', lastname }, 'Invalid firstname'],
 		[{ username, email, password, firstname: 'tes42', lastname }, 'Invalid firstname'],
 		[{ username, email, password, firstname: 'tes@t', lastname }, 'Invalid firstname'],
 
-		[{ username, email, password, firstname, lastname: 'testtesttesttesttesttesttesttesttesttesttesttest' }, 'Lastname is too long'],
+		[{ username, email, password, firstname, lastname: 'testtesttesttesttesttesttesttesttesttesttes' }, 'Lastname is too long'], //42
 		[{ username, email, password, firstname, lastname: ' ' }, 'Invalid lastname'],
 		[{ username, email, password, firstname, lastname: '123' }, 'Invalid lastname'],
 		[{ username, email, password, firstname, lastname: '<Test>' }, 'Invalid lastname'],
 		[{ username, email, password, firstname, lastname: 'tes42' }, 'Invalid lastname'],
-		[{ username, email, password, firstname, lastname: 'tes@t' }, 'Invalid lastname']
+		[{ username, email, password, firstname, lastname: 'tes@t' }, 'Invalid lastname'],
+
+		[{ username: 'matcha', email, password, firstname, lastname }, 'Username already exists'],
+		[{ username: '  matcha  ', email, password, firstname, lastname }, 'Username already exists'],
+		[{ username: '		matcha', email, password, firstname, lastname }, 'Username already exists'],
+
+		[{ username, email: 'matcha@test.com', password, firstname, lastname }, 'This email was already used'],
+		[{ username, email: 'MATCHA@test.com', password, firstname, lastname }, 'This email was already used'],
+		[{ username, email: 'matcha@Test.com', password, firstname, lastname }, 'This email was already used'],
+		[{ username, email: '   matcha@Test.com   ', password, firstname, lastname }, 'This email was already used'],
+		[{ username, email: 'MATCHA@TEST.COM', password, firstname, lastname }, 'This email was already used']
 	])('creation fails with incorrect user payload', async (incorrectUser, expectedErrorMessage) => {
 		const usersAtStart = await getAllUsers();
 
