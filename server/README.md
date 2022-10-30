@@ -6,29 +6,31 @@ FOR DOCKER ON SCHOOL MACS:
 https://dashboard.hive.fi/topics/81/messages?cursus_id=1  
   
 after installing docker client:  
-	docker-compose -h  
-	cd server/  
+	&emsp; `docker-compose -h`  
+	&emsp; 	`cd server/`
+
+
   
 run all setted up containers in background:  
-	docker-compose up -d  
-
+	&emsp; `zdocker-compose up -d`  
+  
 connect to postgres:  
-	psql postgresql://localhost:5432/matcha -U postgres  
+	&emsp; `psql postgresql://localhost:5432/matcha -U postgres`  
   
 show all containers to get an ID:  
-	docker ps  
+	&emsp; `docker ps`  
   
 remove container:  
-	docker stop <ID>  
-	docker rm <ID>  
+	&emsp; `docker stop <ID>`  
+	&emsp; `docker rm <ID>`  
   
 **Migrations**
   
 To create new migration run:  
-npm run migration:create --  <migrationName>  
-
+&emsp; `npm run migration:create --  <migrationName>`  
+  
 Run migration:  
-npm run migrate  
+&emsp; `npm run migrate`  
   
 links:  
 https://node-postgres.com/features/pooling#single-query  
