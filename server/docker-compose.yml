@@ -9,3 +9,12 @@ services:
     - POSTGRES_DB=matcha
     ports:
     - '5432:5432'
+  testdb:
+    image: postgres:15.0-alpine
+    restart: always
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=matcha-test
+    ports:
+    - '5433:5432'

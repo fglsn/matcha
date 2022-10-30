@@ -18,6 +18,7 @@ app.get('/ping', (_req, res) => {
 
 app.use('/api/users', userRouter);
 
+// Error handler for unexpected async errors
 app.use(function (
 	_err: unknown,
 	_req: Request,

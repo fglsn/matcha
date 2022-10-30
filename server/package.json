@@ -4,14 +4,16 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"start": "NODE_ENV=production node build/index.js",
+		"dev": "NODE_ENV=development ts-node-dev src/index.ts",
+		"test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
 		"connect-db": "psql postgresql://localhost:5432/matcha -U postgres",
-		"tsc": "tsc",
-		"dev": "ts-node-dev src/index.ts",
-		"lint": "eslint --ext .ts .",
-		"start": "node build/index.js",
-		"prettier": "prettier --config .prettierrc '**/*.ts' --write",
 		"migration:create": "node node_modules/db-migrate/bin/db-migrate create -e local",
-		"migrate": "db-migrate up -e local"
+		"migrate": "db-migrate up -e local",
+		"migrate:test": "db-migrate up -e test",
+		"prettier": "prettier --config .prettierrc '**/*.ts' --write",
+		"lint": "eslint --ext .ts .",
+		"tsc": "tsc"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.12",

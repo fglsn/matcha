@@ -8,5 +8,14 @@
 		"port": "5432",
 		"schema": "public"
 	},
+	"test": {
+		"driver": "pg",
+		"user": "postgres",
+		"password": "postgres",
+		"host": "localhost",
+		"database": "matcha-test",
+		"port": "5433",
+		"schema": "public"
+	},
 	"sql-file": true
 }

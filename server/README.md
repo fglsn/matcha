@@ -32,6 +32,11 @@ To create new migration run:
 Run migration:  
 &emsp; `npm run migrate`  
   
+
+**Tests**  
+Run test migration:  
+&emsp; `npm run migrate:test`  
+  
 links:  
 https://node-postgres.com/features/pooling#single-query  
 https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51h  
