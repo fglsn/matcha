@@ -19,4 +19,11 @@ function getBoolean(value: unknown): boolean {
 	throw `Expected value to be boolean, got: ${typeof value}`;
 }
 
-export { getString, getNumber, getBoolean };
+const getDate = (value: unknown): Date => {
+	if (value instanceof Date) {
+		return value;
+	}
+	throw `Expected value to be date, got: ${typeof value}`;
+};
+
+export { getString, getNumber, getBoolean, getDate };
