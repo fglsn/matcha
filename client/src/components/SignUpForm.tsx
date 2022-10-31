@@ -18,23 +18,44 @@ import { NewUser } from '../types';
 // import { NewUser, User } from '../types';
 
 import userService from '../services/users'
+import { useState } from 'react';
+import Notification from './Notification';
 
 const SignUpForm = () => {
-
 	const firstname = useField('text', 'Name')
 	const lastname = useField('text', 'Surname')
 	const username = useField('text', 'Username')
 	const email = useField('text', 'Email')
 	const password = useField('text', 'Password')
 
+	const [errorMessage, setErrorMessage] = useState('')
+	const [infoMessage, setInfoMessage] = useState('')
+
+	const [showPassword, setShow] = useState(false)
+
+	const displayError = (error: React.SetStateAction<string>) => {
+		setErrorMessage(error)
+		setTimeout(() => {
+			setErrorMessage('')
+		}, 5000)
+	}
+
+	const displayInfo = (info: React.SetStateAction<string>) => {
+		setInfoMessage(info)
+		setTimeout(() => {
+			setInfoMessage('')
+		}, 5000)
+	}
+
 	const addNewUser = async (newUser: NewUser) => {
 		const addedUser = await userService.create(newUser);
 		// console.log('new user: ', JSON.stringify(addedUser))
-		if (addedUser.error) {
+		if (addedUser.error) {	
 			console.log("error " + addedUser.error)
-			// displayError(addedUser.error)
+			displayError(addedUser.error)
 		} else {
 			console.log(`a new user ${newUser.username} is added`);
+			displayInfo(`A new user ${newUser.username} is created!`)
 		}
 	}
 
@@ -54,6 +75,7 @@ const SignUpForm = () => {
 
 	return (
 		<Box>
+			<Notification error={errorMessage} info={infoMessage} />
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<Box
@@ -112,6 +134,7 @@ const SignUpForm = () => {
 									{...password}
 									required
 									fullWidth
+									type={showPassword?"text":"password"}
 									id="password"
 									autoComplete="new-password"
 								/>
@@ -119,7 +142,8 @@ const SignUpForm = () => {
 							<Grid item xs={12}>
 								<FormControlLabel
 									control={<Checkbox value="allowExtraEmails" color="primary" />}
-									label="Sometext if needed."
+									label="Show password"
+									onChange={() => setShow(!showPassword)}
 								/>
 							</Grid>
 						</Grid>
