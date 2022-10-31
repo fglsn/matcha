@@ -1,4 +1,21 @@
-import { NewUser } from '../types';
+import { NewUser, NewUserWithHashedPwd } from '../types';
+
+export const newUser: NewUser = {
+	username: 'matcha',
+	email: 'matcha@test.com',
+	passwordPlain: 'Test!111',
+	firstname: 'lorem',
+	lastname: 'ipsum'
+};
+
+
+export const newUserWithHashedPwd: NewUserWithHashedPwd = {
+	username: 'matcha',
+	email: 'matcha@test.com',
+	passwordHash: 'Test!111',
+	firstname: 'lorem',
+	lastname: 'ipsum'
+};
 
 // export const initialUsers: User[] = [
 // 	{
@@ -27,10 +44,3 @@ import { NewUser } from '../types';
 // 	}
 // ];
 
-export const newUser: NewUser = {
-	username: 'matcha',
-	email: 'matcha@test.com',
-	passwordPlain: 'Test!111',
-	firstname: 'lorem',
-	lastname: 'ipsum'
-};
