@@ -14,14 +14,43 @@ import {
 } from '@mui/material'
 
 import { useField } from '../hooks';
+import { NewUser } from '../types';
+// import { NewUser, User } from '../types';
+
+import userService from '../services/users'
 
 const SignUpForm = () => {
 
-	const name = useField('text', 'Name')
-	const surname = useField('text', 'Surname')
+	const firstname = useField('text', 'Name')
+	const lastname = useField('text', 'Surname')
 	const username = useField('text', 'Username')
 	const email = useField('text', 'Email')
 	const password = useField('text', 'Password')
+
+	const addNewUser = async (newUser: NewUser) => {
+		const addedUser = await userService.create(newUser);
+		// console.log('new user: ', JSON.stringify(addedUser))
+		if (addedUser.error) {
+			console.log("error " + addedUser.error)
+			// displayError(addedUser.error)
+		} else {
+			console.log(`a new user ${newUser.username} is added`);
+		}
+	}
+
+	const submitNewUser = (event: any) => {
+		event.preventDefault()
+		const newUser: NewUser = {
+			username: username.value,
+			email: email.value,
+			passwordPlain: password.value,
+			firstname: firstname.value,
+			lastname: lastname.value
+		};
+		addNewUser(newUser);
+		// console.log(newUser);
+		// console.log('submit called');
+	};
 
 	return (
 		<Box>
@@ -39,11 +68,11 @@ const SignUpForm = () => {
 					<Typography component="h1" variant="h5">
 						Sign up
 					</Typography>
-					<Box component="form" noValidate sx={{ mt: 3 }}>
+					<Box component="form" noValidate onSubmit={submitNewUser} sx={{ mt: 3 }}>
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<TextField
-									{...name}
+									{...firstname}
 									required
 									fullWidth
 									autoFocus
@@ -52,7 +81,7 @@ const SignUpForm = () => {
 							</Grid>
 							<Grid item xs={12} sm={6}>
 								<TextField
-									{...surname}
+									{...lastname}
 									required
 									fullWidth
 									autoFocus
