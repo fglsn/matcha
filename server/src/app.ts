@@ -7,6 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 import dotenv from 'dotenv';
+import { ValidationError } from './validators/newUserValidator';
 dotenv.config();
 
 app.get('/ping', (_req, res) => {
@@ -17,8 +18,23 @@ app.get('/ping', (_req, res) => {
 app.use('/api/users', userRouter);
 
 // Error handler for unexpected async errors
-app.use(function (_err: unknown, _req: Request, res: Response, _next: NextFunction) {
-	//todo if error = validationError => res.satus(400).json(...)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+app.use(function (_err: any, _req: Request, res: Response, _next: NextFunction) {
+	if (_err instanceof ValidationError) {
+		res.status(400).json({
+			error: `Validation error: ${_err.message}`
+		});
+	}
+	if (_err.message === 'duplicate key value violates unique constraint "users_username_key"') {
+		res.status(400).json({
+			error: 'Username already exists'
+		});
+	}
+	if (_err.message === 'duplicate key value violates unique constraint "users_email_key"') {
+		res.status(400).json({
+			error: 'This email was already used'
+		});
+	}
 	res.status(500).json({
 		error: 'Unexpected error: ' + _err
 	});
