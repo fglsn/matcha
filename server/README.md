@@ -12,7 +12,7 @@ after installing docker client:
 
   
 run all setted up containers in background:  
-	&emsp; `zdocker-compose up -d`  
+	&emsp; `docker-compose up -d`  
   
 connect to postgres:  
 	&emsp; `psql postgresql://localhost:5432/matcha -U postgres`  
