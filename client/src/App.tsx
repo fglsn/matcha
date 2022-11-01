@@ -13,7 +13,6 @@ import { Box } from '@mui/material';
 const App = () => {
 
 	return (
-
 		<NotificationProvider>
 			<Box>
 				<Navbar />

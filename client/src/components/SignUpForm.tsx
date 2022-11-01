@@ -20,6 +20,7 @@ import { NewUser } from '../types';
 import userService from '../services/users'
 import { useContext, useState } from 'react';
 import { NotificationContext } from './NotificationProvider';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
 	const firstname = useField('text', 'Name')
@@ -32,6 +33,8 @@ const SignUpForm = () => {
 
 	const notification = useContext(NotificationContext);
 
+	const navigate = useNavigate();
+
 	const displayError = (error: string) => {
 		notification.setNotification(error);
 	}
@@ -43,12 +46,13 @@ const SignUpForm = () => {
 	const addNewUser = async (newUser: NewUser) => {
 		const addedUser = await userService.create(newUser);
 		// console.log('new user: ', JSON.stringify(addedUser))
-		if (addedUser.error) {	
+		if (addedUser.error) {
 			console.log("error " + addedUser.error)
 			displayError(addedUser.error)
 		} else {
 			console.log(`a new user ${newUser.username} is added`);
-			displayInfo(`A new user ${newUser.username} is created!`)
+			displayInfo(`A new user ${newUser.username} is created!`);
+			navigate('/login');
 		}
 	}
 
