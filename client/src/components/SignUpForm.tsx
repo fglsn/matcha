@@ -98,7 +98,6 @@ const SignUpForm = () => {
 									{...lastname}
 									required
 									fullWidth
-									autoFocus
 									autoComplete="family-name"
 								/>
 							</Grid>
@@ -107,7 +106,6 @@ const SignUpForm = () => {
 									{...username}
 									required
 									fullWidth
-									autoFocus
 									autoComplete="username"
 								/>
 							</Grid>
@@ -116,7 +114,6 @@ const SignUpForm = () => {
 									{...email}
 									required
 									fullWidth
-									autoFocus
 									autoComplete="email"
 								/>
 							</Grid>
@@ -133,7 +130,7 @@ const SignUpForm = () => {
 								<FormControlLabel
 									control={
 										<Checkbox
-											value="allowExtraEmails"
+											value="allowExtraEmails" //fix/rename
 											color="primary"
 										/>
 									}
