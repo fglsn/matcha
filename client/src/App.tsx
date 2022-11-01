@@ -1,19 +1,19 @@
-import NotificationProvider from './components/NotificationProvider';
 import Navbar from './components/Navbar'
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Footer from './components/Footer';
+
+import AlertProvider from './components/AlertProvider';
 import { Alert } from './components/Alert';
 
 import { Routes, Route } from 'react-router-dom';
 
 import { Box } from '@mui/material';
 
-
 const App = () => {
 
 	return (
-		<NotificationProvider>
+		<AlertProvider>
 			<Box>
 				<Navbar />
 				<Alert />
@@ -23,7 +23,7 @@ const App = () => {
 				</Routes>
 				<Footer />
 			</Box>
-		</NotificationProvider>
+		</AlertProvider>
 	);
 };
 

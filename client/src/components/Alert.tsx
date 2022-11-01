@@ -1,12 +1,13 @@
 import { useContext } from "react";
-import { NotificationContext } from "./NotificationProvider";
-import Notification from "./Notification";
+import { AlertContext } from "./AlertProvider";
+import AlertSnackBar from "./AlertSnackBar";
 
 export const Alert = () => {
-	const notification = useContext(NotificationContext);
+	const alert = useContext(AlertContext);
+	console.log(alert)
 
-	if (notification.notification) {
-		return <Notification info={notification.notification} error={notification.notification}/>;
+	if (alert.alert) {
+		return <AlertSnackBar alert={alert.alert} text={alert.alertText}/>;
 	} else {
 		return null;
 	}

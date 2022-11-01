@@ -1,26 +1,18 @@
-import * as React from 'react';
-import {
-	Avatar,
-	Box,
-	Button,
-	CssBaseline,
-	TextField,
-	FormControlLabel,
-	Checkbox,
-	Grid,
-	Container,
-	Link,
-	Typography
-} from '@mui/material'
+import { useContext, useState } from 'react';
 
-import { useField } from '../hooks';
-import { NewUser } from '../types';
-// import { NewUser, User } from '../types';
+import {
+	Avatar, Box, Button, CssBaseline,
+	TextField, FormControlLabel, Checkbox,
+	Grid, Container, Link, Typography
+} from '@mui/material';
 
 import userService from '../services/users'
-import { useContext, useState } from 'react';
-import { NotificationContext } from './NotificationProvider';
+import { NewUser } from '../types';
+import { useField } from '../hooks';
+import { AlertContext } from './AlertProvider';
 import { useNavigate } from 'react-router-dom';
+
+// import { NewUser, User } from '../types';
 
 const SignUpForm = () => {
 	const firstname = useField('text', 'Name')
@@ -31,27 +23,26 @@ const SignUpForm = () => {
 
 	const [showPassword, setShow] = useState(false)
 
-	const notification = useContext(NotificationContext);
-
+	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
 
-	const displayError = (error: string) => {
-		notification.setNotification(error);
-	}
+	// const displayError = (error: string) => {
+	// 	alert.error(error);
+	// }
 
-	const displayInfo = (info: string) => {
-		notification.setNotification(info)
-	}
+	// const displayInfo = (info: string) => {
+	// 	alert.success(info);
+	// }
 
 	const addNewUser = async (newUser: NewUser) => {
 		const addedUser = await userService.create(newUser);
 		// console.log('new user: ', JSON.stringify(addedUser))
 		if (addedUser.error) {
 			console.log("error " + addedUser.error)
-			displayError(addedUser.error)
+			alert.error(addedUser.error)
 		} else {
 			console.log(`a new user ${newUser.username} is added`);
-			displayInfo(`A new user ${newUser.username} is created!`);
+			alert.success(`A new user ${newUser.username} is created! Activation link is sent.`);
 			navigate('/login');
 		}
 	}
@@ -126,7 +117,6 @@ const SignUpForm = () => {
 									required
 									fullWidth
 									autoFocus
-									id="email"
 									autoComplete="email"
 								/>
 							</Grid>
@@ -136,7 +126,6 @@ const SignUpForm = () => {
 									required
 									fullWidth
 									type={showPassword ? 'text' : 'password'}
-									id="password"
 									autoComplete="new-password"
 								/>
 							</Grid>
