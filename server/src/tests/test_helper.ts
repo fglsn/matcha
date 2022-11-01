@@ -8,7 +8,6 @@ export const newUser: NewUser = {
 	lastname: 'ipsum'
 };
 
-
 export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	username: 'matcha',
 	email: 'matcha@test.com',
@@ -18,7 +17,6 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 };
 
 export const loginUser = { username: 'matcha', password: 'Test!111' };
-
 
 // export const initialUsers: User[] = [
 // 	{
@@ -46,4 +44,3 @@ export const loginUser = { username: 'matcha', password: 'Test!111' };
 // 		lastname: 'surnametest2'
 // 	}
 // ];
-

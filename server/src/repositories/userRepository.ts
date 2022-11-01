@@ -18,7 +18,7 @@ const userMapper = (row: any): User => {
 
 const getAllUsers = async (): Promise<User[]> => {
 	const res = await pool.query('select * from users');
-	return res.rows.map(row => userMapper(row));
+	return res.rows.map((row) => userMapper(row));
 };
 
 const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
@@ -30,13 +30,12 @@ const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 	return userMapper(res.rows[0]);
 };
 
-const findUserByUsername = async (username: string): Promise<User|undefined> => {
+const findUserByUsername = async (username: string): Promise<User | undefined> => {
 	const query = {
 		text: 'select * from users where username = $1',
 		values: [username]
 	};
 	const res = await pool.query(query);
-	console.log(res.rowCount);
 	if (!res.rowCount) {
 		return undefined;
 	}
