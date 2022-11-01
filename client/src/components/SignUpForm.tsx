@@ -19,8 +19,7 @@ import { NewUser } from '../types';
 
 import userService from '../services/users'
 import { useContext, useState } from 'react';
-import Notification from './Notification';
-import { NotificationContext } from '../App';
+import { NotificationContext } from './NotificationProvider';
 
 const SignUpForm = () => {
 	const firstname = useField('text', 'Name')

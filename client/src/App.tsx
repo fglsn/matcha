@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-
+import NotificationProvider from './components/NotificationProvider';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Footer from './components/Footer';
+import { Alert } from './components/Alert';
 
 import {
 	Routes,
@@ -12,39 +12,13 @@ import {
 } from 'react-router-dom';
 
 import { Box, Button, AppBar, Toolbar, Typography } from '@mui/material';
-
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
-import { Alert } from './components/Alert';
-
-type NotificationContextValue = {
-	notification: string | undefined;
-	setNotification: (notification: string) => void;
-};
-
-export const NotificationContext =
-	React.createContext<NotificationContextValue>({
-		notification: undefined,
-		setNotification: (_notificaiton) => {}
-	});
 
 const App = () => {
-	const [notification, setNotification] = useState<string | undefined>(
-		undefined
-	);
 
 	return (
-		// extract to a component: https://dev.to/doylecodes/making-alerts-for-a-web-app-41d6
-		<NotificationContext.Provider
-			value={{
-				notification,
-				setNotification: (newNotification: string) => {
-					setNotification(newNotification);
-					setTimeout(() => {
-						setNotification(undefined);
-					}, 1000);
-				}
-			}}
-		>
+
+		<NotificationProvider>
 			<Box>
 				<AppBar
 					position="static"
@@ -92,7 +66,7 @@ const App = () => {
 				</Routes>
 				<Footer />
 			</Box>
-		</NotificationContext.Provider>
+		</NotificationProvider>
 	);
 };
 
