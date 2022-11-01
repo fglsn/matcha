@@ -1,22 +1,19 @@
-import Alert from '@mui/material/Alert'
-import { AlertStatus } from '../types'
+import { useContext } from 'react';
+import { AlertContext } from './AlertProvider';
+import { AlertStatus } from '../types';
 
-const AlertSnackBar = ({alert, text}: any) => {
+import Alert from '@mui/material/Alert';
 
-	if (alert === AlertStatus.Error) {
+export const AlertSnackBar = () => {
+	const alert = useContext(AlertContext);
 
-		return (
-			<Alert severity="error">{text}</Alert>
-		)
+	if (alert.alert === AlertStatus.Error) {
+		return <Alert severity="error">{alert.alertText}</Alert>;
 	}
 
-	if (alert === AlertStatus.Success) {
-		return (
-			<Alert severity="success">{text}</Alert>
-		)
+	if (alert.alert === AlertStatus.Success) {
+		return <Alert severity="success">{alert.alertText}</Alert>;
 	}
 
-	return <></>
-}
-
-export default AlertSnackBar;
+	return null;
+};
