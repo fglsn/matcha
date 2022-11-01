@@ -19,24 +19,24 @@ router.post(
 		const parsedPassword = validatePassword(password);
 
 		const user = await findUserByUsername(parsedUsername);
-		if (user === undefined) {
-			res.status(400).json({ error: 'User not found' });
+		if (!user) {
+			res.status(401).json({ error: 'User not found' });
+			return;
 		}
-		const passwordCorrect = user === undefined
-			? false
-			: await bcrypt.compare(parsedPassword, user.passwordHash);
 
+		const passwordCorrect = await bcrypt.compare(parsedPassword, user.passwordHash);
 		if (!passwordCorrect) {
-			res.status(400).json({ error: 'Wrong password' });
+			res.status(401).json({ error: 'Wrong password' });
+			return;
 		}
 
 		const token = jwt.sign(
-			{ username: user?.username, id: user?.id },
-			"secret", //change to be secret
+			{ username: user.username, id: user.id },
+			'secret', //change to be secret
 			{ expiresIn: 60 * 60 }
 		);
 
-		res.status(201).send({ token, username: user?.username, id: user?.id });
+		res.status(200).send({ token, username: user?.username, id: user?.id });
 	})
 );
 

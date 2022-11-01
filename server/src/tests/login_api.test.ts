@@ -23,18 +23,18 @@ describe('user login', () => {
 		const res = await api
 			.post('/api/login')
 			.send(loginUser)
-			.expect(201)
+			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		expect(res.body).toHaveProperty("token");
+		expect(res.body).toHaveProperty('token');
 	});
 
 	test('login fails with non existing user', async () => {
 		const res = await api
 			.post('/api/login')
 			.send({ username: 'wrong', password: 'Wrong!111' })
-			.expect(400)
+			.expect(401)
 			.expect('Content-Type', /application\/json/);
 
 		expect(res.body.error).toContain('User not found');
@@ -44,7 +44,7 @@ describe('user login', () => {
 		const res = await api
 			.post('/api/login')
 			.send({ username: 'matcha', password: 'Wrong!111' })
-			.expect(400)
+			.expect(401)
 			.expect('Content-Type', /application\/json/);
 
 		expect(res.body.error).toContain('Wrong password');
@@ -72,10 +72,8 @@ describe('user login', () => {
 		[{ username, password: 'T!111111' }, 'Weak password'],
 		[{ username, password: 't!111111' }, 'Weak password'],
 		[{ username, password: 'TestTest!' }, 'Weak password'],
-		[{ username, password: 'Test11111' }, 'Weak password'],
-
+		[{ username, password: 'Test11111' }, 'Weak password']
 	])(`login fails with incorrect input values (failed by basic validators)`, async (invalidInputs, expectedErrorMessage) => {
-
 		// console.log(`Payload: ${incorrectUser}, Expected msg: ${expectedErrorMessage}`);
 		const res = await api
 			.post('/api/login')
