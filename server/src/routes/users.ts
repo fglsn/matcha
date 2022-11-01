@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { addNewUser, getAllUsers } from '../repositories/userRepository';
+import { getAllUsers } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 import { parseNewUserPayload } from '../validators/newUserValidator';
 
@@ -21,9 +21,8 @@ router.post(
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const newUser = parseNewUserPayload(req.body);
-		const parsedUser = createNewUser(newUser);
-		const result = await addNewUser(await parsedUser);
-		res.status(201).json(result);
+		const createdUser = await createNewUser(newUser);
+		res.status(201).json(createdUser);
 	})
 );
 

@@ -18,8 +18,9 @@ import { NewUser } from '../types';
 // import { NewUser, User } from '../types';
 
 import userService from '../services/users'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Notification from './Notification';
+import { NotificationContext } from '../App';
 
 const SignUpForm = () => {
 	const firstname = useField('text', 'Name')
@@ -28,23 +29,16 @@ const SignUpForm = () => {
 	const email = useField('text', 'Email')
 	const password = useField('text', 'Password')
 
-	const [errorMessage, setErrorMessage] = useState('')
-	const [infoMessage, setInfoMessage] = useState('')
-
 	const [showPassword, setShow] = useState(false)
 
-	const displayError = (error: React.SetStateAction<string>) => {
-		setErrorMessage(error)
-		setTimeout(() => {
-			setErrorMessage('')
-		}, 5000)
+	const notification = useContext(NotificationContext);
+
+	const displayError = (error: string) => {
+		notification.setNotification(error);
 	}
 
-	const displayInfo = (info: React.SetStateAction<string>) => {
-		setInfoMessage(info)
-		setTimeout(() => {
-			setInfoMessage('')
-		}, 5000)
+	const displayInfo = (info: string) => {
+		notification.setNotification(info)
 	}
 
 	const addNewUser = async (newUser: NewUser) => {
@@ -75,7 +69,6 @@ const SignUpForm = () => {
 
 	return (
 		<Box>
-			<Notification error={errorMessage} info={infoMessage} />
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<Box
@@ -83,14 +76,19 @@ const SignUpForm = () => {
 						marginTop: 8,
 						display: 'flex',
 						flexDirection: 'column',
-						alignItems: 'center',
+						alignItems: 'center'
 					}}
 				>
 					<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
 					<Typography component="h1" variant="h5">
 						Sign up
 					</Typography>
-					<Box component="form" noValidate onSubmit={submitNewUser} sx={{ mt: 3 }}>
+					<Box
+						component="form"
+						noValidate
+						onSubmit={submitNewUser}
+						sx={{ mt: 3 }}
+					>
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<TextField
@@ -134,14 +132,19 @@ const SignUpForm = () => {
 									{...password}
 									required
 									fullWidth
-									type={showPassword?"text":"password"}
+									type={showPassword ? 'text' : 'password'}
 									id="password"
 									autoComplete="new-password"
 								/>
 							</Grid>
 							<Grid item xs={12}>
 								<FormControlLabel
-									control={<Checkbox value="allowExtraEmails" color="primary" />}
+									control={
+										<Checkbox
+											value="allowExtraEmails"
+											color="primary"
+										/>
+									}
 									label="Show password"
 									onChange={() => setShow(!showPassword)}
 								/>
