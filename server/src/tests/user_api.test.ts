@@ -3,8 +3,9 @@ import supertest from 'supertest';
 
 import { app } from '../app';
 // import bcrypt from 'bcrypt';
-import { addNewUser, clearUsers, getAllUsers } from '../repositories/userRepository';
-import { newUser, newUserWithHashedPwd } from './test_helper';
+import { clearUsers, getAllUsers } from '../repositories/userRepository';
+import { createNewUser } from '../services/users';
+import { newUser } from './test_helper';
 
 const api = supertest(app);
 
@@ -19,7 +20,7 @@ const lastname = 'Testoff';
 describe('user creation', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await addNewUser(newUserWithHashedPwd);
+		await createNewUser(newUser);
 	});
 
 	test('creation succeeds with a new valid payload', async () => {
@@ -45,6 +46,8 @@ describe('user creation', () => {
 		[{ username, email, passwordPlain, lastname }, 'Missing first name'],
 		[{ username, email, passwordPlain, firstname }, 'Missing last name'],
 
+		[{ username: '          ', email, passwordPlain, firstname, lastname }, 'Missing username'],
+		[{ username: '					', email, passwordPlain, firstname, lastname }, 'Missing username'],
 		[{ username: 'tes', email, passwordPlain, firstname, lastname }, 'Username is too short'],
 		[{ username: 'testtesttesttesttestte', email, passwordPlain, firstname, lastname }, 'Username is too long'], //22chars
 		[{ username: 'tes<3>', email, passwordPlain, firstname, lastname }, 'Invalid username'],
