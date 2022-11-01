@@ -25,13 +25,17 @@ const AlertProvider = ({ children }: any) => {
 
 	useEffect(() => {
 		// Clear the interval when the component unmounts
-		if (timerRef === undefined)
-			return;
-		else
-			return () => window.clearTimeout(timerRef.current);
+		return () => {
+			if (timerRef.current) {
+				window.clearTimeout(timerRef.current)
+			}
+		};
 	}, []);
 
 	const runAlert = () => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+		}
 		timerRef.current = window.setTimeout(() => {
 			setAlertText(undefined);
 			setAlert(AlertStatus.None);
