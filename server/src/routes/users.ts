@@ -2,7 +2,7 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { getAllUsers } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
-import { parseNewUserPayload } from '../validators/newUserValidator';
+import { parseNewUserPayload } from '../validators/userPayloadValidators';
 
 const router = express.Router();
 

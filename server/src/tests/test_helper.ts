@@ -17,6 +17,9 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	lastname: 'ipsum'
 };
 
+export const loginUser = { username: 'matcha', password: 'Test!111' };
+
+
 // export const initialUsers: User[] = [
 // 	{
 // 		id: 0,

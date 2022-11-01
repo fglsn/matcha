@@ -21,17 +21,6 @@ const getAllUsers = async (): Promise<User[]> => {
 	return res.rows.map(row => userMapper(row));
 };
 
-// const findUserByUsername = async (username): Promise<User> => {
-// 	const query = {
-// 		text: 'select * from users where username = $1',
-// 		values: [username]
-// 	};
-// 	const res = await pool.query(query);
-// 	return {
-// 		todo: return userMapper(res);
-// 	}
-// };
-
 const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 	const query = {
 		text: 'insert into users(username, email, password_hash, firstname, lastname) VALUES($1, $2, $3, $4, $5) RETURNING *',
@@ -41,8 +30,21 @@ const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 	return userMapper(res.rows[0]);
 };
 
+const findUserByUsername = async (username: string): Promise<User|undefined> => {
+	const query = {
+		text: 'select * from users where username = $1',
+		values: [username]
+	};
+	const res = await pool.query(query);
+	console.log(res.rowCount);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userMapper(res.rows[0]);
+};
+
 const clearUsers = async (): Promise<void> => {
 	await pool.query('truncate table users');
 };
 
-export { getAllUsers, addNewUser, clearUsers };
+export { getAllUsers, addNewUser, clearUsers, findUserByUsername };
