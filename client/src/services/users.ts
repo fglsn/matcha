@@ -1,16 +1,16 @@
-import axios from 'axios'
+import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 import { NewUser } from '../types';
 
-const create = async (newObject: NewUser): Promise<any>=> {
+const create = async (newObject: NewUser): Promise<any> => {
 	try {
-		const response = await axios.post(`${apiBaseUrl}/users`, newObject)
+		const response = await axios.post(`${apiBaseUrl}/users`, newObject);
 		// console.log(response.data)
 		return response.data;
 	} catch (err) {
-		return(err.response.data)
+		return err.response.data;
 	}
-}
+};
 
-const moduleExports = { create }
-export default moduleExports
+const moduleExports = { create };
+export default moduleExports;
