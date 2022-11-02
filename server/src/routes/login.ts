@@ -31,7 +31,7 @@ router.post(
 		}
 
 		const token = jwt.sign(
-			{ username: user.username, id: user.id },
+			{ id: user.id, username: user.username },
 			'secret', //change to be secret
 			{ expiresIn: 60 * 60 }
 		);

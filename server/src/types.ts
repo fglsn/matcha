@@ -9,4 +9,6 @@ export type User = BaseUser & { id: string; passwordHash: string; created_at: Da
 
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
 
+export type LoggedUser = BaseUser & { id: string };
+
 export type NewUser = BaseUser & { passwordPlain: string };
