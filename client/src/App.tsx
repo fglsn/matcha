@@ -1,4 +1,5 @@
 import Navbar from './components/Navbar';
+import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Footer from './components/Footer';
@@ -35,7 +36,7 @@ const App = () => {
 				<Navbar/>
 				<AlertSnackBar />
 				<Routes>
-					<Route path="/" element={<SignUpForm />} />
+					<Route path="/" element={<Main/>} />
 					<Route path="/login" element={<LoginForm />} />
 					<Route path="/signup" element={<SignUpForm />} />
 				</Routes>
