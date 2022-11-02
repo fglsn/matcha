@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
 	Avatar, Box, Button, CssBaseline,
@@ -10,7 +11,6 @@ import userService from '../services/users'
 import { NewUser } from '../types';
 import { useField } from '../hooks';
 import { AlertContext } from './AlertProvider';
-import { useNavigate } from 'react-router-dom';
 
 // import { NewUser, User } from '../types';
 
@@ -130,7 +130,7 @@ const SignUpForm = () => {
 								<FormControlLabel
 									control={
 										<Checkbox
-											value="allowExtraEmails" //fix/rename
+											value="Show password"
 											color="primary"
 										/>
 									}
