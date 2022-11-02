@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export const Mailer = (to: string, subject: string, text: string) => {
+export const sendMail = (to: string, subject: string, text: string) => {
 	const transporter = nodemailer.createTransport({
 		service: 'hotmail',
 		auth: {
