@@ -10,25 +10,13 @@ import { AlertSnackBar } from './components/AlertSnackBar';
 import { Routes, Route } from 'react-router-dom';
 
 import { Box } from '@mui/material';
-import { useContext, useEffect } from 'react';
-import { setLoggedUser, StateContext, useStateValue } from './state';
+import { useContext } from 'react';
+import { StateContext } from './state';
 
 const App = () => {
-	const [, dispatch] = useStateValue();
-	const loggedUser = useContext(StateContext);
+	const [ {loggedUser} ] = useContext(StateContext);
 
-	useEffect(() => {
-		const fetchLoggedUser = () => {
-			const loggedUserJSON = window.localStorage.getItem('loggedUser')
-			if (loggedUserJSON) {
-				const user = JSON.parse(loggedUserJSON)
-				dispatch(setLoggedUser(user));
-			};
-		}
-		void fetchLoggedUser();
-	}, [dispatch])
-
-	console.log(loggedUser[0].loggedUser);
+	console.log(loggedUser);
 
 	return (
 		<AlertProvider>

@@ -8,7 +8,7 @@ const loggedUserJSON = localStorage.getItem('loggedUser')
 loggedUserJSON ? user = JSON.parse(loggedUserJSON) : user = undefined;
 
 export type State = {
-	loggedUser: LoggedUser | undefined
+	loggedUser: LoggedUser | undefined,
 };
 
 const initialState: State = {

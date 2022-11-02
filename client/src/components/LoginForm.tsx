@@ -11,6 +11,7 @@ import {
 import loginService from '../services/login';
 import { useField } from '../hooks/index';
 import { AlertContext } from './AlertProvider';
+import { setLoggedUser, StateContext } from '../state';
 
 const LoginForm = () => {
 	const username = useField('text', 'Username')
@@ -20,6 +21,8 @@ const LoginForm = () => {
 
 	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
+
+	const [, dispatch] = useContext(StateContext);
 
 	const handleLogin = async (event: any) => {
 		event.preventDefault();
@@ -37,6 +40,7 @@ const LoginForm = () => {
 			localStorage.setItem('loggedUser', JSON.stringify(loggedInUser))
 			console.log(`User ${loggedInUser.username} logged in.`);
 			alert.success(`Logged in successfuly. Welcome!`);
+			dispatch(setLoggedUser(loggedInUser));
 			navigate('/');
 		}
 	}
