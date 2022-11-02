@@ -3,12 +3,16 @@ import { LoggedUser } from "../types";
 
 import { Action } from "./reducer";
 
+let user: LoggedUser | undefined;
+const loggedUserJSON = localStorage.getItem('loggedUser')
+loggedUserJSON ? user = JSON.parse(loggedUserJSON) : user = undefined;
+
 export type State = {
 	loggedUser: LoggedUser | undefined
 };
 
 const initialState: State = {
-	loggedUser: undefined,
+	loggedUser: user,
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([

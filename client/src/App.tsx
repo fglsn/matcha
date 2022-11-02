@@ -24,21 +24,18 @@ const App = () => {
 				dispatch(setLoggedUser(user));
 			};
 		}
-
 		void fetchLoggedUser();
 	}, [dispatch])
 
-
 	console.log(loggedUser[0].loggedUser);
-
-
 
 	return (
 		<AlertProvider>
 			<Box>
-				<Navbar />
+				<Navbar/>
 				<AlertSnackBar />
 				<Routes>
+					<Route path="/" element={<SignUpForm />} />
 					<Route path="/login" element={<LoginForm />} />
 					<Route path="/signup" element={<SignUpForm />} />
 				</Routes>

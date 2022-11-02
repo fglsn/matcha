@@ -1,21 +1,47 @@
-import { setLoggedUser, StateContext } from "../state";
+import { setLoggedUser, StateContext, useStateValue } from "../state";
 import { useContext } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, AppBar, Toolbar, Typography } from '@mui/material';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import { LoggedUser } from "../types";
 import { AlertContext } from "./AlertProvider";
 
+const LoggedInUserButtons = ({ loggedUser, handleLogout }: { loggedUser: LoggedUser, handleLogout: any }) => {
+	return (
+		<>
+			<em>{loggedUser?.username} logged in </em>
+			<Button onClick={handleLogout} color="inherit">Logout</Button>
+		</>
+	)
+}
+
+const LoggedOutButtons = () => {
+	return (
+		<>
+			<Button color="inherit" component={Link} to="/login">
+				Login
+			</Button>
+			<Button color="inherit" component={Link} to="/signup">
+				Sign Up
+			</Button>
+		</>
+	)
+}
+
 const Navbar = () => {
+	const [, dispatch] = useStateValue();
 	const loggedUser = useContext(StateContext);
+	const navigate = useNavigate();
 	const alert = useContext(AlertContext);
 
 	const handleLogout = async (event: any) => {
 		event.preventDefault()
 		window.localStorage.clear()
-		dispatch(setLoggedUser(undefined))
 		alert.success('Logged out');
-	}
+		dispatch(setLoggedUser(undefined))
+		navigate('/');
+	};
 
 	return (<AppBar
 		position="static"
@@ -40,24 +66,11 @@ const Navbar = () => {
 				/>
 			</Typography>
 			{loggedUser[0].loggedUser !== undefined
-				? <>
-					<em>{loggedUser[0].loggedUser?.username} logged in </em>
-					<Button onClick={handleLogout} color="inherit">Logout</Button>
-				</>
-				: <>
-					<Button color="inherit" component={Link} to="/login">
-						Login
-					</Button>
-					<Button color="inherit" component={Link} to="/signup">
-						Sign Up
-					</Button></>
+				? <LoggedInUserButtons loggedUser={loggedUser[0].loggedUser} handleLogout={handleLogout} />
+				: <LoggedOutButtons />
 			}
 		</Toolbar>
 	</AppBar>);
 };
 
 export default Navbar;
-
-function dispatch(arg0: { type: "SET_LOGGED_USER"; payload: import("../types").LoggedUser; }) {
-	throw new Error("Function not implemented.");
-}

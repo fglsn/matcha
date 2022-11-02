@@ -34,13 +34,11 @@ const LoginForm = () => {
 			console.log("error " + loggedInUser.error)
 			alert.error(loggedInUser.error)
 		} else {
+			localStorage.setItem('loggedUser', JSON.stringify(loggedInUser))
 			console.log(`User ${loggedInUser.username} logged in.`);
 			alert.success(`Logged in successfuly. Welcome!`);
 			navigate('/');
 		}
-		window.localStorage.setItem(
-			'loggedUser', JSON.stringify(loggedInUser)
-		)
 	}
 
 	return (
