@@ -6,6 +6,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import { CssBaseline } from '@mui/material';
 
+import { reducer, StateProvider } from "./state";
+
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
 
@@ -14,7 +16,9 @@ root.render(
 		{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 		<CssBaseline />
 		<Router>
-			<App />
+			<StateProvider reducer={reducer}>
+				<App />
+			</StateProvider>
 		</Router>
 	</ThemeProvider>
 );

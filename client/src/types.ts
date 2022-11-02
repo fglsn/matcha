@@ -15,6 +15,8 @@ export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
 
 export type NewUser = BaseUser & { passwordPlain: string };
 
+export type LoggedUser = BaseUser & { id: string } | undefined;
+
 export enum AlertStatus {
 	None = 'NONE',
 	Success = 'SUCCSESS',
