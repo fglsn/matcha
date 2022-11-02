@@ -12,7 +12,8 @@ const userMapper = (row: any): User => {
 		passwordHash: getString(row['password_hash']),
 		firstname: getString(row['firstname']),
 		lastname: getString(row['lastname']),
-		created_at: getDate(row['created_at'])
+		createdAt: getDate(row['created_at']),
+		activationCode: getString(row['activation_code'])
 	};
 };
 
@@ -23,8 +24,8 @@ const getAllUsers = async (): Promise<User[]> => {
 
 const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 	const query = {
-		text: 'insert into users(username, email, password_hash, firstname, lastname) VALUES($1, $2, $3, $4, $5) RETURNING *',
-		values: [newUser.username, newUser.email, newUser.passwordHash, newUser.firstname, newUser.lastname]
+		text: 'insert into users(username, email, password_hash, firstname, lastname, activation_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
+		values: [newUser.username, newUser.email, newUser.passwordHash, newUser.firstname, newUser.lastname, newUser.activationCode]
 	};
 	const res = await pool.query(query);
 	return userMapper(res.rows[0]);

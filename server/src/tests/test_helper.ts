@@ -13,7 +13,8 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	email: 'matcha@test.com',
 	passwordHash: 'Test!111',
 	firstname: 'lorem',
-	lastname: 'ipsum'
+	lastname: 'ipsum',
+	activationCode: 'qwertyuio21316546'
 };
 
 export const loginUser = { username: 'matcha', password: 'Test!111' };
