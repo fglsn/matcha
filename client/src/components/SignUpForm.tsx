@@ -26,14 +26,6 @@ const SignUpForm = () => {
 	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
 
-	// const displayError = (error: string) => {
-	// 	alert.error(error);
-	// }
-
-	// const displayInfo = (info: string) => {
-	// 	alert.success(info);
-	// }
-
 	const addNewUser = async (newUser: NewUser) => {
 		const addedUser = await userService.create(newUser);
 		// console.log('new user: ', JSON.stringify(addedUser))

@@ -64,6 +64,7 @@ const LoginForm = () => {
 							required
 							fullWidth
 							autoFocus
+							autoComplete="username"
 						/>
 						<TextField
 							{...password}
