@@ -1,7 +1,6 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 export const Mailer = (to: string, subject: string, text: string) => {
-
 	const transporter = nodemailer.createTransport({
 		service: 'hotmail',
 		auth: {
@@ -12,7 +11,7 @@ export const Mailer = (to: string, subject: string, text: string) => {
 
 	transporter.sendMail({ from: 'matcha_web@hotmail.com', to, subject, html: text }, (err, info) => {
 		if (err) {
-			console.error("Error: ", err);
+			console.error('Error: ', err);
 			return err;
 		} else {
 			console.log(info);
