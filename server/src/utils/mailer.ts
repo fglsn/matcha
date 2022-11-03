@@ -4,12 +4,12 @@ export const sendMail = (to: string, subject: string, text: string) => {
 	const transporter = nodemailer.createTransport({
 		service: 'hotmail',
 		auth: {
-			user: 'matcha_web@hotmail.com',
-			pass: 'Test!111'
+			user: process.env.EMAIL,
+			pass: process.env.PASSWORD
 		}
 	});
 
-	transporter.sendMail({ from: 'matcha_web@hotmail.com', to, subject, html: text }, (err, info) => {
+	transporter.sendMail({ from: process.env.EMAIL, to, subject, html: text }, (err, info) => {
 		if (err) {
 			console.error('Error: ', err);
 			return err;

@@ -1,11 +1,11 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { findUserByUsername } from '../repositories/userRepository';
 import { parseUsername, validatePassword } from '../validators/userPayloadValidators';
+import { createToken } from '../services/login';
 
 const router = express.Router();
 
@@ -30,12 +30,7 @@ router.post(
 			return;
 		}
 
-		const token = jwt.sign(
-			{ id: user.id, username: user.username },
-			'secret', //change to be secret
-			{ expiresIn: 60 * 60 }
-		);
-
+		const token = createToken(user);
 		res.status(200).send({ token, username: user?.username, id: user?.id });
 	})
 );
