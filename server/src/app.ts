@@ -21,28 +21,16 @@ app.get('/ping', (_req, res) => {
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 
-// Error handler for unexpected async errors
+// Error handler for errors
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use(function (_err: any, _req: Request, res: Response, _next: NextFunction) {
-	if (_err instanceof ValidationError) {
+app.use(function (err: any, _req: Request, res: Response, _next: NextFunction) {
+	if (err instanceof ValidationError) {
 		res.status(400).json({
-			error: `Validation error: ${_err.message}`
-		});
-		return;
-	} //move to service
-	if (_err.message === 'duplicate key value violates unique constraint "users_username_key"') {
-		res.status(400).json({
-			error: 'Username already exists'
-		});
-		return;
-	}
-	if (_err.message === 'duplicate key value violates unique constraint "users_email_key"') {
-		res.status(400).json({
-			error: 'This email was already used'
+			error: `Validation error: ${err.message}`
 		});
 		return;
 	}
 	res.status(500).json({
-		error: 'Unexpected error: ' + _err
+		error: 'Unexpected error: ' + err
 	});
 });

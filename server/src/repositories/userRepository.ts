@@ -1,7 +1,8 @@
-import { User, NewUserWithHashedPwd } from '../types';
 
 import pool from '../db';
 import { getString, getDate } from '../dbUtils';
+import { ValidationError } from '../validators/userPayloadValidators';
+import { User, NewUserWithHashedPwd } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -27,7 +28,22 @@ const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 		text: 'insert into users(username, email, password_hash, firstname, lastname, activation_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
 		values: [newUser.username, newUser.email, newUser.passwordHash, newUser.firstname, newUser.lastname, newUser.activationCode]
 	};
-	const res = await pool.query(query);
+
+	let res;
+	try {
+		res = await pool.query(query);
+	} catch (error) {
+		if (error instanceof Error) {
+			if (error.message === 'duplicate key value violates unique constraint "users_username_key"') {
+				throw new ValidationError('Username already exists');
+			}
+			if (error.message === 'duplicate key value violates unique constraint "users_email_key"') {
+				throw new ValidationError('This email was already used');
+			}
+		}
+		throw error;
+	}
+
 	return userMapper(res.rows[0]);
 };
 
