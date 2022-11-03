@@ -1,4 +1,3 @@
-
 import pool from '../db';
 import { getString, getDate } from '../dbUtils';
 import { ValidationError } from '../validators/userPayloadValidators';

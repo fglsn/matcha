@@ -4,7 +4,8 @@ export const validateUsername = (username: string) => {
 };
 
 export const validatePassword = (password: string) => {
-	const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+	const passwordRegex =
+		/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 	return passwordRegex.test(password);
 };
 
@@ -19,10 +20,18 @@ export const validateName = (name: string) => {
 	return nameRegex.test(name);
 };
 
-export const validateSignUpForm = (username: string, email: string, password: string, firstname: string, lastname: string) => {
-	return validateUsername(username) && 
-			validateEmail(email) && 
-			validatePassword(password) && 
-			validateName(firstname) && 
-			validateName(lastname) ? true : false
+export const validateSignUpForm = (
+	username: string,
+	email: string,
+	password: string,
+	firstname: string,
+	lastname: string
+) => {
+	return validateUsername(username) &&
+		validateEmail(email) &&
+		validatePassword(password) &&
+		validateName(firstname) &&
+		validateName(lastname)
+		? true
+		: false;
 };

@@ -9,7 +9,6 @@ export const createNewUser = async (newUser: NewUser): Promise<User> => {
 	const saltRounds = 10;
 	const passwordHash = await bcrypt.hash(newUser.passwordPlain, saltRounds);
 	const activationCode = crypto.randomBytes(20).toString('hex');
-
 	return addNewUser({ ...newUser, passwordHash, activationCode });
 };
 
