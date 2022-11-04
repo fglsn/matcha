@@ -27,12 +27,12 @@ export const sendActivationCode = (user: User): void => {
 export const activateAccount = async (activationCode: string): Promise<void> => {
 	const user = await findUserByActivationCode(activationCode);
 	if (!user) {
-		throw new AppError('Activation code doesn\'t exist', 400);
-	}
-	if (!user.isActive) {
-		await setUserAsActive(activationCode);
+		throw new AppError("Activation code doesn't exist", 400);
 	}
 	if (user.isActive) {
 		throw new AppError('Account already activated', 400);
+	}
+	if (!user.isActive) {
+		await setUserAsActive(activationCode);
 	}
 };

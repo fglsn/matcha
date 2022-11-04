@@ -2,7 +2,7 @@ import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 
 import { app } from '../app';
-import { clearUsers } from '../repositories/userRepository';
+import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 import { newUser, loginUser } from './test_helper';
 
@@ -19,7 +19,19 @@ describe('user login', () => {
 		await createNewUser(newUser);
 	});
 
-	test('registered user can log in', async () => {
+	test('activated user can log in', async () => {
+		const user = await findUserByUsername('matcha');
+		if (user) {
+			const activationCode = user.activationCode;
+
+			await api.get(`/api/users/activate/${activationCode}`).expect(200);
+
+			const activeUser = await findUserByUsername('matcha');
+			if (activeUser) {
+				expect(activeUser.isActive).toBe(true);
+			}
+		}
+
 		const res = await api
 			.post('/api/login')
 			.send(loginUser)
@@ -30,7 +42,26 @@ describe('user login', () => {
 		expect(res.body).toHaveProperty('token');
 	});
 
+	test('login fail with non active user', async () => {
+		const user = await findUserByUsername('matcha');
+		if (user) {
+			const nonActiveUser = await findUserByUsername('matcha');
+			if (nonActiveUser) {
+				expect(nonActiveUser.isActive).toBe(false);
+			}
+		}
+		const res = await api
+			.post('/api/login')
+			.send(loginUser)
+			.expect(401)
+			.expect('Content-Type', /application\/json/);
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		expect(res.body.error).toContain('Account is not active');
+	});
+
 	test('login fails with non existing user', async () => {
+
 		const res = await api
 			.post('/api/login')
 			.send({ username: 'wrong', password: 'Wrong!111' })

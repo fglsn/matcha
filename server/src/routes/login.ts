@@ -30,6 +30,11 @@ router.post(
 			return;
 		}
 
+		if (!user.isActive) {
+			res.status(401).json({ error: 'Account is not active' });
+			return;
+		}
+
 		const token = createToken(user);
 		res.status(200).send({ token, username: user?.username, id: user?.id });
 	})

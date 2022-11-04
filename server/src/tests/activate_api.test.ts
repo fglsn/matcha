@@ -46,7 +46,7 @@ describe('account activation', () => {
 		}
 	});
 
-	test('activation fails on already active account', async () => {
+	test('activation fails on non-existing activation code', async () => {
 		const user = await findUserByUsername('matcha');
 		if (user) {
 			const res = await api

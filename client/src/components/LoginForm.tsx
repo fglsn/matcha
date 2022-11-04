@@ -46,6 +46,8 @@ const LoginForm = () => {
 			if (activationCode) {
 				try {
 					await userService.activate(activationCode);
+					navigate('/login');
+					alert.success('Account activated successfully!');
 				} catch (err) {
 					console.log(err.response.data.error);
 					alert.error(err.response.data.error);
