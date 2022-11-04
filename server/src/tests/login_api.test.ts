@@ -65,7 +65,7 @@ describe('user login', () => {
 		[{ username: 'te{st', password }, 'Invalid username'],
 
 		[{ username, password: 'Test!1' }, 'Password is too short'],
-		[{ username, password: 'Test!111Test!111Test!111Test!111Test!111Te' }, 'Password is too long'], //42
+		[{ username, password: 'Test!111Test!111Test!111Test!111Test!111Te2' }, 'Password is too long'], //43
 		[{ username, password: 'testtest' }, 'Weak password'],
 		[{ username, password: '12345678' }, 'Weak password'],
 		[{ username, password: '12345678' }, 'Weak password'],

@@ -62,7 +62,7 @@ describe('user creation', () => {
 		[{ username, email: 'test@@test.com', passwordPlain, firstname, lastname }, 'Invalid email'],
 
 		[{ username, email, passwordPlain: 'Test!1', firstname, lastname }, 'Password is too short'],
-		[{ username, email, passwordPlain: 'Test!111Test!111Test!111Test!111Test!111Te', firstname, lastname }, 'Password is too long'], //42
+		[{ username, email, passwordPlain: 'Test!111Test!111Test!111Test!111Test!12211T3e', firstname, lastname }, 'Password is too long'], //43
 		[{ username, email, passwordPlain: 'testtest', firstname, lastname }, 'Weak password'],
 		[{ username, email, passwordPlain: '12345678', firstname, lastname }, 'Weak password'],
 		[{ username, email, passwordPlain: '12345678', firstname, lastname }, 'Weak password'],

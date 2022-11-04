@@ -11,10 +11,10 @@ export class ValidationError extends Error {
 	}
 }
 
-const usernameRegex = /^[a-zA-Z0-9_\-.]*$/;
+const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =
 	/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;
 const nameRegex = /^[a-zA-Z'_\-.]*$/;
 
 export const parseUsername = (username: unknown): string => {
@@ -58,7 +58,7 @@ export const validatePassword = (passwordPlain: unknown): string => {
 	if (passwordPlain.length < 8) {
 		throw new ValidationError('Password is too short');
 	}
-	if (passwordPlain.length > 41) {
+	if (passwordPlain.length > 42) {
 		throw new ValidationError('Password is too long');
 	}
 	if (!passwordRegex.test(passwordPlain)) {
@@ -75,7 +75,7 @@ export const parseFirstname = (firstname: unknown): string => {
 	if (!trimmedFirstname) {
 		throw new ValidationError('Missing firstname');
 	}
-	if (trimmedFirstname.length > 23) {
+	if (trimmedFirstname.length > 21) {
 		throw new ValidationError('First name is too long');
 	}
 	if (!nameRegex.test(trimmedFirstname)) {
