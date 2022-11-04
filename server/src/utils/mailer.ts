@@ -11,8 +11,8 @@ export const sendMail = (to: string, subject: string, text: string) => {
 
 	transporter.sendMail({ from: process.env.EMAIL, to, subject, html: text }, (err, info) => {
 		if (err) {
-			console.error('Error: ', err);
-			return err;
+			console.error('Error: Failed to send an email');
+			return;
 		} else {
 			console.log(info);
 			return true;
