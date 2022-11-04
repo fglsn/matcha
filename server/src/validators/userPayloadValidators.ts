@@ -3,13 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NewUser } from '../types';
 import { isString } from './basicTypeValidators';
-
-export class ValidationError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = 'ValidationError';
-	}
-}
+import { ValidationError } from '../errors';
 
 const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =

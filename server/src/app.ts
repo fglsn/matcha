@@ -1,11 +1,10 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
-
-import { ValidationError } from './validators/userPayloadValidators';
+import { globalErrorHandler } from './errors';
 
 export const app = express();
 app.use(express.json());
@@ -22,15 +21,4 @@ app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 
 // Error handler for errors
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use(function (err: any, _req: Request, res: Response, _next: NextFunction) {
-	if (err instanceof ValidationError) {
-		res.status(400).json({
-			error: `Validation error: ${err.message}`
-		});
-		return;
-	}
-	res.status(500).json({
-		error: 'Unexpected error: ' + err
-	});
-});
+app.use(globalErrorHandler);
