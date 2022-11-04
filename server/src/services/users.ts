@@ -19,7 +19,7 @@ export const sendActivationCode = (user: User): void => {
 		'Activation code for Matcha-account',
 		`<h1>Hi and thanks for signing up!</h1>
 			<p>Please visit the link to activate your account here:</p>
-			<a href='http://localhost:3001/users/activate/${user.activationCode}'>Link</a>
+			<a href='http://localhost:3000/login?activate=${user.activationCode}'>Link</a>
 			<p> See you at Matcha! <3 </p>`
 	);
 };
@@ -29,7 +29,6 @@ export const activateAccount = async (activationCode: string): Promise<void> => 
 	if (!user) {
 		throw new AppError('Activation code doesn\'t exist', 400);
 	}
-	console.log(user);
 	if (!user.isActive) {
 		await setUserAsActive(activationCode);
 	}

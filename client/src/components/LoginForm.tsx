@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
 	Avatar,
@@ -15,6 +15,7 @@ import {
 	Typography
 } from '@mui/material';
 
+import userService from '../services/users';
 import loginService from '../services/login';
 import { useField } from '../hooks/index';
 import { AlertContext } from './AlertProvider';
@@ -31,10 +32,29 @@ const LoginForm = () => {
 
 	const [showPassword, setShow] = useState(false);
 
-	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
 
 	const [, dispatch] = useContext(StateContext);
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [searchParams, setSearchParams] = useSearchParams();
+	const activationCode = searchParams.get('activate');
+	const alert = useContext(AlertContext);
+
+	useEffect(() => {
+		const activateAccount = async () => {
+			if (activationCode) {
+				try {
+					await userService.activate(activationCode);
+				} catch (err) {
+					console.log(err.response.data.error);
+					alert.error(err.response.data.error);
+					navigate('/login');
+				}
+			}
+		};
+		activateAccount();
+	}, [activationCode, alert, navigate]);
 
 	const handleLogin = async (event: any) => {
 		event.preventDefault();
@@ -110,8 +130,8 @@ const LoginForm = () => {
 							}
 							label="Remember me"
 						/>
-						{validateLoginForm(username.value, password.value)
-							? <Button
+						{validateLoginForm(username.value, password.value) ? (
+							<Button
 								type="submit"
 								fullWidth
 								variant="contained"
@@ -119,7 +139,8 @@ const LoginForm = () => {
 							>
 								Sign In
 							</Button>
-							: <Button
+						) : (
+							<Button
 								type="submit"
 								fullWidth
 								disabled
@@ -128,7 +149,7 @@ const LoginForm = () => {
 							>
 								Sign In
 							</Button>
-						}
+						)}
 						<Grid container>
 							<Grid item xs>
 								<Link href="#" variant="body2">

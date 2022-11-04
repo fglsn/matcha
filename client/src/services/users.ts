@@ -11,5 +11,9 @@ const create = async (newObject: NewUser): Promise<any> => {
 	}
 };
 
-const moduleExports = { create };
+const activate = async (activationCode: string): Promise<void> => {
+	await axios.get(`${apiBaseUrl}/users/activate/${activationCode}`);
+};
+
+const moduleExports = { create, activate };
 export default moduleExports;
