@@ -11,15 +11,23 @@ import userService from '../services/users'
 import { NewUser } from '../types';
 import { useField } from '../hooks';
 import { AlertContext } from './AlertProvider';
+import {
+	validateEmail,
+	validateFirstame,
+	validateLastname,
+	validatePassword,
+	validateUsername,
+	validateSignUpForm
+} from '../utils/inputValidators';
 
 // import { NewUser, User } from '../types';
 
 const SignUpForm = () => {
-	const firstname = useField('text', 'Name')
-	const lastname = useField('text', 'Surname')
-	const username = useField('text', 'Username')
-	const email = useField('text', 'Email')
-	const password = useField('text', 'Password')
+	const firstname = useField('text', 'Name', validateFirstame)
+	const lastname = useField('text', 'Surname', validateLastname);
+	const username = useField('text', 'Username', validateUsername);
+	const email = useField('text', 'Email', validateEmail);
+	const password = useField('text', 'Password', validatePassword);
 
 	const [showPassword, setShow] = useState(false)
 
@@ -131,14 +139,26 @@ const SignUpForm = () => {
 								/>
 							</Grid>
 						</Grid>
-						<Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
-						>
-							Sign Up
-						</Button>
+						{validateSignUpForm(username.value, email.value, password.value, firstname.value, lastname.value) ? (
+							<Button
+								type="submit"
+								fullWidth
+								variant="contained"
+								sx={{ mt: 3, mb: 2 }}
+							>
+								Sign Up
+							</Button>
+						) : (
+							<Button
+								type="submit"
+								fullWidth
+								disabled
+								variant="contained"
+								sx={{ mt: 3, mb: 2 }}
+							>
+								Sign Up
+							</Button>
+						)}
 						<Grid container justifyContent="flex-end">
 							<Grid item>
 								<Link href="/login" variant="body2">

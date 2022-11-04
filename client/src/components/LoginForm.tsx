@@ -2,22 +2,34 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
-	Avatar, Box, Button,
-	CssBaseline, TextField, Checkbox,
-	Grid, FormControlLabel, Container,
-	Link, Typography
+	Avatar,
+	Box,
+	Button,
+	CssBaseline,
+	TextField,
+	Checkbox,
+	Grid,
+	FormControlLabel,
+	Container,
+	Link,
+	Typography
 } from '@mui/material';
 
 import loginService from '../services/login';
 import { useField } from '../hooks/index';
 import { AlertContext } from './AlertProvider';
 import { setLoggedUser, StateContext } from '../state';
+import {
+	validatePassword,
+	validateUsername,
+	validateLoginForm
+} from '../utils/inputValidators';
 
 const LoginForm = () => {
-	const username = useField('text', 'Username')
-	const password = useField('text', 'Password')
+	const username = useField('text', 'Username', validateUsername);
+	const password = useField('text', 'Password', validatePassword);
 
-	const [showPassword, setShow] = useState(false)
+	const [showPassword, setShow] = useState(false);
 
 	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
@@ -32,17 +44,17 @@ const LoginForm = () => {
 			password: password.value
 		};
 
-		const loggedInUser = await loginService.login(userToLogin)
+		const loggedInUser = await loginService.login(userToLogin);
 		if (loggedInUser.error) {
-			console.log("error " + loggedInUser.error)
-			alert.error(loggedInUser.error)
+			console.log('error ' + loggedInUser.error);
+			alert.error(loggedInUser.error);
 		} else {
 			console.log(`User ${loggedInUser.username} logged in.`);
 			alert.success(`Logged in successfuly. Welcome!`);
-			dispatch(setLoggedUser(loggedInUser))
+			dispatch(setLoggedUser(loggedInUser));
 			navigate('/');
 		}
-	}
+	};
 
 	return (
 		<Box>
@@ -53,14 +65,19 @@ const LoginForm = () => {
 						marginTop: 8,
 						display: 'flex',
 						flexDirection: 'column',
-						alignItems: 'center',
+						alignItems: 'center'
 					}}
 				>
 					<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
 					<Typography component="h1" variant="h5">
 						Sign in
 					</Typography>
-					<Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleLogin}>
+					<Box
+						component="form"
+						noValidate
+						sx={{ mt: 1 }}
+						onSubmit={handleLogin}
+					>
 						<TextField
 							{...username}
 							margin="normal"
@@ -88,17 +105,30 @@ const LoginForm = () => {
 							onChange={() => setShow(!showPassword)}
 						/>
 						<FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
+							control={
+								<Checkbox value="remember" color="primary" />
+							}
 							label="Remember me"
 						/>
-						<Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
-						>
-							Sign In
-						</Button>
+						{validateLoginForm(username.value, password.value)
+							? <Button
+								type="submit"
+								fullWidth
+								variant="contained"
+								sx={{ mt: 3, mb: 2 }}
+							>
+								Sign In
+							</Button>
+							: <Button
+								type="submit"
+								fullWidth
+								disabled
+								variant="contained"
+								sx={{ mt: 3, mb: 2 }}
+							>
+								Sign In
+							</Button>
+						}
 						<Grid container>
 							<Grid item xs>
 								<Link href="#" variant="body2">
@@ -115,7 +145,7 @@ const LoginForm = () => {
 				</Box>
 			</Container>
 		</Box>
-	)
-}
+	);
+};
 
 export default LoginForm;
