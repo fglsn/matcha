@@ -5,7 +5,6 @@ import { NewUser } from '../types';
 const create = async (newObject: NewUser): Promise<any> => {
 	try {
 		const response = await axios.post(`${apiBaseUrl}/users`, newObject);
-		// console.log(response.data)
 		return response.data;
 	} catch (err) {
 		return err.response.data;

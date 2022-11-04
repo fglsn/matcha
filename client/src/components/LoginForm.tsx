@@ -46,10 +46,10 @@ const LoginForm = () => {
 
 		const loggedInUser = await loginService.login(userToLogin);
 		if (loggedInUser.error) {
-			console.log('error ' + loggedInUser.error);
+			console.log('error ' + loggedInUser.error); //rm later
 			alert.error(loggedInUser.error);
 		} else {
-			console.log(`User ${loggedInUser.username} logged in.`);
+			console.log(`User ${loggedInUser.username} logged in.`); //rm later
 			alert.success(`Logged in successfuly. Welcome!`);
 			dispatch(setLoggedUser(loggedInUser));
 			navigate('/');

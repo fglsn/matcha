@@ -2,12 +2,20 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
-	Avatar, Box, Button, CssBaseline,
-	TextField, FormControlLabel, Checkbox,
-	Grid, Container, Link, Typography
+	Avatar,
+	Box,
+	Button,
+	CssBaseline,
+	TextField,
+	FormControlLabel,
+	Checkbox,
+	Grid,
+	Container,
+	Link,
+	Typography
 } from '@mui/material';
 
-import userService from '../services/users'
+import userService from '../services/users';
 import { NewUser } from '../types';
 import { useField } from '../hooks';
 import { AlertContext } from './AlertProvider';
@@ -23,13 +31,13 @@ import {
 // import { NewUser, User } from '../types';
 
 const SignUpForm = () => {
-	const firstname = useField('text', 'Name', validateFirstame)
+	const firstname = useField('text', 'Name', validateFirstame);
 	const lastname = useField('text', 'Surname', validateLastname);
 	const username = useField('text', 'Username', validateUsername);
 	const email = useField('text', 'Email', validateEmail);
 	const password = useField('text', 'Password', validatePassword);
 
-	const [showPassword, setShow] = useState(false)
+	const [showPassword, setShow] = useState(false);
 
 	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
@@ -38,17 +46,19 @@ const SignUpForm = () => {
 		const addedUser = await userService.create(newUser);
 		// console.log('new user: ', JSON.stringify(addedUser))
 		if (addedUser.error) {
-			console.log("error " + addedUser.error)
-			alert.error(addedUser.error)
+			console.log('error ' + addedUser.error); //rm later
+			alert.error(addedUser.error);
 		} else {
-			console.log(`a new user ${newUser.username} is added`);
-			alert.success(`A new user ${newUser.username} is created! Activation link is sent.`);
+			console.log(`a new user ${newUser.username} is added`); //rm later
+			alert.success(
+				`A new user ${newUser.username} is created! Activation link is sent.`
+			);
 			navigate('/login');
 		}
-	}
+	};
 
 	const submitNewUser = (event: any) => {
-		event.preventDefault()
+		event.preventDefault();
 		const newUser: NewUser = {
 			username: username.value,
 			email: email.value,
@@ -57,8 +67,6 @@ const SignUpForm = () => {
 			lastname: lastname.value
 		};
 		addNewUser(newUser);
-		// console.log(newUser);
-		// console.log('submit called');
 	};
 
 	return (
@@ -139,7 +147,13 @@ const SignUpForm = () => {
 								/>
 							</Grid>
 						</Grid>
-						{validateSignUpForm(username.value, email.value, password.value, firstname.value, lastname.value) ? (
+						{validateSignUpForm(
+							username.value,
+							email.value,
+							password.value,
+							firstname.value,
+							lastname.value
+						) ? (
 							<Button
 								type="submit"
 								fullWidth
@@ -171,6 +185,6 @@ const SignUpForm = () => {
 			</Container>
 		</Box>
 	);
-}
+};
 
 export default SignUpForm;
