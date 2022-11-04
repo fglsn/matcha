@@ -7,7 +7,7 @@ import Footer from './components/Footer';
 import AlertProvider from './components/AlertProvider';
 import { AlertSnackBar } from './components/AlertSnackBar';
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { Box } from '@mui/material';
 import { useContext } from 'react';
@@ -16,17 +16,18 @@ import { StateContext } from './state';
 const App = () => {
 	const [ {loggedUser} ] = useContext(StateContext);
 
-	console.log(loggedUser);
+	console.log(loggedUser); //rm later
 
 	return (
 		<AlertProvider>
 			<Box>
-				<Navbar/>
+				<Navbar />
 				<AlertSnackBar />
 				<Routes>
-					<Route path="/" element={<Main/>} />
+					<Route path="/" element={<Main />} />
 					<Route path="/login" element={<LoginForm />} />
 					<Route path="/signup" element={<SignUpForm />} />
+					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
 				<Footer />
 			</Box>
