@@ -1,12 +1,12 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { getAllUsers } from '../repositories/userRepository';
-import { createNewUser, sendActivationCode } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode } from '../services/users';
 import { parseNewUserPayload } from '../validators/userPayloadValidators';
 
 const router = express.Router();
 
-//temp route
+//rm later
 router.get(
 	'/',
 	asyncHandler(async (_req, res) => {
@@ -24,6 +24,15 @@ router.post(
 		const createdUser = await createNewUser(newUser);
 		sendActivationCode(createdUser);
 		res.status(201).json(createdUser);
+	})
+);
+
+//activate
+router.get(
+	'/activate/:id',
+	asyncHandler(async (req, res) => {
+		await activateAccount(req.params.id);
+		res.status(200).end();
 	})
 );
 

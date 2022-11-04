@@ -5,7 +5,7 @@ export type BaseUser = {
 	lastname: string;
 };
 
-export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; activationCode: string };
+export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; isActive: boolean; activationCode: string };
 
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string };
 
