@@ -48,7 +48,7 @@ describe('visit protected page', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(resFromProtectedPage.body).toBeTruthy();
-		expect(resFromProtectedPage.body).toHaveLength(1);
+		expect(resFromProtectedPage.text).toContain("sessionId");
 	});
 
 	test('not logged user cannot access protected page', async () => {
