@@ -32,7 +32,10 @@ To create new migration run:
 Run migration:  
 &emsp; `npm run migrate`  
   
-
+If Postgres drop database error: pq: cannot drop the currently open database:  
+&emsp; `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'tablename';`  
+After that can drop all tables.  
+  
 **Tests**  
 Run test migration:  
 &emsp; `npm run migrate:test`  
