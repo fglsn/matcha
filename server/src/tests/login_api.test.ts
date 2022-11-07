@@ -2,6 +2,7 @@ import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 
 import { app } from '../app';
+import { getSessionIdByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 import { newUser, loginUser } from './test_helper';
@@ -38,6 +39,10 @@ describe('user login', () => {
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await getSessionIdByUserId(res.body.id);
+		expect(sessions).toBeTruthy();
+		expect(sessions?.length).toBe(1);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		expect(res.body).toHaveProperty('token');
 	});
@@ -58,10 +63,13 @@ describe('user login', () => {
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		expect(res.body.error).toContain('Account is not active');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await getSessionIdByUserId(res.body.id);
+		expect(sessions).toBeFalsy();
+		expect(res.body).not.toHaveProperty('token');
 	});
 
 	test('login fails with non existing user', async () => {
-
 		const res = await api
 			.post('/api/login')
 			.send({ username: 'wrong', password: 'Wrong!111' })
@@ -69,6 +77,10 @@ describe('user login', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(res.body.error).toContain('User not found');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await getSessionIdByUserId(res.body.id);
+		expect(sessions).toBeFalsy();
+		expect(res.body).not.toHaveProperty('token');
 	});
 
 	test('login fails with wrong password', async () => {
@@ -79,6 +91,10 @@ describe('user login', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(res.body.error).toContain('Wrong password');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await getSessionIdByUserId(res.body.id);
+		expect(sessions).toBeFalsy();
+		expect(res.body).not.toHaveProperty('token');
 	});
 
 	it.each([
@@ -114,5 +130,9 @@ describe('user login', () => {
 
 		// console.log(res.body.error);
 		expect(res.body.error).toContain(expectedErrorMessage);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await getSessionIdByUserId(res.body.id);
+		expect(sessions).toBeFalsy();
+		expect(res.body).not.toHaveProperty('token');
 	});
 });
