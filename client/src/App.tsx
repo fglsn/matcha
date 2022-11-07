@@ -12,9 +12,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useContext } from 'react';
 import { StateContext } from './state';
+import TestAuth from './components/TestAuth';
+// import AuthRequired from './components/AuthRequired';
 
 const App = () => {
-	const [ {loggedUser} ] = useContext(StateContext);
+	const [{ loggedUser }] = useContext(StateContext);
 
 	console.log(loggedUser); //rm later
 
@@ -27,6 +29,7 @@ const App = () => {
 					<Route path="/" element={<Main />} />
 					<Route path="/login" element={<LoginForm />} />
 					<Route path="/signup" element={<SignUpForm />} />
+					<Route path="/testAuth" element={<TestAuth /> }/> 
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
 				<Footer />
