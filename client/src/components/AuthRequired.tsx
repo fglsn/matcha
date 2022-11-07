@@ -17,6 +17,7 @@ import { StateContext } from '../state';
 // 	);
 // };
 
+//https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
 const withAuthRequired =
 	<P extends object>(
 		Component: React.ComponentType<P>
@@ -30,5 +31,4 @@ const withAuthRequired =
 
 		return <Component {...props as P}/>;
 	}
-
 export default withAuthRequired
