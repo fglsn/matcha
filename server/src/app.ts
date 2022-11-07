@@ -4,7 +4,9 @@ import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
+import testAuthRouter from './routes/testAuth';
 import { globalErrorHandler } from './errors';
+import { sessionIdExtractor } from './utils/middleware';
 
 export const app = express();
 app.use(express.json());
@@ -17,8 +19,12 @@ app.get('/ping', (_req, res) => {
 	res.send('pong');
 });
 
+app.use(sessionIdExtractor);
+
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/testAuth', testAuthRouter);
+
 
 // Error handler for errors
 app.use(globalErrorHandler);

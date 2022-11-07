@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export type BaseUser = {
 	username: string;
 	email: string;
@@ -20,3 +22,8 @@ export type NewSessionUser = {
 };
 
 export type Session = NewSessionUser & { sessionId: string; expiresAt: Date };
+
+export interface CustomRequest extends Request {
+	sessionId?: string;
+	session?: Session;
+}
