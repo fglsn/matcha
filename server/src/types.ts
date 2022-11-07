@@ -12,3 +12,11 @@ export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activation
 export type LoggedUser = BaseUser & { id: string };
 
 export type NewUser = BaseUser & { passwordPlain: string };
+
+export type NewSessionUser = {
+	userId: string;
+	username: string;
+	email: string;
+};
+
+export type Session = NewSessionUser & { sessionId: string; expiresAt: Date };

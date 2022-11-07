@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 import { findUserByUsername } from '../repositories/userRepository';
 import { parseUsername, validatePassword } from '../validators/userPayloadValidators';
-import { createToken } from '../services/login';
+import { addSession } from '../repositories/sessionRepository';
 
 const router = express.Router();
 
@@ -35,8 +35,8 @@ router.post(
 			return;
 		}
 
-		const token = createToken(user);
-		res.status(200).send({ token, username: user?.username, id: user?.id });
+		const session = await addSession({ userId: user.id, username: user.username, email: user.email });
+		res.status(200).send({ token: session.sessionId, username: user?.username, id: user?.id });
 	})
 );
 
