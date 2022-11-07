@@ -23,9 +23,22 @@ const addSession = async (newSessionUser: NewSessionUser): Promise<Session> => {
 	return sessionMapper(res.rows[0]);
 };
 
-const getSessionIdByUserId = async (userId: string): Promise<Session[] | undefined> => {
+const findSessionBySessionId = async (sessionId: string): Promise<Session | undefined> => {
 	const query = {
-		text: 'select * from user_sessions where user_id = $1',
+		text: 'select * from user_sessions where session_id = $1 and expires_at > now()',
+		values: [sessionId]
+	};
+
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return sessionMapper(res.rows[0]);
+};
+
+const findSessionsByUserId = async (userId: string): Promise<Session[] | undefined> => {
+	const query = {
+		text: 'select * from user_sessions where user_id = $1 and expires_at > now()',
 		values: [userId]
 	};
 
@@ -34,6 +47,14 @@ const getSessionIdByUserId = async (userId: string): Promise<Session[] | undefin
 		return undefined;
 	}
 	return res.rows.map(row => sessionMapper(row));
-
 };
-export { addSession, getSessionIdByUserId };
+
+const clearSessions = async (): Promise<void> => {
+	await pool.query('truncate table user_sessions');
+};
+
+const clearExpiredSessions = async (): Promise<void> => {
+	await pool.query('delete * from user_sessions where expires_at < now()');
+};
+
+export { addSession, findSessionBySessionId, findSessionsByUserId, clearSessions, clearExpiredSessions };
