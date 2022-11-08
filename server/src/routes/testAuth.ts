@@ -5,7 +5,8 @@ import { CustomRequest } from '../types';
 import { findSessionBySessionId } from '../repositories/sessionRepository';
 
 const router = express.Router();
-router.get( //rm later
+router.get(
+	//rm later
 	'/',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {

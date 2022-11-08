@@ -12,7 +12,7 @@ const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is 
 jest.mock('nodemailer', () => ({
 	createTransport: jest.fn().mockImplementation(() => {
 		return {
-			sendMail: sendMailMock,
+			sendMail: sendMailMock
 		};
 	})
 }));
@@ -41,10 +41,7 @@ describe('password reset', () => {
 			expect(activeUser.isActive).toBe(true);
 		}
 
-		await api
-			.post('/api/users/forgot_password')
-			.send({ email: newUser.email })
-			.expect(201);
+		await api.post('/api/users/forgot_password').send({ email: newUser.email }).expect(201);
 
 		expect(sendMailMock).toBeCalledTimes(1);
 		expect(sendMailMock.mock.calls[0][0]['to']).toBe(newUser.email);

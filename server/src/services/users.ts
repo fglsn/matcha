@@ -5,7 +5,12 @@ import { NewUser, PasswordResetRequest, User } from '../types';
 import { sendMail } from '../utils/mailer';
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword } from '../repositories/userRepository';
 import { AppError } from '../errors';
-import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
+import {
+	addPasswordResetRequest,
+	findPasswordResetRequestByUserId,
+	removePasswordResetRequest,
+	removePasswordResetRequestByUserId
+} from '../repositories/passwordResetRequestRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
