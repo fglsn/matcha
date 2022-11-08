@@ -1,8 +1,9 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
+import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers } from '../repositories/userRepository';
 import { activateAccount, createNewUser, sendActivationCode, sendResetLink } from '../services/users';
-import { parseNewUserPayload, parseEmail } from '../validators/userPayloadValidators';
+import { parseNewUserPayload, parseEmail, validateToken, validatePassword } from '../validators/userPayloadValidators';
 
 const router = express.Router();
 
@@ -46,5 +47,27 @@ router.post(
 		res.status(201).end();
 	})
 );
+
+router.get(
+	'/forgot_password/:id',
+	asyncHandler(async (req, res) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const token = validateToken(req.params.id);
+		await findPasswordResetRequestByToken(token);
+		res.status(201).end();
+	})
+);
+
+// router.post(
+// 	'/forgot_password/:id',
+// 	asyncHandler(async (req, res) => {
+// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+// 		const token = validateToken(req.params.id);
+// 		const password = validatePassword(req.body.password);
+
+// 		// await sendResetLink(email);
+// 		// res.status(201).end();
+// 	})
+// );
 
 export default router;

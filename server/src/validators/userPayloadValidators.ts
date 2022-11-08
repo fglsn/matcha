@@ -10,6 +10,8 @@ const emailRegex =
 	/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;
 const nameRegex = /^[a-zA-Z'_\-.]*$/;
+// eslint-disable-next-line no-useless-escape
+const tokenRegex = /[a-z0-9\-]{36}/;
 
 export const parseUsername = (username: unknown): string => {
 	if (!username || !isString(username)) {
@@ -93,6 +95,23 @@ export const parseLastname = (lastname: unknown): string => {
 		throw new ValidationError('Invalid lastname');
 	}
 	return trimmedLastname;
+};
+
+export const validateToken = (token: unknown): string => {
+	if (!token || !isString(token)) {
+		throw new ValidationError(`Missing token or not string: ${typeof token}`);
+	}
+	const trimmedToken = token.trim();
+	if (!trimmedToken) {
+		throw new ValidationError('Missing token');
+	}
+	if (trimmedToken.length !== 36) {
+		throw new ValidationError('Invalid password reset code');
+	}
+	if (!tokenRegex.test(trimmedToken)) {
+		throw new ValidationError('Invalid password reset code format');
+	}
+	return trimmedToken;
 };
 
 type Fields = { username: unknown; email: unknown; passwordPlain: unknown; firstname: unknown; lastname: unknown };
