@@ -2,6 +2,7 @@ import Navbar from './components/Navbar';
 import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
 import Footer from './components/Footer';
 
 import AlertProvider from './components/AlertProvider';
@@ -49,6 +50,7 @@ const App = () => {
 							<Route path="/" element={<Main />} />
 							<Route path="/login" element={<LoginForm />} />
 							<Route path="/signup" element={<SignUpForm />} />
+							<Route path="/forgot_password" element={<ForgotPasswordForm />} />
 							<Route path="/testAuth" element={<TestAuth />} />
 							<Route path="*" element={<Navigate to="/" replace />} />
 						</Routes>
