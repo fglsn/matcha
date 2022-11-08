@@ -21,13 +21,13 @@ describe('user login', () => {
 	});
 
 	test('activated user can log in', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		if (user) {
 			const activationCode = user.activationCode;
 
 			await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
-			const activeUser = await findUserByUsername('matcha');
+			const activeUser = await findUserByUsername(newUser.username);
 			if (activeUser) {
 				expect(activeUser.isActive).toBe(true);
 			}
@@ -48,9 +48,9 @@ describe('user login', () => {
 	});
 
 	test('login fail with non active user', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		if (user) {
-			const nonActiveUser = await findUserByUsername('matcha');
+			const nonActiveUser = await findUserByUsername(newUser.username);
 			if (nonActiveUser) {
 				expect(nonActiveUser.isActive).toBe(false);
 			}
@@ -86,7 +86,7 @@ describe('user login', () => {
 	test('login fails with wrong password', async () => {
 		const res = await api
 			.post('/api/login')
-			.send({ username: 'matcha', password: 'Wrong!111' })
+			.send({ username: newUser.username, password: 'Wrong!111' })
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
 

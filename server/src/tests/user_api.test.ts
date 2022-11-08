@@ -11,6 +11,21 @@ const api = supertest(app);
 
 jest.setTimeout(10000);
 
+jest.setTimeout(10000);
+const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is called
+
+jest.mock('nodemailer', () => ({
+	createTransport: jest.fn().mockImplementation(() => {
+		return {
+			sendMail: sendMailMock
+		};
+	})
+}));
+
+beforeEach(() => {
+	sendMailMock.mockClear();
+});
+
 const username = 'test';
 const email = 'test@test.com';
 const passwordPlain = 'Test!111';
@@ -37,6 +52,9 @@ describe('user creation', () => {
 
 		const usernames = usersAtEnd.map((u) => u.username);
 		expect(usernames).toContain(newUser.username);
+
+		expect(sendMailMock).toBeCalledTimes(1);
+		expect(sendMailMock.mock.calls[0][0]['to']).toBe(email);
 	});
 
 	it.each([

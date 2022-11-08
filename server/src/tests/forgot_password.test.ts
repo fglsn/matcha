@@ -1,22 +1,25 @@
 import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
 import { app } from '../app';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
-import { NewUser } from '../types';
-
+import { newUser } from './test_helper';
 const api = supertest(app);
 
 jest.setTimeout(10000);
+const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is called
 
-export const newUser: NewUser = {
-	username: 'matcha',
-	email: 'leverseau19@gmail.com',
-	passwordPlain: 'Test!111',
-	firstname: 'lorem',
-	lastname: 'ipsum'
-};
+jest.mock('nodemailer', () => ({
+	createTransport: jest.fn().mockImplementation(() => {
+		return {
+			sendMail: sendMailMock,
+		};
+	})
+}));
+
+beforeEach(() => {
+	sendMailMock.mockClear();
+});
 
 describe('password reset', () => {
 	beforeEach(async () => {
@@ -25,24 +28,26 @@ describe('password reset', () => {
 	});
 
 	test('reset password link is sent to user with correct email', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 
 		//activate first
 		const activationCode = user?.activationCode;
-		console.log(activationCode);
+		// console.log(activationCode);
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername('matcha');
-		console.log(activeUser);
+		// console.log(activeUser);
 		if (activeUser) {
 			expect(activeUser.isActive).toBe(true);
 		}
 
 		await api
 			.post('/api/users/forgot_password')
-			.send({ email: 'leverseau19@gmail.com' })
+			.send({ email: newUser.email })
 			.expect(201);
 
+		expect(sendMailMock).toBeCalledTimes(1);
+		expect(sendMailMock.mock.calls[0][0]['to']).toBe(newUser.email);
 	});
 
 	test('fails with incorrect (not valid) email', async () => {

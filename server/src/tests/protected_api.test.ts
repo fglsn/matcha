@@ -18,12 +18,12 @@ describe('visit protected page', () => {
 	});
 
 	test('activated and logged user can visit protected page', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
-		const activeUser = await findUserByUsername('matcha');
+		const activeUser = await findUserByUsername(newUser.username);
 		if (activeUser) {
 			expect(activeUser.isActive).toBe(true);
 		}
@@ -61,12 +61,12 @@ describe('visit protected page', () => {
 	});
 
 	test('fails when no session in db', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
-		const activeUser = await findUserByUsername('matcha');
+		const activeUser = await findUserByUsername(newUser.username);
 		if (activeUser) {
 			expect(activeUser.isActive).toBe(true);
 		}

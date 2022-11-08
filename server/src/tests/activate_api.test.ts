@@ -18,7 +18,7 @@ describe('account activation', () => {
 	});
 
 	test('activation succeeds with valid activaton code', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		if (user) {
 			const activationCode = user.activationCode;
 
@@ -32,7 +32,7 @@ describe('account activation', () => {
 	});
 
 	test('activation fails on already active account', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		if (user) {
 			const activationCode = user.activationCode;
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -48,7 +48,7 @@ describe('account activation', () => {
 	});
 
 	test('activation fails on non-existing activation code', async () => {
-		const user = await findUserByUsername('matcha');
+		const user = await findUserByUsername(newUser.username);
 		if (user) {
 			const res = await api
 				.get(`/api/users/activate/81e33e3c8f03678da23232323322f1e29979d63}`)
