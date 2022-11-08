@@ -1,8 +1,8 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { getAllUsers } from '../repositories/userRepository';
-import { activateAccount, createNewUser, sendActivationCode } from '../services/users';
-import { parseNewUserPayload } from '../validators/userPayloadValidators';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink } from '../services/users';
+import { parseNewUserPayload, parseEmail } from '../validators/userPayloadValidators';
 
 const router = express.Router();
 
@@ -33,6 +33,17 @@ router.get(
 	asyncHandler(async (req, res) => {
 		await activateAccount(req.params.id);
 		res.status(200).end();
+	})
+);
+
+//forgot pwd
+router.post(
+	'/forgot_password',
+	asyncHandler(async (req, res) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const email = parseEmail(req.body.email);
+		await sendResetLink(email);
+		res.status(201).end();
 	})
 );
 

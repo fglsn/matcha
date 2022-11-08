@@ -27,3 +27,7 @@ export interface CustomRequest extends Request {
 	sessionId?: string;
 	session?: Session;
 }
+
+export type NewPasswordResetRequest = { userId: string };
+
+export type PasswordResetRequest = NewPasswordResetRequest & { token: string; expiresAt: Date };

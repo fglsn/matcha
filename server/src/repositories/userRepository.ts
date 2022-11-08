@@ -59,6 +59,18 @@ const findUserByUsername = async (username: string): Promise<User | undefined> =
 	return userMapper(res.rows[0]);
 };
 
+const findUserByEmail = async (email: string): Promise<User | undefined> => {
+	const query = {
+		text: 'select * from users where email = $1',
+		values: [email]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userMapper(res.rows[0]);
+};
+
 const findUserByActivationCode = async (activationCode: string): Promise<User | undefined> => {
 	const query = {
 		text: 'select * from users where activation_code = $1',
@@ -83,4 +95,4 @@ const clearUsers = async (): Promise<void> => {
 	await pool.query('truncate table users');
 };
 
-export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive };
+export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail };
