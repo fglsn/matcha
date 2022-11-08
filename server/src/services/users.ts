@@ -44,7 +44,7 @@ export const activateAccount = async (activationCode: string): Promise<void> => 
 export const sendResetLink = async (email: string): Promise<void> => {
 	const user = await findUserByEmail(email);
 	if (!user) {
-		throw new AppError("Couldnt find this email address.", 400);
+		throw new AppError("Couldn't find this email address.", 400);
 	}
 
 	const resetRequset = await findPasswordResetRequestByUserId(user.id);

@@ -18,7 +18,6 @@ export const newUser: NewUser = {
 	lastname: 'ipsum'
 };
 
-
 describe('password reset', () => {
 	beforeEach(async () => {
 		await clearUsers();
@@ -41,8 +40,26 @@ describe('password reset', () => {
 
 		await api
 			.post('/api/users/forgot_password')
-			.send({email: 'leverseau19@gmail.com'})
+			.send({ email: 'leverseau19@gmail.com' })
 			.expect(201);
 
+	});
+
+	test('fails with incorrect (not valid) email', async () => {
+		const res = await api
+			.post('/api/users/forgot_password')
+			.send({ email: 'wrong.com' })
+			.expect(400)
+			.expect('Content-Type', /application\/json/);
+		expect(res.body.error).toContain('ValidationError: Invalid email');
+	});
+
+	test('fails with valid but not existing email', async () => {
+		const res = await api
+			.post('/api/users/forgot_password')
+			.send({ email: 'wrong@wrong.com' })
+			.expect(400)
+			.expect('Content-Type', /application\/json/);
+		expect(res.body.error).toContain(`Couldn't find this email address.`);
 	});
 });
