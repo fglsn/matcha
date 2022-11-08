@@ -67,8 +67,23 @@ const removePasswordResetRequest = async (token: string): Promise<void> => {
 	await pool.query(query);
 };
 
+const removePasswordResetRequestByUserId = async (userId: string): Promise<void> => {
+	const query = {
+		text: 'delete from password_reset_requests where user_id=$1',
+		values: [userId]
+	};
+	await pool.query(query);
+};
+
 const clearExpiredPasswordResetRequests= async (): Promise<void> => {
 	await pool.query('delete * from password_reset_requests where expires_at < now()');
 };
 
-export { addPasswordResetRequest, findPasswordResetRequestByToken, findPasswordResetRequestByUserId, removePasswordResetRequest, clearExpiredPasswordResetRequests };
+export {
+	addPasswordResetRequest,
+	findPasswordResetRequestByToken,
+	findPasswordResetRequestByUserId,
+	removePasswordResetRequest,
+	clearExpiredPasswordResetRequests,
+	removePasswordResetRequestByUserId
+};

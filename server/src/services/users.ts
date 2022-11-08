@@ -3,14 +3,18 @@ import crypto from 'crypto';
 
 import { NewUser, PasswordResetRequest, User } from '../types';
 import { sendMail } from '../utils/mailer';
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword } from '../repositories/userRepository';
 import { AppError } from '../errors';
-import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest } from '../repositories/passwordResetRequestRepository';
+import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
 
 //create
-export const createNewUser = async (newUser: NewUser): Promise<User> => {
+export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
 	const saltRounds = 10;
-	const passwordHash = await bcrypt.hash(newUser.passwordPlain, saltRounds);
+	return await bcrypt.hash(passwordPlain, saltRounds);
+};
+
+export const createNewUser = async (newUser: NewUser): Promise<User> => {
+	const passwordHash = await createHashedPassword(newUser.passwordPlain);
 	const activationCode = crypto.randomBytes(20).toString('hex');
 	return addNewUser({ ...newUser, passwordHash, activationCode });
 };
@@ -71,4 +75,10 @@ export const sendResetPasswordLink = (user: User, newResetRequset: PasswordReset
 
 			<p> See you at Matcha! <3 </p>`
 	);
+};
+
+export const changeUserPassword = async (userId: string, passwordPlain: string): Promise<void> => {
+	const passwordHash = await createHashedPassword(passwordPlain);
+	await updateUserPassword(userId, passwordHash);
+	await removePasswordResetRequestByUserId(userId);
 };

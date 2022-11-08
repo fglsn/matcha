@@ -91,8 +91,16 @@ const setUserAsActive = async (activationCode: string): Promise<void> => {
 	await pool.query(query);
 };
 
+const updateUserPassword = async (userId: string, passwordHash: string): Promise<void> => {
+	const query = {
+		text: 'update users set password_hash = $1 where id = $2',
+		values: [passwordHash, userId]
+	};
+	await pool.query(query);
+};
+
 const clearUsers = async (): Promise<void> => {
 	await pool.query('truncate table users');
 };
 
-export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail };
+export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword };

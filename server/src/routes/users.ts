@@ -1,8 +1,9 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
+import { AppError } from '../errors';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers } from '../repositories/userRepository';
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeUserPassword } from '../services/users';
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword } from '../validators/userPayloadValidators';
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.get(
 	})
 );
 
+// create user
 router.post(
 	'/',
 	asyncHandler(async (req, res) => {
@@ -53,21 +55,26 @@ router.get(
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const token = validateToken(req.params.id);
-		await findPasswordResetRequestByToken(token);
-		res.status(201).end();
+		const passwordResetRequsest = await findPasswordResetRequestByToken(token);
+		if (!passwordResetRequsest) {
+			throw new AppError('Invalid reset link. Please try again.', 400);
+		}
+		res.status(200).end();
 	})
 );
 
-// router.post(
-// 	'/forgot_password/:id',
-// 	asyncHandler(async (req, res) => {
-// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-// 		const token = validateToken(req.params.id);
-// 		const password = validatePassword(req.body.password);
-
-// 		// await sendResetLink(email);
-// 		// res.status(201).end();
-// 	})
-// );
+router.post(
+	'/forgot_password/:id',
+	asyncHandler(async (req, res) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const token = validateToken(req.params.id);
+		const passwordResetRequest = await findPasswordResetRequestByToken(token);
+		if (passwordResetRequest) {
+			const password = validatePassword(req.body.password);
+			await changeUserPassword(passwordResetRequest.userId, password);
+			res.status(200).end();
+		}
+	})
+);
 
 export default router;
