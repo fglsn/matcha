@@ -16,8 +16,9 @@ import TestAuth from './components/TestAuth';
 //import AuthRequired from './components/AuthRequired';
 
 import { ErrorBoundary } from 'react-error-boundary';
+import { SnackbarProvider } from "notistack";
 
-function ErrorFallback({ error, resetErrorBoundary }: {error: any, resetErrorBoundary: any}) {
+function ErrorFallback({ error, resetErrorBoundary }: { error: any, resetErrorBoundary: any }) {
 	return (
 		<div role="alert">
 			<p>Something went wrong:</p>
@@ -39,20 +40,22 @@ const App = () => {
 				// reset the state of your app so the error doesn't happen again
 			}}
 		>
-			<AlertProvider>
-				<Box>
-					<Navbar />
-					<AlertSnackBar />
-					<Routes>
-						<Route path="/" element={<Main />} />
-						<Route path="/login" element={<LoginForm />} />
-						<Route path="/signup" element={<SignUpForm />} />
-						<Route path="/testAuth" element={<TestAuth />} />
-						<Route path="*" element={<Navigate to="/" replace />} />
-					</Routes>
-					<Footer />
-				</Box>
-			</AlertProvider>
+			<SnackbarProvider maxSnack={5}>
+				<AlertProvider>
+					<Box>
+						<Navbar />
+						<AlertSnackBar />
+						<Routes>
+							<Route path="/" element={<Main />} />
+							<Route path="/login" element={<LoginForm />} />
+							<Route path="/signup" element={<SignUpForm />} />
+							<Route path="/testAuth" element={<TestAuth />} />
+							<Route path="*" element={<Navigate to="/" replace />} />
+						</Routes>
+						<Footer />
+					</Box>
+				</AlertProvider>
+			</SnackbarProvider>
 		</ErrorBoundary>
 	);
 };
