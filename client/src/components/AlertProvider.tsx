@@ -39,7 +39,7 @@ const AlertProvider = ({ children }: any) => {
 		timerRef.current = window.setTimeout(() => {
 			setAlertText(undefined);
 			setAlert(AlertStatus.None);
-		}, 2500);
+		}, 2000);
 	}
 
 	return (

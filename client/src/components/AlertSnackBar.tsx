@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AlertContext } from './AlertProvider';
 import { AlertStatus } from '../types';
 
@@ -11,31 +11,22 @@ export const AlertSnackBar = () => {
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	if (alert.alert === AlertStatus.Error) {
-		if (alert.alertText) {
-			enqueueSnackbar(alert.alertText, { variant: 'error' });
-		// 	return (
-		// 		// <span onChange={handler}><Alert severity="error">{alert.alertText}</Alert></span>);
-		// 		<Snackbar open anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-		// 			<Alert severity="error">{alert.alertText}</Alert>
-		// 		</Snackbar>);
-		// }
-	}};
+	useEffect(() => {
+		const showAlert = () => {
+			if (alert.alert === AlertStatus.Error) {
+				if (alert.alertText) {
+					enqueueSnackbar(alert.alertText, { variant: 'error', autoHideDuration: 2000 });
+				};
+			};
+			if (alert.alert === AlertStatus.Success) {
+				if (alert.alertText) {
+					enqueueSnackbar(alert.alertText, { variant: 'success', autoHideDuration: 2000 });
+				};
+			};
+		};
+		showAlert();
+	}, [alert.alert, alert.alertText, enqueueSnackbar]);
 
-	if (alert.alert === AlertStatus.Success) {
-		if (alert.alertText) {
-			enqueueSnackbar(alert.alertText, { variant: 'success' });
-		// 	return (
-		// 		// <span onChange={handler}><Alert severity="error">{alert.alertText}</Alert></span>);
-		// 		<Snackbar open anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-		// 			<Alert severity="error">{alert.alertText}</Alert>
-		// 		</Snackbar>);
-		// }
-		// return (
-		// 	<Snackbar open anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-		// 		<Alert severity="success">{alert.alertText}</Alert>
-		// 	</Snackbar>);
-	} };
+return null;
 
-	return null;
 };
