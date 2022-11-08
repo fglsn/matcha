@@ -35,6 +35,7 @@ describe('account activation', () => {
 		const user = await findUserByUsername('matcha');
 		if (user) {
 			const activationCode = user.activationCode;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			await setUserAsActive(activationCode);
 
 			const res = await api

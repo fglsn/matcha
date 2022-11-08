@@ -22,7 +22,7 @@ export const sessionExtractor = asyncHandler(async (req: CustomRequest, res: any
 	const sessionId = req.sessionId;
 	if (!sessionId) {
 		res.status(401).json({ error: 'Error: Access denied, no token provided' });
-		return; 
+		return;
 	}
 	const session = await findSessionBySessionId(sessionId);
 	if (!session) {

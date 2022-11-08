@@ -46,7 +46,7 @@ const findSessionsByUserId = async (userId: string): Promise<Session[] | undefin
 	if (!res.rowCount) {
 		return undefined;
 	}
-	return res.rows.map(row => sessionMapper(row));
+	return res.rows.map((row) => sessionMapper(row));
 };
 
 const clearSessions = async (): Promise<void> => {

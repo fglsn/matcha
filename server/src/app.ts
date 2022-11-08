@@ -25,6 +25,5 @@ app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/testAuth', testAuthRouter);
 
-
 // Error handler for errors
 app.use(globalErrorHandler);
