@@ -1,6 +1,6 @@
 create table users
 (
-	id bigserial primary key unique,
+	id bigserial primary key,
 	username varchar not null unique,
 	email varchar not null unique,
 	password_hash varchar not null,
@@ -21,3 +21,12 @@ create table user_sessions
 );
 
 create index user_sessions_user_id on user_sessions (user_id);
+
+create table password_reset_requests
+(
+	token uuid default gen_random_uuid() primary key,
+	user_id bigserial not null,
+	expires_at timestamptz not null default now() + time '06:00'
+);
+
+create index password_reset_requests_user_id on password_reset_requests (user_id);
