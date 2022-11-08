@@ -15,12 +15,12 @@ export const AlertSnackBar = () => {
 		const showAlert = () => {
 			if (alert.alert === AlertStatus.Error) {
 				if (alert.alertText) {
-					enqueueSnackbar(alert.alertText, { variant: 'error', autoHideDuration: 2000 });
+					enqueueSnackbar(alert.alertText, { variant: 'error', autoHideDuration: 1500 });
 				};
 			};
 			if (alert.alert === AlertStatus.Success) {
 				if (alert.alertText) {
-					enqueueSnackbar(alert.alertText, { variant: 'success', autoHideDuration: 2000 });
+					enqueueSnackbar(alert.alertText, { variant: 'success', autoHideDuration: 1500 });
 				};
 			};
 		};

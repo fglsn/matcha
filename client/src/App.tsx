@@ -40,7 +40,7 @@ const App = () => {
 				// reset the state of your app so the error doesn't happen again
 			}}
 		>
-			<SnackbarProvider maxSnack={5}>
+			<SnackbarProvider>
 				<AlertProvider>
 					<Box>
 						<Navbar />
