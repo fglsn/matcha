@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { useField } from "../../hooks";
+import { AlertContext } from '../AlertProvider';
 import { validatePassword } from "../../utils/inputValidators";
+import userService from '../../services/users';
 
 import {
 	Avatar,
@@ -17,22 +19,23 @@ import {
 	FormControlLabel
 } from '@mui/material';
 
-const ResetPasswordForm = () => {
+const ResetPasswordForm = ({ token }: {token: string}) => {
 	const [showPassword, setShow] = useState(false);
 	const password = useField('text', 'Password', validatePassword);
 	const navigate = useNavigate();
+	const alert = useContext(AlertContext);
 
 	const handleResetPassword = async (event: any) => {
 		event.preventDefault();
 
 		try {
-			// await userService.resetPassword(email.value);
-			console.log(`Password successfully changed`); //rm later
-			// alert.success(`Reset link sent! Please check your inbox.`);
+			await userService.resetPassword(token, password.value);
+			console.log(`Password changed successfully!`); //rm later
+			alert.success(`Password changed successfully!`);
 			navigate('/login');
 		} catch (err) {
 			console.log(err.response.data.error); //rm later
-			// alert.error(err.response.data.error);
+			alert.error(err.response.data.error);
 			navigate('/forgot_password');
 		}
 	};
@@ -59,7 +62,13 @@ const ResetPasswordForm = () => {
 						sx={{ mt: 1 }}
 						onSubmit={handleResetPassword}
 					>
-						<input hidden type="text" readOnly autoComplete="username" value="{{ }}"></input>
+						<input
+							hidden
+							type="text"
+							readOnly
+							autoComplete="username"
+							value="{{ }}"
+						></input>
 						<TextField
 							{...password}
 							margin="normal"
@@ -114,6 +123,6 @@ const ResetPasswordForm = () => {
 			</Container>
 		</Box>
 	);
-}
+};
 
 export default ResetPasswordForm;

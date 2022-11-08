@@ -27,6 +27,6 @@ const ForgotPassword = () => {
 		validateResetToken();
 	}, [alert, navigate, resetToken]);
 
-	return !resetToken ? <ForgotPasswordForm/> : <ResetPasswordForm/>;
+	return !resetToken ? <ForgotPasswordForm/> : <ResetPasswordForm token={resetToken}/>;
 }
 export default ForgotPassword;

@@ -23,23 +23,6 @@ const ForgotPasswordForm = () => {
 	const alert = useContext(AlertContext);
 	const navigate = useNavigate();
 
-	// useEffect(() => {
-	// 	const resetPassword = async () => {
-	// 		if (resetCode) {
-	// 			try {
-	// 				await userService.activate(activationCode);
-	// 				navigate('/login');
-	// 				alert.success('Account activated successfully!');
-	// 			} catch (err) {
-	// 				console.log(err.response.data.error);
-	// 				alert.error(err.response.data.error);
-	// 				navigate('/login');
-	// 			}
-	// 		}
-	// 	};
-	// 	activateAccount();
-	// }, [activationCode, alert, navigate]);
-
 	const handleForgotPwdRequest = async (event: any) => {
 		event.preventDefault();
 
@@ -50,7 +33,7 @@ const ForgotPasswordForm = () => {
 			navigate('/login');
 		} catch (err) {
 			console.log(err.response.data.error); //rm later
-			// alert.error(err.response.data.error);
+			alert.error(err.response.data.error);
 			navigate('/forgot_password');
 		}
 	};
@@ -69,7 +52,7 @@ const ForgotPasswordForm = () => {
 				>
 					<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
 					<Typography component="h1" variant="h5">
-						Reset Password
+						Get Reset Link
 					</Typography>
 					<Box
 						component="form"
