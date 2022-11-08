@@ -15,5 +15,13 @@ const activate = async (activationCode: string): Promise<void> => {
 	await axios.get(`${apiBaseUrl}/users/activate/${activationCode}`);
 };
 
-const moduleExports = { create, activate };
+const resetPassword = async (email: string): Promise<any> => {
+	try {
+		await axios.post(`${apiBaseUrl}/users/forgot_password`, {email: email});
+	} catch (err) {
+		return err;
+	}
+}
+
+const moduleExports = { create, activate, resetPassword };
 export default moduleExports;
