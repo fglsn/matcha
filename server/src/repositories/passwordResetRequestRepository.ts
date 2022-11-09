@@ -46,19 +46,6 @@ const findPasswordResetRequestByUserId = async (userId: string): Promise<Passwor
 	return passwordResetRequestMapper(res.rows[0]);
 };
 
-// const updatePasswordResetRequest = async (userId: string): Promise<PasswordResetRequest | undefined> => {
-// 	const query = {
-// 		text: 'update password_reset_requests set user_id = $1 where user_id = $1 returning *',
-// 		values: [userId]
-// 	};
-
-// 	const res = await pool.query(query);
-// 	if (!res.rowCount) {
-// 		return undefined;
-// 	}
-// 	return passwordResetRequestMapper(res.rows[0]);
-// };
-
 const removePasswordResetRequest = async (token: string): Promise<void> => {
 	const query = {
 		text: 'delete from password_reset_requests where token=$1',
@@ -79,11 +66,16 @@ const clearExpiredPasswordResetRequests = async (): Promise<void> => {
 	await pool.query('delete * from password_reset_requests where expires_at < now()');
 };
 
+const clearPasswordResetRequestsTable = async (): Promise<void> => {
+	await pool.query('truncate table password_reset_requests');
+};
+
 export {
 	addPasswordResetRequest,
 	findPasswordResetRequestByToken,
 	findPasswordResetRequestByUserId,
 	removePasswordResetRequest,
+	removePasswordResetRequestByUserId,
 	clearExpiredPasswordResetRequests,
-	removePasswordResetRequestByUserId
+	clearPasswordResetRequestsTable
 };
