@@ -76,11 +76,13 @@ router.post(
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const token = validateToken(req.params.id);
 		const passwordResetRequest = await findPasswordResetRequestByToken(token);
-		if (passwordResetRequest) {
-			const password = validatePassword(req.body.password);
-			await changeUserPassword(passwordResetRequest.userId, password);
-			res.status(200).end();
+		if (!passwordResetRequest) {
+			throw new AppError('Reset password code is missing or expired. Please try again.', 400);
 		}
+		const password = validatePassword(req.body.password);
+		await changeUserPassword(passwordResetRequest.userId, password);
+		res.status(200).end();
+
 	})
 );
 
