@@ -3,10 +3,10 @@ import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import ForgotPassword from './components/ForgotPassword/index';
-import Footer from './components/Footer';
-
+import Profile from './components/Profile/index';
 import AlertProvider from './components/AlertProvider';
-import { AlertSnackBar } from './components/AlertSnackBar';
+import AlertSnackBar from './components/AlertSnackBar';
+import Footer from './components/Footer';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 
@@ -51,6 +51,7 @@ const App = () => {
 							<Route path="/login" element={<LoginForm />} />
 							<Route path="/signup" element={<SignUpForm />} />
 							<Route path="/forgot_password" element={<ForgotPassword />} />
+							<Route path="/profile" element={<Profile />} />
 							<Route path="/testAuth" element={<TestAuth />} />
 							<Route path="*" element={<Navigate to="/" replace />} />
 						</Routes>

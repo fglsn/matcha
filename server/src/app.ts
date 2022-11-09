@@ -4,7 +4,10 @@ import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
+import profileRouter from './routes/profile';
+
 import testAuthRouter from './routes/testAuth';
+
 import { globalErrorHandler } from './errors';
 import { sessionIdExtractor } from './utils/middleware';
 
@@ -23,6 +26,8 @@ app.use(sessionIdExtractor);
 
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/profile', profileRouter);
+
 app.use('/api/testAuth', testAuthRouter);
 
 // Error handler for errors
