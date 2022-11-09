@@ -11,6 +11,14 @@ export type User = BaseUser & {
 	created_at: Date;
 };
 
+export type UserData = BaseUser & {
+	id: string;
+	birthday: Date | undefined;
+	gender: string | undefined;
+	orientation: string | undefined;
+	bio: string | undefined;
+};
+
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
 
 export type NewUser = BaseUser & { passwordPlain: string };

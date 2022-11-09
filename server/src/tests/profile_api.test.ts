@@ -24,8 +24,7 @@ describe('get request to profile page', () => {
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
-		if (!activeUser)
-			fail();
+		if (!activeUser) fail();
 
 		expect(activeUser.isActive).toBe(true);
 

@@ -57,7 +57,7 @@ export const sendResetLink = async (email: string): Promise<void> => {
 	}
 
 	if (!user.isActive) {
-		throw new AppError("Account is not active, please activate account first.", 400);
+		throw new AppError('Account is not active, please activate account first.', 400);
 	}
 
 	const resetRequset = await findPasswordResetRequestByUserId(user.id);

@@ -52,8 +52,7 @@ describe('send password reset link on forgot pwd request', () => {
 
 	test('fails on non-activated email', async () => {
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 
 		const res = await api.post('/api/users/forgot_password').send({ email: user.email }).expect(400);
 
@@ -81,7 +80,6 @@ describe('send password reset link on forgot pwd request', () => {
 });
 
 describe('visit password-reset link', () => {
-
 	beforeEach(async () => {
 		//create and activate user
 		await clearUsers();
@@ -93,8 +91,7 @@ describe('visit password-reset link', () => {
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
-		if (!activeUser)
-			fail();
+		if (!activeUser) fail();
 
 		expect(activeUser.isActive).toBe(true);
 
@@ -105,12 +102,10 @@ describe('visit password-reset link', () => {
 
 	test('success with valid existing token', async () => {
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 
 		const resetRequest = await findPasswordResetRequestByUserId(user.id);
-		if (!resetRequest)
-			fail();
+		if (!resetRequest) fail();
 		await api.get(`/api/users/forgot_password/${resetRequest.token}`).expect(200);
 	});
 
@@ -130,8 +125,7 @@ describe('visit password-reset link', () => {
 	])('fails with incorectly formatted token %s %s', async (invalidToken, expectedErrorMessage) => {
 		// console.log(`Payload: ${invalidToken}, Expected msg: ${expectedErrorMessage}`);
 		const res = await api.get(`/api/users/forgot_password/${invalidToken}`).expect(400);
-		if (!res.body.error)
-			fail();
+		if (!res.body.error) fail();
 		expect(res.body.error).toContain(expectedErrorMessage);
 	});
 });
@@ -143,15 +137,13 @@ describe('set new password', () => {
 		await clearPasswordResetRequestsTable();
 		await createNewUser(newUser);
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 		const activationCode = user?.activationCode;
 
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
-		if (!activeUser)
-			fail();
+		if (!activeUser) fail();
 
 		expect(activeUser.isActive).toBe(true);
 
@@ -162,18 +154,14 @@ describe('set new password', () => {
 
 	test('pwd successfully reset on valid link/token/proper pwd', async () => {
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 
 		const resetRequest = await findPasswordResetRequestByUserId(user.id);
-		if (!resetRequest)
-			fail();
+		if (!resetRequest) fail();
 
 		await api.get(`/api/users/forgot_password/${resetRequest.token}`).expect(200);
 
-		await api.post(`/api/users/forgot_password/${resetRequest.token}`)
-			.send({ password: "NewTest!111" })
-			.expect(200);
+		await api.post(`/api/users/forgot_password/${resetRequest.token}`).send({ password: 'NewTest!111' }).expect(200);
 	});
 
 	// test('teset fails if token invalid', async () =>)
@@ -187,40 +175,30 @@ describe('set new password', () => {
 		['2>-)837428374t-2983<32v74slk-dkfhkhf', 'Invalid password reset code format'],
 		['!0831j37-7cbb-4ca0-91cb-5fda0cee63!3', 'Invalid password reset code format'],
 		['42e7ed49-58f4-4ca7-b478-3d3805a7bb7>', 'Invalid password reset code format']
-
 	])('fails to set new pwd with incorrect token %s %s', async (invalidToken, expectedErrorMessage) => {
-
-		const res = await api.post(`/api/users/forgot_password/${invalidToken}`)
-			.send({ password: "NewTest!111" })
-			.expect(400);
-		if (!res.body.error)
-			fail();
+		const res = await api.post(`/api/users/forgot_password/${invalidToken}`).send({ password: 'NewTest!111' }).expect(400);
+		if (!res.body.error) fail();
 		expect(res.body.error).toContain(expectedErrorMessage);
 	});
 
 	test('fails to set new pwd when no token found in db', async () => {
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 
 		const resetRequest = await findPasswordResetRequestByUserId(user.id);
-		if (!resetRequest)
-			fail();
+		if (!resetRequest) fail();
 
 		await clearPasswordResetRequestsTable();
 
-		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`)
-			.send({ password: "NewTest!111" })
-			.expect(400);
-		if (!res.body.error)
-			fail();
-		expect(res.body.error).toContain("Reset password code is missing or expired. Please try again");
+		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`).send({ password: 'NewTest!111' }).expect(400);
+		if (!res.body.error) fail();
+		expect(res.body.error).toContain('Reset password code is missing or expired. Please try again');
 	});
 
 	it.each([
-		[ undefined, 'Missing password'],
-		[ null, 'Missing password'],
-		[ '', 'Missing password'],
+		[undefined, 'Missing password'],
+		[null, 'Missing password'],
+		['', 'Missing password'],
 
 		['Test!1', 'Password is too short'],
 		['Test!111Test!111Test!111Test!111Test!12211T3e', 'Password is too long'], //43
@@ -230,23 +208,16 @@ describe('set new password', () => {
 		['T!111111', 'Weak password'],
 		['t!111111', 'Weak password'],
 		['TestTest!', 'Weak password'],
-		['Test11111', 'Weak password'],
-
+		['Test11111', 'Weak password']
 	])('fails to set new pwd incorrect password provided %s %s', async (invalidPassword, expectedErrorMessage) => {
 		const user = await findUserByUsername(newUser.username);
-		if (!user)
-			fail();
+		if (!user) fail();
 
 		const resetRequest = await findPasswordResetRequestByUserId(user.id);
-		if (!resetRequest)
-			fail();
+		if (!resetRequest) fail();
 
-		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`)
-			.send({ password: invalidPassword })
-			.expect(400);
-		if (!res.body.error)
-			fail();
+		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`).send({ password: invalidPassword }).expect(400);
+		if (!res.body.error) fail();
 		expect(res.body.error).toContain(expectedErrorMessage);
 	});
-
 });

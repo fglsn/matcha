@@ -7,7 +7,7 @@ export type BaseUser = {
 	lastname: string;
 };
 
-export type UserData = BaseUser & { 
+export type UserData = BaseUser & {
 	id: string;
 	birthday: Date | undefined;
 	gender: string | undefined;

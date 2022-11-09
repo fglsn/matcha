@@ -130,4 +130,14 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 	return userDataMapper(res.rows[0]);
 };
 
-export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, getUserDataByUserId };
+export {
+	getAllUsers,
+	addNewUser,
+	clearUsers,
+	findUserByUsername,
+	findUserByActivationCode,
+	setUserAsActive,
+	findUserByEmail,
+	updateUserPassword,
+	getUserDataByUserId
+};

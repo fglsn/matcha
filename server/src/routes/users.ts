@@ -82,7 +82,6 @@ router.post(
 		const password = validatePassword(req.body.password);
 		await changeUserPassword(passwordResetRequest.userId, password);
 		res.status(200).end();
-
 	})
 );
 

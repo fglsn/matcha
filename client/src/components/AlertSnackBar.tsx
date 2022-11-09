@@ -6,7 +6,7 @@ import { AlertStatus } from '../types';
 // import Snackbar from '@mui/material/Snackbar';
 import { useSnackbar } from 'notistack';
 
-export const AlertSnackBar = () => {
+const AlertSnackBar = () => {
 	const alert = useContext(AlertContext);
 
 	const { enqueueSnackbar } = useSnackbar();
@@ -30,3 +30,5 @@ export const AlertSnackBar = () => {
 return null;
 
 };
+
+export default AlertSnackBar;
