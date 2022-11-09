@@ -1,14 +1,6 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-
-const getAuthHeader = () => {
-	const loggedUser = localStorage.getItem('loggedUser');
-	if (loggedUser) {
-		const token = JSON.parse(loggedUser).token;
-		return (`Bearer ${token}`);
-	}
-	throw Error('No token in local storage');
-};
+import getAuthHeader from './auth';
 
 export const testGetProtectedPage = async () => {
 	try {
