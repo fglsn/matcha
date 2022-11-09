@@ -8,7 +8,11 @@ create table users
 	lastname varchar not null,
 	is_active boolean not null default false,
 	created_at timestamptz not null default now(),
-	activation_code varchar not null unique
+	activation_code varchar not null unique,
+	birthday date,
+	gender varchar,
+	orientation varchar,
+	bio varchar
 );
 
 create table user_sessions
