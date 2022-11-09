@@ -39,7 +39,7 @@ router.get(
 	})
 );
 
-//forgot pwd
+//forgot pwd request from email form
 router.post(
 	'/forgot_password',
 	asyncHandler(async (req, res) => {
@@ -47,6 +47,13 @@ router.post(
 		const email = parseEmail(req.body.email);
 		await sendResetLink(email);
 		res.status(201).end();
+	})
+);
+
+router.get(
+	'/forgot_password/',
+	asyncHandler(() => {
+		throw new AppError('Missing activation code', 400);
 	})
 );
 
