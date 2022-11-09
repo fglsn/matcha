@@ -8,7 +8,7 @@ import { createNewUser } from '../services/users';
 import { newUser } from './test_helper';
 const api = supertest(app);
 
-jest.setTimeout(10000);
+jest.setTimeout(100000);
 const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is called
 
 jest.mock('nodemailer', () => ({
@@ -175,4 +175,78 @@ describe('set new password', () => {
 			.send({ password: "NewTest!111" })
 			.expect(200);
 	});
+
+	// test('teset fails if token invalid', async () =>)
+	it.each([
+		[undefined, 'Invalid password reset code'],
+		[null, 'Invalid password reset code'],
+
+		['12345', 'Invalid password reset code'], //too short
+		['1234567890123456789012345678901234567890', 'Invalid password reset code'], //too long 40chars
+
+		['2>-)837428374t-2983<32v74slk-dkfhkhf', 'Invalid password reset code format'],
+		['!0831j37-7cbb-4ca0-91cb-5fda0cee63!3', 'Invalid password reset code format'],
+		['42e7ed49-58f4-4ca7-b478-3d3805a7bb7>', 'Invalid password reset code format']
+
+	])('fails to set new pwd with incorrect token %s %s', async (invalidToken, expectedErrorMessage) => {
+
+		const res = await api.post(`/api/users/forgot_password/${invalidToken}`)
+			.send({ password: "NewTest!111" })
+			.expect(400);
+		if (!res.body.error)
+			fail();
+		expect(res.body.error).toContain(expectedErrorMessage);
+	});
+
+	test('fails to set new pwd when no token found in db', async () => {
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+
+		const resetRequest = await findPasswordResetRequestByUserId(user.id);
+		if (!resetRequest)
+			fail();
+
+		await clearPasswordResetRequestsTable();
+
+		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`)
+			.send({ password: "NewTest!111" })
+			.expect(400);
+		if (!res.body.error)
+			fail();
+		expect(res.body.error).toContain("Reset password code is missing or expired. Please try again");
+	});
+
+	it.each([
+		[ undefined, 'Missing password'],
+		[ null, 'Missing password'],
+		[ '', 'Missing password'],
+
+		['Test!1', 'Password is too short'],
+		['Test!111Test!111Test!111Test!111Test!12211T3e', 'Password is too long'], //43
+		['testtest', 'Weak password'],
+		['12345678', 'Weak password'],
+		['12345678', 'Weak password'],
+		['T!111111', 'Weak password'],
+		['t!111111', 'Weak password'],
+		['TestTest!', 'Weak password'],
+		['Test11111', 'Weak password'],
+
+	])('fails to set new pwd incorrect password provided %s %s', async (invalidPassword, expectedErrorMessage) => {
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+
+		const resetRequest = await findPasswordResetRequestByUserId(user.id);
+		if (!resetRequest)
+			fail();
+
+		const res = await api.post(`/api/users/forgot_password/${resetRequest.token}`)
+			.send({ password: invalidPassword })
+			.expect(400);
+		if (!res.body.error)
+			fail();
+		expect(res.body.error).toContain(expectedErrorMessage);
+	});
+
 });
