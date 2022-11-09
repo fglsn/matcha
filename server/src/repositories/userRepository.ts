@@ -1,7 +1,7 @@
 import pool from '../db';
-import { getString, getDate, getBoolean } from '../dbUtils';
+import { getString, getDate, getBoolean, getDateOrUndefined, getStringOrUndefined } from '../dbUtils';
 import { ValidationError } from '../errors';
-import { User, NewUserWithHashedPwd } from '../types';
+import { User, NewUserWithHashedPwd, UserData } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -15,6 +15,21 @@ const userMapper = (row: any): User => {
 		createdAt: getDate(row['created_at']),
 		isActive: getBoolean(row['is_active']),
 		activationCode: getString(row['activation_code'])
+	};
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const userDataMapper = (row: any): UserData => {
+	return {
+		id: getString(row['id']),
+		username: getString(row['username']),
+		email: getString(row['email']),
+		firstname: getString(row['firstname']),
+		lastname: getString(row['lastname']),
+		birthday: getDateOrUndefined(row['birthday']),
+		gender: getStringOrUndefined(row['gender']),
+		orientation: getStringOrUndefined(row['orientation']),
+		bio: getStringOrUndefined(row['bio'])
 	};
 };
 
@@ -103,4 +118,16 @@ const clearUsers = async (): Promise<void> => {
 	await pool.query('truncate table users');
 };
 
-export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword };
+const getUserDataByUserId = async (userId: string): Promise<UserData | undefined> => {
+	const query = {
+		text: 'select id, username, email, firstname, lastname, birthday, gender, orientation, bio from users where id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userDataMapper(res.rows[0]);
+};
+
+export { getAllUsers, addNewUser, clearUsers, findUserByUsername, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, getUserDataByUserId };

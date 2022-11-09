@@ -32,12 +32,22 @@ const resetPassword = async (
 	});
 };
 
+const getUserData = async (userId: string): Promise<any> => {
+	try {
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}`);
+		return response.data;
+	} catch (err) {
+		return err.response.data;
+	}
+};
+
 const moduleExports = {
 	create,
 	activate,
 	requestPasswordReset,
 	checkResetToken,
-	resetPassword
+	resetPassword,
+	getUserData
 };
 
 export default moduleExports;

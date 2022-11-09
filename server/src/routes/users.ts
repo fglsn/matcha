@@ -1,5 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
+// import { getString } from '../dbUtils';
 import { AppError } from '../errors';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers } from '../repositories/userRepository';
@@ -8,7 +9,6 @@ import { parseNewUserPayload, parseEmail, validateToken, validatePassword } from
 
 const router = express.Router();
 
-//rm later
 router.get(
 	'/',
 	asyncHandler(async (_req, res) => {
@@ -16,7 +16,7 @@ router.get(
 		console.log(result);
 		res.send(result);
 	})
-);
+); //rm later
 
 // create user
 router.post(
@@ -85,5 +85,13 @@ router.post(
 
 	})
 );
+
+// router.get(
+// 	'/:id',
+// 	asyncHandler(async (req, res) => {
+// 		const userId = getString(req.params.id);
+// 		const user = await getUserDataByUserId(userId);
+// 	})
+// )
 
 export default router;
