@@ -1,7 +1,9 @@
 import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 import { app } from '../app';
+import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+
 import { createNewUser } from '../services/users';
 import { newUser } from './test_helper';
 const api = supertest(app);
@@ -21,13 +23,14 @@ beforeEach(() => {
 	sendMailMock.mockClear();
 });
 
-describe('password reset', () => {
+describe('send password reset link on forgot pwd request', () => {
 	beforeEach(async () => {
 		await clearUsers();
+		await clearPasswordResetRequestsTable();
 		await createNewUser(newUser);
 	});
 
-	test('reset password link is sent to user with correct email', async () => {
+	test('reset password link is sent to active user with correct email', async () => {
 		const user = await findUserByUsername(newUser.username);
 
 		//activate first
@@ -35,7 +38,7 @@ describe('password reset', () => {
 		// console.log(activationCode);
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
-		const activeUser = await findUserByUsername('matcha');
+		const activeUser = await findUserByUsername(newUser.username);
 		// console.log(activeUser);
 		if (activeUser) {
 			expect(activeUser.isActive).toBe(true);
@@ -45,6 +48,17 @@ describe('password reset', () => {
 
 		expect(sendMailMock).toBeCalledTimes(1);
 		expect(sendMailMock.mock.calls[0][0]['to']).toBe(newUser.email);
+	});
+
+	test('fails on non-activated email', async () => {
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+
+		const res = await api.post('/api/users/forgot_password').send({ email: user.email }).expect(400);
+
+		expect(res.body.error).toContain('Account is not active');
+		expect(sendMailMock).toBeCalledTimes(0);
 	});
 
 	test('fails with incorrect (not valid) email', async () => {
@@ -63,5 +77,102 @@ describe('password reset', () => {
 			.expect(400)
 			.expect('Content-Type', /application\/json/);
 		expect(res.body.error).toContain(`Couldn't find this email address.`);
+	});
+});
+
+describe('visit password-reset link', () => {
+
+	beforeEach(async () => {
+		//create and activate user
+		await clearUsers();
+		await clearPasswordResetRequestsTable();
+		await createNewUser(newUser);
+		const user = await findUserByUsername(newUser.username);
+		const activationCode = user?.activationCode;
+
+		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+
+		const activeUser = await findUserByUsername(newUser.username);
+		if (!activeUser)
+			fail();
+
+		expect(activeUser.isActive).toBe(true);
+
+		await api.post('/api/users/forgot_password').send({ email: activeUser.email }).expect(201);
+		expect(sendMailMock).toBeCalledTimes(1);
+		expect(sendMailMock.mock.calls[0][0]['to']).toBe(newUser.email);
+	});
+
+	test('success with valid existing token', async () => {
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+
+		const resetRequest = await findPasswordResetRequestByUserId(user.id);
+		if (!resetRequest)
+			fail();
+		await api.get(`/api/users/forgot_password/${resetRequest.token}`).expect(200);
+	});
+
+	it.each([
+		[undefined, 'Invalid password reset code'],
+		[null, 'Invalid password reset code'],
+		['', 'Missing activation code'],
+		['    ', 'Missing activation code'],
+		['		', 'Missing activation code'],
+
+		['12345', 'Invalid password reset code'], //too short
+		['1234567890123456789012345678901234567890', 'Invalid password reset code'], //too long 40chars
+
+		['2>-)837428374t-2983<32v74slk-dkfhkhf', 'Invalid password reset code format'],
+		['!0831j37-7cbb-4ca0-91cb-5fda0cee63!3', 'Invalid password reset code format'],
+		['42e7ed49-58f4-4ca7-b478-3d3805a7bb7>', 'Invalid password reset code format']
+	])('fails with incorectly formatted token %s %s', async (invalidToken, expectedErrorMessage) => {
+		// console.log(`Payload: ${invalidToken}, Expected msg: ${expectedErrorMessage}`);
+		const res = await api.get(`/api/users/forgot_password/${invalidToken}`).expect(400);
+		if (!res.body.error)
+			fail();
+		expect(res.body.error).toContain(expectedErrorMessage);
+	});
+});
+
+describe('set new password', () => {
+	beforeEach(async () => {
+		//create and activate user
+		await clearUsers();
+		await clearPasswordResetRequestsTable();
+		await createNewUser(newUser);
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+		const activationCode = user?.activationCode;
+
+		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+
+		const activeUser = await findUserByUsername(newUser.username);
+		if (!activeUser)
+			fail();
+
+		expect(activeUser.isActive).toBe(true);
+
+		await api.post('/api/users/forgot_password').send({ email: activeUser.email }).expect(201);
+		expect(sendMailMock).toBeCalledTimes(1);
+		expect(sendMailMock.mock.calls[0][0]['to']).toBe(newUser.email);
+	});
+
+	test('pwd successfully reset on valid link/token/proper pwd', async () => {
+		const user = await findUserByUsername(newUser.username);
+		if (!user)
+			fail();
+
+		const resetRequest = await findPasswordResetRequestByUserId(user.id);
+		if (!resetRequest)
+			fail();
+
+		await api.get(`/api/users/forgot_password/${resetRequest.token}`).expect(200);
+
+		await api.post(`/api/users/forgot_password/${resetRequest.token}`)
+			.send({ password: "NewTest!111" })
+			.expect(200);
 	});
 });

@@ -14,7 +14,7 @@ export const sendMail = (to: string, subject: string, text: string) => {
 			console.error('Error: Failed to send an email');
 			return;
 		} else {
-			console.log(info);
+			console.log(info); //rm later
 			return true;
 		}
 	});
