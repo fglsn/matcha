@@ -39,3 +39,9 @@ export const themeDark = createTheme({
 });
 
 export default theme;
+
+// --charcoal: #364652ff;
+// --dark-jungle-green: #071108ff;
+// --black-shadows: #bfb1c1ff;
+// --silver-sand: #b5bec6ff;
+// --beau-blue: #c7dbe6ff;
