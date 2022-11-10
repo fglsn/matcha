@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
+import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
 export const getProfilePage = async () => {
@@ -10,8 +11,7 @@ export const getProfilePage = async () => {
 		const response = await axios.get(`${apiBaseUrl}/profile`, config);
 		return response.data;
 	} catch (err) {
-		console.log(err);
-		return;
+		handleAxiosError(err);
 	}
 };
 
