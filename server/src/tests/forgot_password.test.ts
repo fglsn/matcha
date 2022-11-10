@@ -2,6 +2,7 @@ import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 import { app } from '../app';
 import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
+import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 
 import { createNewUser } from '../services/users';
@@ -39,10 +40,11 @@ describe('send password reset link on forgot pwd request', () => {
 		await api.get(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
-		// console.log(activeUser);
-		if (activeUser) {
-			expect(activeUser.isActive).toBe(true);
+		if (!activeUser) {
+			fail();
 		}
+		// console.log(activeUser);
+		expect(activeUser.isActive).toBe(true);
 
 		await api.post('/api/users/forgot_password').send({ email: newUser.email }).expect(201);
 
@@ -161,10 +163,23 @@ describe('set new password', () => {
 
 		await api.get(`/api/users/forgot_password/${resetRequest.token}`).expect(200);
 
-		await api.post(`/api/users/forgot_password/${resetRequest.token}`).send({ password: 'NewTest!111' }).expect(200);
+		await api.post(`/api/users/forgot_password/${resetRequest.token}`).send({ password: 'NewTest!11111' }).expect(200);
+
+		//login with new pwd
+		const res = await api
+			.post('/api/login')
+			.send({ username: newUser.username, password: 'NewTest!11111' })
+			.expect(200)
+			.expect('Content-Type', /application\/json/);
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const sessions = await findSessionsByUserId(res.body.id);
+		expect(sessions).toBeTruthy();
+		expect(sessions?.length).toBe(1);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		expect(res.body).toHaveProperty('token');
 	});
 
-	// test('teset fails if token invalid', async () =>)
 	it.each([
 		[undefined, 'Invalid password reset code'],
 		[null, 'Invalid password reset code'],
