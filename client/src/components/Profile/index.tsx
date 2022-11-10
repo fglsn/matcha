@@ -1,48 +1,48 @@
-import { Box } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useServiceCall } from '../../hooks/useServiceCall';
+import { getProfilePage } from '../../services/profile';
+import { logoutUser } from '../../services/logout';
+import { useStateValue } from '../../state';
+import { AuthError } from '../../utils/errors';
+import { UserData } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
-
-import profileService from '../../services/profile';
+import LoadingIcon from '../LoadingIcon';
+import Alert from '@mui/material/Alert';
 
 const Profile = () => {
-	const alert = useContext(AlertContext);
+	const { error: errorCallback } = useContext(AlertContext);
+
+	const { data, error }: { data: UserData | undefined; error: Error | undefined } = useServiceCall(getProfilePage);
+
+	const [, dispatch] = useStateValue();
 	const navigate = useNavigate();
-	// const [userData, setUserData] = useState(undefined);
+
+	// to be changed
+	window.onblur = function () {
+		window.onfocus = function () {
+			// eslint-disable-next-line no-restricted-globals
+			location.reload();
+		};
+	};
 
 	useEffect(() => {
-		const accessProfilePage = async () => {
-			try {
-				await profileService.getProfilePage();
-				console.log('User valid'); //rm later
-			} catch (err) {
-				console.log(err);
-				alert.error(err);
+		if (error) {
+			if (error instanceof AuthError) {
+				logoutUser(dispatch);
+				errorCallback(error.message);
 				navigate('/login');
 			}
-		};
-		accessProfilePage();
-	}, [alert, navigate]);
+		}
+	}, [dispatch, error, errorCallback, navigate]);
 
-	// const [{ loggedUser }] = useContext(StateContext);
+	if (error) return <Alert severity="error">Error Loading Profile...</Alert>;
 
-	// useEffect(() => {
-	// 	if (loggedUser) {
-	// 		getUserInfo(loggedUser.id);
-	// 	}
-	// }, [loggedUser]);
+	if (!data) return <LoadingIcon />;
 
-	// const getUserInfo = async (userId: string) => {
-	// 	try {
-	// 		const userDataObj = await userService.getUserData(userId);
-	// 		setUserData(userDataObj);
-	// 	} catch (err) {
-	// 		console.log(err.response.data.error); //rm later
-	// 	}
-	// }
-
-	return <Box>PROFILE ACCESS OK</Box>
-}
+	//render form sections
+	return <div>hello {data.username}</div>;
+};
 
 export default withAuthRequired(Profile);
