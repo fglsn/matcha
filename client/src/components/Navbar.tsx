@@ -1,4 +1,4 @@
-import { setLoggedUser, StateContext, useStateValue } from "../state";
+import { StateContext, useStateValue } from "../state";
 import { useContext } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Button, AppBar, Toolbar, Typography } from '@mui/material';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { LoggedUser } from "../types";
 import { AlertContext } from "./AlertProvider";
+import { logoutUser } from "../services/logout";
 
 const LoggedInUserButtons = ({ loggedUser, handleLogout }: { loggedUser: LoggedUser, handleLogout: any }) => {
 	return (
@@ -37,10 +38,9 @@ const Navbar = () => {
 	const alert = useContext(AlertContext);
 
 	const handleLogout = async (event: any) => {
-		event.preventDefault()
-		window.localStorage.clear()
+		event.preventDefault();
+		logoutUser(dispatch);
 		alert.success('Logged out');
-		dispatch(setLoggedUser(undefined))
 		navigate('/');
 	};
 
