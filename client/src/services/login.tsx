@@ -1,14 +1,11 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 
+// Login user & set data to local storage, server throws error on error
 const login = async (credentials: { username: string; password: string }) => {
-	try {
-		const response = await axios.post(`${apiBaseUrl}/login`, credentials);
-		localStorage.setItem('loggedUser', JSON.stringify(response.data));
-		return response.data;
-	} catch (err) {
-		return err.response.data;
-	}
+	const response = await axios.post(`${apiBaseUrl}/login`, credentials);
+	localStorage.setItem('loggedUser', JSON.stringify(response.data));
+	return response.data;
 };
 
 const moduleExports = { login };

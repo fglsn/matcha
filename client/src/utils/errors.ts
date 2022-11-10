@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { NavigateFunction } from 'react-router';
 
 export class AppError extends Error {
 	constructor(message: string) {
@@ -26,12 +25,3 @@ export const handleAxiosError = (err: unknown): never => {
 	}
 	throw err;
 };
-
-// can be used in components or in some custom hooks that handle service calls for components
-export const handleServiceError = (err: unknown, navigate: NavigateFunction, alertError: (error: string) => void) => {
-	if (err instanceof AuthError) {
-		alertError(err.message);
-		navigate("/login");
-	}
-	alertError('Something went wrong');
-}

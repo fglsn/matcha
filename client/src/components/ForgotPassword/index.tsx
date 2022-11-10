@@ -18,8 +18,8 @@ const ForgotPassword = () => {
 				try {
 					await userService.checkResetToken(resetToken);
 				} catch (err) {
-					console.log(err.response.data.error);
-					alert.error(err.response.data.error);
+					console.log(`Error in validateResetToken (ForgotPassword): ${err}`); //rm later
+					alert.error('Invalid reset link. Please try again.');
 					navigate('/forgot_password');
 				}
 			}

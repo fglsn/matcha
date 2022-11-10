@@ -17,7 +17,7 @@ import {
 
 import userService from '../services/users';
 import loginService from '../services/login';
-import { useField } from '../hooks/index';
+import { useField } from '../hooks/useField';
 import { AlertContext } from './AlertProvider';
 import { setLoggedUser, StateContext } from '../state';
 import {
@@ -66,15 +66,15 @@ const LoginForm = () => {
 			password: password.value
 		};
 
-		const loggedInUser = await loginService.login(userToLogin);
-		if (loggedInUser.error) {
-			console.log('error ' + loggedInUser.error); //rm later
-			alert.error(loggedInUser.error);
-		} else {
+		try {
+			const loggedInUser = await loginService.login(userToLogin);
 			console.log(`User ${loggedInUser.username} logged in.`); //rm later
 			alert.success(`Logged in successfuly. Welcome!`);
 			dispatch(setLoggedUser(loggedInUser));
 			navigate('/');
+		} catch (err) {
+			console.log('Error in handle login (login form) ' + err); //rm later
+			alert.error('Unable to login. Please try again');
 		}
 	};
 

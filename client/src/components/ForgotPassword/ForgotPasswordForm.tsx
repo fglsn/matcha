@@ -28,12 +28,12 @@ const ForgotPasswordForm = () => {
 
 		try {
 			await userService.requestPasswordReset(email.value);
-			console.log(`Reset link sent!`); //rm later
-			alert.success(`Reset link sent! Please check your inbox.`);
+			console.log('Reset link sent!'); //rm later
+			alert.success('Reset link sent! Please check your inbox.');
 			navigate('/login');
 		} catch (err) {
-			console.log(err.response.data.error); //rm later
-			alert.error(err.response.data.error);
+			console.log(`Error in handleForgotPwdRequest (ForgotPasswordForm): ${err}`); //rm later
+			alert.error('Unable to send request. Please try again.');
 			navigate('/forgot_password');
 		}
 	};

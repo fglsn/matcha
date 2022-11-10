@@ -43,17 +43,14 @@ const SignUpForm = () => {
 	const navigate = useNavigate();
 
 	const addNewUser = async (newUser: NewUser) => {
-		const addedUser = await userService.create(newUser);
-		// console.log('new user: ', JSON.stringify(addedUser))
-		if (addedUser.error) {
-			console.log('error ' + addedUser.error); //rm later
-			alert.error(addedUser.error);
-		} else {
-			console.log(`a new user ${newUser.username} is added`); //rm later
-			alert.success(
-				`A new user ${newUser.username} is created! Activation link is sent.`
-			);
+		try {
+			const addedUser = await userService.create(newUser);
+			console.log(`a new user ${addedUser.username} is added`); //rm later
+			alert.success(`User ${addedUser.username} is created! Activation link is sent to email.`);
 			navigate('/login');
+		} catch (err) {
+			console.log('Error in addNewUser (signup form) ' + err); //rm later
+			alert.error('Unable to register new user. Please try again.');
 		}
 	};
 
