@@ -17,7 +17,7 @@ import {
 
 import userService from '../services/users';
 import { NewUser } from '../types';
-import { useField } from '../hooks';
+import { useField } from '../hooks/useField';
 import { AlertContext } from './AlertProvider';
 import {
 	validateEmail,

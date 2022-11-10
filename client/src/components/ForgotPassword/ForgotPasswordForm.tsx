@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import userService from '../../services/users';
-import { useField } from '../../hooks/index';
+import { useField } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
 

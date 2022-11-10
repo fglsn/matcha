@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
-import { useField } from "../../hooks";
+import { useField } from "../../hooks/useField";
 import { AlertContext } from '../AlertProvider';
 import { validatePassword } from "../../utils/inputValidators";
 import userService from '../../services/users';
