@@ -3,13 +3,27 @@
 install docker client && pgAdmin/datagrip  
 
 FOR DOCKER ON SCHOOL MACS:  
-https://dashboard.hive.fi/topics/81/messages?cursus_id=1  
+  
+Uninstall Docker from Software center.  
+Remove the following folders:  
+  
+	rm -rf ~/Library/Group Containers/group.com.docker  
+	rm -rf ~/Library/Containers/com.docker.docker  
+	rm -rf ~/.docker  
+
+Install Docker from Software Center.  
+Clone 42Toolbox git  
+  
+	git clone git@github.com:alexandregv/42toolbox.git  
+Run the docker script  
+
+	bash init_docker.sh  
+  
+  Thanks to : https://dashboard.hive.fi/topics/81/messages?cursus_id=1  
   
 after installing docker client:  
 	&emsp; `docker-compose -h`  
 	&emsp; 	`cd server/`
-
-
   
 run all setted up containers in background:  
 	&emsp; `docker-compose up -d`  

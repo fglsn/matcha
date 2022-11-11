@@ -38,6 +38,7 @@
 		"@types/nodemailer": "^6.4.6",
 		"bcrypt": "^5.1.0",
 		"cors": "^2.8.5",
+		"dayjs": "^1.11.6",
 		"db-migrate": "^0.11.13",
 		"db-migrate-pg": "^1.2.2",
 		"dotenv": "^16.0.3",
