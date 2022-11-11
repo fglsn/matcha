@@ -10,7 +10,7 @@ import {
 	Grid,
 	Container,
 	Link,
-	Typography,
+	Typography
 } from '@mui/material';
 
 import userService from '../../services/users';
@@ -32,8 +32,12 @@ const ForgotPasswordForm = () => {
 			alert.success('Reset link sent! Please check your inbox.');
 			navigate('/login');
 		} catch (err) {
-			console.log(`Error in handleForgotPwdRequest (ForgotPasswordForm): ${err}`); //rm later
-			alert.error(err.response.data?.error);
+			console.log(
+				`Error in handleForgotPwdRequest (ForgotPasswordForm): ${err}`
+			); //rm later
+			if (err.response.data && err.response.data.error)
+				alert.error(err.response.data.error);
+			else alert.error('Unable to send a link. Please try again.');
 			navigate('/forgot_password');
 		}
 	};

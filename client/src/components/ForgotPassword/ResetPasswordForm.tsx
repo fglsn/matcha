@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
-import { useField } from "../../hooks/useField";
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useField } from '../../hooks/useField';
 import { AlertContext } from '../AlertProvider';
-import { validatePassword } from "../../utils/inputValidators";
+import { validatePassword } from '../../utils/inputValidators';
 import userService from '../../services/users';
 
 import {
@@ -19,7 +19,7 @@ import {
 	FormControlLabel
 } from '@mui/material';
 
-const ResetPasswordForm = ({ token }: {token: string}) => {
+const ResetPasswordForm = ({ token }: { token: string }) => {
 	const [showPassword, setShow] = useState(false);
 	const password = useField('text', 'Password', validatePassword);
 	const navigate = useNavigate();
@@ -34,8 +34,12 @@ const ResetPasswordForm = ({ token }: {token: string}) => {
 			alert.success('Password changed successfully!');
 			navigate('/login');
 		} catch (err) {
-			console.log(`Error in handleResetPassword (ResetPasswordForm): ${err} `); //rm later
-			alert.error(err.response.data?.error);
+			console.log(
+				`Error in handleResetPassword (ResetPasswordForm): ${err} `
+			); //rm later
+			if (err.response.data && err.response.data.error)
+				alert.error(err.response.data.error);
+			else alert.error('Unable to reset password. Please try again.');
 			navigate('/forgot_password');
 		}
 	};

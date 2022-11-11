@@ -46,11 +46,15 @@ const SignUpForm = () => {
 		try {
 			const addedUser = await userService.create(newUser);
 			console.log(`a new user ${addedUser.username} is added`); //rm later
-			alert.success(`User ${addedUser.username} is created! Activation link is sent to email.`);
+			alert.success(
+				`User ${addedUser.username} is created! Activation link is sent to email.`
+			);
 			navigate('/login');
 		} catch (err) {
 			console.log('Error in addNewUser (signup form) ' + err); //rm later
-			alert.error(err.response.data?.error);
+			if (err.response.data && err.response.data.error)
+				alert.error(err.response.data.error);
+			else alert.error('Unable to add a user. Please try again.');
 		}
 	};
 
