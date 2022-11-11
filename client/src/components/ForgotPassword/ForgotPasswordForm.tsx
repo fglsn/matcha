@@ -33,7 +33,7 @@ const ForgotPasswordForm = () => {
 			navigate('/login');
 		} catch (err) {
 			console.log(`Error in handleForgotPwdRequest (ForgotPasswordForm): ${err}`); //rm later
-			alert.error('Unable to send request. Please try again.');
+			alert.error(err.response.data?.error);
 			navigate('/forgot_password');
 		}
 	};

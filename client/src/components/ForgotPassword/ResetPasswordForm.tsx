@@ -35,7 +35,7 @@ const ResetPasswordForm = ({ token }: {token: string}) => {
 			navigate('/login');
 		} catch (err) {
 			console.log(`Error in handleResetPassword (ResetPasswordForm): ${err} `); //rm later
-			alert.error('Unable to set new password. Please try again.');
+			alert.error(err.response.data?.error);
 			navigate('/forgot_password');
 		}
 	};

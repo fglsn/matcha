@@ -50,7 +50,7 @@ const SignUpForm = () => {
 			navigate('/login');
 		} catch (err) {
 			console.log('Error in addNewUser (signup form) ' + err); //rm later
-			alert.error('Unable to register new user. Please try again.');
+			alert.error(err.response.data?.error);
 		}
 	};
 
