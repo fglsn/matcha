@@ -48,7 +48,7 @@ describe('get request to profile page', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(resFromProfilePage.body).toBeTruthy();
-		expect(resFromProfilePage.text).toContain('sessionId');
+		expect(resFromProfilePage.text).toContain('lorem');
 	});
 
 	test('not logged user cannot access profile page', async () => {
