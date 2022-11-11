@@ -10,7 +10,28 @@ import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import Alert from '@mui/material/Alert';
-import BasicInfo from './BasicInfo';
+import BasicInfo from './BasicInfoSection';
+import { Paper, styled, Container, Grid } from '@mui/material';
+import PicturesSection from './PicturesSection';
+import Bio from './Bio';
+
+const style = {
+	container: {
+		marginTop: '4rem'
+	},
+	paper: {
+		backgroundColor: '#b5bec6ff',
+		padding: '5rem'
+	}
+};
+
+const Item = styled(Paper)(({ theme }) => ({
+	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+	...theme.typography.body2,
+	padding: theme.spacing(1),
+	textAlign: 'left',
+	color: theme.palette.text.secondary,
+}));
 
 const Profile = () => {
 	const { error: errorCallback } = useContext(AlertContext);
@@ -20,13 +41,13 @@ const Profile = () => {
 	const [, dispatch] = useStateValue();
 	const navigate = useNavigate();
 
-	// to be changed
-	window.onblur = function () {
-		window.onfocus = function () {
-			// eslint-disable-next-line no-restricted-globals
-			location.reload();
-		};
-	};
+	// // to be changed
+	// window.onblur = function () {
+	// 	window.onfocus = function () {
+	// 		// eslint-disable-next-line no-restricted-globals
+	// 		location.reload();
+	// 	};
+	// };
 
 	useEffect(() => {
 		if (error) {
@@ -49,11 +70,26 @@ const Profile = () => {
 		lastname: data.lastname
 	};
 
+	const bio: string | undefined = data.bio;
+
 	//render form sections
 	return (
 		<>
-			<BasicInfo baseUserData={baseUserData} />
-			<div>hello {data.username}</div>
+			<Container maxWidth="lg" style={style.container}>
+				<Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ flexDirection: { xs: "column", sm: "row"} }}>
+					<Grid item xs={12} sm={6}>
+						<Item>
+							<BasicInfo baseUserData={baseUserData} />
+							<Bio bio={bio} />
+						</Item>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<Item><PicturesSection /></Item>
+					</Grid>
+				</Grid>
+			</Container>
+
+			{/* <div>hello {data.username}</div> */}
 		</>
 	);
 };
