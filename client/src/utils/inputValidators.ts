@@ -38,10 +38,17 @@ export const validateFirstame = (firstname: string) => {
 	return undefined;
 };
 
-export const validateLastname = (firstname: string) => {
+export const validateLastname = (lastname: string) => {
 	const nameRegex = /^[a-zA-Z'_\-.]{1,42}$/;
-	if (!nameRegex.test(firstname)) {
+	if (!nameRegex.test(lastname)) {
 		return 'Incorrect field';
+	}
+	return undefined;
+};
+
+export const validateBio = (bio: string) => {
+	if (bio.length < 10 || bio.length > 255) {
+		return 'This field should be 10-255 characters long.';
 	}
 	return undefined;
 };
@@ -64,6 +71,22 @@ export const validateSignUpForm = (
 
 export const validateLoginForm = (username: string, password: string) => {
 	return !validateUsername(username) && !validatePassword(password)
+		? true
+		: false;
+};
+
+export const validateProfileForm = (	
+	username: string,
+	email: string,
+	firstname: string,
+	lastname: string,
+	bio: string
+) => {
+	return !validateUsername(username) &&
+		!validateEmail(email) &&
+		!validateFirstame(firstname) &&
+		!validateLastname(lastname) &&
+		!validateBio(bio)
 		? true
 		: false;
 };

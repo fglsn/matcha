@@ -1,12 +1,15 @@
-import { Box, TextField, Grid, Stack, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
-import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
-import { Dayjs } from 'dayjs';
+// prettier-ignore
+import { validateFirstame, validateLastname, validateUsername, validateEmail, validateProfileForm } from '../../utils/inputValidators';
 import React, { useState } from 'react';
-import { useControlledField } from '../../hooks/useField';
-import { UserDataWithoutId } from '../../types';
-import { validateFirstame, validateLastname, validateUsername, validateEmail } from '../../utils/inputValidators';
+import { Dayjs } from 'dayjs';
+// prettier-ignore
+import { Button, Box, TextField, Grid, Stack, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
+import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import type { } from '@mui/x-date-pickers/themeAugmentation';
+import { useControlledField } from '../../hooks/useControlledField';
+import { UserDataWithoutId } from '../../types';
+
+import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 const style = {
 	box: {
@@ -20,10 +23,11 @@ const style = {
 
 const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 
-	const firstname = useControlledField('text', 'Name', userData.firstname, validateFirstame);
-	const lastname = useControlledField('text', 'Surname', userData.lastname, validateLastname);
-	const username = useControlledField('text', 'Username', userData.username, validateUsername);
-	const email = useControlledField('text', 'Email', userData.email, validateEmail);
+	const firstname = useControlledField('text', userData.firstname, validateFirstame);
+	const lastname = useControlledField('text', userData.lastname, validateLastname);
+	const username = useControlledField('text', userData.username, validateUsername);
+	const email = useControlledField('text', userData.email, validateEmail);
+	const bio = useControlledField('text', userData.bio, validateLastname);
 
 	const [date, setValue] = useState<Dayjs | null>(null);
 	const [gender, setGender] = useState('');
@@ -43,12 +47,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 
 	return (
 		<>
-			<Box
-				component="form"
-				noValidate
-				sx={{ mt: 3 }}
-				style={style.box}
-			>
+			<Box component="form" noValidate sx={{ mt: 3 }} style={style.box}>
 				<h1>ACCOUNT DETAILS</h1>
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
@@ -95,11 +94,12 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 									inputFormat="DD/MM/YYYY"
 									value={date}
 									onChange={handleDateChange}
-									renderInput={(params) =>
+									renderInput={(params) => (
 										<>
 											<strong>Birthday*</strong>
 											<TextField required {...params} />
-										</>}
+										</>
+									)}
 								/>
 							</Stack>
 						</LocalizationProvider>
@@ -107,11 +107,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 					<Grid item xs={12} sm={6}>
 						<strong>Gender*</strong>
 						<FormControl fullWidth>
-							<Select
-
-								value={gender}
-								onChange={handleGenderChange}
-							>
+							<Select value={gender} onChange={handleGenderChange}>
 								<MenuItem value={'Male'}>Male</MenuItem>
 								<MenuItem value={'Female'}>Female</MenuItem>
 							</Select>
@@ -132,15 +128,43 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
-						<TextField
-							required
-							multiline
-							rows={4}
-							fullWidth
-							autoComplete="username"
+						{/*prettier-ignore*/}
+						<TextField 
+							{...bio} 
+							required 
+							fullWidth 
+							multiline 
+							rows={4} 
 						/>
 					</Grid>
 				</Grid>
+				{username.value &&
+				email.value &&
+				firstname.value &&
+				lastname.value &&
+				bio.value &&
+				date &&
+				orientation &&
+				gender &&
+				validateProfileForm(
+					username.value,
+					email.value,
+					firstname.value,
+					lastname.value,
+					bio.value
+				) ? (
+					<Button
+						type="submit"
+						variant="contained"
+						sx={{ mt: 3, mb: 2, ml: 2 }}
+					>
+						Update Info
+					</Button>
+				) : (
+					<Button disabled variant="contained" sx={{ mt: 3, mb: 2, ml: 2 }}>
+						Update Info
+					</Button>
+				)}
 			</Box>
 		</>
 	);
