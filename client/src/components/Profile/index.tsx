@@ -11,7 +11,7 @@ import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import Alert from '@mui/material/Alert';
 import BasicInfo from './BasicInfoSection';
-import { Paper, styled, Container, Grid, Button } from '@mui/material';
+import { Paper, styled, Container, Grid } from '@mui/material';
 import PicturesSection from './PicturesSection';
 
 const style = {
@@ -29,13 +29,17 @@ const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	padding: theme.spacing(1),
 	textAlign: 'left',
-	color: theme.palette.text.secondary,
+	color: theme.palette.text.secondary
 }));
 
 const Profile = () => {
 	const { error: errorCallback } = useContext(AlertContext);
 
-	const { data, error }: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(getProfilePage);
+	const {
+		data,
+		error
+	}: { data: UserDataWithoutId | undefined; error: Error | undefined } =
+		useServiceCall(getProfilePage);
 
 	const [, dispatch] = useStateValue();
 	const navigate = useNavigate();
@@ -77,22 +81,20 @@ const Profile = () => {
 	return (
 		<>
 			<Container maxWidth="lg" style={style.container}>
-				<Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ flexDirection: { xs: "column", sm: "row" } }}>
+				<Grid
+					container
+					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
+					sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
+				>
 					<Grid item xs={12} sm={6}>
 						<Item>
 							<BasicInfo userData={userData} />
-							<Button
-								type="submit"
-								disabled
-								variant="contained"
-								sx={{ mt: 3, mb: 2, ml: 2 }}
-							>
-								Update Info
-							</Button>
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<Item><PicturesSection /></Item>
+						<Item>
+							<PicturesSection />
+						</Item>
 					</Grid>
 				</Grid>
 			</Container>

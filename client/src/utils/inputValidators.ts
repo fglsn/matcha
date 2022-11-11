@@ -70,12 +70,10 @@ export const validateSignUpForm = (
 };
 
 export const validateLoginForm = (username: string, password: string) => {
-	return !validateUsername(username) && !validatePassword(password)
-		? true
-		: false;
+	return !validateUsername(username) && !validatePassword(password) ? true : false;
 };
 
-export const validateProfileForm = (	
+export const validateProfileForm = (
 	username: string,
 	email: string,
 	firstname: string,

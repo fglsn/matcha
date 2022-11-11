@@ -24,10 +24,7 @@ const checkResetToken = async (resetToken: string): Promise<void> => {
 };
 
 // Update users password or throw
-const resetPassword = async (
-	token: string,
-	passwordPlain: string
-): Promise<void> => {
+const resetPassword = async (token: string, passwordPlain: string): Promise<void> => {
 	await axios.post(`${apiBaseUrl}/users/forgot_password/${token}`, {
 		password: passwordPlain
 	});
