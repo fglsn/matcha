@@ -48,9 +48,9 @@ const App = () => {
 						<AlertSnackBar />
 						<Routes>
 							<Route path="/" element={<Main />} />
-							<Route path="/login" element={<LoginForm />} />
-							<Route path="/signup" element={<SignUpForm />} />
-							<Route path="/forgot_password" element={<ForgotPassword />} />
+							<Route path="/login" element={!loggedUser ? <LoginForm /> : <Navigate to="/"/>} />
+							<Route path="/signup" element={!loggedUser ? <SignUpForm /> : <Navigate to="/"/>} />
+							<Route path="/forgot_password" element={!loggedUser ? <ForgotPassword /> : <Navigate to="/"/>} />
 							<Route path="/profile" element={<Profile />} />
 							<Route path="/testAuth" element={<TestAuth />} />
 							<Route path="*" element={<Navigate to="/" replace />} />
