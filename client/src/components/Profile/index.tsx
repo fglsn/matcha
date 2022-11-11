@@ -5,15 +5,14 @@ import { getProfilePage } from '../../services/profile';
 import { logoutUser } from '../../services/logout';
 import { useStateValue } from '../../state';
 import { AuthError } from '../../utils/errors';
-import { BaseUser, UserData } from '../../types';
+import { UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import Alert from '@mui/material/Alert';
 import BasicInfo from './BasicInfoSection';
-import { Paper, styled, Container, Grid } from '@mui/material';
+import { Paper, styled, Container, Grid, Button } from '@mui/material';
 import PicturesSection from './PicturesSection';
-import Bio from './Bio';
 
 const style = {
 	container: {
@@ -36,7 +35,7 @@ const Item = styled(Paper)(({ theme }) => ({
 const Profile = () => {
 	const { error: errorCallback } = useContext(AlertContext);
 
-	const { data, error }: { data: UserData | undefined; error: Error | undefined } = useServiceCall(getProfilePage);
+	const { data, error }: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(getProfilePage);
 
 	const [, dispatch] = useStateValue();
 	const navigate = useNavigate();
@@ -63,24 +62,33 @@ const Profile = () => {
 
 	if (!data) return <LoadingIcon />;
 
-	const baseUserData: BaseUser = {
+	const userData: UserDataWithoutId = {
 		username: data.username,
 		email: data.email,
 		firstname: data.firstname,
-		lastname: data.lastname
+		lastname: data.lastname,
+		birthday: data.birthday,
+		gender: data.gender,
+		orientation: data.orientation,
+		bio: data.bio
 	};
-
-	const bio: string | undefined = data.bio;
 
 	//render form sections
 	return (
 		<>
 			<Container maxWidth="lg" style={style.container}>
-				<Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ flexDirection: { xs: "column", sm: "row"} }}>
+				<Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ flexDirection: { xs: "column", sm: "row" } }}>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<BasicInfo baseUserData={baseUserData} />
-							<Bio bio={bio} />
+							<BasicInfo userData={userData} />
+							<Button
+								type="submit"
+								disabled
+								variant="contained"
+								sx={{ mt: 3, mb: 2, ml: 2 }}
+							>
+								Update Info
+							</Button>
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>

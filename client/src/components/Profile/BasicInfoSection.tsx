@@ -3,7 +3,7 @@ import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { useControlledField } from '../../hooks/useField';
-import { BaseUser } from '../../types';
+import { UserDataWithoutId } from '../../types';
 import { validateFirstame, validateLastname, validateUsername, validateEmail } from '../../utils/inputValidators';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { } from '@mui/x-date-pickers/themeAugmentation';
@@ -18,12 +18,12 @@ const style = {
 	}
 };
 
-const BasicInfo: React.FC<{ baseUserData: BaseUser }> = ({ baseUserData }) => {
+const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 
-	const firstname = useControlledField('text', 'Name', baseUserData.firstname, validateFirstame);
-	const lastname = useControlledField('text', 'Surname', baseUserData.lastname, validateLastname);
-	const username = useControlledField('text', 'Username', baseUserData.username, validateUsername);
-	const email = useControlledField('text', 'Email', baseUserData.email, validateEmail);
+	const firstname = useControlledField('text', 'Name', userData.firstname, validateFirstame);
+	const lastname = useControlledField('text', 'Surname', userData.lastname, validateLastname);
+	const username = useControlledField('text', 'Username', userData.username, validateUsername);
+	const email = useControlledField('text', 'Email', userData.email, validateEmail);
 
 	const [date, setValue] = useState<Dayjs | null>(null);
 	const [gender, setGender] = useState('');
@@ -49,6 +49,7 @@ const BasicInfo: React.FC<{ baseUserData: BaseUser }> = ({ baseUserData }) => {
 				sx={{ mt: 3 }}
 				style={style.box}
 			>
+				<h1>ACCOUNT DETAILS</h1>
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<strong>Username*</strong>
@@ -128,6 +129,16 @@ const BasicInfo: React.FC<{ baseUserData: BaseUser }> = ({ baseUserData }) => {
 								<MenuItem value={'Bi'}>Bi</MenuItem>
 							</Select>
 						</FormControl>
+					</Grid>
+					<Grid item xs={12}>
+						<strong>Bio*</strong>
+						<TextField
+							required
+							multiline
+							rows={4}
+							fullWidth
+							autoComplete="username"
+						/>
 					</Grid>
 				</Grid>
 			</Box>

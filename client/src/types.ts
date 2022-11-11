@@ -19,6 +19,13 @@ export type UserData = BaseUser & {
 	bio: string | undefined;
 };
 
+export type UserDataWithoutId = BaseUser & {
+	birthday: Date | undefined;
+	gender: string | undefined;
+	orientation: string | undefined;
+	bio: string | undefined;
+};
+
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
 
 export type NewUser = BaseUser & { passwordPlain: string };
