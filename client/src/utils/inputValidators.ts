@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const validateUsername = (username: string) => {
 	if (username.length < 4) {
 		return 'Too short (Length: 4-21 charachters)';
@@ -42,6 +44,19 @@ export const validateLastname = (lastname: string) => {
 	const nameRegex = /^[a-zA-Z'_\-.]{1,42}$/;
 	if (!nameRegex.test(lastname)) {
 		return 'Incorrect field';
+	}
+	return undefined;
+};
+
+export const validateBirthday = (birthday: any) => {
+	console.log('dayjs ', dayjs(birthday));
+	if (dayjs(birthday)) {
+		let now = dayjs();
+		console.log('now ', now);
+		let diff = dayjs(birthday).diff(now, 'years');
+		if (diff <= 18) {
+			return (dayjs(birthday));
+		}
 	}
 	return undefined;
 };

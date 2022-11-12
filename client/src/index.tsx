@@ -5,7 +5,6 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import { CssBaseline } from '@mui/material';
-
 import { reducer, StateProvider } from "./state";
 
 const rootElement = document.getElementById('root');

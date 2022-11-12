@@ -1,7 +1,7 @@
 // prettier-ignore
 import { validateFirstame, validateLastname, validateUsername, validateEmail, validateProfileForm } from '../../utils/inputValidators';
 import React, { useState } from 'react';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
 import { Button, Box, TextField, Grid, Stack, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
@@ -22,14 +22,13 @@ const style = {
 };
 
 const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
-
 	const firstname = useControlledField('text', userData.firstname, validateFirstame);
 	const lastname = useControlledField('text', userData.lastname, validateLastname);
 	const username = useControlledField('text', userData.username, validateUsername);
 	const email = useControlledField('text', userData.email, validateEmail);
 	const bio = useControlledField('text', userData.bio, validateLastname);
 
-	const [date, setValue] = useState<Dayjs | null>(null);
+	const [date, setDateValue] = useState<Dayjs | null>(dayjs(userData.birthday));
 	const [gender, setGender] = useState('');
 	const [orientation, setOrientation] = useState('');
 
@@ -42,7 +41,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	};
 
 	const handleDateChange = (newValue: Dayjs | null) => {
-		setValue(newValue);
+		setDateValue(newValue);
 	};
 
 	return (
