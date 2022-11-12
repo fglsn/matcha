@@ -76,9 +76,7 @@ const LoginForm = () => {
 			navigate('/');
 		} catch (err) {
 			console.log('Error in handle login (login form) ' + err); //rm later
-			if (err.response.data && err.response.data.error)
-				alert.error(err.response.data.error);
-			else alert.error('Unable to login. Please try again.');
+			alert.error(err.response?.data?.error || 'Unable to login. Please try again.');
 		}
 	};
 

@@ -37,9 +37,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
 			console.log(
 				`Error in handleResetPassword (ResetPasswordForm): ${err} `
 			); //rm later
-			if (err.response.data && err.response.data.error)
-				alert.error(err.response.data.error);
-			else alert.error('Unable to reset password. Please try again.');
+			alert.error(err.response?.data?.error || 'Unable to reset password. Please try again.');
 			navigate('/forgot_password');
 		}
 	};

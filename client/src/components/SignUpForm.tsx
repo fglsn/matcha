@@ -52,9 +52,7 @@ const SignUpForm = () => {
 			navigate('/login');
 		} catch (err) {
 			console.log('Error in addNewUser (signup form) ' + err); //rm later
-			if (err.response.data && err.response.data.error)
-				alert.error(err.response.data.error);
-			else alert.error('Unable to add a user. Please try again.');
+			alert.error(err.response?.data?.error || 'Unable to add a user. Please try again.');
 		}
 	};
 
