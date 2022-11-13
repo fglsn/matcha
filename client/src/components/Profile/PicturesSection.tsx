@@ -6,12 +6,12 @@ const gridContainer = {
 };
 
 const gridItem = {
-	margin: '15px',
+	margin: '15px'
 };
 
 const mainGridItem = {
 	height: 'fit-content',
-	margin: '15px 100px 0 100px',
+	margin: '15px 100px 0 100px'
 };
 
 function srcset(image: string) {
@@ -22,6 +22,12 @@ function srcset(image: string) {
 }
 
 const PicturesSection = () => {
+	'https://stackoverflow.com/questions/73545447/file-upload-with-react-and-typescript';
+	const handleSetImage = (event: any) => {
+		console.log(event.target);
+		console.log('Image clicked');
+	};
+
 	return (
 		<>
 			<Box sx={mainGridItem}>
@@ -30,6 +36,7 @@ const PicturesSection = () => {
 						{...srcset(itemData[0].img)}
 						alt={itemData[0].title}
 						loading="lazy"
+						onClick={(event) => handleSetImage(event)}
 					/>
 				</ImageListItem>
 			</Box>
@@ -41,6 +48,7 @@ const PicturesSection = () => {
 								{...srcset(itemData[0].img)}
 								alt={itemData[0].title}
 								loading="lazy"
+								onClick={(event) => handleSetImage(event)}
 							/>
 						</ImageListItem>
 					</Box>
