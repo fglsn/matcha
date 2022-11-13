@@ -3,13 +3,14 @@ import { validateFirstame, validateLastname, validateUsername, validateEmail, va
 import React, { useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
-import { Button, Box, TextField, Grid, Stack, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
+import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup } from '@mui/material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
 import { UserDataWithoutId } from '../../types';
-
+// import { useSelectButton } from '../../hooks/useSelectButton';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
+import { useToggleButton } from '../../hooks/useToggleButton';
 
 const style = {
 	box: {
@@ -21,24 +22,35 @@ const style = {
 	}
 };
 
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+	'& .MuiToggleButtonGroup-grouped': {
+		margin: theme.spacing(0.9),
+		border: 3,
+		'&.Mui-disabled': {
+			border: 3
+		},
+		'&:not(:first-of-type)': {
+			borderRadius: theme.shape.borderRadius
+		},
+		'&:first-of-type': {
+			borderRadius: theme.shape.borderRadius
+		}
+	}
+}));
+
 const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const firstname = useControlledField('text', userData.firstname, validateFirstame);
 	const lastname = useControlledField('text', userData.lastname, validateLastname);
 	const username = useControlledField('text', userData.username, validateUsername);
 	const email = useControlledField('text', userData.email, validateEmail);
 	const bio = useControlledField('text', userData.bio, validateLastname);
-
+	const gender = useToggleButton(userData.gender);
+	const orientation = useToggleButton(userData.orientation);
 	const [date, setDateValue] = useState<Dayjs | null>(dayjs(userData.birthday));
-	const [gender, setGender] = useState('');
-	const [orientation, setOrientation] = useState('');
 
-	const handleGenderChange = (event: SelectChangeEvent) => {
-		setGender(event.target.value as string);
-	};
-
-	const handleOrientationChange = (event: SelectChangeEvent) => {
-		setOrientation(event.target.value as string);
-	};
+	// const handleOrientationChange = (event: SelectChangeEvent) => {
+	// 	setOrientation(event.target.value as string);
+	// };
 
 	const handleDateChange = (newValue: Dayjs | null) => {
 		setDateValue(newValue);
@@ -103,18 +115,21 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							</Stack>
 						</LocalizationProvider>
 					</Grid>
-					<Grid item xs={12} sm={6}>
+					<Grid item xs={12}>
 						<strong>Gender*</strong>
-						<FormControl fullWidth>
-							<Select value={gender} onChange={handleGenderChange}>
-								<MenuItem value={'Male'}>Male</MenuItem>
-								<MenuItem value={'Female'}>Female</MenuItem>
-							</Select>
-						</FormControl>
+						<StyledToggleButtonGroup exclusive {...gender}>
+							<ToggleButton value="male">BOY</ToggleButton>
+							<ToggleButton value="female">GIRL</ToggleButton>
+						</StyledToggleButtonGroup>
 					</Grid>
-					<Grid item xs={12} sm={6}>
+					<Grid item xs={12}>
 						<strong>Orientation*</strong>
-						<FormControl fullWidth>
+						<StyledToggleButtonGroup exclusive {...orientation}>
+							<ToggleButton value="straight">STRAIGHT</ToggleButton>
+							<ToggleButton value="gay">GAY</ToggleButton>
+							<ToggleButton value="bi">BI</ToggleButton>
+						</StyledToggleButtonGroup>
+						{/* <FormControl fullWidth>
 							<Select
 								value={orientation}
 								onChange={handleOrientationChange}
@@ -123,7 +138,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 								<MenuItem value={'Gay'}>Gay</MenuItem>
 								<MenuItem value={'Bi'}>Bi</MenuItem>
 							</Select>
-						</FormControl>
+						</FormControl> */}
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
@@ -144,7 +159,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 				bio.value &&
 				date &&
 				orientation &&
-				gender &&
+				// gender &&
 				validateProfileForm(
 					username.value,
 					email.value,
