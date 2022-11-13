@@ -55,7 +55,7 @@ export const validateBirthday = (birthday: any) => {
 		console.log('now ', now);
 		let diff = dayjs(birthday).diff(now, 'years');
 		if (diff <= 18) {
-			return (dayjs(birthday));
+			return dayjs(birthday);
 		}
 	}
 	return undefined;

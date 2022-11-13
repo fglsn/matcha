@@ -8,9 +8,8 @@ import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
 import { UserDataWithoutId } from '../../types';
-// import { useSelectButton } from '../../hooks/useSelectButton';
-import type {} from '@mui/x-date-pickers/themeAugmentation';
 import { useToggleButton } from '../../hooks/useToggleButton';
+import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 const style = {
 	box: {
@@ -46,12 +45,8 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const bio = useControlledField('text', userData.bio, validateLastname);
 	const gender = useToggleButton(userData.gender);
 	const orientation = useToggleButton(userData.orientation);
+
 	const [date, setDateValue] = useState<Dayjs | null>(dayjs(userData.birthday));
-
-	// const handleOrientationChange = (event: SelectChangeEvent) => {
-	// 	setOrientation(event.target.value as string);
-	// };
-
 	const handleDateChange = (newValue: Dayjs | null) => {
 		setDateValue(newValue);
 	};
@@ -129,16 +124,6 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							<ToggleButton value="gay">GAY</ToggleButton>
 							<ToggleButton value="bi">BI</ToggleButton>
 						</StyledToggleButtonGroup>
-						{/* <FormControl fullWidth>
-							<Select
-								value={orientation}
-								onChange={handleOrientationChange}
-							>
-								<MenuItem value={'Hetero'}>Hetero</MenuItem>
-								<MenuItem value={'Gay'}>Gay</MenuItem>
-								<MenuItem value={'Bi'}>Bi</MenuItem>
-							</Select>
-						</FormControl> */}
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
@@ -158,8 +143,8 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 				lastname.value &&
 				bio.value &&
 				date &&
-				orientation &&
-				// gender &&
+				orientation.value &&
+				gender.value &&
 				validateProfileForm(
 					username.value,
 					email.value,
