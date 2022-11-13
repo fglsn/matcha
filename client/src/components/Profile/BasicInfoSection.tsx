@@ -23,7 +23,7 @@ const style = {
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 	'& .MuiToggleButtonGroup-grouped': {
-		margin: theme.spacing(0.9),
+		margin: theme.spacing(0.5),
 		border: 3,
 		'&.Mui-disabled': {
 			border: 3
@@ -50,6 +50,8 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const handleDateChange = (newValue: Dayjs | null) => {
 		setDateValue(newValue);
 	};
+
+	let eighteenYearsAgo = dayjs().subtract(18, 'year');
 
 	return (
 		<>
@@ -99,31 +101,42 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 								<DesktopDatePicker
 									inputFormat="DD/MM/YYYY"
 									value={date}
+									maxDate={eighteenYearsAgo}
+									minDate={dayjs('01/01/1900')}
 									onChange={handleDateChange}
 									renderInput={(params) => (
 										<>
 											<strong>Birthday*</strong>
-											<TextField required {...params} />
+											<TextField
+												required
+												error
+												helperText="User must be at least 18 years old"
+												{...params}
+											/>
 										</>
 									)}
 								/>
 							</Stack>
 						</LocalizationProvider>
 					</Grid>
-					<Grid item xs={12}>
+					<Grid item xs={12} sm={6}>
 						<strong>Gender*</strong>
-						<StyledToggleButtonGroup exclusive {...gender}>
-							<ToggleButton value="male">BOY</ToggleButton>
-							<ToggleButton value="female">GIRL</ToggleButton>
-						</StyledToggleButtonGroup>
+						<Box sx={{ flexDirection: 'column' }}>
+							<StyledToggleButtonGroup exclusive {...gender}>
+								<ToggleButton value="male">BOY</ToggleButton>
+								<ToggleButton value="female">GIRL</ToggleButton>
+							</StyledToggleButtonGroup>
+						</Box>
 					</Grid>
-					<Grid item xs={12}>
+					<Grid item sm={'auto'}>
 						<strong>Orientation*</strong>
-						<StyledToggleButtonGroup exclusive {...orientation}>
-							<ToggleButton value="straight">STRAIGHT</ToggleButton>
-							<ToggleButton value="gay">GAY</ToggleButton>
-							<ToggleButton value="bi">BI</ToggleButton>
-						</StyledToggleButtonGroup>
+						<Box sx={{ flexDirection: 'column' }}>
+							<StyledToggleButtonGroup exclusive {...orientation}>
+								<ToggleButton value="straight">STRAIGHT</ToggleButton>
+								<ToggleButton value="gay">GAY</ToggleButton>
+								<ToggleButton value="bi">BI</ToggleButton>
+							</StyledToggleButtonGroup>
+						</Box>
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
@@ -141,22 +154,19 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 				email.value &&
 				firstname.value &&
 				lastname.value &&
-				bio.value &&
 				date &&
-				orientation.value &&
 				gender.value &&
+				orientation.value &&
+				bio.value &&
 				validateProfileForm(
 					username.value,
 					email.value,
 					firstname.value,
 					lastname.value,
+					date,
 					bio.value
 				) ? (
-					<Button
-						type="submit"
-						variant="contained"
-						sx={{ mt: 3, mb: 2, ml: 2 }}
-					>
+					<Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
 						Update Info
 					</Button>
 				) : (

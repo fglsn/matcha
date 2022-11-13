@@ -48,15 +48,16 @@ export const validateLastname = (lastname: string) => {
 	return undefined;
 };
 
-export const validateBirthday = (birthday: any) => {
-	console.log('dayjs ', dayjs(birthday));
-	if (dayjs(birthday)) {
-		let now = dayjs();
-		console.log('now ', now);
-		let diff = dayjs(birthday).diff(now, 'years');
-		if (diff <= 18) {
-			return dayjs(birthday);
-		}
+export const validateBirthday = (date: dayjs.Dayjs) => {
+	let eighteenYearsAgo = dayjs().subtract(18, 'year');
+	if (
+		!dayjs.isDayjs(date) ||
+		!dayjs(date).isValid() ||
+		!dayjs(date).isBefore(eighteenYearsAgo) ||
+		!dayjs(date).isAfter(dayjs('01/01/1990'))
+	) {
+		console.log('Incorrect field, user should be at least 18yo'); //rm later
+		return 'Incorrect field, user should be at least 18yo';
 	}
 	return undefined;
 };
@@ -93,12 +94,14 @@ export const validateProfileForm = (
 	email: string,
 	firstname: string,
 	lastname: string,
+	date: dayjs.Dayjs,
 	bio: string
 ) => {
 	return !validateUsername(username) &&
 		!validateEmail(email) &&
 		!validateFirstame(firstname) &&
 		!validateLastname(lastname) &&
+		!validateBirthday(date) &&
 		!validateBio(bio)
 		? true
 		: false;

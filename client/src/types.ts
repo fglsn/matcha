@@ -37,3 +37,14 @@ export enum AlertStatus {
 	Success = 'SUCCSESS',
 	Error = 'ERROR'
 }
+
+export enum Gender {
+	MALE = 'male',
+	FEMALE = 'female'
+}
+
+export enum Orientation {
+	STRAIGHT = 'straight',
+	GAY = 'gay',
+	BI = 'bi'
+}
