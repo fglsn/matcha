@@ -6,7 +6,7 @@ const gridContainer = {
 };
 
 const gridItem = {
-	margin: '15px'
+	margin: '15px',
 };
 
 const mainGridItem = {
@@ -26,30 +26,47 @@ const PicturesSection = () => {
 	const handleSetImage = (event: any) => {
 		console.log(event.target);
 		console.log('Image clicked');
+
 	};
 
 	return (
 		<>
 			<Box sx={mainGridItem}>
 				<ImageListItem key={itemData[0].img}>
-					<img
-						{...srcset(itemData[0].img)}
-						alt={itemData[0].title}
-						loading="lazy"
-						onClick={(event) => handleSetImage(event)}
-					/>
+					<label>
+						<img
+							{...srcset(itemData[0].img)}
+							alt={itemData[0].title}
+							loading="lazy"
+							onClick={(event) => handleSetImage(event)}
+							style={{ maxWidth: "100%" }}
+						/>
+						<input
+							hidden
+							type="file"
+						/>
+					</label>
 				</ImageListItem>
 			</Box>
 			<Box sx={gridContainer}>
 				{[...Array(4)].map((e, i) => (
 					<Box key={i} sx={gridItem}>
 						<ImageListItem>
-							<img
-								{...srcset(itemData[0].img)}
-								alt={itemData[0].title}
-								loading="lazy"
-								onClick={(event) => handleSetImage(event)}
-							/>
+							<label>
+								<img
+									{...srcset(itemData[0].img)}
+									alt={itemData[0].title}
+									loading="lazy"
+									onClick={(event) => handleSetImage(event)}
+									style={{ maxWidth: "100%" }}
+								/>
+								<input
+									hidden
+									type="file"
+								// accept={acceptedFormats}
+								// onChange={handleFileSelect}
+								/>
+							</label>
 						</ImageListItem>
 					</Box>
 				))}
