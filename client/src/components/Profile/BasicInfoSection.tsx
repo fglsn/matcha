@@ -1,5 +1,5 @@
 // prettier-ignore
-import { validateFirstame, validateLastname, validateUsername, validateEmail, validateProfileForm } from '../../utils/inputValidators';
+import { validateFirstame, validateLastname, validateUsername, validateEmail, validateBio, validateProfileForm } from '../../utils/inputValidators';
 import React, { useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
@@ -9,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
 import { UserDataWithoutId } from '../../types';
 import { useToggleButton } from '../../hooks/useToggleButton';
-import type {} from '@mui/x-date-pickers/themeAugmentation';
+import type { } from '@mui/x-date-pickers/themeAugmentation';
 
 const style = {
 	box: {
@@ -42,16 +42,26 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const lastname = useControlledField('text', userData.lastname, validateLastname);
 	const username = useControlledField('text', userData.username, validateUsername);
 	const email = useControlledField('text', userData.email, validateEmail);
-	const bio = useControlledField('text', userData.bio, validateLastname);
+	const bio = useControlledField('text', userData.bio, validateBio);
 	const gender = useToggleButton(userData.gender);
 	const orientation = useToggleButton(userData.orientation);
 
-	const [date, setDateValue] = useState<Dayjs | null>(dayjs(userData.birthday));
+	const birthday = userData.birthday ? dayjs(userData.birthday) : null;
+	const [date, setDateValue] = useState<Dayjs | null>(birthday);
 	const handleDateChange = (newValue: Dayjs | null) => {
 		setDateValue(newValue);
 	};
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
+
+	console.log(`${username.value} //rm later
+		${email.value} &&
+		${firstname.value} &&
+		${lastname.value} &&
+		${date} &&
+		${gender.value} &&
+		${orientation.value} &&
+		${bio.value}`);
 
 	return (
 		<>
@@ -64,6 +74,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							{...username}
 							required
 							fullWidth
+							autoFocus
 							autoComplete="username"
 						/>
 					</Grid>
@@ -73,7 +84,6 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							{...firstname}
 							required
 							fullWidth
-							autoFocus
 							autoComplete="given-name"
 						/>
 					</Grid>
@@ -140,32 +150,31 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
-						{/*prettier-ignore*/}
-						<TextField 
-							{...bio} 
-							required 
-							fullWidth 
-							multiline 
-							rows={4} 
+						<TextField
+							{...bio}
+							required
+							fullWidth
+							multiline
+							rows={4}
 						/>
 					</Grid>
 				</Grid>
 				{username.value &&
-				email.value &&
-				firstname.value &&
-				lastname.value &&
-				date &&
-				gender.value &&
-				orientation.value &&
-				bio.value &&
-				validateProfileForm(
-					username.value,
-					email.value,
-					firstname.value,
-					lastname.value,
-					date,
-					bio.value
-				) ? (
+					email.value &&
+					firstname.value &&
+					lastname.value &&
+					date &&
+					gender.value &&
+					orientation.value &&
+					bio.value &&
+					validateProfileForm(
+						username.value,
+						email.value,
+						firstname.value,
+						lastname.value,
+						date,
+						bio.value
+					) ? (
 					<Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
 						Update Info
 					</Button>

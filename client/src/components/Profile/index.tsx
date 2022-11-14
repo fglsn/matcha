@@ -76,7 +76,7 @@ const Profile = () => {
 		orientation: data.orientation,
 		bio: data.bio
 	};
-
+	// console.log('bio ' + data.bio)
 	//render form sections
 	return (
 		<>

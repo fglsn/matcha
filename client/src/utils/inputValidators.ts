@@ -54,7 +54,7 @@ export const validateBirthday = (date: dayjs.Dayjs) => {
 		!dayjs.isDayjs(date) ||
 		!dayjs(date).isValid() ||
 		!dayjs(date).isBefore(eighteenYearsAgo) ||
-		!dayjs(date).isAfter(dayjs('01/01/1990'))
+		!dayjs(date).isAfter(dayjs('01/01/1900'))
 	) {
 		console.log('Incorrect field, user should be at least 18yo'); //rm later
 		return 'Incorrect field, user should be at least 18yo';
