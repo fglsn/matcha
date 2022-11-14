@@ -53,8 +53,9 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	};
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
-
-	console.log(`${username.value} //rm later
+	
+	//rm later
+	console.log(`${username.value} 
 		${email.value} &&
 		${firstname.value} &&
 		${lastname.value} &&
