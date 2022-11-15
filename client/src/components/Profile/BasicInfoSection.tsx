@@ -180,7 +180,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 						Update Info
 					</Button>
 				) : (
-					<Button disabled variant="contained" sx={{ mt: 3, mb: 2, ml: 2 }}>
+					<Button disabled variant="contained" sx={{ mt: 3, mb: 2 }}>
 						Update Info
 					</Button>
 				)}
