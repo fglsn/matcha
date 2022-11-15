@@ -18,3 +18,14 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 };
 
 export const loginUser = { username: 'matcha', password: 'Test!111' };
+
+export const infoProfile = {
+	username: 'matcha',
+	email: 'matcha@test.com',
+	firstname: 'lorem',
+	lastname: 'ipsum',
+	birthday: '1999-03-22',
+	gender: 'male',
+	orientation: 'straight',
+	bio: 'born sleepy'
+};
