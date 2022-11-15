@@ -74,11 +74,7 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 							<Box sx={mainGridItem}>
 								<div key={placeholder.img}>
 									<img
-										src={
-											images.length
-												? images[0].dataURL
-												: placeholder.img
-										}
+										src={images[0]?.dataURL || placeholder.img}
 										alt="Main profile pic"
 										style={{ maxWidth: '100%' }}
 									/>
@@ -106,9 +102,8 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 										<div>
 											<img
 												src={
-													images[i + 1]?.dataURL
-														? images[i + 1].dataURL
-														: placeholder.img
+													images[i + 1]?.dataURL ||
+													placeholder.img
 												}
 												alt={`Profile pic #${i + 1} by ${
 													userData.username
