@@ -36,6 +36,18 @@ const getDate = (value: unknown): Date => {
 	throw `Expected value to be date, got: ${typeof value}`;
 };
 
+const getBdDateOrUndefined = (value: unknown): Date | undefined => {
+	if (value instanceof Date) {
+		const utc = Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), value.getHours(), 0, 0, 0);
+		console.log(new Date(utc));
+		
+		return new Date(utc);
+	}
+	if (value === null) {
+		return undefined;
+	}
+	throw `Expected value to be date, got: ${typeof value}`;
+};
 const getDateOrUndefined = (value: unknown): Date | undefined => {
 	if (value instanceof Date) {
 		return value;
@@ -46,4 +58,4 @@ const getDateOrUndefined = (value: unknown): Date | undefined => {
 	throw `Expected value to be date, got: ${typeof value}`;
 };
 
-export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined };
+export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined };
