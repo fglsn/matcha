@@ -1,6 +1,7 @@
-import { Box, Button, Container } from '@mui/material';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { ImageType, UserDataWithoutId } from '../../types';
+import { AlertContext } from '../AlertProvider';
+import { Box, Button, Container } from '@mui/material';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 
@@ -27,49 +28,99 @@ export const getBase64 = (file: File): Promise<string> => {
 
 export const getImage = (file: File): Promise<HTMLImageElement> => {
 	const image = new Image();
-	return new Promise((resolve) => {
+	return new Promise((resolve, reject) => {
 		image.addEventListener('load', () => resolve(image));
+		image.addEventListener('error', () => {
+			reject('Error creating');
+		});
 		image.src = URL.createObjectURL(file);
 	});
 };
 
-export const getListFiles = (files: FileList): Promise<ImageType[]> => {
+export const getListFiles = async (
+	files: FileList
+): Promise<[ImageType[], string | undefined]> => {
+	const validFiles: File[] = [];
 	const promiseFiles: Array<Promise<string>> = [];
-	for (let i = 0; i < files.length; i += 1) {
-		promiseFiles.push(getBase64(files[i]));
+	const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+	for (let i = 0; i < files.length; i++) {
+		try {
+			const image = await getImage(files[i]);
+			console.log(image.width); //rm later
+			console.log(image.height); //rm later
+
+			if (allowedImageTypes.indexOf(files[i].type) > -1) {
+				promiseFiles.push(getBase64(files[i]));
+				validFiles.push(files[i]);
+			}
+		} catch (e) {
+			console.log('Error decoding image');
+		}
 	}
-	return Promise.all(promiseFiles).then((fileListBase64: Array<string>) => {
-		const fileList: ImageType[] = fileListBase64.map((base64, index) => ({
-			dataURL: base64,
-			file: files[index]
-		}));
-		return fileList;
-	});
+
+	const base64Files = await Promise.all(promiseFiles);
+
+	const fileList: ImageType[] = base64Files.map((base64, index) => ({
+		dataURL: base64,
+		file: validFiles[index]
+	}));
+
+	if (fileList.length < files.length) return [fileList, 'File must be a valid image.'];
+	return [fileList, undefined];
+};
+
+export const validateAddingFiles = async (
+	newImages: ImageType[],
+	existingImages: ImageType[]
+): Promise<[ImageType[], string | undefined]> => {
+	let newImageList: ImageType[] = [];
+
+	for (let i = 0; i < 5 - existingImages.length; i++) {
+		if (newImages[i]) {
+			newImageList.push(newImages[i]);
+		}
+	}
+
+	if (existingImages.length + newImages.length > 5) {
+		if (existingImages.length === 5) {
+			return [
+				[],
+				'Maximum 5 pictures can be uploaded. Please remove some pictures to upload new ones or use replace buttons.'
+			];
+		} else {
+			return [newImageList, 'Maximum 5 pictures can be added to profile pictures.'];
+		}
+	}
+
+	return [newImageList, undefined];
 };
 
 const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
-	const [images, setImages] = useState<ImageType[]>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [keyUpdate, setKeyUpdate] = useState<number>(-1);
-
-	console.log('IMages ', images);
+	const { error: errorCallback } = useContext(AlertContext);
+	const [images, setImages] = useState<ImageType[]>([]);
+	const [imageIndex, setImageIndex] = useState<number>(-1);
 
 	const handleChange = async (files: FileList | null) => {
 		if (!files) return;
 
-		const fileList = await getListFiles(files);
+		const [fileList, error] = await getListFiles(files);
+		if (error) errorCallback(error);
 		if (!fileList.length) return;
 
 		let updatedFileList: ImageType[];
 		const updatedIndexes: number[] = [];
 
-		if (keyUpdate > -1) {
+		if (imageIndex > -1) {
 			const [firstFile] = fileList;
 			updatedFileList = [...images];
-			updatedFileList[keyUpdate] = firstFile;
-			updatedIndexes.push(keyUpdate);
+			updatedFileList[imageIndex] = firstFile;
+			updatedIndexes.push(imageIndex);
 		} else {
-			updatedFileList = [...images, ...fileList];
+			const [newImageList, error] = await validateAddingFiles(fileList, images);
+			if (error) errorCallback(error);
+			updatedFileList = [...images, ...newImageList];
 			for (let i = images.length as number; i < updatedFileList.length; i += 1) {
 				updatedIndexes.push(i);
 			}
@@ -81,19 +132,19 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 		e: React.ChangeEvent<HTMLInputElement>
 	): Promise<void> => {
 		await handleChange(e.target.files);
-		keyUpdate > -1 && setKeyUpdate(-1);
+		imageIndex > -1 && setImageIndex(-1);
 		if (inputRef.current) inputRef.current.value = '';
 	};
 
 	const handleClickInput = useCallback(() => openFileDialog(inputRef), [inputRef]);
 
 	const uploadImage = useCallback((): void => {
-		setKeyUpdate(-1);
+		setImageIndex(-1);
 		handleClickInput();
 	}, [handleClickInput]);
 
 	const replaceImage = (index: number): void => {
-		setKeyUpdate(index);
+		setImageIndex(index);
 		handleClickInput();
 	};
 
@@ -113,7 +164,7 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 		<>
 			<input
 				type="file"
-				accept="image/png, image/jpeg"
+				accept="image/png, image/jpeg, image/jpg"
 				ref={inputRef}
 				multiple
 				onChange={onInputChange}
@@ -121,7 +172,7 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 			/>
 			<Container style={pictureSectionWrapper}>
 				<Button
-					// disabled={images.length >= maxNumber ? true : false}
+					disabled={images.length >= 5 ? true : false}
 					onClick={uploadImage}
 					style={uploadApplyBtn}
 				>
@@ -136,16 +187,10 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 						/>
 						{images[0]?.dataURL ? (
 							<div style={btnWrapper}>
-								<Button
-									onClick={() => replaceImage(0)}
-									sx={singlePicBtn}
-								>
+								<Button onClick={() => replaceImage(0)} sx={singlePicBtn}>
 									<ChangeCircleIcon sx={icon} />
 								</Button>
-								<Button
-									onClick={() => removeImage(0)}
-									sx={singlePicBtn}
-								>
+								<Button onClick={() => removeImage(0)} sx={singlePicBtn}>
 									<RemoveCircleRoundedIcon sx={icon} />
 								</Button>
 							</div>
