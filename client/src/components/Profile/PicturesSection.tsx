@@ -1,100 +1,16 @@
 import { useCallback, useContext, useRef, useState } from 'react';
 import { ImageType, UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
-import { Box, Button, Container } from '@mui/material';
+//prettier-ignore
+import {Box, Button, Container, styled, Tooltip, tooltipClasses, TooltipProps, Typography } from '@mui/material';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-
-export const openFileDialog = (inputRef: React.RefObject<HTMLInputElement>): void => {
-	if (inputRef.current) inputRef.current.click();
-};
-
-export const getAcceptTypeString = (
-	acceptType?: Array<string>,
-	allowNonImageType?: boolean
-) => {
-	if (acceptType?.length) return acceptType.map((item) => `.${item}`).join(', ');
-	if (allowNonImageType) return '';
-	return 'image/*';
-};
-
-export const getBase64 = (file: File): Promise<string> => {
-	const reader = new FileReader();
-	return new Promise((resolve) => {
-		reader.addEventListener('load', () => resolve(String(reader.result)));
-		reader.readAsDataURL(file);
-	});
-};
-
-export const getImage = (file: File): Promise<HTMLImageElement> => {
-	const image = new Image();
-	return new Promise((resolve, reject) => {
-		image.addEventListener('load', () => resolve(image));
-		image.addEventListener('error', () => {
-			reject('Error creating');
-		});
-		image.src = URL.createObjectURL(file);
-	});
-};
-
-export const getListFiles = async (
-	files: FileList
-): Promise<[ImageType[], string | undefined]> => {
-	const validFiles: File[] = [];
-	const promiseFiles: Array<Promise<string>> = [];
-	const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-	for (let i = 0; i < files.length; i++) {
-		try {
-			const image = await getImage(files[i]);
-			console.log(image.width); //rm later
-			console.log(image.height); //rm later
-
-			if (allowedImageTypes.indexOf(files[i].type) > -1) {
-				promiseFiles.push(getBase64(files[i]));
-				validFiles.push(files[i]);
-			}
-		} catch (e) {
-			console.log('Error decoding image');
-		}
-	}
-
-	const base64Files = await Promise.all(promiseFiles);
-
-	const fileList: ImageType[] = base64Files.map((base64, index) => ({
-		dataURL: base64,
-		file: validFiles[index]
-	}));
-
-	if (fileList.length < files.length) return [fileList, 'File must be a valid image.'];
-	return [fileList, undefined];
-};
-
-export const validateAddingFiles = async (
-	newImages: ImageType[],
-	existingImages: ImageType[]
-): Promise<[ImageType[], string | undefined]> => {
-	let newImageList: ImageType[] = [];
-
-	for (let i = 0; i < 5 - existingImages.length; i++) {
-		if (newImages[i]) {
-			newImageList.push(newImages[i]);
-		}
-	}
-
-	if (existingImages.length + newImages.length > 5) {
-		if (existingImages.length === 5) {
-			return [
-				[],
-				'Maximum 5 pictures can be uploaded. Please remove some pictures to upload new ones or use replace buttons.'
-			];
-		} else {
-			return [newImageList, 'Maximum 5 pictures can be added to profile pictures.'];
-		}
-	}
-
-	return [newImageList, undefined];
-};
+import React from 'react';
+import {
+	getValidImages,
+	openFileDialog,
+	validateAddingFiles
+} from '../../utils/imageUploaderAndValidor';
 
 const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -105,27 +21,28 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 	const handleChange = async (files: FileList | null) => {
 		if (!files) return;
 
-		const [fileList, error] = await getListFiles(files);
+		const [newImages, error] = await getValidImages(files);
 		if (error) errorCallback(error);
-		if (!fileList.length) return;
 
-		let updatedFileList: ImageType[];
+		if (!newImages.length) return;
+
+		let updatedImages: ImageType[];
 		const updatedIndexes: number[] = [];
 
 		if (imageIndex > -1) {
-			const [firstFile] = fileList;
-			updatedFileList = [...images];
-			updatedFileList[imageIndex] = firstFile;
+			const [firstImage] = newImages;
+			updatedImages = [...images];
+			updatedImages[imageIndex] = firstImage;
 			updatedIndexes.push(imageIndex);
 		} else {
-			const [newImageList, error] = await validateAddingFiles(fileList, images);
+			const [addedImages, error] = await validateAddingFiles(newImages, images);
 			if (error) errorCallback(error);
-			updatedFileList = [...images, ...newImageList];
-			for (let i = images.length as number; i < updatedFileList.length; i += 1) {
+			updatedImages = [...images, ...addedImages];
+			for (let i = images.length as number; i < updatedImages.length; i += 1) {
 				updatedIndexes.push(i);
 			}
 		}
-		setImages(updatedFileList);
+		setImages(updatedImages);
 	};
 
 	const onInputChange = async (
@@ -171,13 +88,35 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 				style={{ display: 'none' }}
 			/>
 			<Container style={pictureSectionWrapper}>
-				<Button
-					disabled={images.length >= 5 ? true : false}
-					onClick={uploadImage}
-					style={uploadApplyBtn}
+				<HtmlTooltip
+					title={
+						<React.Fragment>
+							<Typography color="inherit">
+								<strong>Valid picture should be:</strong>
+							</Typography>
+							{'Of jpeg, jpg or png format.'}
+							<br />
+							{'At least 450 x 450 pixels'}
+							<br />
+							{'Not larger than 2500x2500 pixels'}
+							<br />
+							{'Not bigger than 25Mb'}
+							<br />
+							{'Maximum 5 pictures.'}
+						</React.Fragment>
+					}
 				>
-					Add pictures
-				</Button>
+					<span style={{ maxWidth: '100%', textAlign: 'center' }}>
+						<Button
+							disabled={images.length >= 5 ? true : false}
+							onClick={uploadImage}
+							style={uploadApplyBtn}
+						>
+							Add pictures
+						</Button>
+					</span>
+				</HtmlTooltip>
+
 				<Box sx={mainGridItem}>
 					<div key={placeholder.img}>
 						<img
@@ -235,13 +174,28 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 	);
 };
 
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+	<Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+	[`& .${tooltipClasses.tooltip}`]: {
+		backgroundColor: '#fcc810',
+		color: 'white',
+		maxWidth: 300,
+		padding: '25px',
+		fontSize: theme.typography.pxToRem(16)
+	}
+}));
+
 const uploadApplyBtn = {
-	margin: '10px 0 5px 0'
+	margin: '10px 0 5px 0',
+	padding: '5px 150px',
+	maxWidth: '100%'
 };
 
 const gridContainer = {
 	display: 'grid',
-	gridTemplateColumns: 'repeat(2, 1fr)'
+	gridTemplateColumns: 'repeat(2, 1fr)',
+	alignItems: 'center'
 };
 
 const pictureSectionWrapper = {
