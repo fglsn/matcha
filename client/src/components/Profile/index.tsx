@@ -93,7 +93,7 @@ const Profile = () => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<PicturesSection />
+							<PicturesSection userData={userData} />
 						</Item>
 					</Grid>
 				</Grid>

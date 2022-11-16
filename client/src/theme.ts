@@ -8,13 +8,21 @@ const theme = createTheme({
 			default: '#fcfcfc'
 		},
 		primary: {
-			main: '#EEB902'
+			main: '#EEB902',
+			contrastText: '#fff' //button text white instead of black
 		},
 		secondary: {
 			main: '#ffffff'
 		},
 		error: {
 			main: red.A400
+		}
+	},
+	components: {
+		MuiButton: {
+			defaultProps: {
+				disableElevation: true
+			}
 		}
 	}
 });
