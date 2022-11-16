@@ -24,7 +24,7 @@ export const infoProfile = {
 	email: 'matcha@test.com',
 	firstname: 'lorem',
 	lastname: 'ipsum',
-	birthday: '1999-03-22',
+	birthday: new Date('1999-03-22').toISOString(),
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy'
