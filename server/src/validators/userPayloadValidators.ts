@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NewUser, UserProfile } from '../types';
-import { isString } from './basicTypeValidators';
+import { isDate, isString } from './basicTypeValidators';
 import { ValidationError } from '../errors';
 // import dayjs from 'dayjs';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -142,22 +142,22 @@ export const parseNewUserPayload = ({ username, email, passwordPlain, firstname,
 // };
 //to be fixed
 const parseGender = (gender: unknown): string => {
-    if (!gender || !isString(gender)) {
-        throw new Error('Incorrect or missing gender: ' + gender);
-    }
-    return gender;
+	if (!gender) {
+		throw new ValidationError('Missing gender');
+	}
+	if (!isString(gender)) {
+		throw new ValidationError('Incorrect or missing gender: ' + gender);
+	}
+	return gender;
 };
 
-const isDate = (date: string): boolean => {
-    return Boolean(Date.parse(date));
-};
-
-const getAge = (dateString:string):number => {
+//might fail when offfset back by local if not same timezone as front
+const getAge = (dateString: string): number => {
 	const today = new Date();
 	const birthDate = new Date(dateString);
 	let age = today.getFullYear() - birthDate.getFullYear();
 	const m = today.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+	if (m < 0 || (m === 0 && today.getDate() > birthDate.getDate())) {
 		age--;
 	}
 	return age;
@@ -165,46 +165,63 @@ const getAge = (dateString:string):number => {
 
 //to be fixed?
 const parseBirthday = (date: unknown): Date => {
-    if (!date || !isString(date) || !isDate(date)) {
-        throw new ValidationError('Incorrect Birthay date format');
-    }
+	if (!date) {
+		throw new ValidationError('Missing birthay date');
+	}
+	if (!isString(date) || !isDate(date)) {
+		throw new ValidationError('Invalid birthday date format');
+	}
 	const age = getAge(date);
-	const limit = new Date(1900, 1, 1, 0, 0, 0, 0);
-	if (age < 18)
-		throw new ValidationError ('User must be at least 18 y.o.');
-	const bd = new Date(date); 
-	if (bd < limit)
-		throw new ValidationError ('Maximum age is excceeded');
+	const limit = new Date('1900-01-01');
+	if (age < 18) throw new ValidationError('User must be at least 18 y.o.');
+	const bd = new Date(date);
+	if (bd < limit) throw new ValidationError('Maximum age is exceeded');
+
 	return bd;
 };
 //to be fixed
 const parseBio = (description: unknown): string => {
-    if (!description || !isString(description)) {
-        throw new Error(`Invalid or missing field descripton: ${description}`);
-    }
-    return description;
+	if (!description) {
+		throw new ValidationError(`Missing bio`);
+	}
+	if (!isString(description)) {
+		throw new ValidationError(`Invalid or missing field descripton: ${description}`);
+	}
+	return description;
 };
 
 //to be fixed
 const parseOrientation = (description: unknown): string => {
-    if (!description || !isString(description)) {
-        throw new Error(`Invalid or missing field descripton: ${description}`);
-    }
-    return description;
+	if (!description) {
+		throw new ValidationError(`Missing orientation`);
+	}
+	if (!isString(description)) {
+		throw new ValidationError(`Invalid or missing field descripton: ${description}`);
+	}
+	return description;
 };
 
-type Fields1 = { username: unknown; email: unknown; firstname: unknown; lastname: unknown, birthday: unknown; gender: unknown; orientation: unknown; bio: unknown; };
+type Fields1 = {
+	username: unknown;
+	email: unknown;
+	firstname: unknown;
+	lastname: unknown;
+	birthday: unknown;
+	gender: unknown;
+	orientation: unknown;
+	bio: unknown;
+};
 
-export const parseUserProfilePayload = ({ username, email, firstname, lastname, birthday, gender, orientation, bio}: Fields1):UserProfile => {
+export const parseUserProfilePayload = ({ username, email, firstname, lastname, birthday, gender, orientation, bio }: Fields1): UserProfile => {
 	const updatedUser: UserProfile = {
 		username: parseUsername(username),
 		email: parseEmail(email),
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
 		birthday: parseBirthday(birthday),
-		gender:  parseGender(gender),
+		gender: parseGender(gender),
 		orientation: parseOrientation(orientation),
-		bio: parseBio(bio),
+		bio: parseBio(bio)
 	};
 	return updatedUser;
 };

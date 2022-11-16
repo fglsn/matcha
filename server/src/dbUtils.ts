@@ -39,8 +39,6 @@ const getDate = (value: unknown): Date => {
 const getBdDateOrUndefined = (value: unknown): Date | undefined => {
 	if (value instanceof Date) {
 		const utc = Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), value.getHours(), 0, 0, 0);
-		console.log(new Date(utc));
-		
 		return new Date(utc);
 	}
 	if (value === null) {

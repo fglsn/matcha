@@ -133,7 +133,17 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 const updateUserDataByUserId = async (userId: string, updatedProfile: UserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set username = $2, email = $3, firstname = $4, lastname = $5, birthday = $6, gender = $7, orientation = $8, bio = $9 where id = $1',
-		values: [userId, updatedProfile.username, updatedProfile.email, updatedProfile.firstname, updatedProfile.lastname, updatedProfile.birthday, updatedProfile.gender, updatedProfile.orientation, updatedProfile.bio]
+		values: [
+			userId,
+			updatedProfile.username,
+			updatedProfile.email,
+			updatedProfile.firstname,
+			updatedProfile.lastname,
+			updatedProfile.birthday,
+			updatedProfile.gender,
+			updatedProfile.orientation,
+			updatedProfile.bio
+		]
 	};
 	await pool.query(query);
 };
