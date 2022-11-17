@@ -226,8 +226,8 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, birthday: '1999-10-32' }, 'Invalid birthday'],
 			[{ ...infoProfile, birthday: '1900-01-00' }, 'Invalid birthday'],
 			[{ ...infoProfile, birthday: '1899-12-31' }, 'Maximum age is exceeded'],
-			[{ ...infoProfile, birthday: '2004-11-15' }, 'User must be at least 18'],
-			[{ ...infoProfile, birthday: '2004-11-16' }, 'User must be at least 18']
+			[{ ...infoProfile, birthday: '2006-11-15' }, 'User must be at least 18'],
+			[{ ...infoProfile, birthday: '2005-11-16' }, 'User must be at least 18']
 		])(`put fails with invalid birthday`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
 				.put(`/api/profile/${id}`)

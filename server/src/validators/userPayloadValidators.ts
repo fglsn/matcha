@@ -146,7 +146,7 @@ const getAge = (dateString: string): number => {
 	const birthDate = new Date(dateString);
 	let age = today.getFullYear() - birthDate.getFullYear();
 	const m = today.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && today.getDate() > birthDate.getDate())) {
+	if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
 		age--;
 	}
 	return age;
@@ -169,25 +169,29 @@ const parseBirthday = (date: unknown): Date => {
 	return bd;
 };
 //to be fixed
-const parseBio = (description: unknown): string => {
-	if (!description) {
+const parseBio = (bio: unknown): string => {
+	if (!bio) {
 		throw new ValidationError(`Missing bio`);
 	}
-	if (!isString(description) || description.length > 255 || description.length < 10) {
+	if (!isString(bio)) {
+		throw new ValidationError(`Expected lastname to be string, got: ${typeof bio}`);
+	}
+	const trimmedBio = bio.trim();
+	if (trimmedBio.length > 255 || trimmedBio.length < 10) {
 		throw new ValidationError(`Invalid bio format: min 10, max 255 chars`);
 	}
-	return description;
+	return trimmedBio;
 };
 
 //to be fixed
-const parseOrientation = (description: unknown): Orientation => {
-	if (!description) {
+const parseOrientation = (orientation: unknown): Orientation => {
+	if (!orientation) {
 		throw new ValidationError(`Missing orientation`);
 	}
-	if (!isString(description) || !isOrientation(description)) {
+	if (!isString(orientation) || !isOrientation(orientation)) {
 		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
 	}
-	return description;
+	return orientation;
 };
 
 type Fields1 = {
