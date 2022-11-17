@@ -48,3 +48,8 @@ export enum Orientation {
 	GAY = 'gay',
 	BI = 'bi'
 }
+
+export interface ImageType {
+	dataURL: string;
+	file: File;
+}
