@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { NewUser, UserProfile } from '../types';
-import { isDate, isString } from './basicTypeValidators';
+import { Gender, NewUser, Orientation, UserProfile } from '../types';
+import { isDate, isGender, isOrientation, isString } from './basicTypeValidators';
 import { ValidationError } from '../errors';
 // import dayjs from 'dayjs';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -129,24 +129,13 @@ export const parseNewUserPayload = ({ username, email, passwordPlain, firstname,
 	return newUser;
 };
 
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// const isGender = (gender: any): gender is Gender => {
-//     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-//     return Object.values(Gender).includes(gender);
-// };
-// const parseGender = (gender: unknown): Gender => {
-//     if (!gender || !isGender(gender)) {
-//         throw new Error('Incorrect or missing gender: ' + gender);
-//     }
-//     return gender;
-// };
 //to be fixed
-const parseGender = (gender: unknown): string => {
+const parseGender = (gender: unknown): Gender => {
 	if (!gender) {
 		throw new ValidationError('Missing gender');
 	}
-	if (!isString(gender)) {
-		throw new ValidationError('Incorrect or missing gender: ' + gender);
+	if (!isString(gender) || !isGender(gender)) {
+		throw new ValidationError('Invalid gender');
 	}
 	return gender;
 };
@@ -185,18 +174,18 @@ const parseBio = (description: unknown): string => {
 		throw new ValidationError(`Missing bio`);
 	}
 	if (!isString(description)) {
-		throw new ValidationError(`Invalid or missing field descripton: ${description}`);
+		throw new ValidationError(`Invalid bio format`);
 	}
 	return description;
 };
 
 //to be fixed
-const parseOrientation = (description: unknown): string => {
+const parseOrientation = (description: unknown): Orientation => {
 	if (!description) {
 		throw new ValidationError(`Missing orientation`);
 	}
-	if (!isString(description)) {
-		throw new ValidationError(`Invalid or missing field descripton: ${description}`);
+	if (!isString(description) || !isOrientation(description)) {
+		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
 	}
 	return description;
 };

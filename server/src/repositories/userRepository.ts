@@ -145,7 +145,19 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UserProfil
 			updatedProfile.bio
 		]
 	};
-	await pool.query(query);
+	try {
+		await pool.query(query);
+	} catch (error) {
+		if (error instanceof Error) {
+			if (error.message === 'duplicate key value violates unique constraint "users_username_key"') {
+				throw new ValidationError('Username already exists');
+			}
+			if (error.message === 'duplicate key value violates unique constraint "users_email_key"') {
+				throw new ValidationError('This email was already used');
+			}
+		}
+		throw error;
+	}
 };
 
 export {
