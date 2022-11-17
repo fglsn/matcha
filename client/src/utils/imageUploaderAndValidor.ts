@@ -1,4 +1,4 @@
-import { ImageType } from "../types";
+import { ImageType } from '../types';
 
 export const openFileDialog = (inputRef: React.RefObject<HTMLInputElement>): void => {
 	if (inputRef.current) inputRef.current.click();
@@ -47,14 +47,15 @@ export const getValidImages = async (
 
 			validImages.push({
 				dataURL: await getBase64(files[i]),
-				file: files[i],
+				file: files[i]
 			});
 		} catch (e) {
 			console.log('Error decoding image', e);
 		}
 	}
 
-	if (validImages.length < files.length) return [validImages, 'File must be a valid image'];
+	if (validImages.length < files.length)
+		return [validImages, 'File must be a valid image'];
 
 	return [validImages, undefined];
 };

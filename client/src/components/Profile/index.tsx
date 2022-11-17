@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect,  useCallback} from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getProfilePage } from '../../services/profile';
@@ -34,14 +34,16 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Profile = () => {
 	const { error: errorCallback } = useContext(AlertContext);
+	const [{loggedUser}, dispatch] = useStateValue();
 
+	const profileCallback = useCallback(() => getProfilePage(loggedUser), [loggedUser]);
+	
 	const {
 		data,
 		error
 	}: { data: UserDataWithoutId | undefined; error: Error | undefined } =
-		useServiceCall(getProfilePage);
-
-	const [, dispatch] = useStateValue();
+		useServiceCall(profileCallback);
+	
 	const navigate = useNavigate();
 
 	// // to be changed
