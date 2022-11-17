@@ -16,6 +16,7 @@ router.get(
 			if (req.session.userId === req.params.id && req.session.userId) {
 				const result = await getUserDataByUserId(req.session.userId);
 				res.status(200).json(result);
+				return;
 			}
 			throw new AppError(`No rights to get profile data`, 400);
 			// res.status(400).json({ error: `Bad Request: no rights to get profile data with id: ${req.params.id}` });
@@ -34,6 +35,7 @@ router.put(
 				await updateUserDataByUserId(req.session.userId, updatedProfile);
 				//res.status(200).json(updatedProfile);
 				res.status(200).end();
+				return;
 			}
 			throw new AppError(`No rights to update profile data`, 400);
 			// res.status(400).json({ error: `No rights to update profile data with id: ${req.params.id}` });
