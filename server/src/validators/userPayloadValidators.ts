@@ -173,8 +173,8 @@ const parseBio = (description: unknown): string => {
 	if (!description) {
 		throw new ValidationError(`Missing bio`);
 	}
-	if (!isString(description)) {
-		throw new ValidationError(`Invalid bio format`);
+	if (!isString(description) || description.length > 255 || description.length < 10) {
+		throw new ValidationError(`Invalid bio format: min 10, max 255 chars`);
 	}
 	return description;
 };

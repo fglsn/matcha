@@ -5,7 +5,7 @@ import { app } from '../app';
 import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser, infoProfile, secondUser, loginUser2, infoProfile2 } from './test_helper';
+import { newUser, loginUser, infoProfile, secondUser, loginUser2, infoProfile2, bioTooLong, bioMax } from './test_helper';
 
 const api = supertest(app);
 
@@ -267,6 +267,20 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
+			[{ ...infoProfile, bio: 'aaaaa' }, 'Invalid bio'],
+			[{ ...infoProfile, bio: bioTooLong }, 'Invalid bio'],
+			[{ ...infoProfile, bio: 'aaaaaaaaa' }, 'Invalid bio']
+		])(`put fails with invalid bio`, async (invalidInputs, expectedErrorMessage) => {
+			const res = await api
+				.put(`/api/profile/${id}`)
+				.set({ Authorization: `bearer ${loginRes.body.token}` })
+				.send(invalidInputs)
+				.expect(400)
+				.expect('Content-Type', /application\/json/);
+			// console.log(res.body.error);
+			expect(res.body.error).toContain(expectedErrorMessage);
+		});
+		it.each([
 			[
 				{ ...infoProfile, orientation: 'gay' },
 				{ ...infoProfile, orientation: 'gay' }
@@ -286,6 +300,14 @@ describe('Check responses and requests to api/profile', () => {
 			[
 				{ ...infoProfile, gender: 'male' },
 				{ ...infoProfile, gender: 'male' }
+			],
+			[
+				{ ...infoProfile, bio: '1234567890' },
+				{ ...infoProfile, bio: '1234567890' }
+			],
+			[
+				{ ...infoProfile, bio: bioMax },
+				{ ...infoProfile, bio: bioMax }
 			],
 			[
 				{ ...infoProfile, birthday: exactly18() },
