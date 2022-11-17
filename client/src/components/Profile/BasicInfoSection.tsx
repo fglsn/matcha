@@ -1,15 +1,19 @@
 // prettier-ignore
 import { validateFirstame, validateLastname, validateUsername, validateEmail, validateBio, validateProfileForm } from '../../utils/inputValidators';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
 import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup } from '@mui/material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
-import { UserDataWithoutId } from '../../types';
+import { NewUserDataWithoutId, UserDataWithoutId } from '../../types';
 import { useToggleButton } from '../../hooks/useToggleButton';
-import type { } from '@mui/x-date-pickers/themeAugmentation';
+import type {} from '@mui/x-date-pickers/themeAugmentation';
+
+import profileService from '../../services/profile';
+import { useStateValue } from '../../state';
+import { AlertContext } from '../AlertProvider';
 
 const style = {
 	box: {
@@ -52,8 +56,10 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 		setDateValue(newValue);
 	};
 
+	const [{ loggedUser }] = useStateValue();
+	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
-	
+
 	//rm later
 	console.log(`${username.value} 
 		${email.value} &&
@@ -63,6 +69,35 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 		${gender.value} &&
 		${orientation.value} &&
 		${bio.value}`);
+
+	const updateUserData = async (newUserData: NewUserDataWithoutId) => {
+		try {
+			loggedUser &&
+				(await profileService.updateProfileUserData(loggedUser, newUserData));
+			successCallback(`Profile settings were updated!.`);
+		} catch (err) {
+			console.log('Error in updateUserData (BasicInfoSection on Profile) ' + err); //rm later
+			errorCallback(
+				err.response?.data?.error ||
+					'Unable to update user profile settings. Please try again.'
+			);
+		}
+	};
+
+	const handleUserDataUpdate = (event: any) => {
+		event.preventDefault();
+		const newUserData: NewUserDataWithoutId = {
+			username: username.value,
+			email: email.value,
+			firstname: firstname.value,
+			lastname: lastname.value,
+			birthday: date,
+			gender: gender.value,
+			orientation: orientation.value,
+			bio: bio?.value?.replace(/\s\s+/g, ' ')
+		};
+		updateUserData(newUserData);
+	};
 
 	return (
 		<>
@@ -151,32 +186,31 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
-						<TextField
-							{...bio}
-							required
-							fullWidth
-							multiline
-							rows={4}
-						/>
+						<TextField {...bio} required fullWidth multiline rows={4} />
 					</Grid>
 				</Grid>
 				{username.value &&
-					email.value &&
-					firstname.value &&
-					lastname.value &&
-					date &&
-					gender.value &&
-					orientation.value &&
-					bio.value &&
-					validateProfileForm(
-						username.value,
-						email.value,
-						firstname.value,
-						lastname.value,
-						date,
-						bio.value
-					) ? (
-					<Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+				email.value &&
+				firstname.value &&
+				lastname.value &&
+				date &&
+				gender.value &&
+				orientation.value &&
+				bio.value &&
+				validateProfileForm(
+					username.value,
+					email.value,
+					firstname.value,
+					lastname.value,
+					date,
+					bio.value
+				) ? (
+					<Button
+						type="submit"
+						onClick={handleUserDataUpdate}
+						variant="contained"
+						sx={{ mt: 3, mb: 2 }}
+					>
 						Update Info
 					</Button>
 				) : (

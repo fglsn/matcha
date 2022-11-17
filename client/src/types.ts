@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export type BaseUser = {
 	username: string;
 	email: string;
@@ -21,6 +23,18 @@ export type UserData = BaseUser & {
 
 export type UserDataWithoutId = BaseUser & {
 	birthday: Date | undefined;
+	gender: string | undefined;
+	orientation: string | undefined;
+	bio: string | undefined;
+};
+
+
+export type NewUserDataWithoutId = {
+	username: string | undefined;
+	email: string | undefined;
+	firstname: string | undefined;
+	lastname: string | undefined;
+	birthday: Dayjs | null;
 	gender: string | undefined;
 	orientation: string | undefined;
 	bio: string | undefined;
