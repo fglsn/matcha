@@ -188,7 +188,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 const uploadApplyBtn = {
 	margin: '10px 0 5px 0',
-	padding: '5px 150px',
+	padding: '5px 25px',
 	maxWidth: '100%'
 };
 
