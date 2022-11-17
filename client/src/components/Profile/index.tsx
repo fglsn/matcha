@@ -1,4 +1,4 @@
-import { useContext, useEffect,  useCallback} from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getProfilePage } from '../../services/profile';
@@ -34,17 +34,16 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Profile = () => {
 	const { error: errorCallback } = useContext(AlertContext);
-	const [{loggedUser}, dispatch] = useStateValue();
+	const [{ loggedUser }, dispatch] = useStateValue();
+	const navigate = useNavigate();
 
-	const profileCallback = useCallback(() => getProfilePage(loggedUser), [loggedUser]);
-	
 	const {
 		data,
 		error
-	}: { data: UserDataWithoutId | undefined; error: Error | undefined } =
-		useServiceCall(profileCallback);
-	
-	const navigate = useNavigate();
+	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
+		async () => loggedUser && await getProfilePage(loggedUser),
+		[loggedUser]
+	);
 
 	// // to be changed
 	// window.onblur = function () {
@@ -78,7 +77,6 @@ const Profile = () => {
 		orientation: data.orientation,
 		bio: data.bio
 	};
-	// console.log('bio ' + data.bio)
 	//render form sections
 	return (
 		<>
