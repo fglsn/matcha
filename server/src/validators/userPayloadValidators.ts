@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { NewUser } from '../types';
-import { isString } from './basicTypeValidators';
+import { Gender, NewUser, Orientation, UserProfile } from '../types';
+import { isDate, isGender, isOrientation, isString } from './basicTypeValidators';
 import { ValidationError } from '../errors';
+// import dayjs from 'dayjs';
+// import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =
@@ -125,4 +127,90 @@ export const parseNewUserPayload = ({ username, email, passwordPlain, firstname,
 		lastname: parseLastname(lastname)
 	};
 	return newUser;
+};
+
+//to be fixed
+const parseGender = (gender: unknown): Gender => {
+	if (!gender) {
+		throw new ValidationError('Missing gender');
+	}
+	if (!isString(gender) || !isGender(gender)) {
+		throw new ValidationError('Invalid gender');
+	}
+	return gender;
+};
+
+//might fail when offfset back by local if not same timezone as front
+const getAge = (dateString: string): number => {
+	const today = new Date();
+	const birthDate = new Date(dateString);
+	let age = today.getFullYear() - birthDate.getFullYear();
+	const m = today.getMonth() - birthDate.getMonth();
+	if (m < 0 || (m === 0 && today.getDate() > birthDate.getDate())) {
+		age--;
+	}
+	return age;
+};
+
+//to be fixed?
+const parseBirthday = (date: unknown): Date => {
+	if (!date) {
+		throw new ValidationError('Missing birthay date');
+	}
+	if (!isString(date) || !isDate(date)) {
+		throw new ValidationError('Invalid birthday date format');
+	}
+	const age = getAge(date);
+	const limit = new Date('1900-01-01');
+	if (age < 18) throw new ValidationError('User must be at least 18 y.o.');
+	const bd = new Date(date);
+	if (bd < limit) throw new ValidationError('Maximum age is exceeded');
+
+	return bd;
+};
+//to be fixed
+const parseBio = (description: unknown): string => {
+	if (!description) {
+		throw new ValidationError(`Missing bio`);
+	}
+	if (!isString(description) || description.length > 255 || description.length < 10) {
+		throw new ValidationError(`Invalid bio format: min 10, max 255 chars`);
+	}
+	return description;
+};
+
+//to be fixed
+const parseOrientation = (description: unknown): Orientation => {
+	if (!description) {
+		throw new ValidationError(`Missing orientation`);
+	}
+	if (!isString(description) || !isOrientation(description)) {
+		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
+	}
+	return description;
+};
+
+type Fields1 = {
+	username: unknown;
+	email: unknown;
+	firstname: unknown;
+	lastname: unknown;
+	birthday: unknown;
+	gender: unknown;
+	orientation: unknown;
+	bio: unknown;
+};
+
+export const parseUserProfilePayload = ({ username, email, firstname, lastname, birthday, gender, orientation, bio }: Fields1): UserProfile => {
+	const updatedUser: UserProfile = {
+		username: parseUsername(username),
+		email: parseEmail(email),
+		firstname: parseFirstname(firstname),
+		lastname: parseLastname(lastname),
+		birthday: parseBirthday(birthday),
+		gender: parseGender(gender),
+		orientation: parseOrientation(orientation),
+		bio: parseBio(bio)
+	};
+	return updatedUser;
 };

@@ -8,7 +8,7 @@ import profileRouter from './routes/profile';
 
 import testAuthRouter from './routes/testAuth';
 
-import { globalErrorHandler } from './errors';
+import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionIdExtractor } from './utils/middleware';
 
 export const app = express();
@@ -32,3 +32,5 @@ app.use('/api/testAuth', testAuthRouter);
 
 // Error handler for errors
 app.use(globalErrorHandler);
+
+app.use(unknownEndpoint);

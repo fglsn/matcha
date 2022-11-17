@@ -15,6 +15,17 @@ export type UserData = BaseUser & {
 	bio: string | undefined;
 };
 
+export type UserProfile = BaseUser & {
+	birthday: Date;
+	gender: Gender;
+	orientation: Orientation;
+	bio: string;
+};
+
+export type Gender = 'male' | 'female';
+
+export type Orientation = 'straight' | 'gay' | 'bi';
+
 export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; isActive: boolean; activationCode: string };
 
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string };

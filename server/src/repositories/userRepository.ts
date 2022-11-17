@@ -1,7 +1,7 @@
 import pool from '../db';
-import { getString, getDate, getBoolean, getDateOrUndefined, getStringOrUndefined } from '../dbUtils';
+import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined } from '../dbUtils';
 import { ValidationError } from '../errors';
-import { User, NewUserWithHashedPwd, UserData } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UserProfile } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -26,7 +26,7 @@ const userDataMapper = (row: any): UserData => {
 		email: getString(row['email']),
 		firstname: getString(row['firstname']),
 		lastname: getString(row['lastname']),
-		birthday: getDateOrUndefined(row['birthday']),
+		birthday: getBdDateOrUndefined(row['birthday']),
 		gender: getStringOrUndefined(row['gender']),
 		orientation: getStringOrUndefined(row['orientation']),
 		bio: getStringOrUndefined(row['bio'])
@@ -130,6 +130,36 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 	return userDataMapper(res.rows[0]);
 };
 
+const updateUserDataByUserId = async (userId: string, updatedProfile: UserProfile): Promise<void> => {
+	const query = {
+		text: 'update users set username = $2, email = $3, firstname = $4, lastname = $5, birthday = $6, gender = $7, orientation = $8, bio = $9 where id = $1',
+		values: [
+			userId,
+			updatedProfile.username,
+			updatedProfile.email,
+			updatedProfile.firstname,
+			updatedProfile.lastname,
+			updatedProfile.birthday,
+			updatedProfile.gender,
+			updatedProfile.orientation,
+			updatedProfile.bio
+		]
+	};
+	try {
+		await pool.query(query);
+	} catch (error) {
+		if (error instanceof Error) {
+			if (error.message === 'duplicate key value violates unique constraint "users_username_key"') {
+				throw new ValidationError('Username already exists');
+			}
+			if (error.message === 'duplicate key value violates unique constraint "users_email_key"') {
+				throw new ValidationError('This email was already used');
+			}
+		}
+		throw error;
+	}
+};
+
 export {
 	getAllUsers,
 	addNewUser,
@@ -139,5 +169,6 @@ export {
 	setUserAsActive,
 	findUserByEmail,
 	updateUserPassword,
-	getUserDataByUserId
+	getUserDataByUserId,
+	updateUserDataByUserId
 };

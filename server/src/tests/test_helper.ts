@@ -7,6 +7,13 @@ export const newUser: NewUser = {
 	firstname: 'lorem',
 	lastname: 'ipsum'
 };
+export const secondUser: NewUser = {
+	username: 'matcha2',
+	email: 'matcha2@test.com',
+	passwordPlain: 'Test!111',
+	firstname: 'lorem',
+	lastname: 'ipsum'
+};
 
 export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	username: 'matcha',
@@ -18,3 +25,32 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 };
 
 export const loginUser = { username: 'matcha', password: 'Test!111' };
+
+export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
+
+export const infoProfile = {
+	username: 'matcha',
+	email: 'matcha@test.com',
+	firstname: 'lorem',
+	lastname: 'ipsum',
+	birthday: new Date('1999-03-22').toISOString(),
+	gender: 'male',
+	orientation: 'straight',
+	bio: 'born sleepy'
+};
+export const infoProfile2 = {
+	username: 'matcha2',
+	email: 'matcha2@test.com',
+	firstname: 'lorem',
+	lastname: 'ipsum',
+	birthday: new Date('1999-03-22').toISOString(),
+	gender: 'male',
+	orientation: 'straight',
+	bio: 'born sleepy'
+};
+
+export const bioTooLong =
+	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+export const bioMax =
+	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';

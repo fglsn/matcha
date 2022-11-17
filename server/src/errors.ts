@@ -29,3 +29,7 @@ export const globalErrorHandler = (err: any, _req: Request, res: Response, _next
 		error: 'Unexpected error: ' + err
 	});
 };
+
+export const unknownEndpoint = (_req: Request, res: Response) => {
+	res.status(404).send({ error: 'Unknown endpoint' });
+};
