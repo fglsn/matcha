@@ -25,6 +25,7 @@ export type UserDataWithoutId = BaseUser & {
 	birthday: Date | undefined;
 	gender: string | undefined;
 	orientation: string | undefined;
+	tags: string[] | undefined;
 	bio: string | undefined;
 };
 

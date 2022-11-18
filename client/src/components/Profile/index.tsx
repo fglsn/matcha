@@ -75,6 +75,7 @@ const Profile = () => {
 		birthday: data.birthday,
 		gender: data.gender,
 		orientation: data.orientation,
+		tags: data.tags,
 		bio: data.bio
 	};
 	//render form sections

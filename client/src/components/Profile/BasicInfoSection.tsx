@@ -14,6 +14,7 @@ import type {} from '@mui/x-date-pickers/themeAugmentation';
 import profileService from '../../services/profile';
 import { useStateValue } from '../../state';
 import { AlertContext } from '../AlertProvider';
+import Tags from './Tags';
 
 const style = {
 	box: {
@@ -49,6 +50,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const bio = useControlledField('text', userData.bio, validateBio);
 	const gender = useToggleButton(userData.gender);
 	const orientation = useToggleButton(userData.orientation);
+	const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
 
 	const birthday = userData.birthday ? dayjs(userData.birthday) : null;
 	const [date, setDateValue] = useState<Dayjs | null>(birthday);
@@ -183,6 +185,9 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 								<ToggleButton value="bi">BI</ToggleButton>
 							</StyledToggleButtonGroup>
 						</Box>
+					</Grid>
+					<Grid container>
+						<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
