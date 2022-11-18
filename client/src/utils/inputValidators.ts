@@ -63,7 +63,7 @@ export const validateBirthday = (date: dayjs.Dayjs) => {
 };
 
 export const validateBio = (bio: string) => {
-	let trimmedBio = bio.trim().replace( /\s\s+/g, ' ' );
+	let trimmedBio = bio.trim().replace(/\s\s+/g, ' ');
 	if (trimmedBio.length < 10 || trimmedBio.length > 255) {
 		return 'This field should be 10-255 characters long. (Note that we are removing recurring spaces)';
 	}

@@ -5,14 +5,14 @@ import { red } from '@mui/material/colors';
 const theme = createTheme({
 	palette: {
 		background: {
-			default: '#fcfcfc',
+			default: '#fcfcfc'
 		},
 		primary: {
 			main: '#EEB902',
 			contrastText: '#fff' //button text white instead of black
 		},
 		secondary: {
-			main: '#ffffff',
+			main: '#ffffff'
 		},
 		error: {
 			main: red.A400

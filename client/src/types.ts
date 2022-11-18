@@ -1,4 +1,4 @@
-import { Dayjs } from "dayjs";
+import { Dayjs } from 'dayjs';
 
 export type BaseUser = {
 	username: string;
@@ -28,7 +28,6 @@ export type UserDataWithoutId = BaseUser & {
 	tags: string[] | undefined;
 	bio: string | undefined;
 };
-
 
 export type NewUserDataWithoutId = {
 	firstname: string | undefined;
