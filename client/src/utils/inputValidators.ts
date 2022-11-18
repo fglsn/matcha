@@ -91,16 +91,12 @@ export const validateLoginForm = (username: string, password: string) => {
 };
 
 export const validateProfileForm = (
-	username: string,
-	email: string,
 	firstname: string,
 	lastname: string,
 	date: dayjs.Dayjs,
 	bio: string
 ) => {
-	return !validateUsername(username) &&
-		!validateEmail(email) &&
-		!validateFirstame(firstname) &&
+	return !validateFirstame(firstname) &&
 		!validateLastname(lastname) &&
 		!validateBirthday(date) &&
 		!validateBio(bio)

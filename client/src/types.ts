@@ -31,13 +31,12 @@ export type UserDataWithoutId = BaseUser & {
 
 
 export type NewUserDataWithoutId = {
-	username: string | undefined;
-	email: string | undefined;
 	firstname: string | undefined;
 	lastname: string | undefined;
 	birthday: Dayjs | null;
 	gender: string | undefined;
 	orientation: string | undefined;
+	tags: string[] | undefined;
 	bio: string | undefined;
 };
 
