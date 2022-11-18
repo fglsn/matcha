@@ -114,6 +114,14 @@ const updateUserPassword = async (userId: string, passwordHash: string): Promise
 	await pool.query(query);
 };
 
+const updateUserEmail = async (userId: string, email: string): Promise<void> => {
+	const query = {
+		text: 'update users set email = $1 where id = $2',
+		values: [email, userId]
+	};
+	await pool.query(query);
+};
+
 const clearUsers = async (): Promise<void> => {
 	await pool.query('truncate table users');
 };
@@ -169,6 +177,7 @@ export {
 	setUserAsActive,
 	findUserByEmail,
 	updateUserPassword,
+	updateUserEmail,
 	getUserDataByUserId,
 	updateUserDataByUserId
 };

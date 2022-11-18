@@ -49,4 +49,6 @@ export interface CustomRequest extends Request {
 
 export type NewPasswordResetRequest = { userId: string };
 
+export type EmailResetRequest = { userId: string; email: string; token: string; expiresAt: Date };
+
 export type PasswordResetRequest = NewPasswordResetRequest & { token: string; expiresAt: Date };

@@ -115,6 +115,22 @@ export const validateToken = (token: unknown): string => {
 	}
 	return trimmedToken;
 };
+export const validateEmailToken = (token: unknown): string => {
+	if (!token || !isString(token)) {
+		throw new ValidationError(`Missing token or not string: ${typeof token}`);
+	}
+	const trimmedToken = token.trim();
+	if (!trimmedToken) {
+		throw new ValidationError('Missing token');
+	}
+	if (trimmedToken.length !== 36) {
+		throw new ValidationError('Invalid email reset code');
+	}
+	if (!tokenRegex.test(trimmedToken)) {
+		throw new ValidationError('Invalid email reset code format');
+	}
+	return trimmedToken;
+};
 
 type Fields = { username: unknown; email: unknown; passwordPlain: unknown; firstname: unknown; lastname: unknown };
 

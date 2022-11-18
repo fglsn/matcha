@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
-import { NewUser, PasswordResetRequest, User } from '../types';
+import { EmailResetRequest, NewUser, PasswordResetRequest, User } from '../types';
 import { sendMail } from '../utils/mailer';
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail } from '../repositories/userRepository';
 import { AppError } from '../errors';
 import {
 	addPasswordResetRequest,
@@ -11,6 +11,13 @@ import {
 	removePasswordResetRequest,
 	removePasswordResetRequestByUserId
 } from '../repositories/passwordResetRequestRepository';
+import {
+	addEmailResetRequest,
+	findEmailResetRequestByUserId,
+	removeEmailResetRequest,
+	removeEmailResetRequestByUserId
+} from '../repositories/emailResetRequestRepository';
+import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -72,6 +79,19 @@ export const sendResetLink = async (email: string): Promise<void> => {
 	sendResetPasswordLink(user, newResetRequset);
 };
 
+export const sendEmailResetLink = async (id: string, email: string): Promise<void> => {
+	const resetRequset = await findEmailResetRequestByUserId(id);
+	if (resetRequset) {
+		await removeEmailResetRequest(resetRequset.token);
+	}
+
+	const newResetRequset = await addEmailResetRequest(id, email);
+	if (!newResetRequset) {
+		throw new AppError('Error creating reset link, please try again', 400);
+	}
+	sendResetEmailLink(email, newResetRequset);
+};
+
 export const sendResetPasswordLink = (user: User, newResetRequset: PasswordResetRequest): void => {
 	sendMail(
 		user.email,
@@ -86,6 +106,20 @@ export const sendResetPasswordLink = (user: User, newResetRequset: PasswordReset
 	);
 };
 
+export const sendResetEmailLink = (email: User['email'], newResetRequset: EmailResetRequest): void => {
+	sendMail(
+		email,
+		'Confirm email reset for Matcha-account',
+		`<h1>Hi, here you can confirm email reset!</h1>
+			<p>Visit the link below to reset your email:</p>
+			<a href='http://localhost:3000/email_reset?reset=${newResetRequset.token}'>Reset email here</a>
+			<p>Link will be active until ${newResetRequset.expiresAt}.</p>
+			<p>Ignore this message if you haven't requested email reset.</p>
+
+			<p> See you at Matcha! <3 </p>`
+	);
+};
+
 export const changeUserPassword = async (userId: string, passwordPlain: string): Promise<void> => {
 	const passwordHash = await createHashedPassword(passwordPlain);
 	await updateUserPassword(userId, passwordHash);
@@ -95,4 +129,10 @@ export const changeUserPassword = async (userId: string, passwordPlain: string):
 export const updatePasswordNoRequest = async (userId: string, passwordPlain: string): Promise<void> => {
 	const passwordHash = await createHashedPassword(passwordPlain);
 	await updateUserPassword(userId, passwordHash);
+};
+
+export const changeUserEmail = async (emailResetRequest: EmailResetRequest): Promise<void> => {
+	await updateUserEmail(emailResetRequest.userId, emailResetRequest.email);
+	await removeEmailResetRequestByUserId(emailResetRequest.userId);
+	await updateSessionEmailByUserId(emailResetRequest.userId, emailResetRequest.email);
 };
