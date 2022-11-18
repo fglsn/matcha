@@ -5,14 +5,14 @@ import { red } from '@mui/material/colors';
 const theme = createTheme({
 	palette: {
 		background: {
-			default: '#fcfcfc'
+			default: '#fcfcfc',
 		},
 		primary: {
 			main: '#EEB902',
 			contrastText: '#fff' //button text white instead of black
 		},
 		secondary: {
-			main: '#ffffff'
+			main: '#ffffff',
 		},
 		error: {
 			main: red.A400
@@ -22,6 +22,22 @@ const theme = createTheme({
 		MuiButton: {
 			defaultProps: {
 				disableElevation: true
+			}
+		},
+		MuiTypography: {
+			defaultProps: {
+				variantMapping: {
+					h1: 'h2',
+					h2: 'h2',
+					h3: 'h2',
+					h4: 'h2',
+					h5: 'h5',
+					h6: 'h2',
+					subtitle1: 'h2',
+					subtitle2: 'h2',
+					body1: 'span',
+					body2: 'h5'
+				}
 			}
 		}
 	}

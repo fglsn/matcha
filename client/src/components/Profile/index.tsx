@@ -11,23 +11,14 @@ import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import Alert from '@mui/material/Alert';
 import BasicInfo from './BasicInfoSection';
-import { Paper, styled, Container, Grid } from '@mui/material';
 import PicturesSection from './PicturesSection';
 
-const style = {
-	container: {
-		marginTop: '4rem'
-	},
-	paper: {
-		backgroundColor: '#b5bec6ff',
-		padding: '5rem'
-	}
-};
+import { Paper, styled, Container, Grid } from '@mui/material';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
-	padding: theme.spacing(1),
+	padding: theme.spacing(2),
 	textAlign: 'left',
 	color: theme.palette.text.secondary
 }));
@@ -41,17 +32,9 @@ const Profile = () => {
 		data,
 		error
 	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
-		async () => loggedUser && await getProfilePage(loggedUser),
+		async () => loggedUser && (await getProfilePage(loggedUser)),
 		[loggedUser]
 	);
-
-	// // to be changed
-	// window.onblur = function () {
-	// 	window.onfocus = function () {
-	// 		// eslint-disable-next-line no-restricted-globals
-	// 		location.reload();
-	// 	};
-	// };
 
 	useEffect(() => {
 		if (error) {
@@ -78,10 +61,11 @@ const Profile = () => {
 		tags: data.tags,
 		bio: data.bio
 	};
-	//render form sections
+
 	return (
 		<>
-			<Container maxWidth="lg" style={style.container}>
+			<Container maxWidth="lg" sx={{ mt: 8 }}>
+
 				<Grid
 					container
 					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
@@ -99,8 +83,6 @@ const Profile = () => {
 					</Grid>
 				</Grid>
 			</Container>
-
-			{/* <div>hello {data.username}</div> */}
 		</>
 	);
 };
