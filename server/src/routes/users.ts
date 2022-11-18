@@ -4,7 +4,9 @@ import asyncHandler from 'express-async-handler';
 import { AppError } from '../errors';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers } from '../repositories/userRepository';
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeUserPassword } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeUserPassword, updatePasswordNoRequest } from '../services/users';
+import { CustomRequest } from '../types';
+import { sessionExtractor } from '../utils/middleware';
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword } from '../validators/userPayloadValidators';
 
 const router = express.Router();
@@ -82,6 +84,24 @@ router.post(
 		const password = validatePassword(req.body.password);
 		await changeUserPassword(passwordResetRequest.userId, password);
 		res.status(200).end();
+	})
+);
+
+router.put(
+	'/password/update',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (req.session) {
+			if (req.session.userId) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				const password = validatePassword(req.body.password);
+				await updatePasswordNoRequest(req.session.userId, password);
+				res.status(200).end();
+				return;
+			}
+			throw new AppError(`No rights to update profile data`, 400);
+			// res.status(400).json({ error: `No rights to update profile data with id: ${req.params.id}` });
+		}
 	})
 );
 

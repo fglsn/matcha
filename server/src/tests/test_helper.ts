@@ -28,6 +28,8 @@ export const loginUser = { username: 'matcha', password: 'Test!111' };
 
 export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
 
+export const newPass = { password: 'Test!2222' };
+
 export const infoProfile = {
 	username: 'matcha',
 	email: 'matcha@test.com',
