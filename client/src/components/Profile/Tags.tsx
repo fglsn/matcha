@@ -3,7 +3,7 @@ import { Box, Chip, Collapse, Grid, List, ListItemButton, styled, Typography } f
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState } from 'react';
 
-const MyList = styled(List)({
+const TagList = styled(List)({
 	'& .MuiListItemButton-root:hover': {
 		backgroundColor: 'white',
 		'&, & .MuiListItemIcon-root': {
@@ -19,7 +19,8 @@ const Tags = ({
 	selectedTags: string[] | undefined;
 	setSelectedTags: React.Dispatch<React.SetStateAction<string[] | undefined>>;
 }) => {
-	const [tagList, setTagList] = useState<string[]>([
+	const [expanded, setExpanded] = useState(false);
+	const [tagList] = useState<string[]>([
 		'Sauna',
 		'Swimming',
 		'Yoga',
@@ -182,7 +183,8 @@ const Tags = ({
 		'Stocks'
 	]);
 
-	// const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
+	const tooManySelected = selectedTags && selectedTags.length >= 5;
+	const isSelected = (tag: string) => selectedTags && selectedTags.indexOf(tag) > -1;
 
 	const handleSelect = (tag: string) => () => {
 		let selected: string[] = [];
@@ -191,23 +193,18 @@ const Tags = ({
 		setSelectedTags(selected);
 	};
 
-	const handleDeselect = (tagToDeselect: string) => () => {
+	const handleDeselect = (tagToDeselect: string) => () =>
 		setSelectedTags((tags) => tags?.filter((tag) => tag !== tagToDeselect));
-	};
 
-	const [open, setOpen] = useState(false);
-
-	const handleClick = () => {
-		setOpen(!open);
-	};
+	const handleExpand = () => setExpanded(!expanded);
 
 	return (
 		<Box sx={tagSectionBox}>
-			<strong>Passions*</strong>
-			<MyList sx={{ maxWidth: '100%' }}>
-				<ListItemButton onClick={handleClick}>
+			<strong>Interests*</strong>
+			<TagList sx={{ maxWidth: '100%' }}>
+				<ListItemButton onClick={handleExpand}>
 					{!selectedTags && <Typography>Select here</Typography>}
-					<Grid sx={tagListGrid}>
+					<Grid sx={selectedTagsListGrid}>
 						{selectedTags?.map((tag) => {
 							return (
 								<Chip
@@ -220,29 +217,40 @@ const Tags = ({
 							);
 						})}
 					</Grid>
-					{open ? <ExpandLess /> : <ExpandMore />}
+					{expanded ? <ExpandLess /> : <ExpandMore />}
 				</ListItemButton>
-				<Collapse in={open} timeout="auto" unmountOnExit>
+				<Collapse in={expanded} timeout="auto" unmountOnExit>
 					<List component="div" disablePadding>
 						<ListItemButton>
 							<Grid sx={tagListGrid}>
 								{tagList?.map((tag) => {
-									return (
+									return !tooManySelected ? (
 										<Chip
-											sx={{ m: 0.3 }}
+											sx={{ m: 0.4 }}
 											key={tag}
 											color="primary"
 											variant={
-												selectedTags &&
-												selectedTags.indexOf(tag) > -1
-													? 'filled'
-													: 'outlined'
+												isSelected(tag) ? 'filled' : 'outlined'
 											}
 											label={tag}
 											onClick={handleSelect(tag)}
 											onDelete={
-												selectedTags &&
-												selectedTags?.indexOf(tag) > -1
+												isSelected(tag)
+													? handleDeselect(tag)
+													: undefined
+											}
+										/>
+									) : (
+										<Chip
+											sx={{ m: 0.4 }}
+											key={tag}
+											color={
+												isSelected(tag) ? 'primary' : 'default'
+											}
+											variant="filled"
+											label={tag}
+											onDelete={
+												isSelected(tag)
 													? handleDeselect(tag)
 													: undefined
 											}
@@ -253,7 +261,7 @@ const Tags = ({
 						</ListItemButton>
 					</List>
 				</Collapse>
-			</MyList>
+			</TagList>
 		</Box>
 	);
 };
@@ -269,10 +277,21 @@ const tagSectionBox = {
 	m: 0
 };
 
+const selectedTagsListGrid = {
+	display: 'flex',
+	flexWrap: 'wrap',
+	listStyle: 'none',
+	flexDirection: 'row',
+	pt: 1,
+	pl: 0.5,
+	m: 0
+};
+
 const tagListGrid = {
 	display: 'flex',
 	flexWrap: 'wrap',
 	listStyle: 'none',
+	justifyContent: 'center',
 	flexDirection: 'row',
 	pt: 1,
 	pl: 0.5,
