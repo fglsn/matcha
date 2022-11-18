@@ -174,7 +174,7 @@ const parseBio = (bio: unknown): string => {
 		throw new ValidationError(`Missing bio`);
 	}
 	if (!isString(bio)) {
-		throw new ValidationError(`Expected lastname to be string, got: ${typeof bio}`);
+		throw new ValidationError(`Expected bio to be string, got: ${typeof bio}`);
 	}
 	const trimmedBio = bio.trim();
 	if (trimmedBio.length > 255 || trimmedBio.length < 10) {
