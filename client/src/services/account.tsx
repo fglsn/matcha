@@ -4,25 +4,25 @@ import { LoggedUser, NewUserDataWithoutId } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
-export const getProfilePage = async (loggedUser: LoggedUser) => {
+export const getAccountPage = async (loggedUser: LoggedUser) => {
 		try {
 			const config = {
 				headers: { Authorization: getAuthHeader() }
 			};
-			const response = await axios.get(`${apiBaseUrl}/profile/${loggedUser.id}`, config);
+			const response = await axios.get(`${apiBaseUrl}/account/${loggedUser.id}`, config);
 			return response.data;
 		} catch (err) {
 			handleAxiosError(err);
 		}
 };
 
-export const updateProfileUserData = async (loggedUser: LoggedUser, newUserData: NewUserDataWithoutId) => {
+export const updateAccountUserData = async (loggedUser: LoggedUser, newUserData: NewUserDataWithoutId) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.put(
-			`${apiBaseUrl}/profile/${loggedUser.id}`,
+			`${apiBaseUrl}/account/${loggedUser.id}`,
 			newUserData,
 			config
 		);
@@ -32,5 +32,5 @@ export const updateProfileUserData = async (loggedUser: LoggedUser, newUserData:
 	}
 };
 
-const moduleExports = { getProfilePage, updateProfileUserData };
+const moduleExports = { getAccountPage, updateAccountUserData };
 export default moduleExports;

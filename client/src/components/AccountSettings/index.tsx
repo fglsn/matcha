@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { getProfilePage } from '../../services/profile';
+import { getAccountPage } from '../../services/account';
 import { logoutUser } from '../../services/logout';
 import { useStateValue } from '../../state';
 import { AuthError } from '../../utils/errors';
@@ -23,7 +23,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary
 }));
 
-const Profile = () => {
+const Account = () => {
 	const { error: errorCallback } = useContext(AlertContext);
 	const [{ loggedUser }, dispatch] = useStateValue();
 	const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Profile = () => {
 		data,
 		error
 	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
-		async () => loggedUser && (await getProfilePage(loggedUser)),
+		async () => loggedUser && (await getAccountPage(loggedUser)),
 		[loggedUser]
 	);
 
@@ -46,7 +46,7 @@ const Profile = () => {
 		}
 	}, [dispatch, error, errorCallback, navigate]);
 
-	if (error) return <Alert severity="error">Error Loading Profile...</Alert>;
+	if (error) return <Alert severity="error">Error loading account settings page, please try again...</Alert>;
 
 	if (!data) return <LoadingIcon />;
 
@@ -87,4 +87,4 @@ const Profile = () => {
 	);
 };
 
-export default withAuthRequired(Profile);
+export default withAuthRequired(Account);

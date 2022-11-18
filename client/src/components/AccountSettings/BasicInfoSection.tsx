@@ -1,5 +1,5 @@
 // prettier-ignore
-import { validateFirstame, validateLastname, validateBio, validateProfileForm } from '../../utils/inputValidators';
+import { validateFirstame, validateLastname, validateBio, validateAccountForm } from '../../utils/inputValidators';
 import React, { useContext, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
@@ -12,7 +12,7 @@ import { useToggleButton } from '../../hooks/useToggleButton';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 import Tags from './Tags';
-import profileService from '../../services/profile';
+import accountService from '../../services/account';
 import { useStateValue } from '../../state';
 import { AlertContext } from '../AlertProvider';
 
@@ -62,13 +62,13 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const updateUserData = async (newUserData: NewUserDataWithoutId) => {
 		try {
 			loggedUser &&
-				(await profileService.updateProfileUserData(loggedUser, newUserData));
-			successCallback(`Profile settings were updated!.`);
+				(await accountService.updateAccountUserData(loggedUser, newUserData));
+			successCallback(`Account settings were updated!.`);
 		} catch (err) {
-			console.log('Error in updateUserData (BasicInfoSection on Profile) ' + err); //rm later
+			console.log('Error in updateUserData (BasicInfoSection on Account) ' + err); //rm later
 			errorCallback(
 				err.response?.data?.error ||
-					'Unable to update user profile settings. Please try again.'
+					'Unable to update account settings. Please try again.'
 			);
 		}
 	};
@@ -91,7 +91,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
 				<Typography variant="h5" mb={3}>
-					<Link href={`/profile/${loggedUser?.id}`} underline="none">
+					<Link href={`/account/${loggedUser?.id}`} underline="none">
 						@{loggedUser?.username.toUpperCase()}
 					</Link>
 				</Typography>
@@ -184,7 +184,7 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 				orientation.value &&
 				selectedTags &&
 				bio.value &&
-				validateProfileForm(firstname.value, lastname.value, date, bio.value) ? (
+				validateAccountForm(firstname.value, lastname.value, date, bio.value) ? (
 					<Button
 						type="submit"
 						onClick={handleUserDataUpdate}
