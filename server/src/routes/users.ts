@@ -10,8 +10,8 @@ import {
 	createNewUser,
 	sendActivationCode,
 	sendResetLink,
-	changeUserPassword,
-	updatePasswordNoRequest,
+	changeForgottenPassword,
+	updatePassword,
 	sendEmailResetLink,
 	changeUserEmail
 } from '../services/users';
@@ -92,20 +92,20 @@ router.post(
 			throw new AppError('Reset password code is missing or expired. Please try again.', 400);
 		}
 		const password = validatePassword(req.body.password);
-		await changeUserPassword(passwordResetRequest.userId, password);
+		await changeForgottenPassword(passwordResetRequest.userId, password);
 		res.status(200).end();
 	})
 );
 
 router.put(
-	'/password/update',
+	'/update_password',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (req.session) {
 			if (req.session.userId) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				const password = validatePassword(req.body.password);
-				await updatePasswordNoRequest(req.session.userId, password);
+				await updatePassword(req.session.userId, password);
 				res.status(200).end();
 				return;
 			}
@@ -116,7 +116,7 @@ router.put(
 );
 
 router.post(
-	'/email/update',
+	'/update_email',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (req.session) {
@@ -135,7 +135,7 @@ router.post(
 );
 
 router.get(
-	'/email/update',
+	'/update_email',
 	asyncHandler(() => {
 		throw new AppError('Missing activation code', 400);
 	})
@@ -143,7 +143,7 @@ router.get(
 
 //also need to renew backend session and send it back to front?
 router.get(
-	'/email/update/:id',
+	'/update_email/:id',
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const token = validateEmailToken(req.params.id);

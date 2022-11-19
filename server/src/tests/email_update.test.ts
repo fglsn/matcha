@@ -34,7 +34,7 @@ const initLoggedUser = async () => {
 
 // const requestEmailReset = async () => {
 // 	await api
-//             .post('/api/users/email/update')
+//             .post('/api/users/update_email')
 //             .set({ Authorization: `bearer ${loginRes.body.token}` })
 //             .send(newEmail)
 //             .expect(201);
@@ -54,7 +54,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('logged user can update request email update', async () => {
 		await api
-			.post('/api/users/email/update')
+			.post('/api/users/update_email')
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ email: 'tester1.hive@yahoo.com' })
 			.expect(201);
@@ -65,7 +65,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('not logged user not allowed to update email', async () => {
 		const resFromEmailUpdate = await api
-			.post('/api/users/email/update')
+			.post('/api/users/update_email')
 			.send({ email: 'tester1.hive@yahoo.com' })
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
@@ -89,7 +89,7 @@ describe('update email after request has been sent', () => {
 		const resetRequest = await findEmailResetRequestByUserId(id);
 		expect(resetRequest).toBeDefined();
 		await api
-			.get(`/api/users/email/update/${resetRequest?.token}`)
+			.get(`/api/users/update_email/${resetRequest?.token}`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(200);
 

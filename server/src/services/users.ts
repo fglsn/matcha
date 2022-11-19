@@ -120,13 +120,13 @@ export const sendResetEmailLink = (email: User['email'], newResetRequset: EmailR
 	);
 };
 
-export const changeUserPassword = async (userId: string, passwordPlain: string): Promise<void> => {
+export const changeForgottenPassword = async (userId: string, passwordPlain: string): Promise<void> => {
 	const passwordHash = await createHashedPassword(passwordPlain);
 	await updateUserPassword(userId, passwordHash);
 	await removePasswordResetRequestByUserId(userId);
 };
 
-export const updatePasswordNoRequest = async (userId: string, passwordPlain: string): Promise<void> => {
+export const updatePassword = async (userId: string, passwordPlain: string): Promise<void> => {
 	const passwordHash = await createHashedPassword(passwordPlain);
 	await updateUserPassword(userId, passwordHash);
 };

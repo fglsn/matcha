@@ -1,7 +1,7 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined } from '../dbUtils';
 import { ValidationError } from '../errors';
-import { User, NewUserWithHashedPwd, UserData, UserProfile } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -33,9 +33,16 @@ const userDataMapper = (row: any): UserData => {
 	};
 };
 
+//for tests
 const getAllUsers = async (): Promise<User[]> => {
 	const res = await pool.query('select * from users');
 	return res.rows.map((row) => userMapper(row));
+};
+
+//for tests
+const getPwdHash = async (userId: string): Promise<string> => {
+	const res = await pool.query({text: 'select password_hash from users where id = $1', values: [userId]});
+	return getString(res.rows[0]['password_hash']);
 };
 
 const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
@@ -138,13 +145,11 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 	return userDataMapper(res.rows[0]);
 };
 
-const updateUserDataByUserId = async (userId: string, updatedProfile: UserProfile): Promise<void> => {
+const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
-		text: 'update users set username = $2, email = $3, firstname = $4, lastname = $5, birthday = $6, gender = $7, orientation = $8, bio = $9 where id = $1',
+		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7 where id = $1',
 		values: [
 			userId,
-			updatedProfile.username,
-			updatedProfile.email,
 			updatedProfile.firstname,
 			updatedProfile.lastname,
 			updatedProfile.birthday,
@@ -170,6 +175,7 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UserProfil
 
 export {
 	getAllUsers,
+	getPwdHash,
 	addNewUser,
 	clearUsers,
 	findUserByUsername,
