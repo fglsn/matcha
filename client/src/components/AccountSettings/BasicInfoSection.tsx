@@ -3,7 +3,7 @@ import { validateFirstame, validateLastname, validateBio, validateAccountForm } 
 import React, { useContext, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 // prettier-ignore
-import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup, Typography, Link } from '@mui/material';
+import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup, Typography, Link, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
@@ -29,6 +29,17 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 		'&:first-of-type': {
 			borderRadius: theme.shape.borderRadius
 		}
+	}
+}));
+
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+	<Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+	[`& .${tooltipClasses.tooltip}`]: {
+		backgroundColor: theme.palette.common.white,
+		color: 'rgba(0, 0, 0, 0.87)',
+		boxShadow: theme.shadows[1],
+		fontSize: 11
 	}
 }));
 
@@ -90,11 +101,13 @@ const BasicInfo: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<Typography variant="h5" mb={3}>
-					<Link href={`/account/${loggedUser?.id}`} underline="none">
-						@{loggedUser?.username.toUpperCase()}
-					</Link>
-				</Typography>
+				<LightTooltip title="Visit own profile page" placement="top-start">
+					<Typography variant="h5" mb={3}>
+						<Link href={`/account/${loggedUser?.id}`} underline="none">
+							@{loggedUser?.username.toUpperCase()}
+						</Link>
+					</Typography>
+				</LightTooltip>
 				<Grid container spacing={2}>
 					<Grid item xs={12} mt={1}>
 						<strong>First name*</strong>

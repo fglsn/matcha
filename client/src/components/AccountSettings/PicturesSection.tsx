@@ -92,7 +92,7 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 					title={
 						<React.Fragment>
 							<Typography color="inherit">
-								<strong>Valid picture should be:</strong>
+								<strong>Valid picture should be: <br/></strong>
 							</Typography>
 							{'Of jpeg, jpg or png format.'}
 							<br />
