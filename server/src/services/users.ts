@@ -1,23 +1,14 @@
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
-
+//prettier-ignore
+import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
+//prettier-ignore
+import { addEmailResetRequest, findEmailResetRequestByUserId, removeEmailResetRequest, removeEmailResetRequestByUserId } from '../repositories/emailResetRequestRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash } from '../repositories/userRepository';
+import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { EmailResetRequest, NewUser, PasswordResetRequest, User } from '../types';
 import { sendMail } from '../utils/mailer';
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail } from '../repositories/userRepository';
 import { AppError } from '../errors';
-import {
-	addPasswordResetRequest,
-	findPasswordResetRequestByUserId,
-	removePasswordResetRequest,
-	removePasswordResetRequestByUserId
-} from '../repositories/passwordResetRequestRepository';
-import {
-	addEmailResetRequest,
-	findEmailResetRequestByUserId,
-	removeEmailResetRequest,
-	removeEmailResetRequestByUserId
-} from '../repositories/emailResetRequestRepository';
-import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -126,8 +117,13 @@ export const changeForgottenPassword = async (userId: string, passwordPlain: str
 	await removePasswordResetRequestByUserId(userId);
 };
 
-export const updatePassword = async (userId: string, passwordPlain: string): Promise<void> => {
-	const passwordHash = await createHashedPassword(passwordPlain);
+export const updatePassword = async (userId: string, oldPasswordPlain: string, newPasswordPlain: string): Promise<void> => {
+	const oldPwdHash = await getPasswordHash(userId);
+	const confirmOldPassword = await bcrypt.compare(oldPasswordPlain, oldPwdHash);
+	if (!confirmOldPassword) {
+		throw new AppError('Wrong old password, please try again', 400);
+	}
+	const passwordHash = await createHashedPassword(newPasswordPlain);
 	await updateUserPassword(userId, passwordHash);
 };
 

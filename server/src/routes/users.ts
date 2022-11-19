@@ -104,8 +104,9 @@ router.put(
 		if (req.session) {
 			if (req.session.userId) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				const oldPassword = validatePassword(req.body.oldPassword);
 				const password = validatePassword(req.body.password);
-				await updatePassword(req.session.userId, password);
+				await updatePassword(req.session.userId, oldPassword, password);
 				res.status(200).end();
 				return;
 			}
@@ -121,6 +122,7 @@ router.post(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (req.session) {
 			if (req.session.userId) {
+				console.log(req.body);
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				const email = parseEmail(req.body.email);
 				await sendEmailResetLink(req.session.userId, email);

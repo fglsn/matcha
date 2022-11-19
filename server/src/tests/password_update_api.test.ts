@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import { app } from '../app';
 import { getString } from '../dbUtils';
 import { clearSessions } from '../repositories/sessionRepository';
-import { clearUsers, findUserByUsername, getPwdHash } from '../repositories/userRepository';
+import { clearUsers, findUserByUsername, getPasswordHash } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 import { newUser, loginUser, newPass } from './test_helper';
 
@@ -14,6 +14,7 @@ jest.setTimeout(10000);
 
 let loginRes = <supertest.Response>{};
 let userId: string;
+const oldPassword = newUser.passwordPlain;
 
 const initLoggedUser = async () => {
 	const user = await findUserByUsername(newUser.username);
@@ -31,14 +32,14 @@ describe('test update password access', () => {
 		userId = getString(loginRes.body.id);
 	});
 	test('logged user can update password', async () => {
-		const oldPwdHash = await getPwdHash(userId);
+		const oldPwdHash = await getPasswordHash(userId);
 		await api
 			.put(`/api/users/update_password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send(newPass)
+			.send({ oldPassword, ...newPass })
 			.expect(200);
 
-		const newPwdHash = await getPwdHash(userId);
+		const newPwdHash = await getPasswordHash(userId);
 		expect(oldPwdHash).not.toBe(newPwdHash);
 	});
 	test('not logged user not allowed to update password', async () => {
@@ -60,15 +61,12 @@ describe('test update password access', () => {
 		expect(resFromPassUpdate.body.error).toContain('No sessions found');
 	});
 	test('relogin with new password ', async () => {
-		const oldPwdHash = await getPwdHash(userId);
-		console.log(oldPwdHash);
 		await api
 			.put(`/api/users/update_password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send(newPass)
+			.send({ oldPassword, ...newPass })
 			.expect(200);
-		const newPwdHash = await getPwdHash(userId);
-		console.log(newPwdHash);
+
 		await api
 			.post('/api/login')
 			.send({ ...loginUser, ...newPass })
@@ -78,7 +76,7 @@ describe('test update password access', () => {
 		await api
 			.put(`/api/users/update_password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send(newPass)
+			.send({ oldPassword, ...newPass })
 			.expect(200);
 
 		const resFromLogin = await api

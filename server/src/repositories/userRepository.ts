@@ -39,8 +39,7 @@ const getAllUsers = async (): Promise<User[]> => {
 	return res.rows.map((row) => userMapper(row));
 };
 
-//for tests
-const getPwdHash = async (userId: string): Promise<string> => {
+const getPasswordHash = async (userId: string): Promise<string> => {
 	const res = await pool.query({text: 'select password_hash from users where id = $1', values: [userId]});
 	return getString(res.rows[0]['password_hash']);
 };
@@ -175,7 +174,7 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 
 export {
 	getAllUsers,
-	getPwdHash,
+	getPasswordHash,
 	addNewUser,
 	clearUsers,
 	findUserByUsername,
