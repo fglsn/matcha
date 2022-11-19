@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Gender, NewUser, Orientation, UserProfile } from '../types';
+import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
 import { isDate, isGender, isOrientation, isString } from './basicTypeValidators';
 import { ValidationError } from '../errors';
 // import dayjs from 'dayjs';
@@ -221,10 +221,8 @@ type Fields1 = {
 	bio: unknown;
 };
 
-export const parseUserProfilePayload = ({ username, email, firstname, lastname, birthday, gender, orientation, bio }: Fields1): UserProfile => {
-	const updatedUser: UserProfile = {
-		username: parseUsername(username),
-		email: parseEmail(email),
+export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio }: Fields1): UpdateUserProfile => {
+	const updatedUser: UpdateUserProfile = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
 		birthday: parseBirthday(birthday),

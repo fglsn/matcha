@@ -15,7 +15,9 @@ export type UserData = BaseUser & {
 	bio: string | undefined;
 };
 
-export type UserProfile = BaseUser & {
+export type UpdateUserProfile = {
+	firstname: string;
+	lastname: string;
 	birthday: Date;
 	gender: Gender;
 	orientation: Orientation;
