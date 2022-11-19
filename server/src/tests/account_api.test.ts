@@ -52,7 +52,7 @@ describe('check access to profile page', () => {
 	});
 	test('logged user can visit profile page', async () => {
 		const resFromProfilePage = await api
-			.get(`/api/profile/${id}`)
+			.get(`/api/account/${id}`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -62,7 +62,7 @@ describe('check access to profile page', () => {
 	});
 	test('not logged user cannot access profile page', async () => {
 		const resFromProfilePage = await api
-			.get(`/api/profile/${id}`)
+			.get(`/api/account/${id}`)
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
 
@@ -77,7 +77,7 @@ describe('check access to profile page', () => {
 	});
 	test('should fail request with wrong id in request', async () => {
 		const resFromProfilePage = await api
-			.get(`/api/profile/11111111`)
+			.get(`/api/account/11111111`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(400);
 		expect(resFromProfilePage.body.error).toContain('No rights to get profile data');
@@ -85,7 +85,7 @@ describe('check access to profile page', () => {
 	test('fails when no session in db', async () => {
 		await clearSessions();
 		const resFromProfilePage = await api
-			.get(`/api/profile/${id}`)
+			.get(`/api/account/${id}`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
@@ -99,7 +99,7 @@ describe('Check responses and requests to api/profile', () => {
 	let id = <string>'';
 	const getResFromProfile = async (res: supertest.Response) => {
 		return await api
-			.get(`/api/profile/${id}`)
+			.get(`/api/account/${id}`)
 			.set({ Authorization: `bearer ${res.body.token}` })
 			.expect(200);
 	};
@@ -113,7 +113,7 @@ describe('Check responses and requests to api/profile', () => {
 	describe('Check repsonse of GET to /api/profile', () => {
 		const putToProfile = async () => {
 			await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(infoProfile)
 				.expect(200);
@@ -151,7 +151,7 @@ describe('Check responses and requests to api/profile', () => {
 		};
 		test('should succeed with code(200)', async () => {
 			await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(infoProfile)
 				.expect(200);
@@ -171,7 +171,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, bio: undefined }, 'Missing bio']
 		])(`put fails with missing profile payload values`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -189,7 +189,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, username: 'te{st' }, 'Invalid username']
 		])(`put fails with misformatted username`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -208,7 +208,7 @@ describe('Check responses and requests to api/profile', () => {
 			// [{ ...infoProfile, email: 'allex@hive.fi' }, 'Invalid email'],
 		])(`put fails with misformatted email`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -230,7 +230,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, birthday: '2005-11-16' }, 'User must be at least 18']
 		])(`put fails with invalid birthday`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -244,7 +244,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, gender: 'femal' }, 'Invalid gender']
 		])(`put fails with misformatted gender`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -258,7 +258,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, orientation: 'straite' }, 'Invalid orientation']
 		])(`put fails with misformatted orientation`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -272,7 +272,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, bio: 'aaaaaaaaa' }, 'Invalid bio']
 		])(`put fails with invalid bio`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(invalidInputs)
 				.expect(400)
@@ -323,7 +323,7 @@ describe('Check responses and requests to api/profile', () => {
 			]
 		])(`put succeeds with correct payload`, async (validInputs, payload) => {
 			await api
-				.put(`/api/profile/${id}`)
+				.put(`/api/account/${id}`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(validInputs)
 				.expect(200);
@@ -352,7 +352,7 @@ describe('Check responses and requests to api/profile', () => {
 				[{ ...infoProfile2, username: 'matcha' }, 'Username already exists']
 			])(`put fails with duplicate value for unique params`, async (invalidInputs, expectedErrorMessage) => {
 				const res = await api
-					.put(`/api/profile/${id}`)
+					.put(`/api/account/${id}`)
 					.set({ Authorization: `bearer ${loginRes.body.token}` })
 					.send(invalidInputs)
 					.expect(400)

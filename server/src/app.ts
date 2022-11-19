@@ -4,7 +4,7 @@ import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
-import profileRouter from './routes/profile';
+import accountRouter from './routes/account';
 
 import testAuthRouter from './routes/testAuth';
 
@@ -26,7 +26,7 @@ app.use(sessionIdExtractor);
 
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
-app.use('/api/profile', profileRouter);
+app.use('/api/account', accountRouter);
 
 app.use('/api/testAuth', testAuthRouter);
 

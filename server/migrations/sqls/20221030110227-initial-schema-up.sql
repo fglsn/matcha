@@ -34,3 +34,13 @@ create table password_reset_requests
 );
 
 create index password_reset_requests_user_id on password_reset_requests (user_id);
+
+create table email_reset_requests
+(
+	token uuid default gen_random_uuid() primary key,
+	user_id bigserial not null,
+	email varchar not null,
+	expires_at timestamptz not null default now() + time '06:00'
+);
+
+create index email_reset_requests_user_id on email_reset_requests (user_id);

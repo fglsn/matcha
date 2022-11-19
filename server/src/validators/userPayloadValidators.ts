@@ -115,6 +115,22 @@ export const validateToken = (token: unknown): string => {
 	}
 	return trimmedToken;
 };
+export const validateEmailToken = (token: unknown): string => {
+	if (!token || !isString(token)) {
+		throw new ValidationError(`Missing token or not string: ${typeof token}`);
+	}
+	const trimmedToken = token.trim();
+	if (!trimmedToken) {
+		throw new ValidationError('Missing token');
+	}
+	if (trimmedToken.length !== 36) {
+		throw new ValidationError('Invalid email reset code');
+	}
+	if (!tokenRegex.test(trimmedToken)) {
+		throw new ValidationError('Invalid email reset code format');
+	}
+	return trimmedToken;
+};
 
 type Fields = { username: unknown; email: unknown; passwordPlain: unknown; firstname: unknown; lastname: unknown };
 
@@ -174,7 +190,7 @@ const parseBio = (bio: unknown): string => {
 		throw new ValidationError(`Missing bio`);
 	}
 	if (!isString(bio)) {
-		throw new ValidationError(`Expected lastname to be string, got: ${typeof bio}`);
+		throw new ValidationError(`Expected bio to be string, got: ${typeof bio}`);
 	}
 	const trimmedBio = bio.trim();
 	if (trimmedBio.length > 255 || trimmedBio.length < 10) {
