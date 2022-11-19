@@ -10,6 +10,7 @@ import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import Alert from '@mui/material/Alert';
+import ChangeEmail from './ChangeEmail';
 import BasicInfo from './BasicInfoSection';
 import PicturesSection from './PicturesSection';
 
@@ -65,7 +66,7 @@ const Account = () => {
 	return (
 		<>
 			<Container maxWidth="lg" sx={{ mt: 8 }}>
-
+				<ChangeEmail />
 				<Grid
 					container
 					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
