@@ -24,7 +24,7 @@ const UpdateEmailForm = () => {
 
 	const requestUpdateEmailAndHandleError = async ({ id, email }: { id: string, email: string }) => {
 		try {
-			await accountService.requestEmailUpdate({id, email});
+			await accountService.requestUpdateEmail({ id, email });
 			successCallback(`Activation link sent to new email.`);
 		} catch (err) {
 			console.log('Error in requestUpdateEmailAndHandleError (UpdateEmailForm) ' + err); //rm later

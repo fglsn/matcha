@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { AppError } from '../errors';
-import { findEmailResetRequestByToken } from '../repositories/emailResetRequestRepository';
+import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers, getUserDataByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import { CustomRequest } from '../types';
@@ -144,7 +144,7 @@ router.put(
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const token = validateEmailToken(req.params.token);
-		const emailResetRequsest = await findEmailResetRequestByToken(token);
+		const emailResetRequsest = await findUpdateEmailRequestByToken(token);
 		if (!emailResetRequsest) {
 			throw new AppError('Invalid reset link. Please try again.', 400);
 		}

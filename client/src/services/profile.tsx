@@ -38,7 +38,7 @@ export const updateProfile = async (
 	}
 };
 
-export const requestEmailUpdate = async ({ id, email }: { id: string, email: string }) => {
+export const requestUpdateEmail = async ({ id, email }: { id: string, email: string }) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
@@ -61,7 +61,7 @@ export const updateEmailbyToken = async (updateToken: string): Promise<void> => 
 const moduleExports = {
 	getProfile,
 	updateProfile,
-	requestEmailUpdate,
+	requestUpdateEmail,
 	updateEmailbyToken
 };
 export default moduleExports;
