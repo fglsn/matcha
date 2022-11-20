@@ -16,11 +16,6 @@ app.use(cors());
 
 dotenv.config();
 
-app.get('/ping', (_req, res) => {
-	console.log('someone pinged here');
-	res.send('pong');
-});
-
 app.use(sessionIdExtractor);
 
 app.use('/api/users', userRouter);
