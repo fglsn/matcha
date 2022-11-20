@@ -38,7 +38,7 @@ export const updateAccountUserData = async (
 	}
 };
 
-export const updateEmail = async ({ email }: { email: string }) => {
+export const requestEmailChange = async ({ email }: { email: string }) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
@@ -54,5 +54,13 @@ export const updateEmail = async ({ email }: { email: string }) => {
 	}
 };
 
-const moduleExports = { getAccountPage, updateAccountUserData, updateEmail };
+export const checkUpdateTokenEmail = async (updateToken: string): Promise<void> => {
+	await axios.get(`${apiBaseUrl}/users/update_email/${updateToken}`);
+}
+const moduleExports = {
+	getAccountPage,
+	updateAccountUserData,
+	requestEmailChange,
+	checkUpdateTokenEmail
+};
 export default moduleExports;
