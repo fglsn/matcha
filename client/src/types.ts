@@ -21,7 +21,10 @@ export type UserData = BaseUser & {
 	bio: string | undefined;
 };
 
-export type UserDataWithoutId = BaseUser & {
+export type UserDataWithoutId = {
+	username: string;
+	firstname: string;
+	lastname: string;
 	birthday: Date | undefined;
 	gender: string | undefined;
 	orientation: string | undefined;

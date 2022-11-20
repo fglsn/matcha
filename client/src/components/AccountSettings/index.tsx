@@ -1,3 +1,4 @@
+import { Paper, styled, Container, Grid, Alert } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
@@ -9,12 +10,9 @@ import { UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
-import Alert from '@mui/material/Alert';
 import ChangeEmail from './ChangeEmail';
 import BasicInfo from './BasicInfoSection';
 import PicturesSection from './PicturesSection';
-
-import { Paper, styled, Container, Grid } from '@mui/material';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -47,13 +45,18 @@ const Account = () => {
 		}
 	}, [dispatch, error, errorCallback, navigate]);
 
-	if (error) return <Alert severity="error">Error loading account settings page, please try again...</Alert>;
+
+	if (error)
+		return (
+			<Alert severity="error">
+				Error loading account settings page, please try again...
+			</Alert>
+		);
 
 	if (!data) return <LoadingIcon />;
 
 	const userData: UserDataWithoutId = {
 		username: data.username,
-		email: data.email,
 		firstname: data.firstname,
 		lastname: data.lastname,
 		birthday: data.birthday,
