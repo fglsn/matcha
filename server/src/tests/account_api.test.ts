@@ -128,7 +128,6 @@ describe('Check responses and requests to api/account', () => {
 			expect(JSON.parse(resFromAccount.text)).toEqual({
 				id: id,
 				username: 'matcha',
-				email: 'matcha@test.com',
 				firstname: 'lorem',
 				lastname: 'ipsum'
 			});

@@ -23,7 +23,6 @@ const userDataMapper = (row: any): UserData => {
 	return {
 		id: getString(row['id']),
 		username: getString(row['username']),
-		email: getString(row['email']),
 		firstname: getString(row['firstname']),
 		lastname: getString(row['lastname']),
 		birthday: getBdDateOrUndefined(row['birthday']),
@@ -125,7 +124,16 @@ const updateUserEmail = async (userId: string, email: string): Promise<void> => 
 		text: 'update users set email = $1 where id = $2',
 		values: [email, userId]
 	};
-	await pool.query(query);
+	try {
+		await pool.query(query);
+	} catch (error) {
+		if (error instanceof Error) {
+			if (error.message === 'duplicate key value violates unique constraint "users_email_key"') {
+				throw new ValidationError('This email was already used');
+			}
+		}
+		throw error;
+	}
 };
 
 const clearUsers = async (): Promise<void> => {
@@ -157,19 +165,7 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 			updatedProfile.bio
 		]
 	};
-	try {
-		await pool.query(query);
-	} catch (error) {
-		if (error instanceof Error) {
-			if (error.message === 'duplicate key value violates unique constraint "users_username_key"') {
-				throw new ValidationError('Username already exists');
-			}
-			if (error.message === 'duplicate key value violates unique constraint "users_email_key"') {
-				throw new ValidationError('This email was already used');
-			}
-		}
-		throw error;
-	}
+	await pool.query(query);
 };
 
 export {

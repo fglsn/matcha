@@ -7,8 +7,11 @@ export type BaseUser = {
 	lastname: string;
 };
 
-export type UserData = BaseUser & {
+export type UserData = { //add tags & photos later
 	id: string;
+	username: string;
+	firstname: string;
+	lastname: string;
 	birthday: Date | undefined;
 	gender: string | undefined;
 	orientation: string | undefined;
@@ -51,6 +54,6 @@ export interface CustomRequest extends Request {
 
 export type NewPasswordResetRequest = { userId: string };
 
-export type EmailResetRequest = { userId: string; email: string; token: string; expiresAt: Date };
+export type EmailUpdateRequest = { userId: string; email: string; token: string; expiresAt: Date };
 
 export type PasswordResetRequest = NewPasswordResetRequest & { token: string; expiresAt: Date };
