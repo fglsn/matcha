@@ -19,6 +19,7 @@ import TestAuth from './components/TestAuth';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { SnackbarProvider } from 'notistack';
+import UpdateEmail from './components/UpdateEmail';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -62,6 +63,7 @@ const App = () => {
 								{/* prettier-ignore */}
 								<Route path="/forgot_password" element={!loggedUser ? <ForgotPassword /> : <Navigate to="/"/>} />
 								<Route path="/account" element={<Account />} />
+								<Route path="/update_email" element={<UpdateEmail />} />
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />
 							</Routes>
