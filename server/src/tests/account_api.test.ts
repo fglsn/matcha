@@ -16,7 +16,7 @@ let loginRes = <supertest.Response>{};
 // const initLoggedUser = async () => {
 // 	const user = await findUserByUsername(newUser.username);
 // 	const activationCode = user?.activationCode;
-// 	await api.get(`/api/users/activate/${activationCode}`).expect(200);
+// 	await api.post(`/api/users/activate/${activationCode}`).expect(200);
 // 	const activeUser = await findUserByUsername('matcha');
 // 	if (!activeUser) fail();
 // 	expect(activeUser.isActive).toBe(true);
@@ -37,7 +37,7 @@ let loginRes = <supertest.Response>{};
 const initLoggedUser = async () => {
 	const user = await findUserByUsername(newUser.username);
 	const activationCode = user?.activationCode;
-	await api.get(`/api/users/activate/${activationCode}`);
+	await api.post(`/api/users/activate/${activationCode}`);
 	const res = await api.post('/api/login').send(loginUser).expect(200);
 	return res;
 };
@@ -338,7 +338,7 @@ describe('Check responses and requests to api/account', () => {
 // 			const initLoggedUser2 = async () => {
 // 				const user = await findUserByUsername(secondUser.username);
 // 				const activationCode = user?.activationCode;
-// 				await api.get(`/api/users/activate/${activationCode}`);
+// 				await api.post(`/api/users/activate/${activationCode}`);
 // 				const res = await api.post('/api/login').send(loginUser2).expect(200);
 // 				return res;
 // 			};

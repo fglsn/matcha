@@ -10,7 +10,7 @@ const create = async (newObject: NewUser): Promise<any> => {
 
 // Activate new user or throw
 const activate = async (activationCode: string): Promise<void> => {
-	await axios.get(`${apiBaseUrl}/users/activate/${activationCode}`);
+	await axios.post(`${apiBaseUrl}/users/activate/${activationCode}`);
 };
 
 // Validate request and send reset link by email or throw

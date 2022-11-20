@@ -43,7 +43,7 @@ router.post(
 );
 
 //activate
-router.get(
+router.post(
 	'/activate/:id',
 	asyncHandler(async (req, res) => {
 		await activateAccount(req.params.id);

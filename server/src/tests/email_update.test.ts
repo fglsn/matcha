@@ -27,7 +27,7 @@ let loginRes = <supertest.Response>{};
 const initLoggedUser = async () => {
 	const user = await findUserByUsername(newUser.username);
 	const activationCode = user?.activationCode;
-	await api.get(`/api/users/activate/${activationCode}`);
+	await api.post(`/api/users/activate/${activationCode}`);
 	const res = await api.post('/api/login').send(loginUser).expect(200);
 	return res;
 };
