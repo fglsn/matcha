@@ -12,7 +12,7 @@ const LoggedInUserButtons = ({ loggedUser, handleLogout }: { loggedUser: LoggedU
 	return (
 		<>
 			<em>{loggedUser?.username} logged in </em>
-			<Button color="inherit" component={Link} to="/account">Account</Button>
+			<Button color="inherit" component={Link} to="/profile">Profile</Button>
 			<Button onClick={handleLogout} color="inherit">Logout</Button>
 		</>
 	)

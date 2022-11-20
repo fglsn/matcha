@@ -12,7 +12,7 @@ import {
 	validateAddingFiles
 } from '../../utils/imageUploaderAndValidor';
 
-const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
+const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { error: errorCallback } = useContext(AlertContext);
 	const [images, setImages] = useState<ImageType[]>([]);
@@ -245,4 +245,4 @@ const placeholder = {
 	featured: true
 };
 
-export default PicturesSection;
+export default Photos;

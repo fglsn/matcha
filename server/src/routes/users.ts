@@ -4,7 +4,7 @@ import asyncHandler from 'express-async-handler';
 import { AppError } from '../errors';
 import { findEmailResetRequestByToken } from '../repositories/emailResetRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
-import { getAllUsers } from '../repositories/userRepository';
+import { getAllUsers, getUserDataByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import {
 	activateAccount,
 	createNewUser,
@@ -17,7 +17,7 @@ import {
 } from '../services/users';
 import { CustomRequest } from '../types';
 import { sessionExtractor } from '../utils/middleware';
-import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken } from '../validators/userPayloadValidators';
+import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 
 const router = express.Router();
 
@@ -96,6 +96,38 @@ router.post(
 		res.status(200).end();
 	})
 );
+
+//get profile page
+router.get(
+	'/:id/profile',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to get profile data`, 400);
+		}
+		const result = await getUserDataByUserId(req.session.userId);
+		res.status(200).json(result);
+		// return;
+	})
+);
+
+//update basic user data on profile page
+router.put(
+	'/:id/profile',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to update profile data`, 400);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const updatedProfile = parseUserProfilePayload(req.body);
+		await updateUserDataByUserId(req.session.userId, updatedProfile);
+		//res.status(200).json(updatedProfile);
+		res.status(200).end();
+		// return;
+	})
+);
+
 
 router.put(
 	'/update_password',
