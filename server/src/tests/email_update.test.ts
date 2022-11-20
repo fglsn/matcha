@@ -2,12 +2,12 @@ import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 import { app } from '../app';
 import { clearEmailResetRequestsTable, findEmailResetRequestByUserId } from '../repositories/emailResetRequestRepository';
-// import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
+// import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/emailResetRequestRepository';
 // import { findSessionsByUserId } from '../repositories/sessionRepository';
-import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { clearUsers, findUserByEmail, findUserByUsername } from '../repositories/userRepository';
 
-import { createNewUser, sendEmailResetLink } from '../services/users';
-import { loginUser, newEmail, newUser } from './test_helper';
+import { createNewUser, sendUpdateEmailLink } from '../services/users';
+import { loginUser, newEmail, newUser, secondUser } from './test_helper';
 
 const api = supertest(app);
 
@@ -52,7 +52,7 @@ describe('send email reset link on email/update request', () => {
 		loginRes = await initLoggedUser();
 	});
 
-	test('logged user can update request email update', async () => {
+	test('logged user can request email update', async () => {
 		await api
 			.post('/api/users/update_email')
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -63,7 +63,18 @@ describe('send email reset link on email/update request', () => {
 		expect(sendMailMock.mock.calls[0][0]['to']).toBe('tester1.hive@yahoo.com');
 	});
 
-	test('not logged user not allowed to update email', async () => {
+	test('logged user can request email update multiple times in a row', async () => {
+		await api
+			.post('/api/users/update_email')
+			.set({ Authorization: `bearer ${loginRes.body.token}` })
+			.send({ email: 'tester1.hive@yahoo.com' })
+			.expect(201);
+
+		expect(sendMailMock).toBeCalledTimes(1);
+		expect(sendMailMock.mock.calls[0][0]['to']).toBe('tester1.hive@yahoo.com');
+	});
+
+	test('fails to update email when user not logged in', async () => {
 		const resFromEmailUpdate = await api
 			.post('/api/users/update_email')
 			.send({ email: 'tester1.hive@yahoo.com' })
@@ -71,6 +82,30 @@ describe('send email reset link on email/update request', () => {
 			.expect('Content-Type', /application\/json/);
 
 		expect(resFromEmailUpdate.body.error).toContain('Access denied, no token provided');
+		expect(sendMailMock).toBeCalledTimes(0);
+	});
+
+	test('fails if user provides same email that he is currently using', async () => {
+		const resFromEmailUpdate = await api
+			.post('/api/users/update_email')
+			.set({ Authorization: `bearer ${loginRes.body.token}` })
+			.send({ email: newUser.email })
+			.expect(400);
+
+		expect(resFromEmailUpdate.body.error).toContain('Please provide new email address');
+		expect(sendMailMock).toBeCalledTimes(0);
+	});
+
+	test('fails when update request is sent for the email that was alreafy used by someone else', async () => {
+		await createNewUser(secondUser);
+		const resFromEmailUpdate = await api
+			.post('/api/users/update_email')
+			.set({ Authorization: `bearer ${loginRes.body.token}` })
+			.send({ email: secondUser.email })
+			.expect(400);
+
+		console.log(resFromEmailUpdate.body.error);
+		expect(resFromEmailUpdate.body.error).toContain('This email was already used');
 		expect(sendMailMock).toBeCalledTimes(0);
 	});
 });
@@ -83,17 +118,41 @@ describe('update email after request has been sent', () => {
 		await createNewUser(newUser);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
-		await sendEmailResetLink(id, newEmail.email);
+		await sendUpdateEmailLink(id, newEmail.email);
 	});
-	test('update email with token from request', async () => {
+	test('succesfully update email with valid token from request by visiting link', async () => {
 		const resetRequest = await findEmailResetRequestByUserId(id);
 		expect(resetRequest).toBeDefined();
 		await api
 			.get(`/api/users/update_email/${resetRequest?.token}`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(200);
+		const updatedUser = await findUserByUsername(newUser.username);
+		expect(updatedUser?.email).toBe(newEmail.email);
+		expect(await findUserByEmail(newUser.email)).toBeFalsy();
+	});
 
-		//expect(resFromEmailUpdate.body.error).toContain('Access denied, no token provided');
-		expect(sendMailMock).toBeCalledTimes(0);
+	it.each([
+		[undefined, 'Invalid email reset code'],
+		[null, 'Invalid email reset code'],
+		['', 'Missing activation code'],
+		['    ', 'Missing activation code'],
+		['		', 'Missing activation code'],
+		['12345', 'Invalid email reset code'], //too short
+		['1234567890123456789012345678901234567890', 'Invalid email reset code'], //too long 40chars
+		['2>-)837428374t-2983<32v74slk-dkfhkhf', 'Invalid email reset code'],
+		['!0831j37-7cbb-4ca0-91cb-5fda0cee63!3', 'Invalid email reset code'],
+		['42e7ed49-58f4-4ca7-b478-3d3805a7bb7>', 'Invalid email reset code']
+	])('fails with incorectly formatted token %s %s', async (invalidToken, expectedErrorMessage) => {
+		// console.log(`Payload: ${invalidToken}, Expected msg: ${expectedErrorMessage}`);
+		const res = await api.get(`/api/users/update_email/${invalidToken}`).expect(400);
+		if (!res.body.error) fail();
+		expect(res.body.error).toContain(expectedErrorMessage);
+	});
+
+	test('fails with valid but non existing/expired token in db', async () => {
+		const res = await api.get(`/api/users/update_email/9bcd25f2-7667-4736-8770-0a132c5a7dca`).expect(400);
+		if (!res.body.error) fail();
+		expect(res.body.error).toContain('Invalid reset link. Please try again.');
 	});
 });
