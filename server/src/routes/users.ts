@@ -12,7 +12,7 @@ import {
 	sendResetLink,
 	changeForgottenPassword,
 	updatePassword,
-	sendEmailResetLink,
+	sendUpdateEmailLink,
 	changeUserEmail
 } from '../services/users';
 import { CustomRequest } from '../types';
@@ -101,18 +101,15 @@ router.put(
 	'/update_password',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
-		if (req.session) {
-			if (req.session.userId) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-				const oldPassword = validatePassword(req.body.oldPassword);
-				const password = validatePassword(req.body.password);
-				await updatePassword(req.session.userId, oldPassword, password);
-				res.status(200).end();
-				return;
-			}
+		if (!req.session || !req.session.userId) {
 			throw new AppError(`No rights to update profile data`, 400);
-			// res.status(400).json({ error: `No rights to update profile data with id: ${req.params.id}` });
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const oldPassword = validatePassword(req.body.oldPassword);
+		const password = validatePassword(req.body.password);
+		await updatePassword(req.session.userId, oldPassword, password);
+		res.status(200).end();
+		return;
 	})
 );
 
@@ -120,19 +117,14 @@ router.post(
 	'/update_email',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
-		if (req.session) {
-			if (req.session.userId) {
-				console.log(req.body);
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-				const email = parseEmail(req.body.email);
-				await sendEmailResetLink(req.session.userId, email);
-				// await updateEmailNoRequest(req.session.userId, email);
-				res.status(201).end();
-				return;
-			}
+		if (!req.session || !req.session.userId) {
 			throw new AppError(`No rights to update profile data`, 400);
-			// res.status(400).json({ error: `No rights to update profile data with id: ${req.params.id}` });
 		}
+		const email = parseEmail(req.body.email);
+		await sendUpdateEmailLink(req.session.userId, email);
+		// await updateEmailNoRequest(req.session.userId, email);
+		res.status(201).end();
+		return;
 	})
 );
 

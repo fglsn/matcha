@@ -1,9 +1,9 @@
 import pool from '../db';
 import { getString, getDate } from '../dbUtils';
-import { EmailResetRequest } from '../types';
+import { EmailUpdateRequest } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const emailResetRequestMapper = (row: any): EmailResetRequest => {
+const emailResetRequestMapper = (row: any): EmailUpdateRequest => {
 	return {
 		token: getString(row['token']),
 		userId: getString(row['user_id']),
@@ -12,7 +12,7 @@ const emailResetRequestMapper = (row: any): EmailResetRequest => {
 	};
 };
 
-const addEmailResetRequest = async (userId: string, email: string): Promise<EmailResetRequest> => {
+const addEmailResetRequest = async (userId: string, email: string): Promise<EmailUpdateRequest> => {
 	const query = {
 		text: 'insert into email_reset_requests(user_id, email) values($1, $2) returning *',
 		values: [userId, email]
@@ -21,7 +21,7 @@ const addEmailResetRequest = async (userId: string, email: string): Promise<Emai
 	return emailResetRequestMapper(res.rows[0]);
 };
 
-const findEmailResetRequestByUserId = async (userId: string): Promise<EmailResetRequest | undefined> => {
+const findEmailResetRequestByUserId = async (userId: string): Promise<EmailUpdateRequest | undefined> => {
 	const query = {
 		text: 'select * from email_reset_requests where user_id = $1',
 		values: [userId]
@@ -34,7 +34,7 @@ const findEmailResetRequestByUserId = async (userId: string): Promise<EmailReset
 	return emailResetRequestMapper(res.rows[0]);
 };
 
-const findEmailResetRequestByToken = async (token: string): Promise<EmailResetRequest | undefined> => {
+const findEmailResetRequestByToken = async (token: string): Promise<EmailUpdateRequest | undefined> => {
 	const query = {
 		text: 'select * from email_reset_requests where token = $1',
 		values: [token]
