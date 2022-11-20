@@ -1,14 +1,14 @@
 //prettier-ignore
 import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button } from "@mui/material";
 import { useContext, useState } from 'react';
-import { useField } from '../../hooks/useField';
+import { useFieldWithReset } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
 import accountService from '../../services/account';
 
 export default function ChangeEmail() {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
-	const email = useField('text', 'Email', validateEmail);
+	const { reset, ...email } = useFieldWithReset('text', 'Email', validateEmail);
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
@@ -17,12 +17,12 @@ export default function ChangeEmail() {
 
 	const handleClose = () => {
 		setOpen(false);
+		reset();
 	};
 
 	const sendUpdateEmailLink = async ({ email }: { email: string }) => {
 		try {
-			const res = await accountService.updateEmail({email});
-			console.log(res.body);
+			await accountService.requestEmailChange({email});
 			successCallback(`Activation link sent to new email.`);
 		} catch (err) {
 			console.log('Error in sendUpdateEmailLink (ChangeEmail) ' + err); //rm later
@@ -37,6 +37,7 @@ export default function ChangeEmail() {
 		event.preventDefault();
 		sendUpdateEmailLink({email: email.value});
 		setOpen(false);
+		reset();
 	};
 
 	return (
