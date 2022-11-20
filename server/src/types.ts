@@ -7,7 +7,8 @@ export type BaseUser = {
 	lastname: string;
 };
 
-export type UserData = { //add tags & photos later
+export type UserData = {
+	//add tags & photos later
 	id: string;
 	username: string;
 	firstname: string;

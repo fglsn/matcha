@@ -39,7 +39,7 @@ const getAllUsers = async (): Promise<User[]> => {
 };
 
 const getPasswordHash = async (userId: string): Promise<string> => {
-	const res = await pool.query({text: 'select password_hash from users where id = $1', values: [userId]});
+	const res = await pool.query({ text: 'select password_hash from users where id = $1', values: [userId] });
 	return getString(res.rows[0]['password_hash']);
 };
 

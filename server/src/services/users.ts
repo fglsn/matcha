@@ -2,6 +2,7 @@
 import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
 //prettier-ignore
 import { addEmailResetRequest, findEmailResetRequestByUserId, removeEmailResetRequest, removeEmailResetRequestByUserId } from '../repositories/emailResetRequestRepository';
+//prettier-ignore
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash } from '../repositories/userRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { EmailUpdateRequest, NewUser, PasswordResetRequest, User } from '../types';
