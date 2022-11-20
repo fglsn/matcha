@@ -14,7 +14,7 @@ const UpdateEmail = () => {
 		const validateUpdateToken = async () => {
 			if (updateToken) {
 				try {
-					await accountService.checkUpdateTokenEmail(updateToken);
+					await accountService.updateEmailbyToken(updateToken);
 					successCallback('Email was successfully updated!');
 					navigate('/');
 				} catch (err) {

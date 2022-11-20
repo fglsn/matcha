@@ -38,13 +38,13 @@ export const updateProfile = async (
 	}
 };
 
-export const requestEmailUpdate = async ({ email }: { email: string }) => {
+export const requestEmailUpdate = async ({ id, email }: { id: string, email: string }) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.post(
-			`${apiBaseUrl}/users/update_email`,
+			`${apiBaseUrl}/users/${id}/update_email`,
 			{email},
 			config
 		);
@@ -54,13 +54,14 @@ export const requestEmailUpdate = async ({ email }: { email: string }) => {
 	}
 };
 
-export const checkUpdateTokenEmail = async (updateToken: string): Promise<void> => {
-	await axios.get(`${apiBaseUrl}/users/update_email/${updateToken}`);
+export const updateEmailbyToken = async (updateToken: string): Promise<void> => {
+	await axios.put(`${apiBaseUrl}/users/update_email/${updateToken}`);
 }
+
 const moduleExports = {
 	getProfile,
 	updateProfile,
 	requestEmailUpdate,
-	checkUpdateTokenEmail
+	updateEmailbyToken
 };
 export default moduleExports;

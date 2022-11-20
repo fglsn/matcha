@@ -32,14 +32,6 @@ const initLoggedUser = async () => {
 	return res;
 };
 
-// const requestEmailReset = async () => {
-// 	await api
-//             .post('/api/users/update_email')
-//             .set({ Authorization: `bearer ${loginRes.body.token}` })
-//             .send(newEmail)
-//             .expect(201);
-// };
-
 beforeEach(() => {
 	sendMailMock.mockClear();
 });
@@ -54,7 +46,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('logged user can request email update', async () => {
 		await api
-			.post('/api/users/update_email')
+			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ email: 'tester1.hive@yahoo.com' })
 			.expect(201);
@@ -65,7 +57,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('logged user can request email update multiple times in a row', async () => {
 		await api
-			.post('/api/users/update_email')
+			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ email: 'tester1.hive@yahoo.com' })
 			.expect(201);
@@ -76,7 +68,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('fails to update email when user not logged in', async () => {
 		const resFromEmailUpdate = await api
-			.post('/api/users/update_email')
+			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.send({ email: 'tester1.hive@yahoo.com' })
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
@@ -87,7 +79,7 @@ describe('send email reset link on email/update request', () => {
 
 	test('fails if user provides same email that he is currently using', async () => {
 		const resFromEmailUpdate = await api
-			.post('/api/users/update_email')
+			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ email: newUser.email })
 			.expect(400);
@@ -99,13 +91,13 @@ describe('send email reset link on email/update request', () => {
 	test('fails when update request is sent for the email that was alreafy used by someone else', async () => {
 		await createNewUser(secondUser);
 		const resFromEmailUpdate = await api
-			.post('/api/users/update_email')
+			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ email: secondUser.email })
 			.expect(400);
 
 		console.log(resFromEmailUpdate.body.error);
-		expect(resFromEmailUpdate.body.error).toContain('This email was already used');
+		expect(resFromEmailUpdate.body.error).toContain('This email is already taken');
 		expect(sendMailMock).toBeCalledTimes(0);
 	});
 });
@@ -124,7 +116,7 @@ describe('update email after request has been sent', () => {
 		const resetRequest = await findEmailResetRequestByUserId(id);
 		expect(resetRequest).toBeDefined();
 		await api
-			.get(`/api/users/update_email/${resetRequest?.token}`)
+			.put(`/api/users/update_email/${resetRequest?.token}`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(200);
 		const updatedUser = await findUserByUsername(newUser.username);
@@ -145,13 +137,13 @@ describe('update email after request has been sent', () => {
 		['42e7ed49-58f4-4ca7-b478-3d3805a7bb7>', 'Invalid email reset code']
 	])('fails with incorectly formatted token %s %s', async (invalidToken, expectedErrorMessage) => {
 		// console.log(`Payload: ${invalidToken}, Expected msg: ${expectedErrorMessage}`);
-		const res = await api.get(`/api/users/update_email/${invalidToken}`).expect(400);
+		const res = await api.put(`/api/users/update_email/${invalidToken}`).expect(400);
 		if (!res.body.error) fail();
 		expect(res.body.error).toContain(expectedErrorMessage);
 	});
 
 	test('fails with valid but non existing/expired token in db', async () => {
-		const res = await api.get(`/api/users/update_email/9bcd25f2-7667-4736-8770-0a132c5a7dca`).expect(400);
+		const res = await api.put(`/api/users/update_email/9bcd25f2-7667-4736-8770-0a132c5a7dca`).expect(400);
 		if (!res.body.error) fail();
 		expect(res.body.error).toContain('Invalid reset link. Please try again.');
 	});

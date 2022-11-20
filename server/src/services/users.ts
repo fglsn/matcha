@@ -107,7 +107,7 @@ export const sendUpdateEmailLink = async (id: string, email: string): Promise<vo
 		if (userWithThisEmail.id === id) {
 			throw new AppError('Please provide new email address', 400);
 		} else {
-			throw new AppError('This email was already used. Please try another email address.', 400);
+			throw new AppError('This email is already taken. Please try another email address.', 400);
 		}
 	}
 	const updateRequset = await findEmailResetRequestByUserId(id);
