@@ -146,7 +146,8 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, birthday: undefined }, 'Missing birthay date'],
 			[{ ...infoProfile, gender: undefined }, 'Missing gender'],
 			[{ ...infoProfile, orientation: undefined }, 'Missing orientation'],
-			[{ ...infoProfile, bio: undefined }, 'Missing bio']
+			[{ ...infoProfile, bio: undefined }, 'Missing bio'],
+			[{ ...infoProfile, tags: undefined }, 'Missing tags']
 		])(`put fails with missing profile payload values`, async (invalidInputs, expectedErrorMessage) => {
 			const res = await api
 				.put(`/api/users/${id}/profile`)
@@ -259,6 +260,22 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
+			[{ ...infoProfile, tags: [] }, 'Invalid tags'],
+			[{ ...infoProfile, tags: [''] }, 'Invalid tags'],
+			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer', 'Rave'] }, 'Invalid tags'],
+			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 1] }, 'Invalid tags'],
+			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Sauna'] }, 'Invalid tags']
+		])(`put fails with invalid tags`, async (invalidInputs, expectedErrorMessage) => {
+			const res = await api
+				.put(`/api/users/${id}/profile`)
+				.set({ Authorization: `bearer ${loginRes.body.token}` })
+				.send(invalidInputs)
+				.expect(400)
+				.expect('Content-Type', /application\/json/);
+			// console.log(res.body.error);
+			expect(res.body.error).toContain(expectedErrorMessage);
+		});
+		it.each([
 			[
 				{ ...infoProfile, orientation: 'gay' },
 				{ ...infoProfile, orientation: 'gay' }
@@ -286,6 +303,10 @@ describe('Check responses and requests to api/profile', () => {
 			[
 				{ ...infoProfile, bio: bioMax },
 				{ ...infoProfile, bio: bioMax }
+			],
+			[
+				{ ...infoProfile, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] },
+				{ ...infoProfile, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] }
 			],
 			[
 				{ ...infoProfile, birthday: exactly18() },

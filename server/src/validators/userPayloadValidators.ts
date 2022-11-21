@@ -4,6 +4,7 @@
 import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
 import { isDate, isGender, isOrientation, isString, isTags } from './basicTypeValidators';
 import { ValidationError } from '../errors';
+import { checkIfDublicatesExist } from '../utils/helpers';
 // import { Tags } from '../utils/tags';
 // import dayjs from 'dayjs';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -207,6 +208,7 @@ const parseTags = (tags: unknown): string[] => {
 	if (!isTags(tags)) {
 		throw new ValidationError(`Invalid tags format: array of 0 to 5 tags`);
 	}
+	if (checkIfDublicatesExist(tags)) throw new ValidationError(`Invalid tags format: tags should not have duplicates`);
 	return tags;
 };
 
