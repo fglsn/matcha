@@ -38,7 +38,8 @@ export const infoProfile = {
 	birthday: new Date('1999-03-22').toISOString(),
 	gender: 'male',
 	orientation: 'straight',
-	bio: 'born sleepy'
+	bio: 'born sleepy',
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer']
 };
 export const infoProfile2 = {
 	username: 'matcha2',
@@ -47,7 +48,8 @@ export const infoProfile2 = {
 	birthday: new Date('1999-03-22').toISOString(),
 	gender: 'male',
 	orientation: 'straight',
-	bio: 'born sleepy'
+	bio: 'born sleepy',
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer']
 };
 
 export const bioTooLong =
