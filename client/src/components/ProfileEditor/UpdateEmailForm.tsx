@@ -5,7 +5,7 @@ import { useFieldWithReset } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
 import { useStateValue } from '../../state';
-import accountService from '../../services/profile';
+import profileService from '../../services/profile';
 
 const UpdateEmailForm = () => {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
@@ -13,21 +13,27 @@ const UpdateEmailForm = () => {
 	const { reset, ...email } = useFieldWithReset('text', 'Email', validateEmail);
 	const [open, setOpen] = useState(false);
 
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
+	const handleClickOpen = () => setOpen(true);
 
 	const handleClose = () => {
 		setOpen(false);
 		reset();
 	};
 
-	const requestUpdateEmailAndHandleError = async ({ id, email }: { id: string, email: string }) => {
+	const requestUpdateEmailAndHandleError = async ({
+		id,
+		email
+	}: {
+		id: string;
+		email: string;
+	}) => {
 		try {
-			await accountService.requestUpdateEmail({ id, email });
+			await profileService.requestUpdateEmail({ id, email });
 			successCallback(`Activation link sent to new email.`);
 		} catch (err) {
-			console.log('Error in requestUpdateEmailAndHandleError (UpdateEmailForm) ' + err); //rm later
+			console.log(
+				'Error in requestUpdateEmailAndHandleError (UpdateEmailForm) ' + err
+			); //rm later
 			errorCallback(
 				err.response?.data?.error ||
 					'Unable to update email address. Please try again.'
@@ -45,7 +51,7 @@ const UpdateEmailForm = () => {
 
 	return (
 		<div>
-			<Button variant="outlined" onClick={handleClickOpen}>
+			<Button onClick={handleClickOpen} color={undefined} style={dialogBtn}>
 				Change Email
 			</Button>
 			<Dialog open={open} onClose={handleClose}>
@@ -71,6 +77,12 @@ const UpdateEmailForm = () => {
 			</Dialog>
 		</div>
 	);
-}
+};
+
+const dialogBtn = {
+	margin: '10px 0 5px 0',
+	padding: '5px 25px',
+	maxWidth: '100%'
+};
 
 export default UpdateEmailForm;

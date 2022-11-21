@@ -38,14 +38,20 @@ export const updateProfile = async (
 	}
 };
 
-export const requestUpdateEmail = async ({ id, email }: { id: string, email: string }) => {
+export const requestUpdateEmail = async ({
+	id,
+	email
+}: {
+	id: string;
+	email: string;
+}) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.post(
 			`${apiBaseUrl}/users/${id}/update_email`,
-			{email},
+			{ email },
 			config
 		);
 		return response.data;
@@ -56,12 +62,37 @@ export const requestUpdateEmail = async ({ id, email }: { id: string, email: str
 
 export const updateEmailbyToken = async (updateToken: string): Promise<void> => {
 	await axios.put(`${apiBaseUrl}/users/update_email/${updateToken}`);
-}
+};
+
+export const updatePassword = async ({
+	id,
+	oldPassword,
+	password
+}: {
+	id: string;
+	oldPassword: string;
+	password: string;
+}): Promise<void> => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		await axios.put(
+			`${apiBaseUrl}/users/${id}/password/`,
+			{ oldPassword, password },
+			config
+		);
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
 
 const moduleExports = {
 	getProfile,
 	updateProfile,
 	requestUpdateEmail,
-	updateEmailbyToken
+	updateEmailbyToken,
+	updatePassword
 };
+
 export default moduleExports;
