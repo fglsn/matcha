@@ -154,10 +154,10 @@ router.put(
 );
 
 router.put(
-	'/update_password',
+	'/:id/password',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
-		if (!req.session || !req.session.userId) {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
 			throw new AppError(`No rights to update profile data`, 400);
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -165,7 +165,6 @@ router.put(
 		const password = validatePassword(req.body.password);
 		await updatePassword(req.session.userId, oldPassword, password);
 		res.status(200).end();
-		return;
 	})
 );
 

@@ -34,7 +34,7 @@ describe('test update password access', () => {
 	test('logged user can update password', async () => {
 		const oldPwdHash = await getPasswordHash(userId);
 		await api
-			.put(`/api/users/update_password`)
+			.put(`/api/users/${userId}/password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ oldPassword, ...newPass })
 			.expect(200);
@@ -44,7 +44,7 @@ describe('test update password access', () => {
 	});
 	test('not logged user not allowed to update password', async () => {
 		const resFromPassUpdate = await api
-			.put(`/api/users/update_password`)
+			.put(`/api/users/${userId}/password`)
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
 
@@ -53,7 +53,7 @@ describe('test update password access', () => {
 	test('fails when no session in db', async () => {
 		await clearSessions();
 		const resFromPassUpdate = await api
-			.put(`/api/users/update_password`)
+			.put(`/api/users/${userId}/password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
@@ -62,7 +62,7 @@ describe('test update password access', () => {
 	});
 	test('relogin with new password ', async () => {
 		await api
-			.put(`/api/users/update_password`)
+			.put(`/api/users/${userId}/password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ oldPassword, ...newPass })
 			.expect(200);
@@ -74,7 +74,7 @@ describe('test update password access', () => {
 	});
 	test('should fail to relogin with old password ', async () => {
 		await api
-			.put(`/api/users/update_password`)
+			.put(`/api/users/${userId}/password`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.send({ oldPassword, ...newPass })
 			.expect(200);
