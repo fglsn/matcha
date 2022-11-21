@@ -9,10 +9,10 @@ export const convertUTCDateToLocalDate = (date: Date): Date => {
 	return newDate;
 };
 
-export const findDublicates = (arr: string[]) => {
+export const findDuplicates = (arr: string[]) => {
 	return arr.filter((item, index) => arr.indexOf(item) !== index);
 };
 
-export const checkIfDublicatesExist = (arr: string[]) => {
+export const checkIfDuplicatesExist = (arr: string[]) => {
 	return new Set(arr).size !== arr.length;
 };
