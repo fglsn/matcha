@@ -17,6 +17,7 @@ export type UserData = {
 	gender: string | undefined;
 	orientation: string | undefined;
 	bio: string | undefined;
+	tags: string[] | undefined;
 };
 
 export type UpdateUserProfile = {
@@ -26,6 +27,7 @@ export type UpdateUserProfile = {
 	gender: Gender;
 	orientation: Orientation;
 	bio: string;
+	tags: string[];
 };
 
 export type Gender = 'male' | 'female';

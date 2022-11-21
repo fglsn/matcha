@@ -1,5 +1,5 @@
 import pool from '../db';
-import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined } from '../dbUtils';
+import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined } from '../dbUtils';
 import { ValidationError } from '../errors';
 import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile } from '../types';
 
@@ -28,7 +28,8 @@ const userDataMapper = (row: any): UserData => {
 		birthday: getBdDateOrUndefined(row['birthday']),
 		gender: getStringOrUndefined(row['gender']),
 		orientation: getStringOrUndefined(row['orientation']),
-		bio: getStringOrUndefined(row['bio'])
+		bio: getStringOrUndefined(row['bio']),
+		tags: getStringArrayOrUndefined(row['tags'])
 	};
 };
 
@@ -142,7 +143,7 @@ const clearUsers = async (): Promise<void> => {
 
 const getUserDataByUserId = async (userId: string): Promise<UserData | undefined> => {
 	const query = {
-		text: 'select id, username, email, firstname, lastname, birthday, gender, orientation, bio from users where id = $1',
+		text: 'select id, username, email, firstname, lastname, birthday, gender, orientation, bio, tags from users where id = $1',
 		values: [userId]
 	};
 	const res = await pool.query(query);
@@ -154,7 +155,7 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
-		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7 where id = $1',
+		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8 where id = $1',
 		values: [
 			userId,
 			updatedProfile.firstname,
@@ -162,7 +163,8 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 			updatedProfile.birthday,
 			updatedProfile.gender,
 			updatedProfile.orientation,
-			updatedProfile.bio
+			updatedProfile.bio,
+			updatedProfile.tags
 		]
 	};
 	await pool.query(query);

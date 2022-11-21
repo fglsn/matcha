@@ -1,3 +1,5 @@
+import { isStringArray } from './validators/basicTypeValidators';
+
 function getString(value: unknown): string {
 	if (typeof value === 'string') {
 		return value;
@@ -13,6 +15,17 @@ function getStringOrUndefined(value: unknown): string | undefined {
 		return undefined;
 	}
 	throw `Expected value to be string or null, got: ${typeof value}`;
+}
+
+function getStringArrayOrUndefined(value: unknown): string[] | undefined {
+	if (value === null) {
+		return undefined;
+	}
+
+	if (!isStringArray(value)) {
+		throw `Expected value to be array of strings or null`;
+	}
+	return value;
 }
 
 function getNumber(value: unknown): number {
@@ -56,4 +69,4 @@ const getDateOrUndefined = (value: unknown): Date | undefined => {
 	throw `Expected value to be date, got: ${typeof value}`;
 };
 
-export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined };
+export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined };
