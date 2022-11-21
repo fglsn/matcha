@@ -12,7 +12,8 @@ create table users
 	birthday date,
 	gender varchar,
 	orientation varchar,
-	bio varchar
+	bio varchar,
+	tags varchar []
 );
 
 create table user_sessions

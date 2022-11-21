@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
-import { isDate, isGender, isOrientation, isString } from './basicTypeValidators';
+import { isDate, isGender, isOrientation, isString, isTags } from './basicTypeValidators';
 import { ValidationError } from '../errors';
+// import { Tags } from '../utils/tags';
 // import dayjs from 'dayjs';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -199,6 +200,16 @@ const parseBio = (bio: unknown): string => {
 	return trimmedBio;
 };
 
+const parseTags = (tags: unknown): string[] => {
+	if (!tags) {
+		throw new ValidationError(`Missing tags`);
+	}
+	if (!isTags(tags)) {
+		throw new ValidationError(`Invalid tags format: array of 0 to 5 tags`);
+	}
+	return tags;
+};
+
 //to be fixed
 const parseOrientation = (orientation: unknown): Orientation => {
 	if (!orientation) {
@@ -219,16 +230,18 @@ type Fields1 = {
 	gender: unknown;
 	orientation: unknown;
 	bio: unknown;
+	tags: unknown;
 };
 
-export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio }: Fields1): UpdateUserProfile => {
+export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio, tags }: Fields1): UpdateUserProfile => {
 	const updatedUser: UpdateUserProfile = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
 		birthday: parseBirthday(birthday),
 		gender: parseGender(gender),
 		orientation: parseOrientation(orientation),
-		bio: parseBio(bio)
+		bio: parseBio(bio),
+		tags: parseTags(tags)
 	};
 	return updatedUser;
 };
