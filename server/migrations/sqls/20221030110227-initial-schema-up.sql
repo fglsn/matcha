@@ -35,7 +35,7 @@ create table password_reset_requests
 
 create index password_reset_requests_user_id on password_reset_requests (user_id);
 
-create table email_reset_requests
+create table update_email_requests
 (
 	token uuid default gen_random_uuid() primary key,
 	user_id bigserial not null,
@@ -43,4 +43,4 @@ create table email_reset_requests
 	expires_at timestamptz not null default now() + time '06:00'
 );
 
-create index email_reset_requests_user_id on email_reset_requests (user_id);
+create index update_email_requests_user_id on update_email_requests (user_id);

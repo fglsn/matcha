@@ -4,10 +4,12 @@ import { useContext, useState } from 'react';
 import { useFieldWithReset } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
-import accountService from '../../services/account';
+import { useStateValue } from '../../state';
+import accountService from '../../services/profile';
 
-export default function ChangeEmail() {
+const UpdateEmailForm = () => {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
+	const [{ loggedUser }] = useStateValue();
 	const { reset, ...email } = useFieldWithReset('text', 'Email', validateEmail);
 	const [open, setOpen] = useState(false);
 
@@ -20,12 +22,12 @@ export default function ChangeEmail() {
 		reset();
 	};
 
-	const sendUpdateEmailLink = async ({ email }: { email: string }) => {
+	const requestUpdateEmailAndHandleError = async ({ id, email }: { id: string, email: string }) => {
 		try {
-			await accountService.requestEmailChange({email});
+			await accountService.requestUpdateEmail({ id, email });
 			successCallback(`Activation link sent to new email.`);
 		} catch (err) {
-			console.log('Error in sendUpdateEmailLink (ChangeEmail) ' + err); //rm later
+			console.log('Error in requestUpdateEmailAndHandleError (UpdateEmailForm) ' + err); //rm later
 			errorCallback(
 				err.response?.data?.error ||
 					'Unable to update email address. Please try again.'
@@ -35,7 +37,8 @@ export default function ChangeEmail() {
 
 	const handleSumbit = (event: any) => {
 		event.preventDefault();
-		sendUpdateEmailLink({email: email.value});
+		if (loggedUser)
+			requestUpdateEmailAndHandleError({ id: loggedUser?.id, email: email.value });
 		setOpen(false);
 		reset();
 	};
@@ -69,3 +72,5 @@ export default function ChangeEmail() {
 		</div>
 	);
 }
+
+export default UpdateEmailForm;

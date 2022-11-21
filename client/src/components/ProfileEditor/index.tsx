@@ -2,7 +2,7 @@ import { Paper, styled, Container, Grid, Alert } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { getAccountPage } from '../../services/account';
+import { getProfile } from '../../services/profile';
 import { logoutUser } from '../../services/logout';
 import { useStateValue } from '../../state';
 import { AuthError } from '../../utils/errors';
@@ -10,9 +10,9 @@ import { UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
-import ChangeEmail from './ChangeEmail';
-import BasicInfo from './BasicInfoSection';
-import PicturesSection from './PicturesSection';
+import UpdateEmailForm from './UpdateEmailForm';
+import BasicInfoForm from './BasicInfoForm';
+import Photos from './Photos';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -22,7 +22,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary
 }));
 
-const Account = () => {
+const ProfileEditor = () => {
 	const { error: errorCallback } = useContext(AlertContext);
 	const [{ loggedUser }, dispatch] = useStateValue();
 	const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Account = () => {
 		data,
 		error
 	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
-		async () => loggedUser && (await getAccountPage(loggedUser)),
+		async () => loggedUser && (await getProfile(loggedUser)),
 		[loggedUser]
 	);
 
@@ -44,7 +44,6 @@ const Account = () => {
 			}
 		}
 	}, [dispatch, error, errorCallback, navigate]);
-
 
 	if (error)
 		return (
@@ -69,7 +68,7 @@ const Account = () => {
 	return (
 		<>
 			<Container maxWidth="lg" sx={{ mt: 8 }}>
-				<ChangeEmail />
+				<UpdateEmailForm />
 				<Grid
 					container
 					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
@@ -77,12 +76,12 @@ const Account = () => {
 				>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<BasicInfo userData={userData} />
+							<BasicInfoForm userData={userData} />
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<PicturesSection userData={userData} />
+							<Photos userData={userData} />
 						</Item>
 					</Grid>
 				</Grid>
@@ -91,4 +90,4 @@ const Account = () => {
 	);
 };
 
-export default withAuthRequired(Account);
+export default withAuthRequired(ProfileEditor);

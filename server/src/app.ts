@@ -4,7 +4,6 @@ import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
-import accountRouter from './routes/account';
 
 import testAuthRouter from './routes/testAuth';
 
@@ -17,16 +16,10 @@ app.use(cors());
 
 dotenv.config();
 
-app.get('/ping', (_req, res) => {
-	console.log('someone pinged here');
-	res.send('pong');
-});
-
 app.use(sessionIdExtractor);
 
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
-app.use('/api/account', accountRouter);
 
 app.use('/api/testAuth', testAuthRouter);
 

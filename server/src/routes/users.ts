@@ -1,23 +1,15 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-// import { getString } from '../dbUtils';
 import { AppError } from '../errors';
-import { findEmailResetRequestByToken } from '../repositories/emailResetRequestRepository';
+import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
-import { getAllUsers } from '../repositories/userRepository';
-import {
-	activateAccount,
-	createNewUser,
-	sendActivationCode,
-	sendResetLink,
-	changeForgottenPassword,
-	updatePassword,
-	sendUpdateEmailLink,
-	changeUserEmail
-} from '../services/users';
+import { getAllUsers, getUserDataByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import { CustomRequest } from '../types';
 import { sessionExtractor } from '../utils/middleware';
-import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken } from '../validators/userPayloadValidators';
+//prettier-ignore
+import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
+//prettier-ignore
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail } from '../services/users';
 
 const router = express.Router();
 
@@ -43,7 +35,7 @@ router.post(
 );
 
 //activate
-router.get(
+router.post(
 	'/activate/:id',
 	asyncHandler(async (req, res) => {
 		await activateAccount(req.params.id);
@@ -97,6 +89,70 @@ router.post(
 	})
 );
 
+//get profile page
+router.get(
+	'/:id/profile',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to get profile data`, 400);
+		}
+		const result = await getUserDataByUserId(req.session.userId);
+		res.status(200).json(result);
+		// return;
+	})
+);
+
+//update basic user data on profile page
+router.put(
+	'/:id/profile',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to update profile data`, 400);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const updatedProfile = parseUserProfilePayload(req.body);
+		await updateUserDataByUserId(req.session.userId, updatedProfile);
+		res.status(200).end();
+	})
+);
+
+router.post(
+	'/:id/update_email',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to update profile data`, 400);
+		}
+		const email = parseEmail(req.body.email);
+		await sendUpdateEmailLink(req.session.userId, email);
+		res.status(201).end();
+	})
+);
+
+router.put(
+	'/update_email',
+	asyncHandler(() => {
+		throw new AppError('Missing activation code', 400);
+	})
+);
+
+//also need to renew backend session and send it back to front?
+router.put(
+	'/update_email/:token',
+	asyncHandler(async (req, res) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const token = validateEmailToken(req.params.token);
+		const emailResetRequsest = await findUpdateEmailRequestByToken(token);
+		if (!emailResetRequsest) {
+			throw new AppError('Invalid reset link. Please try again.', 400);
+		}
+		await changeUserEmail(emailResetRequsest);
+		res.status(200).end();
+	})
+);
+
 router.put(
 	'/update_password',
 	sessionExtractor,
@@ -110,43 +166,6 @@ router.put(
 		await updatePassword(req.session.userId, oldPassword, password);
 		res.status(200).end();
 		return;
-	})
-);
-
-router.post(
-	'/update_email',
-	sessionExtractor,
-	asyncHandler(async (req: CustomRequest, res) => {
-		if (!req.session || !req.session.userId) {
-			throw new AppError(`No rights to update profile data`, 400);
-		}
-		const email = parseEmail(req.body.email);
-		await sendUpdateEmailLink(req.session.userId, email);
-		// await updateEmailNoRequest(req.session.userId, email);
-		res.status(201).end();
-		return;
-	})
-);
-
-router.get(
-	'/update_email',
-	asyncHandler(() => {
-		throw new AppError('Missing activation code', 400);
-	})
-);
-
-//also need to renew backend session and send it back to front?
-router.get(
-	'/update_email/:id',
-	asyncHandler(async (req, res) => {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		const token = validateEmailToken(req.params.id);
-		const emailResetRequsest = await findEmailResetRequestByToken(token);
-		if (!emailResetRequsest) {
-			throw new AppError('Invalid reset link. Please try again.', 400);
-		}
-		await changeUserEmail(emailResetRequsest);
-		res.status(200).end();
 	})
 );
 

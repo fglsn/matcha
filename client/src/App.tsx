@@ -5,7 +5,7 @@ import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import ForgotPassword from './components/ForgotPassword/index';
-import Account from './components/AccountSettings/index';
+import ProfileEditor from './components/ProfileEditor/index';
 import AlertProvider from './components/AlertProvider';
 import AlertSnackBar from './components/AlertSnackBar';
 import Footer from './components/Footer';
@@ -62,7 +62,7 @@ const App = () => {
 								<Route path="/signup" element={!loggedUser ? <SignUpForm /> : <Navigate to="/"/>} />
 								{/* prettier-ignore */}
 								<Route path="/forgot_password" element={!loggedUser ? <ForgotPassword /> : <Navigate to="/"/>} />
-								<Route path="/account" element={<Account />} />
+								<Route path="/profile" element={<ProfileEditor />} />
 								<Route path="/update_email" element={<UpdateEmail />} />
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />

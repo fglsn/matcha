@@ -4,13 +4,13 @@ import { LoggedUser, NewUserDataWithoutId } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
-export const getAccountPage = async (loggedUser: LoggedUser) => {
+export const getProfile = async (loggedUser: LoggedUser) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.get(
-			`${apiBaseUrl}/account/${loggedUser.id}`,
+			`${apiBaseUrl}/users/${loggedUser.id}/profile`,
 			config
 		);
 		return response.data;
@@ -19,7 +19,7 @@ export const getAccountPage = async (loggedUser: LoggedUser) => {
 	}
 };
 
-export const updateAccountUserData = async (
+export const updateProfile = async (
 	loggedUser: LoggedUser,
 	newUserData: NewUserDataWithoutId
 ) => {
@@ -28,7 +28,7 @@ export const updateAccountUserData = async (
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.put(
-			`${apiBaseUrl}/account/${loggedUser.id}`,
+			`${apiBaseUrl}/users/${loggedUser.id}/profile`,
 			newUserData,
 			config
 		);
@@ -38,13 +38,13 @@ export const updateAccountUserData = async (
 	}
 };
 
-export const requestEmailChange = async ({ email }: { email: string }) => {
+export const requestUpdateEmail = async ({ id, email }: { id: string, email: string }) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.post(
-			`${apiBaseUrl}/users/update_email`,
+			`${apiBaseUrl}/users/${id}/update_email`,
 			{email},
 			config
 		);
@@ -54,13 +54,14 @@ export const requestEmailChange = async ({ email }: { email: string }) => {
 	}
 };
 
-export const checkUpdateTokenEmail = async (updateToken: string): Promise<void> => {
-	await axios.get(`${apiBaseUrl}/users/update_email/${updateToken}`);
+export const updateEmailbyToken = async (updateToken: string): Promise<void> => {
+	await axios.put(`${apiBaseUrl}/users/update_email/${updateToken}`);
 }
+
 const moduleExports = {
-	getAccountPage,
-	updateAccountUserData,
-	requestEmailChange,
-	checkUpdateTokenEmail
+	getProfile,
+	updateProfile,
+	requestUpdateEmail,
+	updateEmailbyToken
 };
 export default moduleExports;

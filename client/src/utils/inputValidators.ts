@@ -90,7 +90,7 @@ export const validateLoginForm = (username: string, password: string) => {
 	return !validateUsername(username) && !validatePassword(password) ? true : false;
 };
 
-export const validateAccountForm = (
+export const validateProfileEditorForm = (
 	firstname: string,
 	lastname: string,
 	date: dayjs.Dayjs,

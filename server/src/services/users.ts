@@ -1,7 +1,7 @@
 //prettier-ignore
 import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
 //prettier-ignore
-import { addEmailResetRequest, findEmailResetRequestByUserId, removeEmailResetRequest, removeEmailResetRequestByUserId } from '../repositories/emailResetRequestRepository';
+import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash } from '../repositories/userRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
@@ -107,15 +107,15 @@ export const sendUpdateEmailLink = async (id: string, email: string): Promise<vo
 		if (userWithThisEmail.id === id) {
 			throw new AppError('Please provide new email address', 400);
 		} else {
-			throw new AppError('This email was already used. Please try another email address.', 400);
+			throw new AppError('This email is already taken. Please try another email address.', 400);
 		}
 	}
-	const updateRequset = await findEmailResetRequestByUserId(id);
+	const updateRequset = await findUpdateEmailRequestByUserId(id);
 	if (updateRequset) {
-		await removeEmailResetRequest(updateRequset.token);
+		await removeUpdateEmailRequest(updateRequset.token);
 	}
 
-	const newUpdateRequset = await addEmailResetRequest(id, email);
+	const newUpdateRequset = await addUpdateEmailRequest(id, email);
 	if (!newUpdateRequset) {
 		throw new AppError('Error creating reset link, please try again', 400);
 	}
@@ -138,6 +138,6 @@ export const mailEmailUpdateLink = (email: User['email'], newUpdateRequset: Emai
 
 export const changeUserEmail = async (emailResetRequest: EmailUpdateRequest): Promise<void> => {
 	await updateUserEmail(emailResetRequest.userId, emailResetRequest.email);
-	await removeEmailResetRequestByUserId(emailResetRequest.userId);
+	await removeUpdateEmailRequestByUserId(emailResetRequest.userId);
 	await updateSessionEmailByUserId(emailResetRequest.userId, emailResetRequest.email);
 };

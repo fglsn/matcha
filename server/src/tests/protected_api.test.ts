@@ -21,7 +21,7 @@ describe('visit protected page', () => {
 		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
-		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+		await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
 		if (activeUser) {
@@ -64,7 +64,7 @@ describe('visit protected page', () => {
 		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
-		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+		await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
 		if (activeUser) {

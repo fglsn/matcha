@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { AlertContext } from './AlertProvider';
-import accountService from '../services/account';
+import accountService from '../services/profile';
 
 const UpdateEmail = () => {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
@@ -14,7 +14,7 @@ const UpdateEmail = () => {
 		const validateUpdateToken = async () => {
 			if (updateToken) {
 				try {
-					await accountService.checkUpdateTokenEmail(updateToken);
+					await accountService.updateEmailbyToken(updateToken);
 					successCallback('Email was successfully updated!');
 					navigate('/');
 				} catch (err) {
