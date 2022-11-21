@@ -33,9 +33,20 @@ const isTags = (tags: any): tags is string[] => {
 	return true;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isStringArray = (arr: any): arr is string[] => {
+	if (!Array.isArray(arr)) return false;
+	for (let i = 0; i < arr.length; i++) {
+		if (!isString(arr[i])) {
+			return false;
+		}
+	}
+	return true;
+};
+
 // const isGender = (param: any): param is Gender => {
 // 	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 // 	return Object.values(Gender).includes(param);
 // };
 
-export { isString, isDate, isGender, isOrientation, isTags };
+export { isString, isDate, isGender, isOrientation, isTags, isStringArray };

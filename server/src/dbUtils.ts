@@ -1,4 +1,4 @@
-import { isTags } from './validators/basicTypeValidators';
+import { isStringArray } from './validators/basicTypeValidators';
 
 function getString(value: unknown): string {
 	if (typeof value === 'string') {
@@ -17,13 +17,13 @@ function getStringOrUndefined(value: unknown): string | undefined {
 	throw `Expected value to be string or null, got: ${typeof value}`;
 }
 
-function getTagsOrUndefined(value: unknown): string[] | undefined {
+function getStringArrayOrUndefined(value: unknown): string[] | undefined {
 	if (value === null) {
 		return undefined;
 	}
 
-	if (!isTags(value)) {
-		throw `Expected value to be string or null, got: ${typeof value}`;
+	if (!isStringArray(value)) {
+		throw `Expected value to be array of strings or null`;
 	}
 	return value;
 }
@@ -69,4 +69,4 @@ const getDateOrUndefined = (value: unknown): Date | undefined => {
 	throw `Expected value to be date, got: ${typeof value}`;
 };
 
-export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined, getTagsOrUndefined };
+export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined };

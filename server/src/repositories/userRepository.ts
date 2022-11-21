@@ -1,5 +1,5 @@
 import pool from '../db';
-import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getTagsOrUndefined } from '../dbUtils';
+import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined } from '../dbUtils';
 import { ValidationError } from '../errors';
 import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile } from '../types';
 
@@ -29,7 +29,7 @@ const userDataMapper = (row: any): UserData => {
 		gender: getStringOrUndefined(row['gender']),
 		orientation: getStringOrUndefined(row['orientation']),
 		bio: getStringOrUndefined(row['bio']),
-		tags: getTagsOrUndefined(row['tags'])
+		tags: getStringArrayOrUndefined(row['tags'])
 	};
 };
 
