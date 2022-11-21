@@ -37,7 +37,7 @@ describe('send password reset link on forgot pwd request', () => {
 		//activate first
 		const activationCode = user?.activationCode;
 		// console.log(activationCode);
-		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+		await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
 		if (!activeUser) {
@@ -90,7 +90,7 @@ describe('visit password-reset link', () => {
 		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
-		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+		await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
 		if (!activeUser) fail();
@@ -142,7 +142,7 @@ describe('set new password', () => {
 		if (!user) fail();
 		const activationCode = user?.activationCode;
 
-		await api.get(`/api/users/activate/${activationCode}`).expect(200);
+		await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 		const activeUser = await findUserByUsername(newUser.username);
 		if (!activeUser) fail();

@@ -25,7 +25,7 @@ describe('user login', () => {
 		if (user) {
 			const activationCode = user.activationCode;
 
-			await api.get(`/api/users/activate/${activationCode}`).expect(200);
+			await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 			const activeUser = await findUserByUsername(newUser.username);
 			if (activeUser) {

@@ -1,16 +1,15 @@
+//prettier-ignore
+import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
+//prettier-ignore
+import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
+//prettier-ignore
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash } from '../repositories/userRepository';
+import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
+import { EmailUpdateRequest, NewUser, PasswordResetRequest, User } from '../types';
+import { sendMail } from '../utils/mailer';
+import { AppError } from '../errors';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-
-import { NewUser, PasswordResetRequest, User } from '../types';
-import { sendMail } from '../utils/mailer';
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword } from '../repositories/userRepository';
-import { AppError } from '../errors';
-import {
-	addPasswordResetRequest,
-	findPasswordResetRequestByUserId,
-	removePasswordResetRequest,
-	removePasswordResetRequestByUserId
-} from '../repositories/passwordResetRequestRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -49,7 +48,7 @@ export const activateAccount = async (activationCode: string): Promise<void> => 
 	}
 };
 
-//reset pwd
+//reset forgotten password
 export const sendResetLink = async (email: string): Promise<void> => {
 	const user = await findUserByEmail(email);
 	if (!user) {
@@ -86,8 +85,59 @@ export const sendResetPasswordLink = (user: User, newResetRequset: PasswordReset
 	);
 };
 
-export const changeUserPassword = async (userId: string, passwordPlain: string): Promise<void> => {
+export const changeForgottenPassword = async (userId: string, passwordPlain: string): Promise<void> => {
 	const passwordHash = await createHashedPassword(passwordPlain);
 	await updateUserPassword(userId, passwordHash);
 	await removePasswordResetRequestByUserId(userId);
+};
+
+export const updatePassword = async (userId: string, oldPasswordPlain: string, newPasswordPlain: string): Promise<void> => {
+	const oldPwdHash = await getPasswordHash(userId);
+	const confirmOldPassword = await bcrypt.compare(oldPasswordPlain, oldPwdHash);
+	if (!confirmOldPassword) {
+		throw new AppError('Wrong old password, please try again', 400);
+	}
+	const passwordHash = await createHashedPassword(newPasswordPlain);
+	await updateUserPassword(userId, passwordHash);
+};
+
+export const sendUpdateEmailLink = async (id: string, email: string): Promise<void> => {
+	const userWithThisEmail = await findUserByEmail(email);
+	if (userWithThisEmail) {
+		if (userWithThisEmail.id === id) {
+			throw new AppError('Please provide new email address', 400);
+		} else {
+			throw new AppError('This email is already taken. Please try another email address.', 400);
+		}
+	}
+	const updateRequset = await findUpdateEmailRequestByUserId(id);
+	if (updateRequset) {
+		await removeUpdateEmailRequest(updateRequset.token);
+	}
+
+	const newUpdateRequset = await addUpdateEmailRequest(id, email);
+	if (!newUpdateRequset) {
+		throw new AppError('Error creating reset link, please try again', 400);
+	}
+	mailEmailUpdateLink(email, newUpdateRequset);
+};
+
+export const mailEmailUpdateLink = (email: User['email'], newUpdateRequset: EmailUpdateRequest): void => {
+	sendMail(
+		email,
+		'Confirm email reset for Matcha-account',
+		`<h1>Hi, here you can confirm email reset!</h1>
+			<p>Visit the link below to reset your email:</p>
+			<a href='http://localhost:3000/update_email?update=${newUpdateRequset.token}'>Reset email here</a>
+			<p>Link will be active until ${newUpdateRequset.expiresAt}.</p>
+			<p>Ignore this message if you haven't requested email reset.</p>
+
+			<p> See you at Matcha! <3 </p>`
+	);
+};
+
+export const changeUserEmail = async (emailResetRequest: EmailUpdateRequest): Promise<void> => {
+	await updateUserEmail(emailResetRequest.userId, emailResetRequest.email);
+	await removeUpdateEmailRequestByUserId(emailResetRequest.userId);
+	await updateSessionEmailByUserId(emailResetRequest.userId, emailResetRequest.email);
 };

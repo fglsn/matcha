@@ -28,9 +28,11 @@ export const loginUser = { username: 'matcha', password: 'Test!111' };
 
 export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
 
+export const newPass = { password: 'Test!2222' };
+
+export const newEmail = { email: 'tester1.hive@yahoo.com' };
 export const infoProfile = {
 	username: 'matcha',
-	email: 'matcha@test.com',
 	firstname: 'lorem',
 	lastname: 'ipsum',
 	birthday: new Date('1999-03-22').toISOString(),
@@ -40,7 +42,6 @@ export const infoProfile = {
 };
 export const infoProfile2 = {
 	username: 'matcha2',
-	email: 'matcha2@test.com',
 	firstname: 'lorem',
 	lastname: 'ipsum',
 	birthday: new Date('1999-03-22').toISOString(),

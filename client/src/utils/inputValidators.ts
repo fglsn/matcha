@@ -63,8 +63,9 @@ export const validateBirthday = (date: dayjs.Dayjs) => {
 };
 
 export const validateBio = (bio: string) => {
-	if (bio.length < 10 || bio.length > 255) {
-		return 'This field should be 10-255 characters long.';
+	let trimmedBio = bio.trim().replace(/\s\s+/g, ' ');
+	if (trimmedBio.length < 10 || trimmedBio.length > 255) {
+		return 'This field should be 10-255 characters long. (Note that we are removing recurring spaces)';
 	}
 	return undefined;
 };
@@ -89,17 +90,13 @@ export const validateLoginForm = (username: string, password: string) => {
 	return !validateUsername(username) && !validatePassword(password) ? true : false;
 };
 
-export const validateProfileForm = (
-	username: string,
-	email: string,
+export const validateProfileEditorForm = (
 	firstname: string,
 	lastname: string,
 	date: dayjs.Dayjs,
 	bio: string
 ) => {
-	return !validateUsername(username) &&
-		!validateEmail(email) &&
-		!validateFirstame(firstname) &&
+	return !validateFirstame(firstname) &&
 		!validateLastname(lastname) &&
 		!validateBirthday(date) &&
 		!validateBio(bio)

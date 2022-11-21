@@ -22,7 +22,7 @@ describe('account activation', () => {
 		if (user) {
 			const activationCode = user.activationCode;
 
-			await api.get(`/api/users/activate/${activationCode}`).expect(200);
+			await api.post(`/api/users/activate/${activationCode}`).expect(200);
 
 			const activeUser = await findUserByUsername(newUser.username);
 			if (!activeUser) fail();
@@ -38,7 +38,7 @@ describe('account activation', () => {
 			await setUserAsActive(activationCode);
 
 			const res = await api
-				.get(`/api/users/activate/${activationCode}`)
+				.post(`/api/users/activate/${activationCode}`)
 				.expect(400)
 				.expect('Content-Type', /application\/json/);
 
@@ -50,7 +50,7 @@ describe('account activation', () => {
 		const user = await findUserByUsername(newUser.username);
 		if (user) {
 			const res = await api
-				.get(`/api/users/activate/81e33e3c8f03678da23232323322f1e29979d63}`)
+				.post(`/api/users/activate/81e33e3c8f03678da23232323322f1e29979d63}`)
 				.expect(400)
 				.expect('Content-Type', /application\/json/);
 

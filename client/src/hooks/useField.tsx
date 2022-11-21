@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useState } from 'react';
 
 export const useField = (
 	type: string,
@@ -25,18 +25,30 @@ export const useField = (
 	};
 };
 
-export const useFieldWithReset = (type: string, label: string) => {
-	const [value, setValue] = useState('')
+export const useFieldWithReset = (
+	type: string,
+	label: string,
+	validationFn: (value: string) => string | undefined
+) => {
+	const [value, setValue] = useState('');
 
-	const onChange = (event: { target: { value: SetStateAction<string> } }) => setValue(event.target.value)
+	const onChange = (event: { target: { value: SetStateAction<string> } }) =>
+		setValue(event.target.value);
 
-	const reset = () => setValue('')
+	let errorMessage;
+	if (value !== '') {
+		errorMessage = validationFn(value);
+	}
+
+	const reset = () => setValue('');
 
 	return {
 		type,
 		label,
 		value,
 		onChange,
-		reset
-	}
-}
+		reset,
+		error: !!errorMessage,
+		helperText: errorMessage
+	};
+};

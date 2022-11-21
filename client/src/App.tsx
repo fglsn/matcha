@@ -5,7 +5,7 @@ import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import ForgotPassword from './components/ForgotPassword/index';
-import Profile from './components/Profile/index';
+import ProfileEditor from './components/ProfileEditor/index';
 import AlertProvider from './components/AlertProvider';
 import AlertSnackBar from './components/AlertSnackBar';
 import Footer from './components/Footer';
@@ -19,6 +19,7 @@ import TestAuth from './components/TestAuth';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { SnackbarProvider } from 'notistack';
+import UpdateEmail from './components/UpdateEmail';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -61,7 +62,8 @@ const App = () => {
 								<Route path="/signup" element={!loggedUser ? <SignUpForm /> : <Navigate to="/"/>} />
 								{/* prettier-ignore */}
 								<Route path="/forgot_password" element={!loggedUser ? <ForgotPassword /> : <Navigate to="/"/>} />
-								<Route path="/profile" element={<Profile />} />
+								<Route path="/profile" element={<ProfileEditor />} />
+								<Route path="/update_email" element={<UpdateEmail />} />
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />
 							</Routes>

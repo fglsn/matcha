@@ -23,6 +23,22 @@ const theme = createTheme({
 			defaultProps: {
 				disableElevation: true
 			}
+		},
+		MuiTypography: {
+			defaultProps: {
+				variantMapping: {
+					h1: 'h2',
+					h2: 'h2',
+					h3: 'h2',
+					h4: 'h2',
+					h5: 'h5',
+					h6: 'h2',
+					subtitle1: 'h2',
+					subtitle2: 'h2',
+					body1: 'span',
+					body2: 'h5'
+				}
+			}
 		}
 	}
 });

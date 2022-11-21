@@ -12,7 +12,7 @@ import {
 	validateAddingFiles
 } from '../../utils/imageUploaderAndValidor';
 
-const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
+const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { error: errorCallback } = useContext(AlertContext);
 	const [images, setImages] = useState<ImageType[]>([]);
@@ -92,7 +92,7 @@ const PicturesSection: React.FC<{ userData: UserDataWithoutId }> = ({ userData }
 					title={
 						<React.Fragment>
 							<Typography color="inherit">
-								<strong>Valid picture should be:</strong>
+								<strong>Valid picture should be: <br/></strong>
 							</Typography>
 							{'Of jpeg, jpg or png format.'}
 							<br />
@@ -188,7 +188,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 const uploadApplyBtn = {
 	margin: '10px 0 5px 0',
-	padding: '5px 150px',
+	padding: '5px 25px',
 	maxWidth: '100%'
 };
 
@@ -245,4 +245,4 @@ const placeholder = {
 	featured: true
 };
 
-export default PicturesSection;
+export default Photos;

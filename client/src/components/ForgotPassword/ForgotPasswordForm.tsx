@@ -1,22 +1,11 @@
+//prettier-ignore
+import { Avatar, Box, Button, CssBaseline, TextField, Grid, Container, Link, Typography } from '@mui/material';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import {
-	Avatar,
-	Box,
-	Button,
-	CssBaseline,
-	TextField,
-	Grid,
-	Container,
-	Link,
-	Typography
-} from '@mui/material';
-
-import userService from '../../services/users';
 import { useField } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
+import userService from '../../services/users';
 
 const ForgotPasswordForm = () => {
 	const email = useField('text', 'Email', validateEmail);

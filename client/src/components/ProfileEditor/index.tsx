@@ -1,7 +1,8 @@
-import { useContext, useEffect,  useCallback} from 'react';
+import { Paper, styled, Container, Grid, Alert } from '@mui/material';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { getProfilePage } from '../../services/profile';
+import { getProfile } from '../../services/profile';
 import { logoutUser } from '../../services/logout';
 import { useStateValue } from '../../state';
 import { AuthError } from '../../utils/errors';
@@ -9,50 +10,30 @@ import { UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
-import Alert from '@mui/material/Alert';
-import BasicInfo from './BasicInfoSection';
-import { Paper, styled, Container, Grid } from '@mui/material';
-import PicturesSection from './PicturesSection';
-
-const style = {
-	container: {
-		marginTop: '4rem'
-	},
-	paper: {
-		backgroundColor: '#b5bec6ff',
-		padding: '5rem'
-	}
-};
+import UpdateEmailForm from './UpdateEmailForm';
+import BasicInfoForm from './BasicInfoForm';
+import Photos from './Photos';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
-	padding: theme.spacing(1),
+	padding: theme.spacing(2),
 	textAlign: 'left',
 	color: theme.palette.text.secondary
 }));
 
-const Profile = () => {
+const ProfileEditor = () => {
 	const { error: errorCallback } = useContext(AlertContext);
-	const [{loggedUser}, dispatch] = useStateValue();
+	const [{ loggedUser }, dispatch] = useStateValue();
+	const navigate = useNavigate();
 
-	const profileCallback = useCallback(() => getProfilePage(loggedUser), [loggedUser]);
-	
 	const {
 		data,
 		error
-	}: { data: UserDataWithoutId | undefined; error: Error | undefined } =
-		useServiceCall(profileCallback);
-	
-	const navigate = useNavigate();
-
-	// // to be changed
-	// window.onblur = function () {
-	// 	window.onfocus = function () {
-	// 		// eslint-disable-next-line no-restricted-globals
-	// 		location.reload();
-	// 	};
-	// };
+	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
+		async () => loggedUser && (await getProfile(loggedUser)),
+		[loggedUser]
+	);
 
 	useEffect(() => {
 		if (error) {
@@ -64,25 +45,30 @@ const Profile = () => {
 		}
 	}, [dispatch, error, errorCallback, navigate]);
 
-	if (error) return <Alert severity="error">Error Loading Profile...</Alert>;
+	if (error)
+		return (
+			<Alert severity="error">
+				Error loading account settings page, please try again...
+			</Alert>
+		);
 
 	if (!data) return <LoadingIcon />;
 
 	const userData: UserDataWithoutId = {
 		username: data.username,
-		email: data.email,
 		firstname: data.firstname,
 		lastname: data.lastname,
 		birthday: data.birthday,
 		gender: data.gender,
 		orientation: data.orientation,
+		tags: data.tags,
 		bio: data.bio
 	};
-	// console.log('bio ' + data.bio)
-	//render form sections
+
 	return (
 		<>
-			<Container maxWidth="lg" style={style.container}>
+			<Container maxWidth="lg" sx={{ mt: 8 }}>
+				<UpdateEmailForm />
 				<Grid
 					container
 					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
@@ -90,20 +76,18 @@ const Profile = () => {
 				>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<BasicInfo userData={userData} />
+							<BasicInfoForm userData={userData} />
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<PicturesSection userData={userData} />
+							<Photos userData={userData} />
 						</Item>
 					</Grid>
 				</Grid>
 			</Container>
-
-			{/* <div>hello {data.username}</div> */}
 		</>
 	);
 };
 
-export default withAuthRequired(Profile);
+export default withAuthRequired(ProfileEditor);
