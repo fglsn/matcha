@@ -11,6 +11,7 @@ import { AlertContext } from '../AlertProvider';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import UpdateEmailForm from './UpdateEmailForm';
+import UpdatePasswordForm from './UpdatePasswordForm';
 import BasicInfoForm from './BasicInfoForm';
 import Photos from './Photos';
 
@@ -20,6 +21,15 @@ const Item = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(2),
 	textAlign: 'left',
 	color: theme.palette.text.secondary
+}));
+
+const StyledButtons = styled('div')(() => ({
+	background: 'white',
+	display: 'flex',
+	flexDirection: 'row',
+	alignItems: 'center',
+	justifyContent: 'space-evenly',
+	textAlign: 'center'
 }));
 
 const ProfileEditor = () => {
@@ -68,7 +78,6 @@ const ProfileEditor = () => {
 	return (
 		<>
 			<Container maxWidth="lg" sx={{ mt: 8 }}>
-				<UpdateEmailForm />
 				<Grid
 					container
 					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
@@ -77,6 +86,11 @@ const ProfileEditor = () => {
 					<Grid item xs={12} sm={6}>
 						<Item>
 							<BasicInfoForm userData={userData} />
+							{/* <location here> */}
+							<StyledButtons>
+								<UpdateEmailForm />
+								<UpdatePasswordForm />
+							</StyledButtons>
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>

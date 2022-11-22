@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
-import { isDate, isGender, isOrientation, isString, isTags } from './basicTypeValidators';
+import { Tags } from '../utils/tags';
+import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
-import { checkIfDublicatesExist } from '../utils/helpers';
-// import { Tags } from '../utils/tags';
+import { checkIfDuplicatesExist } from '../utils/helpers';
 // import dayjs from 'dayjs';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -147,6 +147,11 @@ export const parseNewUserPayload = ({ username, email, passwordPlain, firstname,
 	return newUser;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isGender = (gender: any): gender is Gender => {
+	return gender === 'male' || gender === 'female';
+};
+
 //to be fixed
 const parseGender = (gender: unknown): Gender => {
 	if (!gender) {
@@ -156,6 +161,22 @@ const parseGender = (gender: unknown): Gender => {
 		throw new ValidationError('Invalid gender');
 	}
 	return gender;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isOrientation = (orientation: any): orientation is Orientation => {
+	return orientation === 'straight' || orientation === 'gay' || orientation === 'bi';
+};
+
+//to be fixed
+export const parseOrientation = (orientation: unknown): Orientation => {
+	if (!orientation) {
+		throw new ValidationError(`Missing orientation`);
+	}
+	if (!isString(orientation) || !isOrientation(orientation)) {
+		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
+	}
+	return orientation;
 };
 
 //might fail when offfset back by local if not same timezone as front
@@ -186,8 +207,9 @@ const parseBirthday = (date: unknown): Date => {
 
 	return bd;
 };
+
 //to be fixed
-const parseBio = (bio: unknown): string => {
+export const parseBio = (bio: unknown): string => {
 	if (!bio) {
 		throw new ValidationError(`Missing bio`);
 	}
@@ -201,26 +223,20 @@ const parseBio = (bio: unknown): string => {
 	return trimmedBio;
 };
 
-const parseTags = (tags: unknown): string[] => {
+export const parseTags = (tags: unknown): string[] => {
 	if (!tags) {
 		throw new ValidationError(`Missing tags`);
 	}
-	if (!isTags(tags)) {
-		throw new ValidationError(`Invalid tags format: array of 0 to 5 tags`);
+	if (!isStringArray(tags))
+		throw new ValidationError(`Invalid tags format: tags must be strings`);
+	if (tags.length === 0 || tags.length > 5) throw new ValidationError(`Invalid tags format! Array of 1 to 5 tags expected`);
+	for (let i = 0; i < tags.length; i++) {
+		if (!Tags.find((t) => t === tags[i])) {
+			throw new ValidationError(`Invalid tags format: tag '${tags[i]}' is not on the list`);
+		}
 	}
-	if (checkIfDublicatesExist(tags)) throw new ValidationError(`Invalid tags format: tags should not have duplicates`);
+	if (checkIfDuplicatesExist(tags)) throw new ValidationError(`Invalid tags format: tags should not have duplicates`);
 	return tags;
-};
-
-//to be fixed
-const parseOrientation = (orientation: unknown): Orientation => {
-	if (!orientation) {
-		throw new ValidationError(`Missing orientation`);
-	}
-	if (!isString(orientation) || !isOrientation(orientation)) {
-		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
-	}
-	return orientation;
 };
 
 type Fields1 = {

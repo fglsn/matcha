@@ -194,7 +194,7 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 				date &&
 				gender.value &&
 				orientation.value &&
-				selectedTags &&
+				selectedTags && selectedTags.length &&
 				bio.value &&
 				validateProfileEditorForm(
 					firstname.value,

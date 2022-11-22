@@ -7,7 +7,7 @@ const TagList = styled(List)({
 	'& .MuiListItemButton-root:hover': {
 		backgroundColor: 'white',
 		'&, & .MuiListItemIcon-root': {
-			color: '#fcfcfc'
+			color: '#fcc810ba'
 		}
 	}
 });
