@@ -12,6 +12,8 @@ import { useToggleButton } from '../../hooks/useToggleButton';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 import Tags from './Tags';
+import Location from './Location';
+
 import profileService from '../../services/profile';
 import { useStateValue } from '../../state';
 import { AlertContext } from '../AlertProvider';
@@ -32,7 +34,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 	}
 }));
 
-const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 	<Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
 	[`& .${tooltipClasses.tooltip}`]: {
@@ -188,13 +190,17 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 						<strong>Bio*</strong>
 						<TextField {...bio} required fullWidth multiline rows={4} />
 					</Grid>
+					<Grid item xs={12}>
+						<Location />
+					</Grid>
 				</Grid>
 				{firstname.value &&
 				lastname.value &&
 				date &&
 				gender.value &&
 				orientation.value &&
-				selectedTags && selectedTags.length &&
+				selectedTags &&
+				selectedTags.length &&
 				bio.value &&
 				validateProfileEditorForm(
 					firstname.value,
@@ -208,11 +214,11 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
-						Update Info
+						Update Profile
 					</Button>
 				) : (
 					<Button disabled variant="contained" sx={{ mt: 3, mb: 2 }}>
-						Update Info
+						Update Profile
 					</Button>
 				)}
 			</Box>
