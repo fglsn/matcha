@@ -77,25 +77,26 @@ const ProfileEditor = () => {
 
 	return (
 		<>
-			<Container maxWidth="lg" sx={{ mt: 8 }}>
+			<Container maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
 				<Grid
 					container
-					columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 10 }}
+					columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
 					sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
 				>
 					<Grid item xs={12} sm={6}>
 						<Item>
 							<BasicInfoForm userData={userData} />
-							{/* <location here> */}
-							<StyledButtons>
-								<UpdateEmailForm />
-								<UpdatePasswordForm />
-							</StyledButtons>
 						</Item>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Item>
 							<Photos userData={userData} />
+						</Item>
+						<Item sx={{marginTop: '2rem'}}>
+							<StyledButtons >
+								<UpdateEmailForm />
+								<UpdatePasswordForm />
+							</StyledButtons>
 						</Item>
 					</Grid>
 				</Grid>
