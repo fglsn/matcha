@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { LoggedUser, NewUserDataWithoutId } from '../types';
+import { Images, LoggedUser, NewUserDataWithoutId } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
@@ -9,11 +9,18 @@ export const getProfile = async (loggedUser: LoggedUser) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(
+		const responseProfile = await axios.get(
 			`${apiBaseUrl}/users/${loggedUser.id}/profile`,
 			config
 		);
-		return response.data;
+		console.log(responseProfile.data);
+		
+		const responsePhotos = await axios.get(
+			`${apiBaseUrl}/users/${loggedUser.id}/photos`,
+			config
+		);
+		console.log(responsePhotos.data);
+		return {...responseProfile.data, ...responsePhotos.data } ;
 	} catch (err) {
 		handleAxiosError(err);
 	}
@@ -33,6 +40,23 @@ export const updateProfile = async (
 			config
 		);
 		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+export const uploadPhotos = async (
+	loggedUser: LoggedUser,
+	images: Images
+) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		await axios.post(
+			`${apiBaseUrl}/users/${loggedUser.id}/photos`,
+			images,
+			config
+		);
 	} catch (err) {
 		handleAxiosError(err);
 	}
@@ -112,6 +136,7 @@ const moduleExports = {
 	requestUpdateEmail,
 	updateEmailbyToken,
 	updatePassword,
+	uploadPhotos
 	// requestLocation
 };
 

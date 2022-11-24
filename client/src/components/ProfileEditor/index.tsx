@@ -44,6 +44,15 @@ const ProfileEditor = () => {
 		async () => loggedUser && (await getProfile(loggedUser)),
 		[loggedUser]
 	);
+	
+	// const {
+	// 	photos,
+	// 	errorPhotos
+	// }: { photos: ImageType[] | undefined; errorPhotos: Error | undefined } = useServiceCall(
+	// 	async () => loggedUser && (await getPhotos(loggedUser)),
+	// 	[loggedUser]
+	// );
+
 
 	useEffect(() => {
 		if (error) {
@@ -72,7 +81,8 @@ const ProfileEditor = () => {
 		gender: data.gender,
 		orientation: data.orientation,
 		tags: data.tags,
-		bio: data.bio
+		bio: data.bio,
+		images: data.images
 	};
 
 	return (

@@ -105,5 +105,7 @@ export const validateProfileEditorForm = (
 };
 
 export const validateUpdatePasswordForm = (oldPassword: string, newPassword: string) => {
-	return !validatePassword(oldPassword) && !validatePassword(newPassword) ? true : false;
-}
+	return !validatePassword(oldPassword) && !validatePassword(newPassword)
+		? true
+		: false;
+};
