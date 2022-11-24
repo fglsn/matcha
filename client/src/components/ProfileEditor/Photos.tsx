@@ -10,7 +10,7 @@ import { Images, ImageType } from '../../types';
 import { useStateValue } from '../../state';
 import { AlertContext } from '../AlertProvider';
 import profileService from '../../services/profile';
-
+import { LightTooltip } from './BasicInfoForm';
 
 const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 	const [{ loggedUser }] = useStateValue();
@@ -28,8 +28,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 		if (!files) return;
 
 		const [newImages, error] = await getValidImages(files);
-		if (error) 
-			errorCallback(error);
+		if (error) errorCallback(error);
 
 		if (!newImages.length) return;
 
@@ -95,6 +94,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 			errorCallback(
 				err.response?.data?.error || 'Unable to upload photos. Please try again.'
 			);
+			setIsUploading(false);
 		}
 	};
 
@@ -196,13 +196,21 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 						</Box>
 					))}
 				</Box>
-				<Button
-					onClick={handleUserPhotosUpload}
-					disabled={isUploading}
-					style={uploadApplyBtn}
+				<LightTooltip
+					title={isUploading || !images || !images.length ? "Add at least one picture!" : "Don't forget to upload if you changed something!"}
+					placement="top"
 				>
-					Upload
-				</Button>
+					<span>
+						<Button
+							fullWidth
+							onClick={handleUserPhotosUpload}
+							disabled={isUploading || !images || !images.length}
+							style={uploadApplyBtn}
+						>
+							Upload
+						</Button>
+					</span>
+				</LightTooltip>
 			</Container>
 		</>
 	);
