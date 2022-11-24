@@ -9,7 +9,7 @@ const photosMapper = (rows: any): Images => {
 		const photo_type = getString(rows[i]['photo_type']);
 		const photo = getString(rows[i]['photo']);
 		const image = `data:${photo_type};base64,${photo}`;
-		images.push(image);
+		images.push({ dataURL: image });
 	}
 	return { images: images };
 };
@@ -40,7 +40,7 @@ const getPhotosByUserId = async (userId: string): Promise<Images> => {
 
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return { images: [] };
+		return { images: undefined };
 	}
 	return photosMapper(res.rows);
 };

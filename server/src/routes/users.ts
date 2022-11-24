@@ -203,12 +203,12 @@ router.get(
 
 router.put(
 	'/:id/location',
-  sessionExtractor,
+	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
 			throw new AppError(`No rights to update profile data`, 400);
 		}
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const coordinates = req.body.coordinates;
 		if (!coordinates) {
 			console.log('ip ', req.headers['x-forwarded-for'] || req.socket.remoteAddress || null);
@@ -228,7 +228,7 @@ router.put(
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		res.status(201).json(result?.data?.data[0]);
-    })
+	})
 );
 
 // router.get(

@@ -1,6 +1,6 @@
 import { ValidationError } from '../errors';
-import { Photo } from '../types';
-import { isStringArray } from './basicTypeValidators';
+import { ImageType, Photo } from '../types';
+import { isString } from './basicTypeValidators';
 import Jimp from 'jimp';
 
 type Fields2 = {
@@ -8,16 +8,25 @@ type Fields2 = {
 };
 
 const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isImagesArray = (images: any): images is ImageType[] => {
+	if (!images || !Array.isArray(images) || !images.length) return false;
+	for (let i = 0; i < images.length; i++) {
+		if (!images[i].dataURL || !isString(images[i].dataURL)) return false;
+	}
+	return true;
+};
 
 export const parseImages = async ({ images }: Fields2): Promise<Photo[]> => {
 	const imgArr = [];
-	if (!images) throw new ValidationError(`Missing images`);
-	if (!isStringArray(images)) throw new ValidationError(`Invalid images format: Array of 1 to 5 Images Data URIs expected`);
+
+	if (!isImagesArray(images)) throw new ValidationError(`Missing images`);
 	if (images.length === 0 || images.length > 5) throw new ValidationError(`Invalid images format! Array of 1 to 5 Images Data URIs expected`);
 	for (let i = 0; i < images.length; i++) {
-		// const type = images[i];
-		if (!/data:image\//.test(images[i])) throw new ValidationError(`Invalid images format! Image ${i + 1} is not an Image Data URI`);
-		const [, type, dataBase64] = images[i].match('data:(image/.*);base64,(.*)') || [];
+		const image = images[i].dataURL;
+
+		if (!/data:image\//.test(image)) throw new ValidationError(`Invalid images format! Image ${i + 1} is not an Image Data URI`);
+		const [, type, dataBase64] = image.match('data:(image/.*);base64,(.*)') || [];
 		if (!type) throw new ValidationError(`Invalid images format! Allowed types: 'image/jpeg', 'image/png', 'image/jpg'`);
 		if (allowedImageTypes.indexOf(type) < 0) throw new ValidationError(`Invalid images format! Allowed types: 'image/jpeg', 'image/png', 'image/jpg'`);
 		if (!dataBase64) throw new ValidationError(`Invalid images format! Image ${i + 1} is not valid Image Data URI`);
@@ -42,7 +51,6 @@ export const parseImages = async ({ images }: Fields2): Promise<Photo[]> => {
 		if (height > width && width / height < 0.6) {
 			throw new ValidationError(`Invalid images format! Image ${i + 1} is of unacceptable ratio.`);
 		}
-		console.log(height, width, fileSizeInBytes);
 
 		imgArr.push({
 			imageType: type,

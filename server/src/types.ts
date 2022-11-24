@@ -66,6 +66,9 @@ export type Photo = {
 	dataBase64: string;
 };
 
+export interface ImageType {
+	dataURL: string;
+}
 export type Images = {
-	images: string[];
+	images: ImageType[] | undefined;
 };
