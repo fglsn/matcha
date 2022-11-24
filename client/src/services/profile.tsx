@@ -113,24 +113,24 @@ export const updatePassword = async ({
 	}
 };
 
-// export const requestLocation = async (id: string, coordinates: number[] | undefined) => {
-// 	try {
-// 		const config = {
-// 			headers: { Authorization: getAuthHeader() }
-// 		};
-// 		let response;
+export const requestLocation = async (id: string, coordinates: number[] | undefined) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		let response;
 
-// 		response = await axios.put(
-// 			`${apiBaseUrl}/users/${id}/location`,
-// 			{ coordinates },
-// 			config
-// 		);
+		response = await axios.put(
+			`${apiBaseUrl}/users/${id}/location`,
+			{ coordinates },
+			config
+		);
 
-// 		return response.data;
-// 	} catch (err) {
-// 		handleAxiosError(err);
-// 	}
-// };
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
 
 const moduleExports = {
 	getProfile,
@@ -140,7 +140,7 @@ const moduleExports = {
 	requestUpdateEmail,
 	updateEmailbyToken,
 	updatePassword,
-	// requestLocation
+	requestLocation
 };
 
 export default moduleExports;

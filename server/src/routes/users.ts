@@ -210,22 +210,25 @@ router.put(
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const coordinates = req.body.coordinates;
-		if (!coordinates) {
-			console.log('ip ', req.headers['x-forwarded-for'] || req.socket.remoteAddress || null);
-		}
-
+		// if (!coordinates) {
+		// 	console.log('ip ', req.headers['x-forwarded-for'] || req.socket.remoteAddress || null);
+		// }
+		// console.log(coordinates.latitude);
 		let result;
 		try {
 			const params = {
 				access_key: process.env.API_KEY,
-				query: `${coordinates}`
+				query: `${coordinates[0]}, ${coordinates[1]}`
 			};
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+			// console.log(coordinates[0], coordinates[1]);
 			result = await axios.get(`http://api.positionstack.com/v1/reverse`, { params });
 		} catch (err) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
 			if (axios.isAxiosError(err)) console.log('Response err: ', err.response?.data);
 		}
+
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		res.status(201).json(result?.data?.data[0]);
 	})

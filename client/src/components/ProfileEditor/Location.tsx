@@ -1,8 +1,10 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
-import { Box, Button } from '@mui/material';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents } from 'react-leaflet';
+import { Box, Button, Typography } from '@mui/material';
 // import { useStateValue } from '../../state';
 import { LightTooltip } from './BasicInfoForm';
+import profileService from '../../services/profile';
+import { useStateValue } from '../../state';
 
 const getCoordinates = (
 	setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>,
@@ -74,38 +76,13 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 
 const Location = () => {
 	// const [{ loggedUser }] = useStateValue();
+	const [{ loggedUser }] = useStateValue();
 	const [coordinates, setCoordinates] = useState<[number, number]>([
 		60.16678195339881, 24.941711425781254
 	]);
 	const [isLocationEnabled, setIsLocationEnabled] = useState<boolean>(false);
 	const [locationError, setError] = useState<boolean>(false);
-	// const getGeoPosition = useCallback(
-	// 	async (coordinates: number[] | undefined) => {
-	// 		let res;
-	// 		try {
-	// 			if (!coordinates || !coordinates[0] || !coordinates[1]) {
-	// 				res =
-	// 					loggedUser &&
-	// 					(await profileService.requestLocation(loggedUser.id, undefined));
-	// 				console.log('ip res ', res);
-	// 			} else {
-	// 				res =
-	// 					loggedUser &&
-	// 					(await profileService.requestLocation(
-	// 						loggedUser.id,
-	// 						coordinates
-	// 					));
-	// 				console.log('coord res ', res);
-	// 			}
-	// 			setLocation(res);
-	// 		} catch (err) {
-	// 			console.log(err); //rm later
-	// 		}
-	// 		console.log(res);
-	// 	},
-	// 	[loggedUser]
-	// );
-
+	const [address, setAddress] = useState<any>('');
 	useEffect(() => {
 		checkIsLocationEnabled(setIsLocationEnabled);
 	}, []);
@@ -114,12 +91,45 @@ const Location = () => {
 		if (!coordinates[0] || !coordinates[1]) getCoordinates(setCoordinates, setError);
 	}, [coordinates]);
 
-	// const handleClick = async (event: any) => {
-	// 	event.preventDefault();
-	// 	console.log(coordinates); //rm later
-	// 	// if (coordinates[0] && coordinates[1]) getGeoPosition(coordinates);
-	// 	// else getGeoPosition(undefined);
-	// };
+	const getGeoPosition = useCallback(
+		async (coordinates: [number, number] | undefined) => {
+			// let res;
+			let res2;
+			try
+				{
+					// res = loggedUser && (await profileService.requestLocation(loggedUser.id, undefined));
+					// console.log('ip res ', res);
+				
+					res2 = loggedUser && (await profileService.requestLocation(loggedUser.id, coordinates));
+					console.log('coord res ', res2);
+					res2.neighbourhood 
+						? setAddress(`${res2.neighbourhood}, ${res2.locality}, ${res2.country}`)
+						: setAddress(`${res2.locality}, ${res2.country}`);
+				}
+			catch (err) {
+				console.log(err); //rm later
+			}
+			// console.log(res);
+		},
+		[loggedUser]
+	);
+
+	useEffect(() => {
+		getGeoPosition(coordinates)
+	}, [coordinates, getGeoPosition])
+
+	const SetMarkerOnClick = ({
+		setCoordinates
+	}: {
+		setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>;
+	}) => {
+		useMapEvents({
+			click(e) {
+				setCoordinates([e.latlng.lat, e.latlng.lng]);
+			}
+		});
+		return null;
+	};
 
 	return (
 		<Box>
@@ -143,24 +153,18 @@ const Location = () => {
 			</LightTooltip>
 			<MapContainer
 				center={coordinates}
-				zoom={14}
 				scrollWheelZoom={true}
 				style={{ height: '30vh', width: '100wh' }}
 			>
-				<ChangeView center={coordinates} zoom={12} />
+				<ChangeView center={coordinates} zoom={13} />
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright"></a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 				<DraggableMarker coords={coordinates} setCoordinates={setCoordinates} />
+				<SetMarkerOnClick setCoordinates={setCoordinates} />
 			</MapContainer>
-			{/* <Button
-				sx={{ marginTop: 1, marginRight: 2, width: '100%' }}
-				variant="contained"
-				onClick={handleClick}
-			>
-				Set selected location
-			</Button> */}
+			<Typography>{address}</Typography>
 		</Box>
 	);
 };
