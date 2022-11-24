@@ -1,3 +1,4 @@
+import axios from 'axios';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { AppError } from '../errors';
@@ -184,6 +185,7 @@ router.post(
 		res.status(200).end();
 	})
 );
+
 //rename photos
 router.get(
 	'/:id/photos',
@@ -197,6 +199,36 @@ router.get(
 		const userPhotos = await getUserPhotosById(req.params.id);
 		res.status(200).json(userPhotos);
 	})
+);
+
+router.put(
+	'/:id/location',
+  sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to update profile data`, 400);
+		}
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const coordinates = req.body.coordinates;
+		if (!coordinates) {
+			console.log('ip ', req.headers['x-forwarded-for'] || req.socket.remoteAddress || null);
+		}
+
+		let result;
+		try {
+			const params = {
+				access_key: process.env.API_KEY,
+				query: `${coordinates}`
+			};
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+			result = await axios.get(`http://api.positionstack.com/v1/reverse`, { params });
+		} catch (err) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			if (axios.isAxiosError(err)) console.log('Response err: ', err.response?.data);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		res.status(201).json(result?.data?.data[0]);
+    })
 );
 
 // router.get(
