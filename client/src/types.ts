@@ -30,6 +30,7 @@ export type UserDataWithoutId = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
+	images: ImageType[] | undefined;
 };
 
 export type NewUserDataWithoutId = {
@@ -67,5 +68,8 @@ export enum Orientation {
 
 export interface ImageType {
 	dataURL: string;
-	file: File;
 }
+
+export type Images = {
+	images: ImageType[];
+};

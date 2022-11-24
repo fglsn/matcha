@@ -46,8 +46,7 @@ export const getValidImages = async (
 			if (height > width && width / height < 0.6) continue;
 
 			validImages.push({
-				dataURL: await getBase64(files[i]),
-				file: files[i]
+				dataURL: await getBase64(files[i])
 			});
 		} catch (e) {
 			console.log('Error decoding image', e);

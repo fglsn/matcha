@@ -10,7 +10,7 @@ import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { addPhotoByUserId, dropPhotosByUserId, getPhotosByUserId } from '../repositories/photosRepository';
+import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -144,10 +144,11 @@ export const changeUserEmail = async (emailResetRequest: EmailUpdateRequest): Pr
 };
 
 export const updateUserPhotos = async (images: Photo[], userId: string) => {
-	await dropPhotosByUserId(userId);
-	for (let i = 0; i < images.length; i++) {
-		await addPhotoByUserId(userId, images[i]);
-	}
+	// await dropPhotosByUserId(userId);
+	// for (let i = 0; i < images.length; i++) {
+	// 	await addPhotoByUserId(userId, images[i]);
+	// }
+	await updatePhotoByUserId(userId, images); 
 };
 
 export const getUserPhotosById = async (userId: string) => {

@@ -1,5 +1,5 @@
-import { useCallback, useContext, useRef, useState } from 'react';
-import { ImageType, UserDataWithoutId } from '../../types';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Images, ImageType, UserDataWithoutId } from '../../types';
 import { AlertContext } from '../AlertProvider';
 //prettier-ignore
 import {Box, Button, Container, styled, Tooltip, tooltipClasses, TooltipProps, Typography } from '@mui/material';
@@ -11,13 +11,24 @@ import {
 	openFileDialog,
 	validateAddingFiles
 } from '../../utils/imageUploaderAndValidor';
+import { useStateValue } from '../../state';
+import profileService from '../../services/profile';
 
 const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
+	const [{ loggedUser }] = useStateValue();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const { error: errorCallback } = useContext(AlertContext);
 	const [images, setImages] = useState<ImageType[]>([]);
 	const [imageIndex, setImageIndex] = useState<number>(-1);
+	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 
+	useEffect(() => {
+		if (userData.images) {
+			setImages(userData.images);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+	console.log('ggg: ', images);
+	
 	const handleChange = async (files: FileList | null) => {
 		if (!files) return;
 
@@ -75,6 +86,25 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 			updatedList.splice(index, 1);
 		}
 		setImages(updatedList);
+	};
+
+	const uploadPhotos = async (images: Images) => {
+		try {
+			loggedUser && (await profileService.uploadPhotos(loggedUser, images));
+			successCallback(`Profile photos were updated!.`);
+		} catch (err) {
+			console.log('Error in uploadPhotos (Photos on Profile) ' + err); //rm later
+			errorCallback(
+				err.response?.data?.error ||
+					'Unable to upload photos. Please try again.'
+			);
+		}
+	};
+
+	const handleUserPhotosUpload = (event: any) => {
+		event.preventDefault();
+		console.log(images);
+		uploadPhotos({images: images});
 	};
 
 	return (
@@ -166,7 +196,7 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 						</Box>
 					))}
 				</Box>
-				<Button disabled={true} style={uploadApplyBtn}>
+				<Button onClick={handleUserPhotosUpload} disabled={false} style={uploadApplyBtn}>
 					Upload
 				</Button>
 			</Container>
