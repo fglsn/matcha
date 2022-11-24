@@ -80,6 +80,18 @@ const findUserByUsername = async (username: string): Promise<User | undefined> =
 	return userMapper(res.rows[0]);
 };
 
+const isUserById = async (id: string): Promise<boolean> => {
+	const query = {
+		text: 'select username from users where id = $1',
+		values: [id]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
+};
+
 const findUserByEmail = async (email: string): Promise<User | undefined> => {
 	const query = {
 		text: 'select * from users where email = $1',
@@ -182,5 +194,6 @@ export {
 	updateUserPassword,
 	updateUserEmail,
 	getUserDataByUserId,
-	updateUserDataByUserId
+	updateUserDataByUserId,
+	isUserById
 };

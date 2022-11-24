@@ -10,7 +10,8 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById } from '../services/users';
+import { parseImages } from '../validators/imgValidators';
 
 const router = express.Router();
 
@@ -91,6 +92,7 @@ router.post(
 );
 
 //get profile page
+//check user by
 router.get(
 	'/:id/profile',
 	sessionExtractor,
@@ -169,15 +171,44 @@ router.put(
 	})
 );
 
-router.put(
-	'/:id/location',
+//rename in photos
+router.post(
+	'/:id/photos',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
 			throw new AppError(`No rights to update profile data`, 400);
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const images = await parseImages(req.body);
+		await updateUserPhotos(images, req.params.id);
+		res.status(200).end();
+	})
+);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+//rename photos
+router.get(
+	'/:id/photos',
+	// sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		// if (!req.session || !req.session.userId) {
+		// 	throw new AppError(`No rights to update profile data`, 400);
+		// }
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		if (!req.params.id) throw new AppError(`Please, provide user id`, 400);
+		const userPhotos = await getUserPhotosById(req.params.id);
+		res.status(200).json(userPhotos);
+	})
+);
+
+router.put(
+	'/:id/location',
+  sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
+			throw new AppError(`No rights to update profile data`, 400);
+		}
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const coordinates = req.body.coordinates;
 		if (!coordinates) {
 			console.log('ip ', req.headers['x-forwarded-for'] || req.socket.remoteAddress || null);
@@ -197,7 +228,7 @@ router.put(
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		res.status(201).json(result?.data?.data[0]);
-	})
+    })
 );
 
 // router.get(

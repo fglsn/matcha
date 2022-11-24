@@ -3,13 +3,14 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById } from '../repositories/userRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
-import { EmailUpdateRequest, NewUser, PasswordResetRequest, User } from '../types';
+import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User } from '../types';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { addPhotoByUserId, dropPhotosByUserId, getPhotosByUserId } from '../repositories/photosRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -140,4 +141,17 @@ export const changeUserEmail = async (emailResetRequest: EmailUpdateRequest): Pr
 	await updateUserEmail(emailResetRequest.userId, emailResetRequest.email);
 	await removeUpdateEmailRequestByUserId(emailResetRequest.userId);
 	await updateSessionEmailByUserId(emailResetRequest.userId, emailResetRequest.email);
+};
+
+export const updateUserPhotos = async (images: Photo[], userId: string) => {
+	await dropPhotosByUserId(userId);
+	for (let i = 0; i < images.length; i++) {
+		await addPhotoByUserId(userId, images[i]);
+	}
+};
+
+export const getUserPhotosById = async (userId: string) => {
+	if (!(await isUserById(userId))) throw new AppError('No user with provided id', 400);
+	const userPhotos = await getPhotosByUserId(userId);
+	return userPhotos;
 };
