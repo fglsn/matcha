@@ -45,3 +45,12 @@ create table update_email_requests
 );
 
 create index update_email_requests_user_id on update_email_requests (user_id);
+
+create table photos (
+    id bigserial primary key,
+	photo_type varchar not null,
+    photo varchar not null,
+    user_id bigserial not null
+);
+
+create index photos_user_id on photos (user_id);

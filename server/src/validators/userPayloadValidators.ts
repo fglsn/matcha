@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
 import { checkIfDuplicatesExist } from '../utils/helpers';
-// import dayjs from 'dayjs';
-// import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =
@@ -152,7 +147,6 @@ const isGender = (gender: any): gender is Gender => {
 	return gender === 'male' || gender === 'female';
 };
 
-//to be fixed
 const parseGender = (gender: unknown): Gender => {
 	if (!gender) {
 		throw new ValidationError('Missing gender');
@@ -168,7 +162,6 @@ const isOrientation = (orientation: any): orientation is Orientation => {
 	return orientation === 'straight' || orientation === 'gay' || orientation === 'bi';
 };
 
-//to be fixed
 export const parseOrientation = (orientation: unknown): Orientation => {
 	if (!orientation) {
 		throw new ValidationError(`Missing orientation`);
@@ -191,7 +184,6 @@ const getAge = (dateString: string): number => {
 	return age;
 };
 
-//to be fixed?
 const parseBirthday = (date: unknown): Date => {
 	if (!date) {
 		throw new ValidationError('Missing birthay date');
@@ -208,7 +200,6 @@ const parseBirthday = (date: unknown): Date => {
 	return bd;
 };
 
-//to be fixed
 export const parseBio = (bio: unknown): string => {
 	if (!bio) {
 		throw new ValidationError(`Missing bio`);
@@ -227,8 +218,7 @@ export const parseTags = (tags: unknown): string[] => {
 	if (!tags) {
 		throw new ValidationError(`Missing tags`);
 	}
-	if (!isStringArray(tags))
-		throw new ValidationError(`Invalid tags format: tags must be strings`);
+	if (!isStringArray(tags)) throw new ValidationError(`Invalid tags format: tags must be strings`);
 	if (tags.length === 0 || tags.length > 5) throw new ValidationError(`Invalid tags format! Array of 1 to 5 tags expected`);
 	for (let i = 0; i < tags.length; i++) {
 		if (!Tags.find((t) => t === tags[i])) {
