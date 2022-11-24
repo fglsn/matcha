@@ -1,6 +1,7 @@
 import pool from '../db';
 import { Images, Photo } from '../types';
 import { getString } from '../dbUtils';
+import { AppError } from '../errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const photosMapper = (rows: any): Images => {
@@ -21,6 +22,20 @@ const addPhotoByUserId = async (userId: string, image: Photo): Promise<void> => 
 	};
 
 	await pool.query(query);
+};
+const updatePhotoByUserId = async (userId: string, images: Photo[]): Promise<void> => {
+	
+	try { 
+		await pool.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+		await dropPhotosByUserId(userId);
+		for (let i = 0; i < images.length; i++) {
+			await addPhotoByUserId(userId, images[i]);
+		}
+		await pool.query('COMMIT');
+	} catch (e) {
+		await pool.query('ROLLBACK');
+		throw new AppError('Failed to upload photos! Please, try again', 500);
+	}
 };
 
 const dropPhotosByUserId = async (userId: string): Promise<void> => {
@@ -45,4 +60,4 @@ const getPhotosByUserId = async (userId: string): Promise<Images> => {
 	return photosMapper(res.rows);
 };
 
-export { addPhotoByUserId, dropPhotosByUserId, getPhotosByUserId };
+export { addPhotoByUserId, dropPhotosByUserId, getPhotosByUserId, updatePhotoByUserId };
