@@ -46,7 +46,7 @@ const DraggableMarker = ({
 			dragend() {
 				const marker: any = markerRef.current;
 				if (marker != null) {
-					console.log(marker.getLatLng());
+					console.log(marker.getLatLng()); //rm later
 					const latLng = marker.getLatLng();
 					setCoordinates([latLng.lat, latLng.lng]);
 				}

@@ -212,14 +212,24 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 						type="submit"
 						onClick={handleUserDataUpdate}
 						variant="contained"
+						fullWidth
 						sx={{ mt: 3, mb: 2 }}
 					>
 						Update Profile
 					</Button>
 				) : (
-					<Button disabled variant="contained" sx={{ mt: 3, mb: 2 }}>
-						Update Profile
-					</Button>
+					<LightTooltip title="Please fill all the required filds">
+						<span>
+							<Button
+								disabled
+								fullWidth
+								variant="contained"
+								sx={{ mt: 3, mb: 2 }}
+							>
+								Update Profile
+							</Button>
+						</span>
+					</LightTooltip>
 				)}
 			</Box>
 		</>
