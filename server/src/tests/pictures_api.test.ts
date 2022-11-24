@@ -31,13 +31,13 @@ describe('check requests to photos', () => {
 		id = <string>JSON.parse(loginRes.text).id;
 	});
 	test('should succeed update photos', async () => {
-		const resFromProfilePage = await api
+		await api
 			.post(`/api/users/${id}/photos`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send({ images: [DataURL] })
+			.send({ images: [{ dataURL: DataURL }] })
 			.expect(200);
 
-		console.log(resFromProfilePage.error);
+		//console.log(resFromProfilePage.error);
 
 		// expect(resFromProfilePage.body).toBeTruthy();
 	});
@@ -45,7 +45,7 @@ describe('check requests to photos', () => {
 		await api
 			.post(`/api/users/${id}/photos`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send({ images: [DataURL] })
+			.send({ images: [{ dataURL: DataURL }] })
 			.expect(200);
 
 		const resFromProfilePage = await api
@@ -56,13 +56,13 @@ describe('check requests to photos', () => {
 		// console.log(resFromProfilePage.error);
 
 		expect(resFromProfilePage.body).toBeTruthy();
-		expect(resFromProfilePage.body).toEqual({ images: [DataURL] });
+		expect(resFromProfilePage.body.images).toEqual([{ dataURL: DataURL }]);
 	});
 	test('should fail with invalid photos', async () => {
 		const resFromProfilePage = await api
 			.post(`/api/users/${id}/photos`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send({ images: [InvDataURL] })
+			.send({ images: [{ dataURL: InvDataURL }] })
 			.expect(400);
 
 		// console.log(resFromProfilePage.error);
@@ -73,7 +73,7 @@ describe('check requests to photos', () => {
 		const resFromProfilePage = await api
 			.post(`/api/users/${id}/photos`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send({ images: [InvDataURL2] })
+			.send({ images: [{ dataURL: InvDataURL2 }] })
 			.expect(400);
 
 		// console.log(resFromProfilePage.error);
@@ -84,7 +84,7 @@ describe('check requests to photos', () => {
 		const resFromProfilePage = await api
 			.post(`/api/users/${id}/photos`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
-			.send({ images: [InvDataURL3] })
+			.send({ images: [{ dataURL: InvDataURL3 }] })
 			.expect(400);
 
 		// console.log(resFromProfilePage.error);
