@@ -13,6 +13,12 @@ export type User = BaseUser & {
 	created_at: Date;
 };
 
+export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
+
+export type NewUser = BaseUser & { passwordPlain: string };
+
+export type LoggedUser = { id: string; token: string; username: string };
+
 export type UserData = BaseUser & {
 	id: string;
 	birthday: Date | undefined;
@@ -30,7 +36,6 @@ export type UserDataWithoutId = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
-	images: ImageType[] | undefined;
 };
 
 export type NewUserDataWithoutId = {
@@ -42,18 +47,6 @@ export type NewUserDataWithoutId = {
 	tags: string[] | undefined;
 	bio: string | undefined;
 };
-
-export type NewUserWithHashedPwd = BaseUser & { passwordHash: string };
-
-export type NewUser = BaseUser & { passwordPlain: string };
-
-export type LoggedUser = { id: string; token: string; username: string };
-
-export enum AlertStatus {
-	None = 'NONE',
-	Success = 'SUCCSESS',
-	Error = 'ERROR'
-}
 
 export enum Gender {
 	MALE = 'male',
@@ -73,3 +66,9 @@ export interface ImageType {
 export type Images = {
 	images: ImageType[];
 };
+
+export enum AlertStatus {
+	None = 'NONE',
+	Success = 'SUCCSESS',
+	Error = 'ERROR'
+}

@@ -1,13 +1,8 @@
 import { Paper, styled, Container, Grid, Alert } from '@mui/material';
-import { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { getProfile } from '../../services/profile';
-import { logoutUser } from '../../services/logout';
+import { getPhotos, getProfile } from '../../services/profile';
 import { useStateValue } from '../../state';
-import { AuthError } from '../../utils/errors';
-import { UserDataWithoutId } from '../../types';
-import { AlertContext } from '../AlertProvider';
+import { Images, UserDataWithoutId } from '../../types';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import UpdateEmailForm from './UpdateEmailForm';
@@ -33,56 +28,42 @@ const StyledButtons = styled('div')(() => ({
 }));
 
 const ProfileEditor = () => {
-	const { error: errorCallback } = useContext(AlertContext);
-	const [{ loggedUser }, dispatch] = useStateValue();
-	const navigate = useNavigate();
+	const [{ loggedUser }] = useStateValue();
 
 	const {
-		data,
-		error
+		data: profileData,
+		error: profileError
 	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
 		async () => loggedUser && (await getProfile(loggedUser)),
 		[loggedUser]
 	);
-	
-	// const {
-	// 	photos,
-	// 	errorPhotos
-	// }: { photos: ImageType[] | undefined; errorPhotos: Error | undefined } = useServiceCall(
-	// 	async () => loggedUser && (await getPhotos(loggedUser)),
-	// 	[loggedUser]
-	// );
 
+	const {
+		data: photosData,
+		error: photosError
+	}: { data: Images | undefined; error: Error | undefined } = useServiceCall(
+		async () => loggedUser && (await getPhotos(loggedUser)),
+		[loggedUser]
+	);
 
-	useEffect(() => {
-		if (error) {
-			if (error instanceof AuthError) {
-				logoutUser(dispatch);
-				errorCallback(error.message);
-				navigate('/login');
-			}
-		}
-	}, [dispatch, error, errorCallback, navigate]);
-
-	if (error)
+	if (profileError || photosError)
 		return (
 			<Alert severity="error">
 				Error loading account settings page, please try again...
 			</Alert>
 		);
 
-	if (!data) return <LoadingIcon />;
+	if (!profileData || !photosData) return <LoadingIcon />;
 
 	const userData: UserDataWithoutId = {
-		username: data.username,
-		firstname: data.firstname,
-		lastname: data.lastname,
-		birthday: data.birthday,
-		gender: data.gender,
-		orientation: data.orientation,
-		tags: data.tags,
-		bio: data.bio,
-		images: data.images
+		username: profileData.username,
+		firstname: profileData.firstname,
+		lastname: profileData.lastname,
+		birthday: profileData.birthday,
+		gender: profileData.gender,
+		orientation: profileData.orientation,
+		tags: profileData.tags,
+		bio: profileData.bio
 	};
 
 	return (
@@ -100,10 +81,10 @@ const ProfileEditor = () => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Item>
-							<Photos userData={userData} />
+							<Photos photos={photosData.images} />
 						</Item>
-						<Item sx={{marginTop: '2rem'}}>
-							<StyledButtons >
+						<Item sx={{ marginTop: '2rem' }}>
+							<StyledButtons>
 								<UpdateEmailForm />
 								<UpdatePasswordForm />
 							</StyledButtons>

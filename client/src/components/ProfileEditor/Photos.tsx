@@ -1,39 +1,35 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Images, ImageType, UserDataWithoutId } from '../../types';
-import { AlertContext } from '../AlertProvider';
+/* eslint-disable react-hooks/exhaustive-deps */
 //prettier-ignore
 import {Box, Button, Container, styled, Tooltip, tooltipClasses, TooltipProps, Typography } from '@mui/material';
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import React from 'react';
-import {
-	getValidImages,
-	openFileDialog,
-	validateAddingFiles
-} from '../../utils/imageUploaderAndValidor';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+//prettier-ignore
+import { getValidImages, openFileDialog, validateAddingFiles} from '../../utils/imageUploaderAndValidor';
+import { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Images, ImageType } from '../../types';
 import { useStateValue } from '../../state';
+import { AlertContext } from '../AlertProvider';
 import profileService from '../../services/profile';
 
-const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
+
+const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 	const [{ loggedUser }] = useStateValue();
-	const inputRef = useRef<HTMLInputElement>(null);
-	const [images, setImages] = useState<ImageType[]>([]);
-	const [imageIndex, setImageIndex] = useState<number>(-1);
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
+	const [isUploading, setIsUploading] = useState<boolean>(false);
+	const [imageIndex, setImageIndex] = useState<number>(-1);
+	const [images, setImages] = useState<ImageType[]>([]);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		if (userData.images) {
-			setImages(userData.images);
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-	console.log('ggg: ', images);
-	
+		photos && setImages(photos);
+	}, []);
+
 	const handleChange = async (files: FileList | null) => {
 		if (!files) return;
 
 		const [newImages, error] = await getValidImages(files);
-		if (error) errorCallback(error);
+		if (error) 
+			errorCallback(error);
 
 		if (!newImages.length) return;
 
@@ -90,21 +86,21 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 
 	const uploadPhotos = async (images: Images) => {
 		try {
+			setIsUploading(true);
 			loggedUser && (await profileService.uploadPhotos(loggedUser, images));
 			successCallback(`Profile photos were updated!.`);
+			setIsUploading(false);
 		} catch (err) {
 			console.log('Error in uploadPhotos (Photos on Profile) ' + err); //rm later
 			errorCallback(
-				err.response?.data?.error ||
-					'Unable to upload photos. Please try again.'
+				err.response?.data?.error || 'Unable to upload photos. Please try again.'
 			);
 		}
 	};
 
 	const handleUserPhotosUpload = (event: any) => {
 		event.preventDefault();
-		console.log(images);
-		uploadPhotos({images: images});
+		uploadPhotos({ images: images });
 	};
 
 	return (
@@ -120,9 +116,11 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 			<Container style={pictureSectionWrapper}>
 				<HtmlTooltip
 					title={
-						<React.Fragment>
+						<Fragment>
 							<Typography color="inherit">
-								<strong>Valid picture should be: <br/></strong>
+								<strong>
+									Valid picture should be: <br />
+								</strong>
 							</Typography>
 							{'Of jpeg, jpg or png format.'}
 							<br />
@@ -133,7 +131,7 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							{'Not bigger than 25Mb'}
 							<br />
 							{'Maximum 5 pictures.'}
-						</React.Fragment>
+						</Fragment>
 					}
 				>
 					<span style={{ maxWidth: '100%', textAlign: 'center' }}>
@@ -172,7 +170,9 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 							<div>
 								<img
 									src={images[i + 1]?.dataURL || placeholder.img}
-									alt={`Profile pic #${i + 1} by ${userData.username}`}
+									alt={`Profile pic #${i + 1} by ${
+										loggedUser?.username
+									}`}
 									loading="lazy"
 									style={imgStyle}
 								/>
@@ -196,7 +196,11 @@ const Photos: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
 						</Box>
 					))}
 				</Box>
-				<Button onClick={handleUserPhotosUpload} disabled={false} style={uploadApplyBtn}>
+				<Button
+					onClick={handleUserPhotosUpload}
+					disabled={isUploading}
+					style={uploadApplyBtn}
+				>
 					Upload
 				</Button>
 			</Container>
