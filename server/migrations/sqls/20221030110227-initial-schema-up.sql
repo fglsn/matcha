@@ -6,6 +6,8 @@ create table users
 	password_hash varchar not null,
 	firstname varchar not null,
 	lastname varchar not null,
+	lat double precision not null,
+	lon double precision not null,
 	is_active boolean not null default false,
 	created_at timestamptz not null default now(),
 	activation_code varchar not null unique,
@@ -47,10 +49,10 @@ create table update_email_requests
 create index update_email_requests_user_id on update_email_requests (user_id);
 
 create table photos (
-    id bigserial primary key,
+	id bigserial primary key,
 	photo_type varchar not null,
-    photo varchar not null,
-    user_id bigserial not null
+	photo varchar not null,
+	user_id bigserial not null
 );
 
 create index photos_user_id on photos (user_id);

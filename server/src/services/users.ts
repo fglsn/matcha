@@ -5,12 +5,13 @@ import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmai
 //prettier-ignore
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById } from '../repositories/userRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
-import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User } from '../types';
+import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User, Location } from '../types';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
+import axios from 'axios';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -18,10 +19,43 @@ export const createHashedPassword = async (passwordPlain: string): Promise<strin
 	return await bcrypt.hash(passwordPlain, saltRounds);
 };
 
-export const createNewUser = async (newUser: NewUser): Promise<User> => {
+export const requestLocationByIp = async (ipAddress: string | undefined): Promise<Location> => {
+	const defaultCoordinates: Location = { lat: 60.16678195339881, lon: 24.941711425781254 }; //Hki city center as we are hki startup hehe
+	if (!ipAddress) return defaultCoordinates;
+
+	try {
+		const response = await axios.get(`http://ip-api.com/json/${ipAddress}?fields=status,message,lat,lon`);
+
+		const payload: unknown = response.data;
+		let parsedPayload;
+		if (payload && typeof payload === 'object' && 'lat' in payload && 'lon' in payload && 'status' in payload && 'message' in payload) {
+			parsedPayload = payload as { lat: number; lon: number; status: string; message: string };
+			console.log('parsed payload from IP API: ', parsedPayload); //rm later
+		} else {
+			return defaultCoordinates;
+		}
+
+		if (parsedPayload.status === 'fail') console.log(`Location by ip response: ${parsedPayload.status}, message: ${parsedPayload.message}`); //rm later
+
+		if (parsedPayload.status === 'success') {
+			return { lat: parsedPayload.lat, lon: parsedPayload.lon };
+		} else {
+			console.log(`Unexpected response from IP API (requestLocationByIp) ${ipAddress}, ${response.data}`);
+			return defaultCoordinates;
+		}
+	} catch (err) {
+		if (axios.isAxiosError(err)) console.log('Response err: ', err.response?.data); //rm later
+		console.log(err); //rm later
+		return defaultCoordinates;
+	}
+};
+
+export const createNewUser = async (newUser: NewUser, ipAddress: string | undefined): Promise<User> => {
 	const passwordHash = await createHashedPassword(newUser.passwordPlain);
 	const activationCode = crypto.randomBytes(20).toString('hex');
-	return addNewUser({ ...newUser, passwordHash, activationCode });
+
+	const coordinates = await requestLocationByIp(ipAddress);
+	return addNewUser({ ...newUser, passwordHash, activationCode, lat: coordinates.lat, lon: coordinates.lon });
 };
 
 //activate
@@ -148,7 +182,7 @@ export const updateUserPhotos = async (images: Photo[], userId: string) => {
 	// for (let i = 0; i < images.length; i++) {
 	// 	await addPhotoByUserId(userId, images[i]);
 	// }
-	await updatePhotoByUserId(userId, images); 
+	await updatePhotoByUserId(userId, images);
 };
 
 export const getUserPhotosById = async (userId: string) => {

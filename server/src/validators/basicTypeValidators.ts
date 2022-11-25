@@ -2,6 +2,9 @@ const isString = (text: unknown): text is string => {
 	return typeof text === 'string' || text instanceof String;
 };
 
+const isNumber = (value: unknown): value is number => {
+	return typeof value === 'number' || value instanceof Number;
+};
 const isDate = (date: string): boolean => {
 	return Boolean(Date.parse(date));
 };
@@ -17,4 +20,4 @@ const isStringArray = (arr: any): arr is string[] => {
 	return true;
 };
 
-export { isString, isDate, isStringArray };
+export { isString, isNumber, isDate, isStringArray };

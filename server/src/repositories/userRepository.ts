@@ -1,5 +1,5 @@
 import pool from '../db';
-import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined } from '../dbUtils';
+import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
 import { ValidationError } from '../errors';
 import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile } from '../types';
 
@@ -14,7 +14,8 @@ const userMapper = (row: any): User => {
 		lastname: getString(row['lastname']),
 		createdAt: getDate(row['created_at']),
 		isActive: getBoolean(row['is_active']),
-		activationCode: getString(row['activation_code'])
+		activationCode: getString(row['activation_code']),
+		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon'])}
 	};
 };
 
@@ -29,7 +30,8 @@ const userDataMapper = (row: any): UserData => {
 		gender: getStringOrUndefined(row['gender']),
 		orientation: getStringOrUndefined(row['orientation']),
 		bio: getStringOrUndefined(row['bio']),
-		tags: getStringArrayOrUndefined(row['tags'])
+		tags: getStringArrayOrUndefined(row['tags']),
+		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) }
 	};
 };
 
@@ -46,8 +48,8 @@ const getPasswordHash = async (userId: string): Promise<string> => {
 
 const addNewUser = async (newUser: NewUserWithHashedPwd): Promise<User> => {
 	const query = {
-		text: 'insert into users(username, email, password_hash, firstname, lastname, activation_code) values($1, $2, $3, $4, $5, $6) returning *',
-		values: [newUser.username, newUser.email, newUser.passwordHash, newUser.firstname, newUser.lastname, newUser.activationCode]
+		text: 'insert into users(username, email, password_hash, firstname, lastname, activation_code, lat, lon) values($1, $2, $3, $4, $5, $6, $7, $8) returning *',
+		values: [newUser.username, newUser.email, newUser.passwordHash, newUser.firstname, newUser.lastname, newUser.activationCode, newUser.lat, newUser.lon]
 	};
 
 	let res;

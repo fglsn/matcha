@@ -30,7 +30,8 @@ router.post(
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const newUser = parseNewUserPayload(req.body);
-		const createdUser = await createNewUser(newUser);
+		const ipAddress = req.socket.remoteAddress;
+		const createdUser = await createNewUser(newUser, ipAddress);
 		sendActivationCode(createdUser);
 		res.status(201).json(createdUser);
 	})
