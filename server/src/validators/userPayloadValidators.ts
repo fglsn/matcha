@@ -1,4 +1,4 @@
-import { Location, Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
+import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
@@ -229,7 +229,7 @@ export const parseTags = (tags: unknown): string[] => {
 	return tags;
 };
 
-export const parseCoordinates = (coorditates: unknown): Location => {
+export const parseCoordinates = (coorditates: unknown): Coordinates => {
 	if (coorditates && typeof coorditates === 'object' && 'lat' in coorditates && 'lon' in coorditates) {
 		const { lat, lon } = coorditates as { lat: number; lon: number };
 		if (isFinite(lat) && Math.abs(lat) <= 90 && isFinite(lon) && Math.abs(lon) <= 180) return { lat, lon };

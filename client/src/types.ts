@@ -19,7 +19,7 @@ export type NewUser = BaseUser & { passwordPlain: string };
 
 export type LoggedUser = { id: string; token: string; username: string };
 
-export type Location = {
+export type Coordinates = {
 	lat: number;
 	lon: number;
 };
@@ -33,7 +33,7 @@ export type UserData = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
-	coordinates: Location;
+	coordinates: Coordinates;
 	location: string;
 };
 
@@ -45,7 +45,7 @@ export type NewUserData = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
-	coordinates: Location;
+	coordinates: Coordinates;
 	location: string;
 };
 

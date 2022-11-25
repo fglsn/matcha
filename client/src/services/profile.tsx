@@ -113,15 +113,15 @@ export const updatePassword = async ({
 	}
 };
 
-export const requestLocation = async (id: string, coordinates: number[] | undefined) => {
+export const requestLocation = async (coordinates: number[] | undefined) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		let response;
 
-		response = await axios.put(
-			`${apiBaseUrl}/users/${id}/location`,
+		response = await axios.post(
+			`${apiBaseUrl}/location`,
 			{ coordinates },
 			config
 		);

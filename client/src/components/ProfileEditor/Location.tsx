@@ -1,11 +1,9 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, useMap, Marker, useMapEvents } from 'react-leaflet';
 import { Box, Button, Typography } from '@mui/material';
-// import { useStateValue } from '../../state';
+import { getCoordinates, checkIsLocationEnabled } from '../../utils/location';
 import { LightTooltip } from './BasicInfoForm';
 import profileService from '../../services/profile';
-import { useStateValue } from '../../state';
-import { getCoordinates, checkIsLocationEnabled } from '../../utils/location';
 
 const DraggableMarker = ({
 	coords,
@@ -57,7 +55,6 @@ const Location = ({
 	locationString: string;
 	setLocationString: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-	const [{ loggedUser }] = useStateValue();
 	const [isLocationEnabled, setIsLocationEnabled] = useState<boolean>(false);
 	const [locationError, setError] = useState<boolean>(false);
 
@@ -73,9 +70,7 @@ const Location = ({
 		async (coordinates: [number, number]) => {
 			let res;
 			try {
-				res =
-					loggedUser &&
-					(await profileService.requestLocation(loggedUser.id, coordinates));
+				res = await profileService.requestLocation(coordinates);
 				console.log('coord res ', res);
 
 				const neighbourhood = res.neighbourhood ? `${res.neighbourhood}, ` : '';
@@ -87,8 +82,7 @@ const Location = ({
 				console.log(err); //rm later
 			}
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[loggedUser]
+		[setLocationString]
 	);
 
 	useEffect(() => {
