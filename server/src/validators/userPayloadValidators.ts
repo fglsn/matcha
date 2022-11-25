@@ -244,7 +244,7 @@ export const parseLocationString = (location: unknown): string => {
 		throw new ValidationError(`Missing location string.`);
 	}
 	if (!isString(location)) {
-		throw new ValidationError(`Expected lovation to be string, got: ${typeof location}`);
+		throw new ValidationError(`Expected location to be string, got: ${typeof location}`);
 	}
 	return location;
 };
