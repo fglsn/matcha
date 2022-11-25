@@ -46,12 +46,15 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 	return null;
 }
 
-const Location = () => {
+const Location = ({
+	coordinates,
+	setCoordinates
+}: {
+	coordinates: [number, number];
+	setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>;
+}) => {
 	// const [{ loggedUser }] = useStateValue();
 	const [{ loggedUser }] = useStateValue();
-	const [coordinates, setCoordinates] = useState<[number, number]>([
-		60.16678195339881, 24.941711425781254
-	]);
 	const [isLocationEnabled, setIsLocationEnabled] = useState<boolean>(false);
 	const [locationError, setError] = useState<boolean>(false);
 	const [address, setAddress] = useState<any>('');
@@ -67,18 +70,20 @@ const Location = () => {
 		async (coordinates: [number, number] | undefined) => {
 			// let res;
 			let res2;
-			try
-				{
-					// res = loggedUser && (await profileService.requestLocation(loggedUser.id, undefined));
-					// console.log('ip res ', res);
-				
-					res2 = loggedUser && (await profileService.requestLocation(loggedUser.id, coordinates));
-					console.log('coord res ', res2);
-					res2.neighbourhood 
-						? setAddress(`${res2.neighbourhood}, ${res2.locality}, ${res2.country}`)
-						: setAddress(`${res2.locality}, ${res2.country}`);
-				}
-			catch (err) {
+			try {
+				// res = loggedUser && (await profileService.requestLocation(loggedUser.id, undefined));
+				// console.log('ip res ', res);
+
+				res2 =
+					loggedUser &&
+					(await profileService.requestLocation(loggedUser.id, coordinates));
+				console.log('coord res ', res2);
+				res2.neighbourhood
+					? setAddress(
+							`${res2.neighbourhood}, ${res2.locality}, ${res2.country}`
+					  )
+					: setAddress(`${res2.locality}, ${res2.country}`);
+			} catch (err) {
 				console.log(err); //rm later
 			}
 			// console.log(res);
@@ -87,8 +92,8 @@ const Location = () => {
 	);
 
 	useEffect(() => {
-		getGeoPosition(coordinates)
-	}, [coordinates, getGeoPosition])
+		getGeoPosition(coordinates);
+	}, [coordinates, getGeoPosition]);
 
 	const SetMarkerOnClick = ({
 		setCoordinates

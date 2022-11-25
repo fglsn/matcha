@@ -7,7 +7,7 @@ import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButton
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
-import { NewUserDataWithoutId, UserDataWithoutId } from '../../types';
+import { NewUserData, UserData } from '../../types';
 import { useToggleButton } from '../../hooks/useToggleButton';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 
@@ -45,7 +45,7 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 	}
 }));
 
-const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) => {
+const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const [{ loggedUser }] = useStateValue();
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 
@@ -57,7 +57,7 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 	const orientation = useToggleButton(userData.orientation);
 	const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
 	const bio = useControlledField('text', userData.bio, validateBio);
-
+	const [coordinates, setCoordinates] = useState<[number, number]>([userData.coordinates.lat, userData.coordinates.lon]);
 	const handleDateChange = (newValue: Dayjs | null) => setDateValue(newValue);
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
@@ -72,7 +72,7 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 		${selectedTags} &&
 		${bio.value}`);
 
-	const updateUserData = async (newUserData: NewUserDataWithoutId) => {
+	const updateUserData = async (newUserData: NewUserData) => {
 		try {
 			loggedUser && (await profileService.updateProfile(loggedUser, newUserData));
 			successCallback(`Profile settings were updated!.`);
@@ -87,14 +87,15 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 
 	const handleUserDataUpdate = (event: any) => {
 		event.preventDefault();
-		const newUserData: NewUserDataWithoutId = {
+		const newUserData: NewUserData = {
 			firstname: firstname.value,
 			lastname: lastname.value,
 			birthday: date,
 			gender: gender.value,
 			orientation: orientation.value,
 			tags: selectedTags,
-			bio: bio?.value?.replace(/\s\s+/g, ' ')
+			bio: bio?.value?.replace(/\s\s+/g, ' '),
+			coordinates: {lat: coordinates[0], lon: coordinates[1]}
 		};
 		updateUserData(newUserData);
 	};
@@ -191,7 +192,7 @@ const BasicInfoForm: React.FC<{ userData: UserDataWithoutId }> = ({ userData }) 
 						<TextField {...bio} required fullWidth multiline rows={4} />
 					</Grid>
 					<Grid item xs={12}>
-						<Location />
+						<Location coordinates={coordinates} setCoordinates={setCoordinates}/>
 					</Grid>
 				</Grid>
 				{firstname.value &&

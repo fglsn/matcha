@@ -19,15 +19,12 @@ export type NewUser = BaseUser & { passwordPlain: string };
 
 export type LoggedUser = { id: string; token: string; username: string };
 
-export type UserData = BaseUser & {
-	id: string;
-	birthday: Date | undefined;
-	gender: string | undefined;
-	orientation: string | undefined;
-	bio: string | undefined;
+export type Location = {
+	lat: number;
+	lon: number;
 };
 
-export type UserDataWithoutId = {
+export type UserData = {
 	username: string;
 	firstname: string;
 	lastname: string;
@@ -36,9 +33,10 @@ export type UserDataWithoutId = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
+	coordinates: Location;
 };
 
-export type NewUserDataWithoutId = {
+export type NewUserData = {
 	firstname: string | undefined;
 	lastname: string | undefined;
 	birthday: Dayjs | null;
@@ -46,6 +44,7 @@ export type NewUserDataWithoutId = {
 	orientation: string | undefined;
 	tags: string[] | undefined;
 	bio: string | undefined;
+	coordinates: Location;
 };
 
 export enum Gender {

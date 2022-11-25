@@ -1,4 +1,4 @@
-import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
+import { Location, Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
@@ -229,6 +229,17 @@ export const parseTags = (tags: unknown): string[] => {
 	return tags;
 };
 
+export const parseCoordinates = (coorditates: unknown): Location => {
+	if (coorditates && typeof coorditates === 'object' && 'lat' in coorditates && 'lon' in coorditates) {
+		const {lat, lon} = coorditates as { lat: number; lon: number };
+		if (isFinite(lat) && Math.abs(lat) <= 90 && isFinite(lon) && Math.abs(lon) <= 180)
+			return { lat, lon };
+		else throw new ValidationError(`Invalid coordinates.`);
+	} else {
+		throw new ValidationError(`Error in coordinates parser.`);
+	}
+};
+
 type Fields1 = {
 	username: unknown;
 	email: unknown;
@@ -239,9 +250,10 @@ type Fields1 = {
 	orientation: unknown;
 	bio: unknown;
 	tags: unknown;
+	coordinates: unknown;
 };
 
-export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio, tags }: Fields1): UpdateUserProfile => {
+export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio, tags, coordinates }: Fields1): UpdateUserProfile => {
 	const updatedUser: UpdateUserProfile = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
@@ -249,7 +261,8 @@ export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender,
 		gender: parseGender(gender),
 		orientation: parseOrientation(orientation),
 		bio: parseBio(bio),
-		tags: parseTags(tags)
+		tags: parseTags(tags),
+		coordinates: parseCoordinates(coordinates)
 	};
 	return updatedUser;
 };

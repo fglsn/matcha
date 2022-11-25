@@ -34,6 +34,7 @@ export type UpdateUserProfile = {
 	orientation: Orientation;
 	bio: string;
 	tags: string[];
+	coordinates: Location;
 };
 
 export type Gender = 'male' | 'female';

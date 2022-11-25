@@ -2,7 +2,7 @@ import { Paper, styled, Container, Grid, Alert } from '@mui/material';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getPhotos, getProfile } from '../../services/profile';
 import { useStateValue } from '../../state';
-import { Images, UserDataWithoutId } from '../../types';
+import { Images, UserData } from '../../types';
 import withAuthRequired from '../AuthRequired';
 import LoadingIcon from '../LoadingIcon';
 import UpdateEmailForm from './UpdateEmailForm';
@@ -33,7 +33,7 @@ const ProfileEditor = () => {
 	const {
 		data: profileData,
 		error: profileError
-	}: { data: UserDataWithoutId | undefined; error: Error | undefined } = useServiceCall(
+	}: { data: UserData | undefined; error: Error | undefined } = useServiceCall(
 		async () => loggedUser && (await getProfile(loggedUser)),
 		[loggedUser]
 	);
@@ -55,7 +55,7 @@ const ProfileEditor = () => {
 
 	if (!profileData || !photosData) return <LoadingIcon />;
 
-	const userData: UserDataWithoutId = {
+	const userData: UserData = {
 		username: profileData.username,
 		firstname: profileData.firstname,
 		lastname: profileData.lastname,
@@ -63,7 +63,8 @@ const ProfileEditor = () => {
 		gender: profileData.gender,
 		orientation: profileData.orientation,
 		tags: profileData.tags,
-		bio: profileData.bio
+		bio: profileData.bio,
+		coordinates: profileData.coordinates
 	};
 
 	return (

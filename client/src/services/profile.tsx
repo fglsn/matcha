@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { Images, LoggedUser, NewUserDataWithoutId } from '../types';
+import { Images, LoggedUser, NewUserData } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
@@ -21,7 +21,7 @@ export const getProfile = async (loggedUser: LoggedUser) => {
 
 export const updateProfile = async (
 	loggedUser: LoggedUser,
-	newUserData: NewUserDataWithoutId
+	newUserData: NewUserData
 ) => {
 	try {
 		const config = {
