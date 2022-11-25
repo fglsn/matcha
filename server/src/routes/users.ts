@@ -10,6 +10,7 @@ import { sessionExtractor } from '../utils/middleware';
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
 import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById } from '../services/users';
+import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 
 const router = express.Router();
@@ -116,7 +117,8 @@ router.put(
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const updatedProfile = parseUserProfilePayload(req.body);
-		await updateUserDataByUserId(req.session.userId, updatedProfile);
+		const location = await getLocation(updatedProfile.coordinates);
+		await updateUserDataByUserId(req.session.userId, { ...updatedProfile, location });
 		res.status(200).end();
 	})
 );

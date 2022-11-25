@@ -1,4 +1,4 @@
-import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
+import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfileWithoutLocation } from '../types';
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
@@ -260,7 +260,6 @@ type Fields1 = {
 	bio: unknown;
 	tags: unknown;
 	coordinates: unknown;
-	location: unknown;
 };
 
 export const parseUserProfilePayload = ({
@@ -271,10 +270,9 @@ export const parseUserProfilePayload = ({
 	orientation,
 	bio,
 	tags,
-	coordinates,
-	location
-}: Fields1): UpdateUserProfile => {
-	const updatedUser: UpdateUserProfile = {
+	coordinates
+}: Fields1): UpdateUserProfileWithoutLocation => {
+	const updatedUser: UpdateUserProfileWithoutLocation = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
 		birthday: parseBirthday(birthday),
@@ -282,8 +280,7 @@ export const parseUserProfilePayload = ({
 		orientation: parseOrientation(orientation),
 		bio: parseBio(bio),
 		tags: parseTags(tags),
-		coordinates: parseCoordinates(coordinates),
-		location: parseLocationString(location)
+		coordinates: parseCoordinates(coordinates)
 	};
 	return updatedUser;
 };

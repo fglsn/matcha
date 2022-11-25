@@ -105,7 +105,6 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 			tags: selectedTags,
 			bio: bio?.value?.replace(/\s\s+/g, ' '),
 			coordinates: { lat: coordinates[0], lon: coordinates[1] },
-			location: locationString
 		};
 		updateUserData(newUserData);
 	};

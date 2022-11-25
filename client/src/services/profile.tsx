@@ -120,7 +120,7 @@ export const requestLocation = async (coordinates: number[] | undefined) => {
 		};
 		let response;
 
-		response = await axios.post(
+		response = await axios.post<string>(
 			`${apiBaseUrl}/location`,
 			{ coordinates },
 			config

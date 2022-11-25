@@ -46,7 +46,6 @@ export type NewUserData = {
 	tags: string[] | undefined;
 	bio: string | undefined;
 	coordinates: Coordinates;
-	location: string;
 };
 
 export enum Gender {

@@ -68,16 +68,9 @@ const Location = ({
 
 	const getGeoPosition = useCallback(
 		async (coordinates: [number, number]) => {
-			let res;
 			try {
-				res = await profileService.requestLocation(coordinates);
-				console.log('coord res ', res);
-
-				const neighbourhood = res.neighbourhood ? `${res.neighbourhood}, ` : '';
-				const city = res.locality ? `${res.locality}, ` : '';
-				const country = res.country ? `${res.country}` : '';
-
-				setLocationString(neighbourhood + city + country);
+				const locationString = await profileService.requestLocation(coordinates) || '';
+				setLocationString(locationString);
 			} catch (err) {
 				console.log(err); //rm later
 			}
