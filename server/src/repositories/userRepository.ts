@@ -15,7 +15,7 @@ const userMapper = (row: any): User => {
 		createdAt: getDate(row['created_at']),
 		isActive: getBoolean(row['is_active']),
 		activationCode: getString(row['activation_code']),
-		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon'])}
+		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) }
 	};
 };
 

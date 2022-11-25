@@ -231,9 +231,8 @@ export const parseTags = (tags: unknown): string[] => {
 
 export const parseCoordinates = (coorditates: unknown): Location => {
 	if (coorditates && typeof coorditates === 'object' && 'lat' in coorditates && 'lon' in coorditates) {
-		const {lat, lon} = coorditates as { lat: number; lon: number };
-		if (isFinite(lat) && Math.abs(lat) <= 90 && isFinite(lon) && Math.abs(lon) <= 180)
-			return { lat, lon };
+		const { lat, lon } = coorditates as { lat: number; lon: number };
+		if (isFinite(lat) && Math.abs(lat) <= 90 && isFinite(lon) && Math.abs(lon) <= 180) return { lat, lon };
 		else throw new ValidationError(`Invalid coordinates.`);
 	} else {
 		throw new ValidationError(`Error in coordinates parser.`);
