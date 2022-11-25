@@ -64,7 +64,8 @@ const ProfileEditor = () => {
 		orientation: profileData.orientation,
 		tags: profileData.tags,
 		bio: profileData.bio,
-		coordinates: profileData.coordinates
+		coordinates: profileData.coordinates,
+		location: profileData.location
 	};
 
 	return (

@@ -239,6 +239,16 @@ export const parseCoordinates = (coorditates: unknown): Location => {
 	}
 };
 
+export const parseLocationString = (location: unknown): string => {
+	if (location === null || location === undefined) {
+		throw new ValidationError(`Missing location string.`);
+	}
+	if (!isString(location)) {
+		throw new ValidationError(`Expected bio to be string, got: ${typeof location}`);
+	}
+	return location;
+};
+
 type Fields1 = {
 	username: unknown;
 	email: unknown;
@@ -250,9 +260,20 @@ type Fields1 = {
 	bio: unknown;
 	tags: unknown;
 	coordinates: unknown;
+	location: unknown;
 };
 
-export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio, tags, coordinates }: Fields1): UpdateUserProfile => {
+export const parseUserProfilePayload = ({
+	firstname,
+	lastname,
+	birthday,
+	gender,
+	orientation,
+	bio,
+	tags,
+	coordinates,
+	location
+}: Fields1): UpdateUserProfile => {
 	const updatedUser: UpdateUserProfile = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
@@ -261,7 +282,8 @@ export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender,
 		orientation: parseOrientation(orientation),
 		bio: parseBio(bio),
 		tags: parseTags(tags),
-		coordinates: parseCoordinates(coordinates)
+		coordinates: parseCoordinates(coordinates),
+		location: parseLocationString(location)
 	};
 	return updatedUser;
 };

@@ -24,6 +24,7 @@ export type UserData = {
 	bio: string | undefined;
 	tags: string[] | undefined;
 	coordinates: Location;
+	location: string;
 };
 
 export type UpdateUserProfile = {
@@ -35,13 +36,14 @@ export type UpdateUserProfile = {
 	bio: string;
 	tags: string[];
 	coordinates: Location;
+	location: string;
 };
 
 export type Gender = 'male' | 'female';
 
 export type Orientation = 'straight' | 'gay' | 'bi';
 
-export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; isActive: boolean; activationCode: string; coordinates: Location };
+export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; isActive: boolean; activationCode: string; coordinates: Location, location: string };
 
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string; lat: number; lon: number };
 

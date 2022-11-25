@@ -8,6 +8,7 @@ create table users
 	lastname varchar not null,
 	lat double precision not null,
 	lon double precision not null,
+	location_string varchar not null default '',
 	is_active boolean not null default false,
 	created_at timestamptz not null default now(),
 	activation_code varchar not null unique,

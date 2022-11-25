@@ -57,7 +57,13 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const orientation = useToggleButton(userData.orientation);
 	const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
 	const bio = useControlledField('text', userData.bio, validateBio);
-	const [coordinates, setCoordinates] = useState<[number, number]>([userData.coordinates.lat, userData.coordinates.lon]);
+	const [coordinates, setCoordinates] = useState<[number, number]>([
+		userData.coordinates.lat,
+		userData.coordinates.lon
+	]);
+	const [locationString, setLocationString] = useState<string>('');
+	if (locationString === '') setLocationString(`${coordinates[0]}, ${coordinates[1]}`);
+
 	const handleDateChange = (newValue: Dayjs | null) => setDateValue(newValue);
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
@@ -70,7 +76,10 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 		${gender.value} &&
 		${orientation.value} &&
 		${selectedTags} &&
-		${bio.value}`);
+		${bio.value} && 
+		${coordinates[0]} && 
+		${coordinates[1]} && 
+		${locationString}`);
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
@@ -95,7 +104,8 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 			orientation: orientation.value,
 			tags: selectedTags,
 			bio: bio?.value?.replace(/\s\s+/g, ' '),
-			coordinates: {lat: coordinates[0], lon: coordinates[1]}
+			coordinates: { lat: coordinates[0], lon: coordinates[1] },
+			location: locationString
 		};
 		updateUserData(newUserData);
 	};
@@ -129,15 +139,6 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 							autoComplete="family-name"
 						/>
 					</Grid>
-					{/* <Grid item xs={12}>
-						<strong>Email*</strong>
-						<TextField
-							{...email}
-							required
-							fullWidth
-							autoComplete="username"
-						/>
-					</Grid> */}
 					<Grid item xs={12} mt={1}>
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
 							<Stack>
@@ -192,7 +193,12 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 						<TextField {...bio} required fullWidth multiline rows={4} />
 					</Grid>
 					<Grid item xs={12}>
-						<Location coordinates={coordinates} setCoordinates={setCoordinates}/>
+						<Location
+							coordinates={coordinates}
+							setCoordinates={setCoordinates}
+							locationString={locationString}
+							setLocationString={setLocationString}
+						/>
 					</Grid>
 				</Grid>
 				{firstname.value &&
@@ -203,6 +209,7 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 				selectedTags &&
 				selectedTags.length &&
 				bio.value &&
+				coordinates &&
 				validateProfileEditorForm(
 					firstname.value,
 					lastname.value,

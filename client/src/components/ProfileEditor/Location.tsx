@@ -48,46 +48,46 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 
 const Location = ({
 	coordinates,
-	setCoordinates
+	setCoordinates,
+	locationString,
+	setLocationString
 }: {
 	coordinates: [number, number];
 	setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>;
+	locationString: string;
+	setLocationString: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-	// const [{ loggedUser }] = useStateValue();
 	const [{ loggedUser }] = useStateValue();
 	const [isLocationEnabled, setIsLocationEnabled] = useState<boolean>(false);
 	const [locationError, setError] = useState<boolean>(false);
-	const [address, setAddress] = useState<any>('');
+
 	useEffect(() => {
 		checkIsLocationEnabled(setIsLocationEnabled);
 	}, []);
 
 	useEffect(() => {
 		if (!coordinates[0] || !coordinates[1]) getCoordinates(setCoordinates, setError);
-	}, [coordinates]);
+	}, [coordinates, setCoordinates]);
 
 	const getGeoPosition = useCallback(
-		async (coordinates: [number, number] | undefined) => {
-			// let res;
-			let res2;
+		async (coordinates: [number, number]) => {
+			let res;
 			try {
-				// res = loggedUser && (await profileService.requestLocation(loggedUser.id, undefined));
-				// console.log('ip res ', res);
-
-				res2 =
+				res =
 					loggedUser &&
 					(await profileService.requestLocation(loggedUser.id, coordinates));
-				console.log('coord res ', res2);
-				res2.neighbourhood
-					? setAddress(
-							`${res2.neighbourhood}, ${res2.locality}, ${res2.country}`
-					  )
-					: setAddress(`${res2.locality}, ${res2.country}`);
+				console.log('coord res ', res);
+
+				const neighbourhood = res.neighbourhood ? `${res.neighbourhood}, ` : '';
+				const city = res.locality ? `${res.locality}, ` : '';
+				const country = res.country ? `${res.country}` : '';
+
+				setLocationString(neighbourhood + city + country);
 			} catch (err) {
 				console.log(err); //rm later
 			}
-			// console.log(res);
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[loggedUser]
 	);
 
@@ -141,7 +141,7 @@ const Location = ({
 				<DraggableMarker coords={coordinates} setCoordinates={setCoordinates} />
 				<SetMarkerOnClick setCoordinates={setCoordinates} />
 			</MapContainer>
-			<Typography>{address}</Typography>
+			<Typography>{locationString}</Typography>
 		</Box>
 	);
 };
