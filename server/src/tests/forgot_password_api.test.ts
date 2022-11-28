@@ -4,9 +4,10 @@ import { app } from '../app';
 import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
 import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { requestCoordinatesByIp } from '../services/location';
 
 import { createNewUser } from '../services/users';
-import { newUser } from './test_helper';
+import { defaultCoordinates, ipAddress, newUser } from './test_helper';
 const api = supertest(app);
 
 jest.setTimeout(100000);
@@ -20,6 +21,9 @@ jest.mock('nodemailer', () => ({
 	})
 }));
 
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
+
 beforeEach(() => {
 	sendMailMock.mockClear();
 });
@@ -28,7 +32,8 @@ describe('send password reset link on forgot pwd request', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		await clearPasswordResetRequestsTable();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 	});
 
 	test('reset password link is sent to active user with correct email', async () => {
@@ -86,7 +91,8 @@ describe('visit password-reset link', () => {
 		//create and activate user
 		await clearUsers();
 		await clearPasswordResetRequestsTable();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		const user = await findUserByUsername(newUser.username);
 		const activationCode = user?.activationCode;
 
@@ -137,7 +143,8 @@ describe('set new password', () => {
 		//create and activate user
 		await clearUsers();
 		await clearPasswordResetRequestsTable();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		const user = await findUserByUsername(newUser.username);
 		if (!user) fail();
 		const activationCode = user?.activationCode;

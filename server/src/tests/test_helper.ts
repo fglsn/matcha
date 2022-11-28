@@ -1,4 +1,4 @@
-import { NewUser, NewUserWithHashedPwd } from '../types';
+import { Coordinates, NewUser, NewUserWithHashedPwd } from '../types';
 
 export const newUser: NewUser = {
 	username: 'matcha',
@@ -21,7 +21,21 @@ export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	passwordHash: 'Test!111',
 	firstname: 'lorem',
 	lastname: 'ipsum',
-	activationCode: 'qwertyuio21316546'
+	activationCode: 'qwertyuio21316546',
+	lat: 60.1797,
+	lon: 24.9344
+};
+
+export const defaultCoordinates: Coordinates = {
+	lat: 60.16678195339881,
+	lon: 24.941711425781254
+};
+
+export const ipAddress = '194.136.126.42'; //Hive
+
+export const expectedResponseFromIpLocator = { //Hive
+	lat: 60.1797,
+	lon: 24.9344
 };
 
 export const loginUser = { username: 'matcha', password: 'Test!111' };
@@ -31,6 +45,7 @@ export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
 export const newPass = { password: 'Test!2222' };
 
 export const newEmail = { email: 'tester1.hive@yahoo.com' };
+
 export const infoProfile = {
 	username: 'matcha',
 	firstname: 'lorem',
@@ -39,8 +54,11 @@ export const infoProfile = {
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer']
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
+	coordinates: defaultCoordinates,
+	location: 'Helsinki, Finland',
 };
+
 export const infoProfile2 = {
 	username: 'matcha2',
 	firstname: 'lorem',
@@ -49,7 +67,9 @@ export const infoProfile2 = {
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer']
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
+	coordinates: defaultCoordinates,
+	location: 'Helsinki, Finland'
 };
 
 export const bioTooLong =

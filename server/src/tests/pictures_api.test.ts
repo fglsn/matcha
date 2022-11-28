@@ -5,12 +5,16 @@ import { app } from '../app';
 // import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser } from './test_helper';
+import { requestCoordinatesByIp } from '../services/location';
+import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
 import { DataURL, InvDataURL, InvDataURL2, InvDataURL3 } from './test_helper_images';
 
 const api = supertest(app);
 
 jest.setTimeout(100000);
+
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
 let loginRes = <supertest.Response>{};
 
@@ -26,7 +30,8 @@ describe('check requests to photos', () => {
 	let id = <string>'';
 	beforeAll(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
 	});

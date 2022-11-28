@@ -1,13 +1,11 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
+import { describe, expect } from '@jest/globals';
 import { app } from '../app';
+import { defaultCoordinates, ipAddress, loginUser, newEmail, newUser, secondUser } from './test_helper';
 import { clearUpdateEmailRequestsTable, findUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
-// import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/emailResetRequestRepository';
-// import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByEmail, findUserByUsername } from '../repositories/userRepository';
-
 import { createNewUser, sendUpdateEmailLink } from '../services/users';
-import { loginUser, newEmail, newUser, secondUser } from './test_helper';
+import { requestCoordinatesByIp } from '../services/location';
 
 const api = supertest(app);
 
@@ -21,6 +19,9 @@ jest.mock('nodemailer', () => ({
 		};
 	})
 }));
+
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
 let loginRes = <supertest.Response>{};
 
@@ -40,7 +41,8 @@ describe('send email reset link on email/update request', () => {
 	beforeAll(async () => {
 		await clearUsers();
 		await clearUpdateEmailRequestsTable();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 	});
 
@@ -88,8 +90,9 @@ describe('send email reset link on email/update request', () => {
 		expect(sendMailMock).toBeCalledTimes(0);
 	});
 
-	test('fails when update request is sent for the email that was alreafy used by someone else', async () => {
-		await createNewUser(secondUser);
+	test('fails when update request is sent for the email that was already used by someone else', async () => {
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(secondUser, ipAddress);
 		const resFromEmailUpdate = await api
 			.post(`/api/users/${loginRes.body.id}/update_email`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -107,7 +110,8 @@ describe('update email after request has been sent', () => {
 	beforeAll(async () => {
 		await clearUsers();
 		await clearUpdateEmailRequestsTable();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
 		await sendUpdateEmailLink(id, newEmail.email);

@@ -1,15 +1,19 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
+import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { clearSessions } from '../repositories/sessionRepository';
+import { newUser, loginUser, infoProfile, bioTooLong, bioMax, defaultCoordinates, ipAddress } from './test_helper';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { clearSessions } from '../repositories/sessionRepository';
+import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser, infoProfile, bioTooLong, bioMax } from './test_helper';
 
 const api = supertest(app);
 
 jest.setTimeout(10000);
+
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
+const getLocationMock = jest.mocked(getLocation);
 
 let loginRes = <supertest.Response>{};
 
@@ -25,7 +29,8 @@ describe('check access to profile page', () => {
 	let id = <string>'';
 	beforeAll(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
 	});
@@ -84,20 +89,22 @@ describe('Check responses and requests to api/profile', () => {
 	};
 	beforeAll(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
 		resFromProfile = await getResFromProfile(loginRes);
 	});
 	describe('Check repsonse of GET to /api/profile', () => {
 		const putToProfile = async () => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
 				.send(infoProfile)
 				.expect(200);
-			// 	if (res.body.error)
-			// 		console.log(res.body.error);
+			// if (res.body.error)
+			// 	console.log(res.body.error);
 		};
 
 		test('should respond with baseUser + id on 1st access', () => {
@@ -108,12 +115,15 @@ describe('Check responses and requests to api/profile', () => {
 				id: id,
 				username: 'matcha',
 				firstname: 'lorem',
-				lastname: 'ipsum'
+				lastname: 'ipsum',
+				coordinates: defaultCoordinates,
+				location: ''
 			});
 			// console.log(JSON.parse(resFromProfile.text));
 		});
 
 		test('should respond with UserData on 2nd+ access', async () => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			await putToProfile();
 			const newResFromProfile = await getResFromProfile(loginRes);
 			expect(newResFromProfile.body).toBeTruthy();
