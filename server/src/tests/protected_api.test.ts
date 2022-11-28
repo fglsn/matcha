@@ -1,20 +1,24 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
+import { describe, expect } from '@jest/globals';
 import { app } from '../app';
+import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
 import { clearSessions, findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser } from './test_helper';
 
 const api = supertest(app);
 
 jest.setTimeout(10000);
 
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
+
 describe('visit protected page', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 	});
 
 	test('activated and logged user can visit protected page', async () => {

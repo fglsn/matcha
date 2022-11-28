@@ -1,16 +1,19 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
+import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { getString } from '../dbUtils';
-import { clearSessions } from '../repositories/sessionRepository';
+import { newUser, loginUser, newPass, defaultCoordinates, ipAddress } from './test_helper';
 import { clearUsers, findUserByUsername, getPasswordHash } from '../repositories/userRepository';
+import { clearSessions } from '../repositories/sessionRepository';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser, newPass } from './test_helper';
+import { getString } from '../dbUtils';
 
 const api = supertest(app);
 
 jest.setTimeout(10000);
+
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
 let loginRes = <supertest.Response>{};
 let userId: string;
@@ -27,7 +30,8 @@ const initLoggedUser = async () => {
 describe('test update password access', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		userId = getString(loginRes.body.id);
 	});

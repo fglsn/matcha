@@ -4,17 +4,22 @@ import supertest from 'supertest';
 import { app } from '../app';
 // import bcrypt from 'bcrypt';
 import { clearUsers, findUserByUsername, setUserAsActive } from '../repositories/userRepository';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser } from './test_helper';
+import { defaultCoordinates, ipAddress, newUser } from './test_helper';
 
 const api = supertest(app);
 
 jest.setTimeout(30000);
 
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
+
 describe('account activation', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 	});
 
 	test('activation succeeds with valid activaton code', async () => {

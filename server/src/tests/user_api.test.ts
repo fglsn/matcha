@@ -1,17 +1,15 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
+import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-// import bcrypt from 'bcrypt';
+import { defaultCoordinates, expectedResponseFromIpLocator, ipAddress, newUser } from './test_helper';
 import { clearUsers, getAllUsers } from '../repositories/userRepository';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser } from './test_helper';
 
 const api = supertest(app);
 
 jest.setTimeout(10000);
 
-jest.setTimeout(10000);
 const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is called
 
 jest.mock('nodemailer', () => ({
@@ -21,6 +19,9 @@ jest.mock('nodemailer', () => ({
 		};
 	})
 }));
+
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
 beforeEach(() => {
 	sendMailMock.mockClear();
@@ -35,12 +36,14 @@ const lastname = 'Testoff';
 describe('user creation', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 	});
 
 	test('creation succeeds with a new valid payload', async () => {
 		const usersAtStart = await getAllUsers();
 
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(expectedResponseFromIpLocator));
 		await api
 			.post('/api/users')
 			.send({ username, email, passwordPlain, firstname, lastname })
@@ -50,8 +53,13 @@ describe('user creation', () => {
 		const usersAtEnd = await getAllUsers();
 		expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
 
-		const usernames = usersAtEnd.map((u) => u.username);
-		expect(usernames).toContain(newUser.username);
+		const userInDb = usersAtEnd.find((user) => user.username === username);
+		if (!userInDb) fail();
+		expect(userInDb?.username).toEqual(username);
+		expect(userInDb?.firstname).toEqual(firstname);
+		expect(userInDb?.lastname).toEqual(lastname);
+		expect(userInDb?.location).toEqual('');
+		expect(userInDb?.coordinates).toEqual(expectedResponseFromIpLocator);
 
 		expect(sendMailMock).toBeCalledTimes(1);
 		expect(sendMailMock.mock.calls[0][0]['to']).toBe(email);

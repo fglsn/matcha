@@ -4,8 +4,9 @@ import supertest from 'supertest';
 import { app } from '../app';
 import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser } from './test_helper';
+import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
 
 const api = supertest(app);
 
@@ -14,10 +15,14 @@ jest.setTimeout(10000);
 const username = 'matcha';
 const password = 'Test!111';
 
+jest.mock('../services/location');
+const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
+
 describe('user login', () => {
 	beforeEach(async () => {
 		await clearUsers();
-		await createNewUser(newUser);
+		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+		await createNewUser(newUser, ipAddress);
 	});
 
 	test('activated user can log in', async () => {
