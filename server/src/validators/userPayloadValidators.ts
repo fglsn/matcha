@@ -1,4 +1,4 @@
-import { Gender, NewUser, Orientation, UpdateUserProfile } from '../types';
+import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfileWithoutLocation } from '../types';
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
@@ -229,6 +229,26 @@ export const parseTags = (tags: unknown): string[] => {
 	return tags;
 };
 
+export const parseCoordinates = (coorditates: unknown): Coordinates => {
+	if (coorditates && typeof coorditates === 'object' && 'lat' in coorditates && 'lon' in coorditates) {
+		const { lat, lon } = coorditates as { lat: number; lon: number };
+		if (isFinite(lat) && Math.abs(lat) <= 90 && isFinite(lon) && Math.abs(lon) <= 180) return { lat, lon };
+		else throw new ValidationError(`Invalid coordinates.`);
+	} else {
+		throw new ValidationError(`Error in coordinates parser.`);
+	}
+};
+
+export const parseLocationString = (location: unknown): string => {
+	if (location === null || location === undefined) {
+		throw new ValidationError(`Missing location string.`);
+	}
+	if (!isString(location)) {
+		throw new ValidationError(`Expected location to be string, got: ${typeof location}`);
+	}
+	return location;
+};
+
 type Fields1 = {
 	username: unknown;
 	email: unknown;
@@ -239,17 +259,28 @@ type Fields1 = {
 	orientation: unknown;
 	bio: unknown;
 	tags: unknown;
+	coordinates: unknown;
 };
 
-export const parseUserProfilePayload = ({ firstname, lastname, birthday, gender, orientation, bio, tags }: Fields1): UpdateUserProfile => {
-	const updatedUser: UpdateUserProfile = {
+export const parseUserProfilePayload = ({
+	firstname,
+	lastname,
+	birthday,
+	gender,
+	orientation,
+	bio,
+	tags,
+	coordinates
+}: Fields1): UpdateUserProfileWithoutLocation => {
+	const updatedUser: UpdateUserProfileWithoutLocation = {
 		firstname: parseFirstname(firstname),
 		lastname: parseLastname(lastname),
 		birthday: parseBirthday(birthday),
 		gender: parseGender(gender),
 		orientation: parseOrientation(orientation),
 		bio: parseBio(bio),
-		tags: parseTags(tags)
+		tags: parseTags(tags),
+		coordinates: parseCoordinates(coordinates)
 	};
 	return updatedUser;
 };

@@ -24,8 +24,7 @@ const addPhotoByUserId = async (userId: string, image: Photo): Promise<void> => 
 	await pool.query(query);
 };
 const updatePhotoByUserId = async (userId: string, images: Photo[]): Promise<void> => {
-	
-	try { 
+	try {
 		await pool.query('BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE');
 		await dropPhotosByUserId(userId);
 		for (let i = 0; i < images.length; i++) {

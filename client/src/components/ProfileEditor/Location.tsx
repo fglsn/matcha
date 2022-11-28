@@ -1,37 +1,9 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
-import { Box, Button } from '@mui/material';
-// import { useStateValue } from '../../state';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents } from 'react-leaflet';
+import { Box, Button, Typography } from '@mui/material';
+import { getCoordinates, checkIsLocationEnabled } from '../../utils/location';
 import { LightTooltip } from './BasicInfoForm';
-
-const getCoordinates = (
-	setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>,
-	setError: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-	navigator.geolocation.getCurrentPosition(
-		(position) => {
-			const lat = position.coords.latitude;
-			const lng = position.coords.longitude;
-			setCoordinates([lat, lng]);
-		},
-		() => {
-			setError(true);
-		}
-	);
-};
-
-const checkIsLocationEnabled = (
-	setIsLocationEnabled: (isLocationEnabled: boolean) => void
-) => {
-	navigator.geolocation.getCurrentPosition(
-		() => {
-			setIsLocationEnabled(true);
-		},
-		() => {
-			setIsLocationEnabled(false);
-		}
-	);
-};
+import profileService from '../../services/profile';
 
 const DraggableMarker = ({
 	coords,
@@ -72,39 +44,19 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 	return null;
 }
 
-const Location = () => {
-	// const [{ loggedUser }] = useStateValue();
-	const [coordinates, setCoordinates] = useState<[number, number]>([
-		60.16678195339881, 24.941711425781254
-	]);
+const Location = ({
+	coordinates,
+	setCoordinates,
+	locationString,
+	setLocationString
+}: {
+	coordinates: [number, number];
+	setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>;
+	locationString: string;
+	setLocationString: React.Dispatch<React.SetStateAction<string>>;
+}) => {
 	const [isLocationEnabled, setIsLocationEnabled] = useState<boolean>(false);
 	const [locationError, setError] = useState<boolean>(false);
-	// const getGeoPosition = useCallback(
-	// 	async (coordinates: number[] | undefined) => {
-	// 		let res;
-	// 		try {
-	// 			if (!coordinates || !coordinates[0] || !coordinates[1]) {
-	// 				res =
-	// 					loggedUser &&
-	// 					(await profileService.requestLocation(loggedUser.id, undefined));
-	// 				console.log('ip res ', res);
-	// 			} else {
-	// 				res =
-	// 					loggedUser &&
-	// 					(await profileService.requestLocation(
-	// 						loggedUser.id,
-	// 						coordinates
-	// 					));
-	// 				console.log('coord res ', res);
-	// 			}
-	// 			setLocation(res);
-	// 		} catch (err) {
-	// 			console.log(err); //rm later
-	// 		}
-	// 		console.log(res);
-	// 	},
-	// 	[loggedUser]
-	// );
 
 	useEffect(() => {
 		checkIsLocationEnabled(setIsLocationEnabled);
@@ -112,14 +64,36 @@ const Location = () => {
 
 	useEffect(() => {
 		if (!coordinates[0] || !coordinates[1]) getCoordinates(setCoordinates, setError);
-	}, [coordinates]);
+	}, [coordinates, setCoordinates]);
 
-	// const handleClick = async (event: any) => {
-	// 	event.preventDefault();
-	// 	console.log(coordinates); //rm later
-	// 	// if (coordinates[0] && coordinates[1]) getGeoPosition(coordinates);
-	// 	// else getGeoPosition(undefined);
-	// };
+	const getGeoPosition = useCallback(
+		async (coordinates: [number, number]) => {
+			try {
+				const locationString = await profileService.requestLocation(coordinates) || '';
+				setLocationString(locationString);
+			} catch (err) {
+				console.log(err); //rm later
+			}
+		},
+		[setLocationString]
+	);
+
+	useEffect(() => {
+		getGeoPosition(coordinates);
+	}, [coordinates, getGeoPosition]);
+
+	const SetMarkerOnClick = ({
+		setCoordinates
+	}: {
+		setCoordinates: React.Dispatch<React.SetStateAction<[number, number]>>;
+	}) => {
+		useMapEvents({
+			click(e) {
+				setCoordinates([e.latlng.lat, e.latlng.lng]);
+			}
+		});
+		return null;
+	};
 
 	return (
 		<Box>
@@ -143,24 +117,18 @@ const Location = () => {
 			</LightTooltip>
 			<MapContainer
 				center={coordinates}
-				zoom={14}
 				scrollWheelZoom={true}
 				style={{ height: '30vh', width: '100wh' }}
 			>
-				<ChangeView center={coordinates} zoom={12} />
+				<ChangeView center={coordinates} zoom={13} />
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright"></a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 				<DraggableMarker coords={coordinates} setCoordinates={setCoordinates} />
+				<SetMarkerOnClick setCoordinates={setCoordinates} />
 			</MapContainer>
-			{/* <Button
-				sx={{ marginTop: 1, marginRight: 2, width: '100%' }}
-				variant="contained"
-				onClick={handleClick}
-			>
-				Set selected location
-			</Button> */}
+			<Typography>{locationString}</Typography>
 		</Box>
 	);
 };

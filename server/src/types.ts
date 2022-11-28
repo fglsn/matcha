@@ -7,6 +7,11 @@ export type BaseUser = {
 	lastname: string;
 };
 
+export type Coordinates = {
+	lat: number;
+	lon: number;
+};
+
 export type UserData = {
 	//add tags & photos later
 	id: string;
@@ -18,9 +23,13 @@ export type UserData = {
 	orientation: string | undefined;
 	bio: string | undefined;
 	tags: string[] | undefined;
+	coordinates: Coordinates;
+	location: string;
 };
 
-export type UpdateUserProfile = {
+export type UpdateUserProfile = UpdateUserProfileWithoutLocation & { location: string };
+
+export type UpdateUserProfileWithoutLocation = {
 	firstname: string;
 	lastname: string;
 	birthday: Date;
@@ -28,15 +37,24 @@ export type UpdateUserProfile = {
 	orientation: Orientation;
 	bio: string;
 	tags: string[];
+	coordinates: Coordinates;
 };
 
 export type Gender = 'male' | 'female';
 
 export type Orientation = 'straight' | 'gay' | 'bi';
 
-export type User = BaseUser & { id: string; passwordHash: string; createdAt: Date; isActive: boolean; activationCode: string };
+export type User = BaseUser & {
+	id: string;
+	passwordHash: string;
+	createdAt: Date;
+	isActive: boolean;
+	activationCode: string;
+	coordinates: Coordinates;
+	location: string;
+};
 
-export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string };
+export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string; lat: number; lon: number };
 
 export type LoggedUser = BaseUser & { id: string };
 

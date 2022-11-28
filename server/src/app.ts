@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import userRouter from './routes/users';
 import loginRouter from './routes/login';
+import locationRouter from './routes/location';
 
 import testAuthRouter from './routes/testAuth';
 
@@ -22,6 +23,7 @@ app.use(sessionIdExtractor);
 
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/location', locationRouter);
 
 app.use('/api/testAuth', testAuthRouter);
 

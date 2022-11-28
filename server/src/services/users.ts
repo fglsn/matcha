@@ -1,16 +1,17 @@
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 //prettier-ignore
 import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById } from '../repositories/userRepository';
+import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User } from '../types';
+import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
-import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -18,10 +19,12 @@ export const createHashedPassword = async (passwordPlain: string): Promise<strin
 	return await bcrypt.hash(passwordPlain, saltRounds);
 };
 
-export const createNewUser = async (newUser: NewUser): Promise<User> => {
+export const createNewUser = async (newUser: NewUser, ipAddress: string | undefined): Promise<User> => {
 	const passwordHash = await createHashedPassword(newUser.passwordPlain);
 	const activationCode = crypto.randomBytes(20).toString('hex');
-	return addNewUser({ ...newUser, passwordHash, activationCode });
+
+	const coordinates = await requestCoordinatesByIp(ipAddress);
+	return addNewUser({ ...newUser, passwordHash, activationCode, lat: coordinates.lat, lon: coordinates.lon });
 };
 
 //activate
@@ -148,7 +151,7 @@ export const updateUserPhotos = async (images: Photo[], userId: string) => {
 	// for (let i = 0; i < images.length; i++) {
 	// 	await addPhotoByUserId(userId, images[i]);
 	// }
-	await updatePhotoByUserId(userId, images); 
+	await updatePhotoByUserId(userId, images);
 };
 
 export const getUserPhotosById = async (userId: string) => {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { Images, LoggedUser, NewUserDataWithoutId } from '../types';
+import { Images, LoggedUser, NewUserData } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
@@ -21,7 +21,7 @@ export const getProfile = async (loggedUser: LoggedUser) => {
 
 export const updateProfile = async (
 	loggedUser: LoggedUser,
-	newUserData: NewUserDataWithoutId
+	newUserData: NewUserData
 ) => {
 	try {
 		const config = {
@@ -113,24 +113,24 @@ export const updatePassword = async ({
 	}
 };
 
-// export const requestLocation = async (id: string, coordinates: number[] | undefined) => {
-// 	try {
-// 		const config = {
-// 			headers: { Authorization: getAuthHeader() }
-// 		};
-// 		let response;
+export const requestLocation = async (coordinates: number[] | undefined) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		let response;
 
-// 		response = await axios.put(
-// 			`${apiBaseUrl}/users/${id}/location`,
-// 			{ coordinates },
-// 			config
-// 		);
+		response = await axios.post<string>(
+			`${apiBaseUrl}/location`,
+			{ coordinates },
+			config
+		);
 
-// 		return response.data;
-// 	} catch (err) {
-// 		handleAxiosError(err);
-// 	}
-// };
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
 
 const moduleExports = {
 	getProfile,
@@ -140,7 +140,7 @@ const moduleExports = {
 	requestUpdateEmail,
 	updateEmailbyToken,
 	updatePassword,
-	// requestLocation
+	requestLocation
 };
 
 export default moduleExports;
