@@ -12,12 +12,13 @@ User will be able to register, connect, fill his/her profile, search and look in
 ### Stack  
 
 Backend:
+- TypeScript
 - NodeJs
 - PostgreSQL
 - Jest
 
 Frontend:
-
+- TypeScript
 - React
 - Material UI  
 
