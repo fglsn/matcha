@@ -175,13 +175,13 @@ export const checkCompletnessByUserId = async (userId: string) => {
 // 	return completeness;
 // };
 
-export const getUserCompletenessById = async (userId: string) => {
+export const getAndUpdateUserCompletnessById = async (userId: string) => {
 	const completeness = await getCompletenessByUserId(userId);
 	if (!completeness) throw new AppError('No user with provided id', 400);
 	if (!completeness.complete) {
 		completeness.complete = await checkCompletnessByUserId(userId);
+		if (completeness.complete) void updateCompletenessByUserId(userId, completeness.complete);
 	}
 
-	if (completeness.complete) void updateCompletenessByUserId(userId, completeness.complete);
 	return completeness;
 };
