@@ -10,23 +10,33 @@ const StyledContainer = styled('div')({
 	margin: '0 auto'
 });
 
-const StyledBeforeIcon = styled(NavigateBeforeIcon)({
-	position: 'absolute',
-	top: '90%',
-	transform: 'translate(0, 50%)',
-	left: '15px',
-	zIndex: 1,
-	cursor: 'pointer'
-});
+const StyledBeforeIcon = styled(NavigateBeforeIcon)`
+	position: absolute;
+	top: 95%;
+	left: 15px;
+	z-index: 1;
+	cursor: pointer;
+	border-radius: 28px;
+	background-color: white !important;
+	border: 1px solid #dcdcdc;
+	&:hover {
+		transform: scale(1.1);
+	}
+`;
 
-const StyledNextIcon = styled(NavigateNextIcon)({
-	position: 'absolute',
-	top: '90%',
-	transform: 'translate(0, 50%)',
-	right: '15px',
-	zIndex: 1,
-	cursor: 'pointer'
-});
+const StyledNextIcon = styled(NavigateNextIcon)`
+	position: absolute;
+	top: 95%;
+	right: 15px;
+	z-index: 1;
+	cursor: pointer;
+	border-radius: 28px;
+	background-color: white!important;
+	border: 1px solid #dcdcdc;
+	&:hover {
+		transform: scale(1.1);
+	}
+`;
 
 const Slider = styled('div')({
 	height: '100%',

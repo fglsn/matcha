@@ -1,10 +1,11 @@
-import { styled, Alert, Container, Grid, Paper } from '@mui/material';
+import { styled, Alert, Container, Paper } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getPhotos, getProfile } from '../../services/profile';
 import { Images, UserData } from '../../types';
 import LoadingIcon from '../LoadingIcon';
-// import BasicInfoForm from '../ProfileEditor/BasicInfoForm';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ClearIcon from '@mui/icons-material/Clear';
 import Photos from './Photos';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,9 +17,57 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const StyledContainer = styled(Container)({
-	height: '550px',
-	width: '600px',
-	margin: '0 auto'
+	maxHeight: '750px',
+	maxWidth: 'auto',
+	display: 'flex',
+	justifyContent: 'center'
+});
+
+const IconGroup = styled('div')({
+	display: 'flex',
+	flexDirection: 'row',
+	position: 'relative',
+	justifyContent: 'center'
+});
+
+// const IconWrapper = styled('div')({
+// 	height: '65px',
+// 	width: '65px',
+// 	borderRadius: 50,
+// 	backgroundColor: 'white!important',
+// 	border: '1px solid #dcdcdc',
+// 	position: 'relative',
+// 	margin: '0 45px',
+// 	transformOrigin: '2 2 2'
+// });
+
+const IconWrapper = styled('div')`
+	height: 65px;
+	width: 65px;
+	border-radius: 50px;
+	background-color: white !important;
+	border: 1px solid #dcdcdc;
+	position: relative;
+	margin: 0 45px;
+	&:hover {
+		transform: scale(1.1);
+	}
+`;
+
+const StyledLikeIcon = styled(FavoriteIcon)({
+	position: 'absolute',
+	color: 'primary',
+	zIndex: 1,
+	top: '34%',
+	left: '31%'
+});
+
+const StyledDislikeIcon = styled(ClearIcon)({
+	position: 'absolute',
+	color: 'primary',
+	zIndex: 1,
+	top: '33%',
+	left: '31%'
 });
 
 const PublicProfile = () => {
@@ -65,14 +114,19 @@ const PublicProfile = () => {
 	return (
 		<>
 			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
-				<Grid container>
-					<Grid item>
-						<Item>
-							<Photos photos={photosData.images} />
-						</Item>
-						{/* <Item sx={{ marginTop: '2rem' }}></Item> */}
-					</Grid>
-				</Grid>
+				<Item>
+					<Photos photos={photosData.images} />
+					<IconGroup>
+						<IconWrapper>
+							<StyledDislikeIcon color="inherit" />
+						</IconWrapper>
+
+						<IconWrapper>
+							<StyledLikeIcon color="primary" />
+						</IconWrapper>
+					</IconGroup>
+				</Item>
+				{/* <Item sx={{ marginTop: '2rem' }}></Item> */}
 			</StyledContainer>
 		</>
 	);
