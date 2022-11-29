@@ -199,7 +199,7 @@ const updateCompletenessByUserId = async (userId: string, value: boolean): Promi
 
 const userDataIsNotNULL = async (userId: string): Promise<boolean> => {
 	const query = {
-		text: 'select * from users where id = $1 and gender is not null',
+		text: 'select * from users where id = $1 and birthday is not null and gender is not null and orientation is not null and bio is not null and tags is not null',
 		values: [userId]
 	};
 	const res = await pool.query(query);
