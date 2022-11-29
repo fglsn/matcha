@@ -14,19 +14,19 @@ const withProfileRequired =
 	(...props) => {
 		const [{ loggedUser }, dispatch] = useContext(StateContext);
 		const navigate = useNavigate();
-		const alert = useContext(AlertContext);
+		const { error: errorCallback } = useContext(AlertContext);
 		const [completenessData, setData] = useState<UserCompletness | null>(null);
 		const [completenessError, setError] = useState(null);
 
 		useEffect(() => {
-			const profileCompleteness = async(loggedUser: LoggedUser) => {
+			const profileCompleteness = async (loggedUser: LoggedUser) => {
 				try {
 					const res = await checkProfileCompleteness(loggedUser);
 					setData(res);
 				} catch (e) {
 					if (e instanceof AuthError) logoutUser(dispatch);
 					setError(e);
-					alert.error(e.message);
+					errorCallback(e.message);
 				}
 			};
 
@@ -38,7 +38,7 @@ const withProfileRequired =
 				profileCompleteness(loggedUser);
 			}
 			if (completenessData && !completenessData.complete) {
-				alert.error('Please, complete your profile first!');
+				errorCallback('Please, complete all the required fields on your profile in order to use the service!');
 				navigate('/profile');
 				return;
 			}
@@ -57,14 +57,12 @@ const withProfileRequired =
 					})
 				);
 			}
-		}, [loggedUser, alert, navigate, dispatch, completenessData, completenessError]);
+		}, [loggedUser, errorCallback, navigate, dispatch, completenessData, completenessError]);
 
 		if (loggedUser?.complete === true) return <Component {...(props as P)} />;
 		else if (completenessError)
 			return (
-				<Alert severity="error">
-					Error loading page, please try again...
-				</Alert>
+				<Alert severity="error">Error loading page, please try again...</Alert>
 			);
 		else return <LoadingIcon />;
 	};
