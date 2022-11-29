@@ -9,7 +9,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getUserCompletenessById } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 
@@ -200,6 +200,17 @@ router.get(
 		if (!req.params.id) throw new AppError(`Please, provide user id`, 400);
 		const userPhotos = await getUserPhotosById(req.params.id);
 		res.status(200).json(userPhotos);
+	})
+);
+
+router.get(
+	'/:id/complete',
+	// sessionExtractor,
+	asyncHandler(async (req, res) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		if (!req.params.id) throw new AppError(`Please, provide user id`, 400);
+		const completeness = await getUserCompletenessById(req.params.id);
+		res.status(200).json(completeness);
 	})
 );
 

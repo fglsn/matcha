@@ -52,7 +52,10 @@ export type User = BaseUser & {
 	activationCode: string;
 	coordinates: Coordinates;
 	location: string;
+	complete: boolean;
 };
+
+export type UserCompletness = { complete: boolean };
 
 export type NewUserWithHashedPwd = BaseUser & { passwordHash: string; activationCode: string; lat: number; lon: number };
 

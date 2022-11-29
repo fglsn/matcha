@@ -16,7 +16,8 @@ create table users
 	gender varchar,
 	orientation varchar,
 	bio varchar,
-	tags varchar []
+	tags varchar [],
+	is_complete boolean not null default false
 );
 
 create table user_sessions

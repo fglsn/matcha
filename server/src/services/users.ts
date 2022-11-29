@@ -5,7 +5,7 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User } from '../types';
@@ -158,4 +158,30 @@ export const getUserPhotosById = async (userId: string) => {
 	if (!(await isUserById(userId))) throw new AppError('No user with provided id', 400);
 	const userPhotos = await getPhotosByUserId(userId);
 	return userPhotos;
+};
+
+export const checkCompletnessByUserId = async (userId: string) => {
+	if ((await userHasPhotos(userId)) && (await userDataIsNotNULL(userId))) return true;
+	return false;
+};
+
+// export const getUserCompletenessById = async (userId: string) => {
+// 	const completeness = await getCompletenessByUserId(userId);
+// 	if (!completeness) throw new AppError('No user with provided id', 400);
+// 	if (!completeness.complete){
+// 		completeness.complete = await checkCompletnessByUserId(userId);
+// 	}
+
+// 	return completeness;
+// };
+
+export const getUserCompletenessById = async (userId: string) => {
+	const completeness = await getCompletenessByUserId(userId);
+	if (!completeness) throw new AppError('No user with provided id', 400);
+	if (!completeness.complete) {
+		completeness.complete = await checkCompletnessByUserId(userId);
+	}
+
+	if (completeness.complete) void updateCompletenessByUserId(userId, completeness.complete);
+	return completeness;
 };

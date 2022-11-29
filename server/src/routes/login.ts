@@ -36,7 +36,7 @@ router.post(
 		}
 
 		const session = await addSession({ userId: user.id, username: user.username, email: user.email });
-		res.status(200).send({ token: session.sessionId, username: user?.username, id: user?.id });
+		res.status(200).send({ token: session.sessionId, username: user?.username, id: user?.id, complete: user?.complete });
 	})
 );
 
