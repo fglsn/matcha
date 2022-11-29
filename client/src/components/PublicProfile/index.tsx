@@ -50,6 +50,7 @@ const IconWrapper = styled('div')`
 	position: relative;
 	margin: 0 45px;
 	&:hover {
+		transition: 0.2s ease;
 		transform: scale(1.1);
 	}
 `;

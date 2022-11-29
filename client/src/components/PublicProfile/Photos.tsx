@@ -20,6 +20,8 @@ const StyledBeforeIcon = styled(NavigateBeforeIcon)`
 	background-color: white !important;
 	border: 1px solid #dcdcdc;
 	&:hover {
+		// box-shadow: 22px 23px #eeb902;
+		transition: 0.2s ease;
 		transform: scale(1.1);
 	}
 `;
@@ -31,9 +33,10 @@ const StyledNextIcon = styled(NavigateNextIcon)`
 	z-index: 1;
 	cursor: pointer;
 	border-radius: 28px;
-	background-color: white!important;
+	background-color: white !important;
 	border: 1px solid #dcdcdc;
 	&:hover {
+		transition: 0.2s ease;
 		transform: scale(1.1);
 	}
 `;
