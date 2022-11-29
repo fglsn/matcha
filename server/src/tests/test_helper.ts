@@ -79,5 +79,147 @@ export const bioTooLong =
 export const bioMax =
 	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
+
 export const completenessFalse = { complete: false };
 export const completenessTrue = { complete: true };
+
+export const positionstackResponseDataAllThree = {
+	data: [
+		{
+			latitude: 60.180873,
+			longitude: 24.958137,
+			type: 'address',
+			distance: 0.016,
+			name: 'Sörnäs Strandväg 15b',
+			number: '15b',
+			postal_code: '00530',
+			street: 'Sörnäs Strandväg',
+			confidence: 0.8,
+			region: 'Uusimaa',
+			region_code: null,
+			county: 'Helsinki',
+			locality: 'Helsinki',
+			administrative_area: null,
+			neighbourhood: 'Vilhonvuori',
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Sörnäs Strandväg 15b, Helsinki, Finland'
+		},
+		{
+			latitude: 60.180873,
+			longitude: 24.958137,
+			type: 'address',
+			distance: 0.016,
+			name: 'Haapaniemenkatu 5b',
+			number: '5b',
+			postal_code: '00530',
+			street: 'Haapaniemenkatu',
+			confidence: 0.8,
+			region: 'Uusimaa',
+			region_code: null,
+			county: 'Helsinki',
+			locality: 'Helsinki',
+			administrative_area: null,
+			neighbourhood: 'Vilhonvuori',
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Haapaniemenkatu 5b, Helsinki, Finland'
+		}
+	]
+};
+
+export const positionstackResponseNoNeighbourhood = {
+	data: [
+		{
+			latitude: 63.367725,
+			longitude: 25.574402,
+			type: 'address',
+			distance: 0.063,
+			name: 'Kolimantie 9',
+			number: '9',
+			postal_code: '44800',
+			street: 'Kolimantie',
+			confidence: 0.8,
+			region: 'Central Finland',
+			region_code: null,
+			county: 'Saarijarvi-Viitasaari',
+			locality: 'Pihtipudas',
+			administrative_area: 'Pihtipudas',
+			neighbourhood: null,
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Kolimantie 9, Pihtipudas, Finland'
+		},
+		{
+			latitude: 63.367931,
+			longitude: 25.574391,
+			type: 'address',
+			distance: 0.066,
+			name: 'Kolimantie 7',
+			number: '7',
+			postal_code: '44800',
+			street: 'Kolimantie',
+			confidence: 0.8,
+			region: 'Central Finland',
+			region_code: null,
+			county: 'Saarijarvi-Viitasaari',
+			locality: 'Pihtipudas',
+			administrative_area: 'Pihtipudas',
+			neighbourhood: null,
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Kolimantie 7, Pihtipudas, Finland'
+		}
+	]
+};
+
+export const positionstackResponseDataOnlyCountry = {
+	data: [
+		{
+			latitude: 60.324422,
+			longitude: 24.575217,
+			type: 'venue',
+			distance: 0.323,
+			name: 'Valkealampi',
+			number: null,
+			postal_code: null,
+			street: null,
+			confidence: 0.6,
+			region: 'Uusimaa',
+			region_code: null,
+			county: 'Helsinki',
+			locality: null,
+			administrative_area: 'Vihti',
+			neighbourhood: null,
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Valkealampi, Vihti, Finland'
+		},
+		{
+			latitude: 60.323799,
+			longitude: 24.576445,
+			type: 'venue',
+			distance: 0.384,
+			name: 'Valkealampi Kehrääjänpesä',
+			number: null,
+			postal_code: null,
+			street: null,
+			confidence: 0.6,
+			region: 'Uusimaa',
+			region_code: null,
+			county: 'Helsinki',
+			locality: null,
+			administrative_area: 'Vihti',
+			neighbourhood: null,
+			country: 'Finland',
+			country_code: 'FIN',
+			continent: 'Europe',
+			label: 'Valkealampi Kehrääjänpesä, Vihti, Finland'
+		},
+	]
+};

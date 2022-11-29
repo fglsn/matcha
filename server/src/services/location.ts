@@ -20,10 +20,12 @@ export const requestCoordinatesByIp = async (ipAddress: string | undefined): Pro
 
 		const payload: unknown = response.data;
 		let parsedPayload;
-		if (payload && typeof payload === 'object' && 'lat' in payload && 'lon' in payload && 'status' in payload && 'message' in payload) {
+		if (payload && typeof payload === 'object' && 'lat' in payload && 'lon' in payload && 'status' in payload) {
 			parsedPayload = payload as { lat: number; lon: number; status: string; message: string };
 			console.log('parsed payload from IP API: ', parsedPayload); //rm later
 		} else {
+			parsedPayload = payload as { status: string; message: string }; //rm later
+			console.log('parsed failed payload from IP API: ', parsedPayload); //rm later
 			return defaultCoordinates;
 		}
 
@@ -32,7 +34,7 @@ export const requestCoordinatesByIp = async (ipAddress: string | undefined): Pro
 		if (parsedPayload.status === 'success') {
 			return { lat: parsedPayload.lat, lon: parsedPayload.lon };
 		} else {
-			console.log(`Unexpected response from IP API (requestLocationByIp) ${ipAddress}, ${response.data}`);
+			console.log('Unexpected response from IP API (requestLocationByIp)', ipAddress, response.data);
 			return defaultCoordinates;
 		}
 	} catch (err) {
@@ -53,7 +55,7 @@ export const getLocation = async (coordinates: Coordinates) => {
 		if (!response.data) {
 			return '';
 		}
-
+		console.log(response.data);
 		const location = response.data.data[0];
 		const neighbourhood = location.neighbourhood ? `${location.neighbourhood}, ` : '';
 		const city = location.locality ? `${location.locality}, ` : '';
