@@ -21,7 +21,7 @@ const withProfileRequired =
 		useEffect(() => {
 			const profileCompleteness = async (loggedUser: LoggedUser) => {
 				try {
-					const res = await checkProfileCompleteness(loggedUser);
+					const res = await checkProfileCompleteness(loggedUser.id);
 					setData(res);
 				} catch (e) {
 					if (e instanceof AuthError) logoutUser(dispatch);

@@ -1,34 +1,28 @@
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { Images, LoggedUser, NewUserData } from '../types';
+import { Images, NewUserData } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
-export const getProfile = async (loggedUser: LoggedUser) => {
+export const getProfile = async (userId: string) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(
-			`${apiBaseUrl}/users/${loggedUser.id}/profile`,
-			config
-		);
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/profile`, config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
 	}
 };
 
-export const updateProfile = async (
-	loggedUser: LoggedUser,
-	newUserData: NewUserData
-) => {
+export const updateProfile = async (userId: string, newUserData: NewUserData) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.put(
-			`${apiBaseUrl}/users/${loggedUser.id}/profile`,
+			`${apiBaseUrl}/users/${userId}/profile`,
 			newUserData,
 			config
 		);
@@ -38,13 +32,25 @@ export const updateProfile = async (
 	}
 };
 
-export const getPhotos = async (loggedUser: LoggedUser) => {
+export const getPhotos = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/photos`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
+export const checkProfileCompleteness = async (userId: string) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.get(
-			`${apiBaseUrl}/users/${loggedUser.id}/photos`,
+			`${apiBaseUrl}/users/${userId}/complete`,
 			config
 		);
 		return response.data;
@@ -53,27 +59,12 @@ export const getPhotos = async (loggedUser: LoggedUser) => {
 	}
 };
 
-export const checkProfileCompleteness = async (loggedUser: LoggedUser) => {
+export const uploadPhotos = async (userId: string, images: Images) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(
-			`${apiBaseUrl}/users/${loggedUser.id}/complete`,
-			config
-		);
-		return response.data;
-	} catch (err) {
-		handleAxiosError(err);
-	}
-};
-
-export const uploadPhotos = async (loggedUser: LoggedUser, images: Images) => {
-	try {
-		const config = {
-			headers: { Authorization: getAuthHeader() }
-		};
-		await axios.post(`${apiBaseUrl}/users/${loggedUser.id}/photos`, images, config);
+		await axios.post(`${apiBaseUrl}/users/${userId}/photos`, images, config);
 	} catch (err) {
 		handleAxiosError(err);
 	}

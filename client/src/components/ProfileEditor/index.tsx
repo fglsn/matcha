@@ -34,7 +34,7 @@ const ProfileEditor = () => {
 		data: profileData,
 		error: profileError
 	}: { data: UserData | undefined; error: Error | undefined } = useServiceCall(
-		async () => loggedUser && (await getProfile(loggedUser)),
+		async () => loggedUser && (await getProfile(loggedUser.id)),
 		[loggedUser]
 	);
 
@@ -42,7 +42,7 @@ const ProfileEditor = () => {
 		data: photosData,
 		error: photosError
 	}: { data: Images | undefined; error: Error | undefined } = useServiceCall(
-		async () => loggedUser && (await getPhotos(loggedUser)),
+		async () => loggedUser && (await getPhotos(loggedUser.id)),
 		[loggedUser]
 	);
 

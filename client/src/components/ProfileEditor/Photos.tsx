@@ -86,7 +86,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 	const uploadPhotos = async (images: Images) => {
 		try {
 			setIsUploading(true);
-			loggedUser && (await profileService.uploadPhotos(loggedUser, images));
+			loggedUser && (await profileService.uploadPhotos(loggedUser.id, images));
 			successCallback(`Profile photos were updated!.`);
 			setIsUploading(false);
 		} catch (err) {
