@@ -53,6 +53,21 @@ export const getPhotos = async (loggedUser: LoggedUser) => {
 	}
 };
 
+export const checkProfileCompleteness = async (loggedUser: LoggedUser) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(
+			`${apiBaseUrl}/users/${loggedUser.id}/complete`,
+			config
+		);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
 export const uploadPhotos = async (loggedUser: LoggedUser, images: Images) => {
 	try {
 		const config = {

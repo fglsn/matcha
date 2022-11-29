@@ -79,6 +79,10 @@ export const bioTooLong =
 export const bioMax =
 	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
+
+export const completenessFalse = { complete: false };
+export const completenessTrue = { complete: true };
+
 export const positionstackResponseDataAllThree = {
 	data: [
 		{
@@ -219,4 +223,3 @@ export const positionstackResponseDataOnlyCountry = {
 		},
 	]
 };
-

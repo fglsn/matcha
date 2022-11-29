@@ -1,6 +1,8 @@
 // import { useEffect } from "react";
 // import { setLoggedUser, useStateValue } from "../state";
 
+import withProfileRequired from "./ProfileRequired";
+
 const Main = () => {
 	// const [, dispatch] = useStateValue();
 
@@ -18,4 +20,4 @@ const Main = () => {
 	return <>HELLO</>;
 };
 
-export default Main;
+export default withProfileRequired(Main);

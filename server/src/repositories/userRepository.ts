@@ -1,7 +1,7 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
 import { ValidationError } from '../errors';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -16,7 +16,15 @@ const userMapper = (row: any): User => {
 		isActive: getBoolean(row['is_active']),
 		activationCode: getString(row['activation_code']),
 		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) },
-		location: getString(row['location_string'])
+		location: getString(row['location_string']),
+		complete: getBoolean(row['is_complete'])
+	};
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const userCompletnessMapper = (row: any): UserCompletness => {
+	return {
+		complete: getBoolean(row['is_complete'])
 	};
 };
 
@@ -169,6 +177,50 @@ const getUserDataByUserId = async (userId: string): Promise<UserData | undefined
 	return userDataMapper(res.rows[0]);
 };
 
+const getCompletenessByUserId = async (userId: string): Promise<UserCompletness | undefined> => {
+	const query = {
+		text: 'select is_complete from users where id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userCompletnessMapper(res.rows[0]);
+};
+
+const updateCompletenessByUserId = async (userId: string, value: boolean): Promise<void> => {
+	const query = {
+		text: 'update users set is_complete = $2 where id = $1',
+		values: [userId, value]
+	};
+	await pool.query(query);
+};
+
+const userDataIsNotNULL = async (userId: string): Promise<boolean> => {
+	const query = {
+		text: 'select * from users where id = $1 and birthday is not null and gender is not null and orientation is not null and bio is not null and tags is not null',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
+};
+
+const userHasPhotos = async (userId: string): Promise<boolean> => {
+	const query = {
+		text: 'select * from photos where user_id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
+};
+
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8, lat = $9, lon = $10, location_string = $11 where id = $1',
@@ -202,5 +254,9 @@ export {
 	updateUserEmail,
 	getUserDataByUserId,
 	updateUserDataByUserId,
-	isUserById
+	isUserById,
+	getCompletenessByUserId,
+	userDataIsNotNULL,
+	userHasPhotos,
+	updateCompletenessByUserId
 };
