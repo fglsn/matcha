@@ -33,7 +33,8 @@ export const defaultCoordinates: Coordinates = {
 
 export const ipAddress = '194.136.126.42'; //Hive
 
-export const expectedResponseFromIpLocator = { //Hive
+export const expectedResponseFromIpLocator = {
+	//Hive
 	lat: 60.1797,
 	lon: 24.9344
 };
@@ -56,7 +57,7 @@ export const infoProfile = {
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	coordinates: defaultCoordinates,
-	location: 'Helsinki, Finland',
+	location: 'Helsinki, Finland'
 };
 
 export const infoProfile2 = {
@@ -77,3 +78,6 @@ export const bioTooLong =
 
 export const bioMax =
 	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+export const completenessFalse = { complete: false };
+export const completenessTrue = { complete: true };
