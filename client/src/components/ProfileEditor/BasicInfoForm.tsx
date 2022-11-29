@@ -69,17 +69,17 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
 
 	//rm later
-	console.log(`
-		${firstname.value} &&
-		${lastname.value} &&
-		${date} &&
-		${gender.value} &&
-		${orientation.value} &&
-		${selectedTags} &&
-		${bio.value} && 
-		${coordinates[0]} && 
-		${coordinates[1]} && 
-		${locationString}`);
+	// console.log(`
+	// 	${firstname.value} &&
+	// 	${lastname.value} &&
+	// 	${date} &&
+	// 	${gender.value} &&
+	// 	${orientation.value} &&
+	// 	${selectedTags} &&
+	// 	${bio.value} && 
+	// 	${coordinates[0]} && 
+	// 	${coordinates[1]} && 
+	// 	${locationString}`);
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
