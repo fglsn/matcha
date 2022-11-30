@@ -51,12 +51,25 @@ export const infoProfile = {
 	username: 'matcha',
 	firstname: 'lorem',
 	lastname: 'ipsum',
-	birthday: new Date('1999-03-22').toISOString(),
+	birthday: new Date('1999-11-30').toISOString(),
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	coordinates: defaultCoordinates,
+	location: 'Helsinki, Finland'
+};
+
+export const infoProfilePublic = {
+	username: 'matcha',
+	firstname: 'lorem',
+	lastname: 'ipsum',
+	age: 23,
+	gender: 'male',
+	orientation: 'straight',
+	bio: 'born sleepy',
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
+	distance: 0,
 	location: 'Helsinki, Finland'
 };
 
@@ -78,7 +91,6 @@ export const bioTooLong =
 
 export const bioMax =
 	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-
 
 export const completenessFalse = { complete: false };
 export const completenessTrue = { complete: true };
@@ -220,6 +232,6 @@ export const positionstackResponseDataOnlyCountry = {
 			country_code: 'FIN',
 			continent: 'Europe',
 			label: 'Valkealampi Kehrääjänpesä, Vihti, Finland'
-		},
+		}
 	]
 };

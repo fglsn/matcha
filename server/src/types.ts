@@ -27,6 +27,20 @@ export type UserData = {
 	location: string;
 };
 
+export type ProfilePublic = {
+	id: string;
+	username: string;
+	firstname: string;
+	lastname: string;
+	age: number;
+	gender: string;
+	orientation: string;
+	bio: string;
+	tags: string[];
+	distance: number;
+	location: string;
+};
+
 export type UpdateUserProfile = UpdateUserProfileWithoutLocation & { location: string };
 
 export type UpdateUserProfileWithoutLocation = {
