@@ -147,7 +147,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 
 				<Box sx={mainGridItem}>
 					<div key={placeholder.img}>
-						<img
+						<Photo
 							src={images[0]?.dataURL || placeholder.img}
 							alt="Main profile pic"
 							style={imgStyle}
@@ -168,7 +168,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 					{[...Array(4)].map((e, i) => (
 						<Box key={i} sx={gridItem}>
 							<div>
-								<img
+								<Photo
 									src={images[i + 1]?.dataURL || placeholder.img}
 									alt={`Profile pic #${i + 1} by ${
 										loggedUser?.username
@@ -197,7 +197,11 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 					))}
 				</Box>
 				<LightTooltip
-					title={isUploading || !images || !images.length ? "Add at least one picture!" : "Don't forget to upload if you changed something!"}
+					title={
+						isUploading || !images || !images.length
+							? 'Add at least one picture!'
+							: "Don't forget to upload if you changed something!"
+					}
 					placement="top"
 				>
 					<span>
@@ -216,6 +220,14 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 	);
 };
 
+const Photo = styled('img')`
+	max-width: 100%;
+	max-height: 100%;
+	margin: auto;
+	border-radius: 7px;
+	object-fit: scale-down;
+`;
+
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 	<Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -224,7 +236,8 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 		color: 'white',
 		maxWidth: 300,
 		padding: '25px',
-		fontSize: theme.typography.pxToRem(16)
+		fontSize: theme.typography.pxToRem(16),
+		borderRadius: 7
 	}
 }));
 
