@@ -33,12 +33,8 @@ export const getAge = (dateString: string): number => {
 };
 
 export const getDistance = (a: UserData, b: UserData) => {
-	console.log(a.coordinates.lon, a.coordinates.lat);
-	console.log(b.coordinates.lon, b.coordinates.lat);
-	
 	const from = turf.point([a.coordinates.lon, a.coordinates.lat]);
 	const to = turf.point([b.coordinates.lon, b.coordinates.lat]);
 	const distance = turf.distance(from, to);
-	console.log('distnace:%d', distance);
 	return distance;
 };

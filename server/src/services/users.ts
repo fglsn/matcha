@@ -179,9 +179,12 @@ export const getAndUpdateUserCompletnessById = async (userId: string) => {
 
 export const getPublicProfileData = async (profileId: string, requestorId: string): Promise<ProfilePublic> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
-	if (!completeness[0].complete)throw new AppError('Please, complete your own profile first', 400);
-	if (!completeness[1].complete)throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	const [requestor, profile] = await Promise.all([getUserDataByUserId(requestorId) as Promise<UserData>, getUserDataByUserId(profileId) as Promise<UserData>]);
+	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
+	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	const [requestor, profile] = await Promise.all([
+		getUserDataByUserId(requestorId) as Promise<UserData>,
+		getUserDataByUserId(profileId) as Promise<UserData>
+	]);
 	const distance = getDistance(requestor, profile);
 	const age = getAge(String(profile.birthday));
 

@@ -32,7 +32,7 @@ const putToProfile = async () => {
 		.put(`/api/users/${id}/profile`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
 		.send(infoProfile)
-        .expect(200);
+		.expect(200);
 	// if (res.body.error)
 	// 	console.log(res.body.error);
 };
@@ -41,7 +41,7 @@ const postToPhotos = async () => {
 		.post(`/api/users/${id}/photos`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
 		.send({ images: [{ dataURL: DataURL }] })
-        .expect(200);
+		.expect(200);
 };
 
 describe('check access to profile page', () => {
@@ -51,20 +51,20 @@ describe('check access to profile page', () => {
 		await createNewUser(newUser, ipAddress);
 		loginRes = await initLoggedUser();
 		id = <string>JSON.parse(loginRes.text).id;
-        await Promise.all([putToProfile(), postToPhotos()]);
+		await Promise.all([putToProfile(), postToPhotos()]);
 	});
 	test('logged user can visit public profile page', async () => {
 		const resFromProfilePage = await api
 			.get(`/api/users/${id}/public_profile`)
 			.set({ Authorization: `bearer ${loginRes.body.token}` })
 			.expect('Content-Type', /application\/json/);
-        
-        expect(resFromProfilePage.statusCode).toBe(200);
+
+		expect(resFromProfilePage.statusCode).toBe(200);
 		expect(resFromProfilePage.body).toBeTruthy();
-        console.log(resFromProfilePage.text);
-        
+		console.log(resFromProfilePage.text);
+
 		expect(resFromProfilePage.text).toContain('lorem');
-        expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: id });
 	});
 	test('not logged user cannot access profile page', async () => {
 		const resFromProfilePage = await api
