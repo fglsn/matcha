@@ -48,7 +48,8 @@ export const getLocation = async (coordinates: Coordinates) => {
 	try {
 		const params = {
 			access_key: process.env.API_KEY,
-			query: `${coordinates.lat}, ${coordinates.lon}`
+			query: `${coordinates.lat}, ${coordinates.lon}`,
+			limit: 1
 		};
 
 		const response = await axios.get<ReverseLocationResponse>(`http://api.positionstack.com/v1/reverse`, { params });
