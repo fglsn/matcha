@@ -9,7 +9,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 
@@ -120,6 +120,17 @@ router.put(
 		const location = await getLocation(updatedProfile.coordinates);
 		await updateUserDataByUserId(req.session.userId, { ...updatedProfile, location });
 		res.status(200).end();
+	})
+);
+
+router.get(
+	'/:id/public_profile',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
+		if (!req.params.id) throw new AppError(`Id query parameter is requried to find profile`, 400);
+		const result = await getPublicProfileData(req.params.id, req.session.userId);
+		res.status(200).json(result);
 	})
 );
 

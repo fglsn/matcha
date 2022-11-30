@@ -5,13 +5,14 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
-import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, User } from '../types';
+import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
+import { getAge, getDistance } from '../utils/helpers';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -165,16 +166,6 @@ export const checkCompletnessByUserId = async (userId: string) => {
 	return false;
 };
 
-// export const getUserCompletenessById = async (userId: string) => {
-// 	const completeness = await getCompletenessByUserId(userId);
-// 	if (!completeness) throw new AppError('No user with provided id', 400);
-// 	if (!completeness.complete){
-// 		completeness.complete = await checkCompletnessByUserId(userId);
-// 	}
-
-// 	return completeness;
-// };
-
 export const getAndUpdateUserCompletnessById = async (userId: string) => {
 	const completeness = await getCompletenessByUserId(userId);
 	if (!completeness) throw new AppError('No user with provided id', 400);
@@ -184,4 +175,28 @@ export const getAndUpdateUserCompletnessById = async (userId: string) => {
 	}
 
 	return completeness;
+};
+
+export const getPublicProfileData = async (profileId: string, requestorId: string): Promise<ProfilePublic> => {
+	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
+	if (!completeness[0].complete)throw new AppError('Please, complete your own profile first', 400);
+	if (!completeness[1].complete)throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	const [requestor, profile] = await Promise.all([getUserDataByUserId(requestorId) as Promise<UserData>, getUserDataByUserId(profileId) as Promise<UserData>]);
+	const distance = getDistance(requestor, profile);
+	const age = getAge(String(profile.birthday));
+
+	const profilePublic = {
+		id: profile.id,
+		username: profile.username,
+		firstname: profile.firstname,
+		lastname: profile.lastname,
+		age: age,
+		gender: profile.gender as string,
+		orientation: profile.orientation as string,
+		bio: profile.bio as string,
+		tags: profile.tags as string[],
+		distance: distance,
+		location: profile.location
+	};
+	return profilePublic;
 };
