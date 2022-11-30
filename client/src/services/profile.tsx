@@ -4,6 +4,18 @@ import { Images, NewUserData } from '../types';
 import { handleAxiosError } from '../utils/errors';
 import getAuthHeader from './auth';
 
+export const getPublicProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/public_profile`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
 export const getProfile = async (userId: string) => {
 	try {
 		const config = {
@@ -139,6 +151,7 @@ export const requestLocation = async (coordinates: number[] | undefined) => {
 };
 
 const moduleExports = {
+	getPublicProfile,
 	getProfile,
 	updateProfile,
 	getPhotos,
