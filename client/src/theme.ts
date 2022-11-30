@@ -3,12 +3,26 @@ import { red } from '@mui/material/colors';
 
 // A custom theme for this app
 const theme = createTheme({
+	typography: {
+		fontFamily: [
+			'-apple-system',
+			'BlinkMacSystemFont',
+			'"Segoe UI"',
+			'Roboto',
+			'"Helvetica Neue"',
+			'Arial',
+			'sans-serif',
+			'"Apple Color Emoji"',
+			'"Segoe UI Emoji"',
+			'"Segoe UI Symbol"'
+		].join(',')
+	},
 	palette: {
 		background: {
 			default: '#fcfcfc'
 		},
 		primary: {
-			main: '#EEB902',
+			main: '#ffc600',
 			contrastText: '#fff' //button text white instead of black
 		},
 		secondary: {
@@ -19,6 +33,34 @@ const theme = createTheme({
 		}
 	},
 	components: {
+		MuiAppBar: {
+			styleOverrides: {
+				root: {
+					borderRadius: 0
+				}
+			}
+		},
+		MuiPaper: {
+			styleOverrides: {
+				root: {
+					borderRadius: 7
+				}
+			}
+		},
+		MuiToolbar: {
+			styleOverrides: {
+				root: {
+					borderRadius: 0
+				}
+			}
+		},
+		MuiContainer: {
+			styleOverrides: {
+				root: {
+					borderRadius: 7
+				}
+			}
+		},
 		MuiButton: {
 			defaultProps: {
 				disableElevation: true
@@ -27,12 +69,12 @@ const theme = createTheme({
 		MuiTypography: {
 			defaultProps: {
 				variantMapping: {
-					h1: 'h2',
+					h1: 'h1',
 					h2: 'h2',
-					h3: 'h2',
-					h4: 'h2',
+					h3: 'h3',
+					h4: 'h4',
 					h5: 'h5',
-					h6: 'h2',
+					h6: 'h6',
 					subtitle1: 'h2',
 					subtitle2: 'h2',
 					body1: 'span',
