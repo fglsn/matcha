@@ -167,7 +167,7 @@ const clearUsers = async (): Promise<void> => {
 
 const getUserDataByUserId = async (userId: string): Promise<UserData | undefined> => {
 	const query = {
-		text: 'select id, username, email, firstname, lastname, birthday, gender, orientation, bio, tags, lat, lon, location_string from users where id = $1',
+		text: 'select id, username, firstname, lastname, birthday, gender, orientation, bio, tags, lat, lon, location_string from users where id = $1',
 		values: [userId]
 	};
 	const res = await pool.query(query);
