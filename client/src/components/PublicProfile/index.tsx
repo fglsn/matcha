@@ -1,10 +1,11 @@
 import { styled, Alert, Container, Paper, Tooltip, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPhotos, getProfile } from '../../services/profile';
+import { getPhotos, getPublicProfile } from '../../services/profile';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { Images, UserData } from '../../types';
+import { Images, ProfilePublic } from '../../types';
 import { useContext, useState } from 'react';
 import { AlertContext } from '../AlertProvider';
+import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -94,6 +95,19 @@ export const StyledRow = styled('div')`
 	align-items: baseline;
 `;
 
+const StyledReportButton = styled('div')`
+	cursor: pointer;
+	display: flex;
+	align-items: baseline;
+	font-size: 11px;
+	text-align: left;
+	// position: relative;
+	// bottom: 10px;
+	width: fit-content;
+	color: #808080d4;
+	border-bottom: 1px solid #80808070;
+`;
+
 const PublicProfile = () => {
 	const { id } = useParams();
 	const { success: successCallback } = useContext(AlertContext);
@@ -104,8 +118,8 @@ const PublicProfile = () => {
 	const {
 		data: profileData,
 		error: profileError
-	}: { data: UserData | undefined; error: Error | undefined } = useServiceCall(
-		async () => id && (await getProfile(id)),
+	}: { data: ProfilePublic | undefined; error: Error | undefined } = useServiceCall(
+		async () => id && (await getPublicProfile(id)),
 		[]
 	);
 
@@ -126,36 +140,30 @@ const PublicProfile = () => {
 
 	if (!profileData || !photosData) return <LoadingIcon />;
 
-	const userData: UserData = {
-		username: profileData.username,
-		firstname: profileData.firstname,
-		lastname: profileData.lastname,
-		birthday: profileData.birthday,
-		gender: profileData.gender,
-		orientation: profileData.orientation,
-		tags: profileData.tags,
-		bio: profileData.bio,
-		coordinates: profileData.coordinates,
-		location: profileData.location
-	};
-
-	const likeUser = (event: any) => {
+	const handleLike = (event: any) => {
 		event.preventDefault();
 		setIsLiked(!isLiked);
 	};
 
-	const blockUser = (event: any) => {
+	const handleBlock = (event: any) => {
 		event.preventDefault();
 		setIsBlocked(true);
 		if (isLiked) {
 			setIsLiked(false);
-			successCallback(`Like removed and ${userData.username} won't appear again`);
+			successCallback(
+				`Like removed and ${profileData.username} won't appear again`
+			);
 		}
 		navigate('/');
 	};
 
-	const GenderIcon: React.FC<{ gender: string | undefined }> = ({ gender }) => {
-		//remove undefined
+	const handleReport = (event: any) => {
+		event.preventDefault();
+		//add confirmation pop up
+		console.log('report fake account');
+	};
+
+	const GenderIcon: React.FC<{ gender: string }> = ({ gender }) => {
 		switch (gender) {
 			case 'male':
 				return <MaleIcon color="primary" />;
@@ -170,15 +178,15 @@ const PublicProfile = () => {
 		<>
 			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
 				<Item>
-					<ProfileSlider photos={photosData.images} user={userData} />
+					<ProfileSlider photos={photosData.images} user={profileData} />
 					<IconGroup>
 						<Tooltip title="Pass / Block" arrow placement="top">
 							{isBlocked ? (
-								<IconWrapperPressed onClick={blockUser}>
+								<IconWrapperPressed onClick={handleBlock}>
 									<StyledDislikeIcon color="secondary" />
 								</IconWrapperPressed>
 							) : (
-								<IconWrapper onClick={blockUser}>
+								<IconWrapper onClick={handleBlock}>
 									<StyledDislikeIcon color="inherit" />
 								</IconWrapper>
 							)}
@@ -189,11 +197,11 @@ const PublicProfile = () => {
 							placement="top"
 						>
 							{isLiked ? (
-								<IconWrapperPressed onClick={likeUser}>
+								<IconWrapperPressed onClick={handleLike}>
 									<StyledLikeIcon color="secondary" />
 								</IconWrapperPressed>
 							) : (
-								<IconWrapper onClick={likeUser}>
+								<IconWrapper onClick={handleLike}>
 									<StyledLikeIcon color="primary" />
 								</IconWrapper>
 							)}
@@ -201,20 +209,21 @@ const PublicProfile = () => {
 					</IconGroup>
 					<UserInfo>
 						<Typography sx={{ mt: 2 }}>
-							@{userData.username.toLowerCase()}
+							@{profileData.username.toLowerCase()}
 						</Typography>
 						<StyledRow sx={{ mt: 0.75 }}>
-							<GenderIcon gender={userData.gender} />
+							<GenderIcon gender={profileData.gender} />
 							<Typography
 								variant="h5"
 								sx={{
 									ml: 0.75,
-									maxWidth: '30rem',
+									maxWidth: 'fit-content',
 									textAlign: 'right'
 								}}
 							>
-								{userData.firstname} {userData.lastname},
+								{profileData.firstname} {profileData.lastname},
 							</Typography>
+
 							<Typography
 								variant="h5"
 								sx={{
@@ -222,11 +231,19 @@ const PublicProfile = () => {
 									textAlign: 'right'
 								}}
 							>
-								{'28yo'}
+								{`${profileData.age}y.o.`}
 							</Typography>
 						</StyledRow>
-						<Typography sx={{ mt: 0.75 }}>{'5 km away'}</Typography>
+						<Typography sx={{ mt: 0.75 }}>
+							{profileData.distance} km away
+						</Typography>
 					</UserInfo>
+					<StyledReportButton onClick={handleReport}>
+						<EmojiFlagsIcon
+							style={{ height: '10px', width: '10px', marginRight: 3 }}
+						/>
+						Report fake account
+					</StyledReportButton>
 				</Item>
 			</StyledContainer>
 		</>

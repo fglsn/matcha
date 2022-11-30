@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageType } from '../../types';
+import { ImageType, ProfilePublic } from '../../types';
 import { Chip, Grid, styled, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -78,19 +78,17 @@ const ProfileInfoWrapper = styled('div')`
 	background-color: #ffc600db;
 `;
 
-export const ProfileInfo = ({ user }: any) => {
-	//any will be changed late to according type
+export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 	const OrientationIcon = ({
 		orientation,
 		gender
 	}: {
-		orientation: string | undefined;
-		gender: string | undefined;
+		orientation: string;
+		gender: string;
 	}) => {
-		//remove undefined
 		switch (orientation) {
 			case 'straight':
-				if (gender === 'male') return <FemaleIcon color='secondary'/>;
+				if (gender === 'male') return <FemaleIcon color="secondary" />;
 				if (gender === 'female') return <MaleIcon color="secondary" />;
 				return <></>;
 			case 'gay':
@@ -130,7 +128,7 @@ export const ProfileInfo = ({ user }: any) => {
 	);
 };
 
-const ProfileSlider: React.FC<{ photos: ImageType[]; user: any }> = ({
+const ProfileSlider: React.FC<{ photos: ImageType[]; user: ProfilePublic }> = ({
 	photos,
 	user
 }) => {
