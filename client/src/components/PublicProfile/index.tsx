@@ -235,21 +235,17 @@ const PublicProfile = () => {
 								</IconWrapper>
 							)}
 						</Tooltip>
-						<Tooltip
-							title={isLiked ? 'Unlike' : 'Like'}
-							arrow
-							placement="top"
-						>
-							{isLiked ? (
+						{isLiked ? (
+							<Tooltip title="Unlike" arrow placement="top">
 								<IconWrapperPressed onClick={handleLike}>
 									<StyledLikeIcon color="secondary" />
 								</IconWrapperPressed>
-							) : (
+							</Tooltip>
+						) : (
 								<IconWrapper onClick={handleLike}>
 									<StyledLikeIcon color="primary" />
 								</IconWrapper>
-							)}
-						</Tooltip>
+						)};
 					</IconGroup>
 					<UserInfo>
 						<Typography sx={{ mt: 2 }}>
