@@ -58,3 +58,9 @@ create table photos (
 );
 
 create index photos_user_id on photos (user_id);
+
+create table visit_history (
+	visited_user_id bigserial not null,
+	visitor_user_id bigserial not null,
+	primary key (visited_user_id, visitor_user_id)
+);

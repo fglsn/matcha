@@ -215,10 +215,11 @@ const PublicProfile = () => {
 							<GenderIcon gender={profileData.gender} />
 							<Typography
 								variant="h5"
+								noWrap
 								sx={{
 									ml: 0.75,
 									maxWidth: 'fit-content',
-									textAlign: 'right'
+									textAlign: 'right',
 								}}
 							>
 								{profileData.firstname} {profileData.lastname},
