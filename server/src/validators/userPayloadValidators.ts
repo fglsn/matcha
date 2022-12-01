@@ -8,7 +8,7 @@ const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =
 	/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;
-const nameRegex = /^[a-zA-Z'_\-.]*$/;
+const nameRegex = /^[a-zA-Z'\-ÄÖäöÅåßÜü\s]*$/;
 // eslint-disable-next-line no-useless-escape
 const tokenRegex = /[a-z0-9\-]{36}/;
 
@@ -66,7 +66,7 @@ export const parseFirstname = (firstname: unknown): string => {
 	if (!firstname || !isString(firstname)) {
 		throw new ValidationError(`Missing first name / Expected firstname to be string, got: ${typeof firstname}`);
 	}
-	const trimmedFirstname = firstname.trim();
+	const trimmedFirstname = firstname.trim().replace(/\s\s+/g, ' ');
 	if (!trimmedFirstname) {
 		throw new ValidationError('Missing firstname');
 	}
@@ -83,7 +83,7 @@ export const parseLastname = (lastname: unknown): string => {
 	if (!lastname || !isString(lastname)) {
 		throw new ValidationError(`Missing last name / Expected lastname to be string, got: ${typeof lastname}`);
 	}
-	const trimmedLastname = lastname.trim();
+	const trimmedLastname = lastname.trim().replace(/\s\s+/g, ' ');
 	if (!trimmedLastname) {
 		throw new ValidationError('Missing lastname');
 	}
@@ -195,7 +195,7 @@ export const parseBio = (bio: unknown): string => {
 	if (!isString(bio)) {
 		throw new ValidationError(`Expected bio to be string, got: ${typeof bio}`);
 	}
-	const trimmedBio = bio.trim();
+	const trimmedBio = bio.trim().replace(/\s\s+/g, ' ');
 	if (trimmedBio.length > 255 || trimmedBio.length < 10) {
 		throw new ValidationError(`Invalid bio format: min 10, max 255 chars`);
 	}

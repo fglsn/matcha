@@ -31,7 +31,7 @@ export const parseImages = async ({ images }: Fields2): Promise<Photo[]> => {
 		if (allowedImageTypes.indexOf(type) < 0) throw new ValidationError(`Invalid images format! Allowed types: 'image/jpeg', 'image/png', 'image/jpg'`);
 		if (!dataBase64) throw new ValidationError(`Invalid images format! Image ${i + 1} is not valid Image Data URI`);
 		const fileSizeInBytes = Math.ceil(dataBase64.length / 4) * 3;
-		if (fileSizeInBytes - 2 > 2500000) throw new ValidationError(`Invalid images format! Image ${i + 1} is too big: 25mb max`);
+		if (fileSizeInBytes - 2 > 25000000) throw new ValidationError(`Invalid images format! Image ${i + 1} is too big: 25mb max`);
 		const imageBuffer = Buffer.from(dataBase64, 'base64');
 		const jimpInstance = await Jimp.read(imageBuffer);
 		const width = jimpInstance.bitmap.width;
@@ -43,7 +43,7 @@ export const parseImages = async ({ images }: Fields2): Promise<Photo[]> => {
 			throw new ValidationError(`Invalid images format! Image ${i + 1} is too small. Min 450x450 pixels`);
 		}
 		if (width > 6000 || height > 4000) {
-			throw new ValidationError(`Invalid images format! Image ${i + 1} is too big. Max 2500x2500 pixels`);
+			throw new ValidationError(`Invalid images format! Image ${i + 1} is too big. Max 6000x4000 pixels`);
 		}
 		if (width > height && height / width < 0.6) {
 			throw new ValidationError(`Invalid images format! Image ${i + 1} is of unacceptable ratio.`);
