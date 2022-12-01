@@ -165,6 +165,7 @@ const PublicProfile = () => {
 	const like = async (id: string) => {
 		try {
 			await likeProfile(id);
+			setIsLiked(!isLiked);
 		} catch (e) {
 			errorCallback(e.message);
 		}
@@ -173,6 +174,7 @@ const PublicProfile = () => {
 	const dislike = async (id: string) => {
 		try {
 			await dislikeProfile(id);
+			setIsLiked(!isLiked);
 		} catch (e) {
 			errorCallback(e.message);
 		}
@@ -180,7 +182,6 @@ const PublicProfile = () => {
 	const handleLike = (event: any) => {
 		event.preventDefault();
 		if (!id) return;
-		setIsLiked(!isLiked);
 		if (!isLiked) {
 			like(id);
 		} else {

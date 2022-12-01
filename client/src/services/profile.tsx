@@ -73,7 +73,7 @@ export const likeProfile = async (userId: string) => {
 			headers: { Authorization: getAuthHeader() }
 		};
 		console.log(config.headers);
-		const response = await axios.put(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		const response = await axios.put(`${apiBaseUrl}/users/${userId}/public_profile/like`, undefined ,config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
