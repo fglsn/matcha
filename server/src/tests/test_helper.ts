@@ -69,7 +69,7 @@ export const infoProfilePublic = {
 	orientation: 'straight',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
-	distance: 0,
+	distance: 2,
 	location: 'Helsinki, Finland'
 };
 
