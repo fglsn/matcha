@@ -36,7 +36,6 @@ export const getDistance = (a: UserData, b: UserData) => {
 	const from = turf.point([a.coordinates.lon, a.coordinates.lat]);
 	const to = turf.point([b.coordinates.lon, b.coordinates.lat]);
 	const distance = turf.distance(from, to);
-	if (distance <= 2)
-		return 2;
+	if (distance <= 2) return 2;
 	return Math.ceil(distance);
 };

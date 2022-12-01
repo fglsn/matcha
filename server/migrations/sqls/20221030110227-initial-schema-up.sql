@@ -64,3 +64,9 @@ create table visit_history (
 	visitor_user_id bigserial not null,
 	primary key (visited_user_id, visitor_user_id)
 );
+
+create table likes_history (
+	liked_user_id bigserial not null,
+	liking_user_id bigserial not null,
+	primary key (liked_user_id, liking_user_id)
+);
