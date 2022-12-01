@@ -135,9 +135,21 @@ describe('Check responses and requests to api/profile', () => {
 	describe('Check PUT requests to api/profile ', () => {
 		const exactly18 = () => {
 			const today = new Date();
-			return `${today.getFullYear() - 18}-${today.getMonth() + 1}-${today.getDate()}`;
+			let date;
+			let month;
+			
+			if (today.getDate() < 10)
+				date = `0${today.getDate()}`;
+			else date = `${today.getDate()}`;
+			
+			if (today.getMonth() + 1 < 10)
+				month = `0${today.getMonth() + 1}`;
+			else	
+				month = `${today.getMonth() + 1}`;
+			return `${today.getFullYear() - 18}-${month}-${date}`;
 		};
 		test('should succeed with code(200)', async () => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -159,6 +171,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, bio: undefined }, 'Missing bio'],
 			[{ ...infoProfile, tags: undefined }, 'Missing tags']
 		])(`put fails with missing profile payload values`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -218,6 +231,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, birthday: '2006-11-15' }, 'User must be at least 18'],
 			[{ ...infoProfile, birthday: '2005-11-16' }, 'User must be at least 18']
 		])(`put fails with invalid birthday`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -232,6 +246,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, gender: 'male  ' }, 'Invalid gender'],
 			[{ ...infoProfile, gender: 'femal' }, 'Invalid gender']
 		])(`put fails with misformatted gender`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -246,6 +261,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, orientation: 'gay  ' }, 'Invalid orientation'],
 			[{ ...infoProfile, orientation: 'straite' }, 'Invalid orientation']
 		])(`put fails with misformatted orientation`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -260,6 +276,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, bio: bioTooLong }, 'Invalid bio'],
 			[{ ...infoProfile, bio: 'aaaaaaaaa' }, 'Invalid bio']
 		])(`put fails with invalid bio`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -276,6 +293,7 @@ describe('Check responses and requests to api/profile', () => {
 			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 1] }, 'Invalid tags'],
 			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Sauna'] }, 'Invalid tags']
 		])(`put fails with invalid tags`, async (invalidInputs, expectedErrorMessage) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -286,6 +304,14 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
+			[
+				{ ...infoProfile, firstname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...infoProfile, firstname: 'Alekse-öäÖÄ ßÜügggggg' }
+			],
+			[
+				{ ...infoProfile, lastname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...infoProfile, lastname: 'Alekse-öäÖÄ ßÜügggggg' }
+			],
 			[
 				{ ...infoProfile, orientation: 'gay' },
 				{ ...infoProfile, orientation: 'gay' }
@@ -331,6 +357,7 @@ describe('Check responses and requests to api/profile', () => {
 				{ ...infoProfile, birthday: new Date('1999-03-22').toISOString() }
 			]
 		])(`put succeeds with correct payload`, async (validInputs, payload) => {
+			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
@@ -375,24 +402,3 @@ describe('Check responses and requests to api/profile', () => {
 // 		});
 // 	});
 // });
-
-// const initLoggedUser = async () => {
-// 	const user = await findUserByUsername(newUser.username);
-// 	const activationCode = user?.activationCode;
-// 	await api.post(`/api/users/activate/${activationCode}`).expect(200);
-// 	const activeUser = await findUserByUsername('matcha');
-// 	if (!activeUser) fail();
-// 	expect(activeUser.isActive).toBe(true);
-// 	const res = await api
-// 		.post('/api/login')
-// 		.send(loginUser)
-// 		.expect(200)
-// 		.expect('Content-Type', /application\/json/);
-// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-// 	const sessions = await findSessionsByUserId(res.body.id);
-// 	expect(sessions).toBeTruthy();
-// 	expect(sessions?.length).toBe(1);
-// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-// 	expect(res.body).toHaveProperty('token');
-// 	return res;
-// };
