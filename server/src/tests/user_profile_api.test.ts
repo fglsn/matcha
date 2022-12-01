@@ -137,15 +137,12 @@ describe('Check responses and requests to api/profile', () => {
 			const today = new Date();
 			let date;
 			let month;
-			
-			if (today.getDate() < 10)
-				date = `0${today.getDate()}`;
+
+			if (today.getDate() < 10) date = `0${today.getDate()}`;
 			else date = `${today.getDate()}`;
-			
-			if (today.getMonth() + 1 < 10)
-				month = `0${today.getMonth() + 1}`;
-			else	
-				month = `${today.getMonth() + 1}`;
+
+			if (today.getMonth() + 1 < 10) month = `0${today.getMonth() + 1}`;
+			else month = `${today.getMonth() + 1}`;
 			return `${today.getFullYear() - 18}-${month}-${date}`;
 		};
 		test('should succeed with code(200)', async () => {

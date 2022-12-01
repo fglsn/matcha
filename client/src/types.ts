@@ -88,6 +88,10 @@ export type Images = {
 	images: ImageType[];
 };
 
+export type Like = {
+	like: boolean;
+};
+
 export enum AlertStatus {
 	None = 'NONE',
 	Success = 'SUCCSESS',

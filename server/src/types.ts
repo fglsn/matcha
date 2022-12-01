@@ -112,3 +112,11 @@ export type VisitEntry = {
 	visitedUserId: string;
 	visitorUserId: string;
 };
+export type LikeEntry = {
+	likedUserId: string;
+	likingUserId: string;
+};
+
+export type LikeJSON = {
+	like: boolean;
+};
