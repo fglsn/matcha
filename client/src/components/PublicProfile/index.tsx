@@ -1,9 +1,15 @@
 import { styled, Alert, Container, Paper, Tooltip, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPhotos, getPublicProfile } from '../../services/profile';
+import {
+	dislikeProfile,
+	getLike,
+	getPhotos,
+	getPublicProfile,
+	likeProfile
+} from '../../services/profile';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { Images, ProfilePublic } from '../../types';
-import { useContext, useState } from 'react';
+import { Images, Like, ProfilePublic } from '../../types';
+import { useContext, useEffect, useState } from 'react';
 import { AlertContext } from '../AlertProvider';
 import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -12,6 +18,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import ClearIcon from '@mui/icons-material/Clear';
 import LoadingIcon from '../LoadingIcon';
 import ProfileSlider from './ProfileSlider';
+// import withProfileRequired from '../ProfileRequired';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: 'primary',
@@ -110,7 +117,7 @@ const StyledReportButton = styled('div')`
 
 const PublicProfile = () => {
 	const { id } = useParams();
-	const { success: successCallback } = useContext(AlertContext);
+	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isBlocked, setIsBlocked] = useState<boolean>(false);
 	const navigate = useNavigate();
@@ -131,18 +138,54 @@ const PublicProfile = () => {
 		[]
 	);
 
-	if (profileError || photosError)
+	const {
+		data: likeData,
+		error: likeError
+	}: { data: Like | undefined; error: Error | undefined } = useServiceCall(
+		async () => id && (await getLike(id)),
+		[]
+	);
+
+	useEffect(() => {
+		console.log('uf');
+		if (likeData !== undefined) {
+			setIsLiked(likeData.like);
+		}
+	}, [likeData, setIsLiked]);
+
+	if (profileError || photosError || likeError)
 		return (
 			<Alert severity="error">
-				Error loading account settings page, please try again...
+				Error loading profile page, please try again...
 			</Alert>
 		);
 
-	if (!profileData || !photosData) return <LoadingIcon />;
+	if (!profileData || !photosData || !likeData) return <LoadingIcon />;
 
+	const like = async (id: string) => {
+		try {
+			await likeProfile(id);
+		} catch (e) {
+			errorCallback(e.message);
+		}
+	};
+
+	const dislike = async (id: string) => {
+		try {
+			await dislikeProfile(id);
+		} catch (e) {
+			errorCallback(e.message);
+		}
+	};
 	const handleLike = (event: any) => {
 		event.preventDefault();
+		if (!id) return;
 		setIsLiked(!isLiked);
+		if (!isLiked) {
+			like(id);
+		} else {
+			dislike(id);
+		}
 	};
 
 	const handleBlock = (event: any) => {
@@ -219,7 +262,7 @@ const PublicProfile = () => {
 								sx={{
 									ml: 0.75,
 									maxWidth: 'fit-content',
-									textAlign: 'right',
+									textAlign: 'right'
 								}}
 							>
 								{profileData.firstname} {profileData.lastname},
@@ -251,4 +294,5 @@ const PublicProfile = () => {
 	);
 };
 
+// export default withProfileRequired(PublicProfile);
 export default PublicProfile;

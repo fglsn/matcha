@@ -56,6 +56,41 @@ export const getPhotos = async (userId: string) => {
 	}
 };
 
+export const getLike = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+export const likeProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		console.log(config.headers);
+		const response = await axios.put(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+export const dislikeProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.delete(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
 export const checkProfileCompleteness = async (userId: string) => {
 	try {
 		const config = {
