@@ -305,6 +305,14 @@ describe('Check responses and requests to api/profile', () => {
 		});
 		it.each([
 			[
+				{ ...infoProfile, firstname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...infoProfile, firstname: 'Alekse-öäÖÄ ßÜügggggg' }
+			],
+			[
+				{ ...infoProfile, lastname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...infoProfile, lastname: 'Alekse-öäÖÄ ßÜügggggg' }
+			],
+			[
 				{ ...infoProfile, orientation: 'gay' },
 				{ ...infoProfile, orientation: 'gay' }
 			],
