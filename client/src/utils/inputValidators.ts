@@ -33,7 +33,7 @@ export const validateEmail = (email: string) => {
 };
 
 export const validateFirstame = (firstname: string) => {
-	const nameRegex = /^[a-zA-Z'_\-.]{1,21}$/;
+	const nameRegex = /^[a-zA-Z'\-ÄÖäöÅåßÜü\s]{1,21}$/;
 	if (!nameRegex.test(firstname)) {
 		return 'Incorrect field';
 	}
@@ -41,7 +41,7 @@ export const validateFirstame = (firstname: string) => {
 };
 
 export const validateLastname = (lastname: string) => {
-	const nameRegex = /^[a-zA-Z'_\-.]{1,42}$/;
+	const nameRegex = /^[a-zA-Z'\-ÄÖäöÅåßÜü\s]{1,42}$/;
 	if (!nameRegex.test(lastname)) {
 		return 'Incorrect field';
 	}

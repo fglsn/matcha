@@ -126,7 +126,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 							<br />
 							{'At least 450 x 450 pixels'}
 							<br />
-							{'Not larger than 2500x2500 pixels'}
+							{'Not larger than 6000x4000 pixels'}
 							<br />
 							{'Not bigger than 25Mb'}
 							<br />
