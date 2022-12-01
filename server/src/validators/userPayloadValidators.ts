@@ -2,7 +2,7 @@ import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfileWithoutLoca
 import { Tags } from '../utils/tags';
 import { isDate, isString, isStringArray } from './basicTypeValidators';
 import { ValidationError } from '../errors';
-import { checkIfDuplicatesExist } from '../utils/helpers';
+import { checkIfDuplicatesExist, getAge } from '../utils/helpers';
 
 const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 const emailRegex =
@@ -170,18 +170,6 @@ export const parseOrientation = (orientation: unknown): Orientation => {
 		throw new ValidationError(`Invalid orientation. Choose from : straight, gay, bi`);
 	}
 	return orientation;
-};
-
-//might fail when offfset back by local if not same timezone as front
-const getAge = (dateString: string): number => {
-	const today = new Date();
-	const birthDate = new Date(dateString);
-	let age = today.getFullYear() - birthDate.getFullYear();
-	const m = today.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-		age--;
-	}
-	return age;
 };
 
 const parseBirthday = (date: unknown): Date => {
