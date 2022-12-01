@@ -18,7 +18,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import ClearIcon from '@mui/icons-material/Clear';
 import LoadingIcon from '../LoadingIcon';
 import ProfileSlider from './ProfileSlider';
-// import withProfileRequired from '../ProfileRequired';
+import withProfileRequired from '../ProfileRequired';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: 'primary',
@@ -147,7 +147,6 @@ const PublicProfile = () => {
 	);
 
 	useEffect(() => {
-		console.log('uf');
 		if (likeData !== undefined) {
 			setIsLiked(likeData.like);
 		}
@@ -167,7 +166,7 @@ const PublicProfile = () => {
 			await likeProfile(id);
 			setIsLiked(!isLiked);
 		} catch (e) {
-			errorCallback(e.message);
+			errorCallback(e.message);		
 		}
 	};
 
@@ -245,7 +244,7 @@ const PublicProfile = () => {
 								<IconWrapper onClick={handleLike}>
 									<StyledLikeIcon color="primary" />
 								</IconWrapper>
-						)};
+						)}
 					</IconGroup>
 					<UserInfo>
 						<Typography sx={{ mt: 2 }}>
@@ -291,5 +290,4 @@ const PublicProfile = () => {
 	);
 };
 
-// export default withProfileRequired(PublicProfile);
-export default PublicProfile;
+export default withProfileRequired(PublicProfile);
