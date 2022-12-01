@@ -21,8 +21,10 @@ const isStringArray = (arr: any): arr is string[] => {
 };
 
 const isStringRepresentedInteger = (string: string) => {
-	if (Number.isInteger(Number(string))) return true;
-	return false;
+	const num = Number(string);
+	if (!Number.isInteger(num)) return false;
+	if (num <= 0) return false; 
+	return true;
 };
 
 export { isString, isNumber, isDate, isStringArray, isStringRepresentedInteger };
