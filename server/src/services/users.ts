@@ -8,6 +8,7 @@ import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmai
 import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
+import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
 import { EmailUpdateRequest, NewUser, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
@@ -201,5 +202,6 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		distance: distance,
 		location: profile.location
 	};
+	if (profileId !== requestorId) await addEntryToVisitHistory(profileId, requestorId); //this check will be avoided when we will check that user is visiting not own page
 	return profilePublic;
 };

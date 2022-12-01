@@ -107,3 +107,8 @@ export interface ImageType {
 export type Images = {
 	images: ImageType[] | undefined;
 };
+
+export type VisitEntry = {
+	visitedUserId: string;
+	visitorUserId: string;
+};
