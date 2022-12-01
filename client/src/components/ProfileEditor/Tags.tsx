@@ -277,7 +277,7 @@ const tagSectionBox = {
 	m: 0
 };
 
-const selectedTagsListGrid = {
+export const selectedTagsListGrid = {
 	display: 'flex',
 	flexWrap: 'wrap',
 	listStyle: 'none',

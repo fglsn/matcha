@@ -1,22 +1,31 @@
-import { StateContext, useStateValue } from "../state";
-import { useContext } from "react";
-
-import { Link, useNavigate } from "react-router-dom";
 import { Button, AppBar, Toolbar, Typography } from '@mui/material';
+import { StateContext, useStateValue } from '../state';
+import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoggedUser } from '../types';
+import { AlertContext } from './AlertProvider';
+import { logoutUser } from '../services/logout';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
-import { LoggedUser } from "../types";
-import { AlertContext } from "./AlertProvider";
-import { logoutUser } from "../services/logout";
 
-const LoggedInUserButtons = ({ loggedUser, handleLogout }: { loggedUser: LoggedUser, handleLogout: any }) => {
+const LoggedInUserButtons = ({
+	loggedUser,
+	handleLogout
+}: {
+	loggedUser: LoggedUser;
+	handleLogout: any;
+}) => {
 	return (
 		<>
 			<em>{loggedUser?.username} logged in </em>
-			<Button color="inherit" component={Link} to="/profile">Profile</Button>
-			<Button onClick={handleLogout} color="inherit">Logout</Button>
+			<Button color="inherit" component={Link} to="/profile">
+				Profile
+			</Button>
+			<Button onClick={handleLogout} color="inherit">
+				Logout
+			</Button>
 		</>
-	)
-}
+	);
+};
 
 const LoggedOutButtons = () => {
 	return (
@@ -28,8 +37,8 @@ const LoggedOutButtons = () => {
 				Sign Up
 			</Button>
 		</>
-	)
-}
+	);
+};
 
 const Navbar = () => {
 	const [, dispatch] = useStateValue();
@@ -44,34 +53,52 @@ const Navbar = () => {
 		navigate('/');
 	};
 
-	return (<AppBar
-		position="static"
-		color="secondary"
-		sx={{ justifyContent: 'space-between' }}
-	>
-		<Toolbar sx={{ justifyContent: 'flex-end' }}>
-			<Typography
-				color="primary"
-				component={Link}
-				to="/"
+	return (
+		<AppBar
+			position="static"
+			color="secondary"
+			sx={{
+				justifyContent: 'space-between',
+				'& .MuiAppBar-root': {
+					borderRadius: '0!important'
+				}
+			}}
+		>
+			<Toolbar
 				sx={{
-					flexGrow: 1,
-					display: { xs: 'none', sm: 'block' }
+					justifyContent: 'flex-end',
+					'& .MuiPaper-root': {
+						borderRadius: '0!important'
+					}
 				}}
 			>
-				<LoyaltyIcon
+				<Typography
+					color="primary"
+					component={Link}
+					to="/"
 					sx={{
 						flexGrow: 1,
 						display: { xs: 'none', sm: 'block' }
 					}}
-				/>
-			</Typography>
-			{loggedUser[0].loggedUser !== undefined
-				? <LoggedInUserButtons loggedUser={loggedUser[0].loggedUser} handleLogout={handleLogout} />
-				: <LoggedOutButtons />
-			}
-		</Toolbar>
-	</AppBar>);
+				>
+					<LoyaltyIcon
+						sx={{
+							flexGrow: 1,
+							display: { xs: 'none', sm: 'block' }
+						}}
+					/>
+				</Typography>
+				{loggedUser[0].loggedUser !== undefined ? (
+					<LoggedInUserButtons
+						loggedUser={loggedUser[0].loggedUser}
+						handleLogout={handleLogout}
+					/>
+				) : (
+					<LoggedOutButtons />
+				)}
+			</Toolbar>
+		</AppBar>
+	);
 };
 
 export default Navbar;

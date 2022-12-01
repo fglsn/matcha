@@ -2,13 +2,15 @@
 import { validateFirstame, validateLastname, validateBio, validateProfileEditorForm } from '../../utils/inputValidators';
 import React, { useContext, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
+
 // prettier-ignore
-import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup, Typography, Link, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
+import { Button, Box, TextField, Grid, Stack, ToggleButton, styled, ToggleButtonGroup, Typography, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useControlledField } from '../../hooks/useControlledField';
 import { NewUserData, UserData } from '../../types';
 import { useToggleButton } from '../../hooks/useToggleButton';
+import { Link } from 'react-router-dom';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 import Tags from './Tags';
@@ -41,7 +43,7 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 		backgroundColor: theme.palette.common.white,
 		color: 'rgba(0, 0, 0, 0.87)',
 		boxShadow: theme.shadows[1],
-		fontSize: 11
+		fontSize: 11,
 	}
 }));
 
@@ -76,14 +78,14 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	// 	${gender.value} &&
 	// 	${orientation.value} &&
 	// 	${selectedTags} &&
-	// 	${bio.value} && 
-	// 	${coordinates[0]} && 
-	// 	${coordinates[1]} && 
+	// 	${bio.value} &&
+	// 	${coordinates[0]} &&
+	// 	${coordinates[1]} &&
 	// 	${locationString}`);
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
-			loggedUser && (await profileService.updateProfile(loggedUser, newUserData));
+			loggedUser && (await profileService.updateProfile(loggedUser.id, newUserData));
 			successCallback(`Profile settings were updated!.`);
 		} catch (err) {
 			console.log('Error in updateUserData (BasicInfoSection on Profile) ' + err); //rm later
@@ -104,7 +106,7 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 			orientation: orientation.value,
 			tags: selectedTags,
 			bio: bio?.value?.replace(/\s\s+/g, ' '),
-			coordinates: { lat: coordinates[0], lon: coordinates[1] },
+			coordinates: { lat: coordinates[0], lon: coordinates[1] }
 		};
 		updateUserData(newUserData);
 	};
@@ -114,7 +116,7 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
 				<LightTooltip title="Visit own profile page" placement="top-start">
 					<Typography variant="h5" mb={3}>
-						<Link href={`/profile/${loggedUser?.id}`} underline="none">
+						<Link to={`/profile/${loggedUser?.id}`}>
 							@{loggedUser?.username.toUpperCase()}
 						</Link>
 					</Typography>

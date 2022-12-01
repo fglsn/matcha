@@ -51,7 +51,7 @@ export const infoProfile = {
 	username: 'matcha',
 	firstname: 'lorem',
 	lastname: 'ipsum',
-	birthday: new Date('1999-11-30').toISOString(),
+	birthday: new Date('1999-03-22').toISOString(),
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy',
@@ -69,7 +69,7 @@ export const infoProfilePublic = {
 	orientation: 'straight',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
-	distance: 0,
+	distance: 2,
 	location: 'Helsinki, Finland'
 };
 
