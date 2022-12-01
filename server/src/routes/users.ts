@@ -146,13 +146,13 @@ router.get(
 		res.status(200).json(result);
 	})
 );
-router.put(
+router.post(
 	'/:id/public_profile/like',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id query parameter is requried to find profile`, 400);
-		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
+		if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
 		await likePublicProfile(req.params.id, req.session.userId);
 		res.status(200).end();
 	})
@@ -164,7 +164,7 @@ router.delete(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id query parameter is requried to find profile`, 400);
-		// if (req.session.userId === req.params.id) throw new AppError(`You cannot dislike own profile`, 400);
+		if (req.session.userId === req.params.id) throw new AppError(`You cannot dislike own profile`, 400);
 		await dislikePublicProfile(req.params.id, req.session.userId);
 		res.status(200).end();
 	})

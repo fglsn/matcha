@@ -10,11 +10,9 @@ import { findSessionBySessionId } from '../repositories/sessionRepository';
 export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const authorization: string | undefined = req.get('Authorization');
-	console.log('000000000');
 	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
 		const sessionId: string = authorization.substring(7);
 		req.sessionId = sessionId;
-		console.log('11111111');
 
 		// console.log(req.sessionId); //rm later
 	}
@@ -24,7 +22,6 @@ export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 export const sessionExtractor = asyncHandler(async (req: CustomRequest, res: any, next: any) => {
 	const sessionId = req.sessionId;
 	if (!sessionId) {
-		console.log(sessionId);
 		res.status(401).json({ error: 'Error: Access denied, no token provided' });
 		return;
 	}
