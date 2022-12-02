@@ -19,6 +19,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import LoadingIcon from '../LoadingIcon';
 import ProfileSlider from './ProfileSlider';
 import withProfileRequired from '../ProfileRequired';
+import { socket } from '../../services/socket';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: 'primary',
@@ -114,6 +115,31 @@ const StyledReportButton = styled('div')`
 	color: #808080d4;
 	border-bottom: 1px solid #80808070;
 `;
+
+const OnlineIndicator = ({ user_id }: {user_id: number}) => {
+	
+	const [online, setOnline] = useState(false);
+	// Query online status and listen for response
+	useEffect(() => {
+		try {
+			if (socket.disconnected)
+				socket.open()
+			socket.on('online_response', (data) => {
+				if (data.queried_id === user_id) setOnline(data.online);
+			});
+			socket.emit('online_query', user_id);
+		} catch (err) {}
+		return () => {
+			socket.removeAllListeners('online_response');
+		};
+	}, [user_id]);
+
+	return online ? (
+		<div className="round-green">Online</div>
+	) : (
+		<div className="round-gray">Offline</div>
+	);
+};
 
 const PublicProfile = () => {
 	const { id } = useParams();
@@ -250,6 +276,7 @@ const PublicProfile = () => {
 						<Typography sx={{ mt: 2 }}>
 							@{profileData.username.toLowerCase()}
 						</Typography>
+						<OnlineIndicator user_id={Number(profileData.id)} />
 						<StyledRow sx={{ mt: 0.75 }}>
 							<GenderIcon gender={profileData.gender} />
 							<Typography

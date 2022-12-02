@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
 import {
 	Avatar,
 	Box,
@@ -25,6 +24,7 @@ import {
 	validateUsername,
 	validateLoginForm
 } from '../utils/inputValidators';
+import { socket } from '../services/socket';
 
 const LoginForm = () => {
 	const username = useField('text', 'Username', validateUsername);
@@ -73,6 +73,11 @@ const LoginForm = () => {
 			console.log(`User ${loggedInUser.username} logged in.`); //rm later
 			alert.success(`Logged in successfuly. Welcome!`);
 			dispatch(setLoggedUser(loggedInUser));
+			socket.auth = {
+				sessionId: loggedInUser.token,
+				user_id: loggedInUser.id,
+			};
+			socket.disconnect().connect();
 			navigate('/');
 		} catch (err) {
 			console.log('Error in handle login (login form) ' + err); //rm later
