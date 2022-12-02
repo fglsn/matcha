@@ -129,7 +129,7 @@ router.get(
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
-		if (!req.params.id) throw new AppError(`Id query parameter is requried to find profile`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		const result = await getPublicProfileData(req.params.id, req.session.userId);
 		res.status(200).json(result);
 	})
@@ -140,7 +140,7 @@ router.get(
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
-		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id query parameter is requried to find profile`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
 		const result = await getLikePublicProfile(req.params.id, req.session.userId);
 		res.status(200).json(result);
@@ -151,7 +151,7 @@ router.post(
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
-		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id query parameter is requried to find profile`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
 		await likePublicProfile(req.params.id, req.session.userId);
 		res.status(200).end();
@@ -163,7 +163,7 @@ router.delete(
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
-		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id query parameter is requried to find profile`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		if (req.session.userId === req.params.id) throw new AppError(`You cannot dislike own profile`, 400);
 		await dislikePublicProfile(req.params.id, req.session.userId);
 		res.status(200).end();
@@ -244,7 +244,7 @@ router.get(
 		// 	throw new AppError(`No rights to update profile data`, 400);
 		// }
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		if (!req.params.id) throw new AppError(`Please, provide user id`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Please, provide correct user id`, 400);
 		const userPhotos = await getUserPhotosById(req.params.id);
 		res.status(200).json(userPhotos);
 	})
@@ -255,7 +255,7 @@ router.get(
 	// sessionExtractor,
 	asyncHandler(async (req, res) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		if (!req.params.id) throw new AppError(`Please, provide user id`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Please, provide correct user id`, 400);
 		const completeness = await getAndUpdateUserCompletnessById(req.params.id);
 		res.status(200).json(completeness);
 	})
