@@ -26,6 +26,7 @@ const initLoggedUser = async () => {
 	const res = await api.post('/api/login').send(loginUser).expect(200);
 	return res;
 };
+
 const putToProfile = async () => {
 	getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 	await api
@@ -36,6 +37,7 @@ const putToProfile = async () => {
 	// if (res.body.error)
 	// 	console.log(res.body.error);
 };
+
 const postToPhotos = async () => {
 	await api
 		.post(`/api/users/${id}/photos`)

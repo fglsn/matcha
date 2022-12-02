@@ -2,7 +2,8 @@ import supertest from 'supertest';
 import { describe, expect } from '@jest/globals';
 import { app } from '../app';
 import { newUser, loginUser, newPass, defaultCoordinates, ipAddress } from './test_helper';
-import { clearUsers, findUserByUsername, getPasswordHash } from '../repositories/userRepository';
+import { initLoggedUser } from './test_helper_fns';
+import { clearUsers, getPasswordHash } from '../repositories/userRepository';
 import { clearSessions } from '../repositories/sessionRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
@@ -15,24 +16,16 @@ jest.setTimeout(10000);
 jest.mock('../services/location');
 const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
-let loginRes = <supertest.Response>{};
 let userId: string;
+let loginRes = <supertest.Response>{};
 const oldPassword = newUser.passwordPlain;
-
-const initLoggedUser = async () => {
-	const user = await findUserByUsername(newUser.username);
-	const activationCode = user?.activationCode;
-	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
-	return res;
-};
 
 describe('test update password access', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 		userId = getString(loginRes.body.id);
 	});
 	test('logged user can update password', async () => {

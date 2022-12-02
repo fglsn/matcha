@@ -3,14 +3,14 @@ import supertest from 'supertest';
 
 import { app } from '../app';
 // import { clearSessions } from '../repositories/sessionRepository';
-import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { clearUsers } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 import { requestCoordinatesByIp } from '../services/location';
 import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
 import { DataURL, InvDataURL, InvDataURL2, InvDataURL3 } from './test_helper_images';
+import { initLoggedUser } from './test_helper_fns';
 
 const api = supertest(app);
-
 jest.setTimeout(100000);
 
 jest.mock('../services/location');
@@ -18,21 +18,13 @@ const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
 let loginRes = <supertest.Response>{};
 
-const initLoggedUser = async () => {
-	const user = await findUserByUsername(newUser.username);
-	const activationCode = user?.activationCode;
-	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
-	return res;
-};
-
 describe('check requests to photos', () => {
 	let id = <string>'';
 	beforeAll(async () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 		id = <string>JSON.parse(loginRes.text).id;
 	});
 	test('should succeed update photos', async () => {
@@ -43,7 +35,6 @@ describe('check requests to photos', () => {
 			.expect(200);
 
 		//console.log(resFromProfilePage.error);
-
 		// expect(resFromProfilePage.body).toBeTruthy();
 	});
 	test('should succeed to get photos', async () => {
