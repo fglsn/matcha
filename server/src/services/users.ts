@@ -187,7 +187,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		getUserDataByUserId(requestorId) as Promise<UserData>,
 		getUserDataByUserId(profileId) as Promise<UserData>
 	]);
-	const distance = getDistance(requestor, profile);
+	const distance = getDistance(requestor.coordinates, profile.coordinates);
 	const age = getAge(String(profile.birthday));
 
 	const profilePublic = {
