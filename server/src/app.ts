@@ -17,11 +17,10 @@ import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-const PORT = 3002;
 export const app = express();
 // app.use(express.json());
 const httpServer = createServer();
-const io = new Server(httpServer, {
+export const io = new Server(httpServer, {
 	cors: {
 		origin: 'http://localhost:3000',
 		methods: ['GET', 'POST'],
@@ -105,7 +104,6 @@ setInterval(() => {
 	io.to('clock-room').emit('time', new Date());
 }, 10000);
 
-io.listen(PORT);
 
 app.use(express.json({ limit: '50mb' }));
 
