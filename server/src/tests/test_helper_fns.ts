@@ -54,3 +54,24 @@ export const loginAndPrepareUser = async (user: NewUser, loginUser: { username: 
 	await Promise.all([putToProfile(id), postToPhotos(id)]);
 	return { id: id, token: loginRes.body.token };
 };
+
+export const putLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
+	const resFromProfilePage = await api
+		.post(`/api/users/${visited.id}/public_profile/like`)
+		.set({ Authorization: `bearer ${visitor.token}` })
+		.expect(200);
+
+	expect(resFromProfilePage.statusCode).toBe(200);
+	expect(resFromProfilePage.body).toBeTruthy();
+};
+
+export const removeLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
+	const resFromProfilePage = await api
+		.delete(`/api/users/${visited.id}/public_profile/like`)
+		.set({ Authorization: `bearer ${visitor.token}` })
+		.expect(200);
+
+	expect(resFromProfilePage.statusCode).toBe(200);
+	expect(resFromProfilePage.body).toBeTruthy();
+};
+

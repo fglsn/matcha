@@ -53,6 +53,7 @@ const addLikeEntry = async (visitedUserId: string, visitorUserId: string): Promi
 	};
 	await pool.query(query);
 };
+
 const removeLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<void> => {
 	const query = {
 		text: 'delete from likes_history where liked_user_id = $1 and liking_user_id = $2',
@@ -70,4 +71,8 @@ const getLikesCount = async (visitedUserId: string): Promise<number> => {
 	return res.rowCount;
 };
 
-export { getLikesByVisitedId, getLikesByVisitorId, addLikeEntry, checkLikeEntry, getLikesCount, removeLikeEntry };
+const clearLikes = async (): Promise<void> => {
+	await pool.query('truncate table likes_history');
+};
+
+export { getLikesByVisitedId, getLikesByVisitorId, addLikeEntry, checkLikeEntry, getLikesCount, removeLikeEntry, clearLikes };
