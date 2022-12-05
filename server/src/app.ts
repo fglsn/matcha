@@ -71,7 +71,7 @@ const updateUserActivity = (socket_id: string) => {
 };
 
 io.on('connection', (socket: any) => {
-	updateOnlineUsers(Number(socket.request.session.userId), socket.id);
+	updateOnlineUsers(Number(socket.request.session?.userId), socket.id);
 	console.log('client connected: ', socket.id);
     socket.on("connect_error", (err: { message: any; }) => {
 		console.log(`connect_error due to ${err.message}`);
