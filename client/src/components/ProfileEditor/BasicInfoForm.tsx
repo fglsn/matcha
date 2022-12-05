@@ -75,6 +75,19 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
 
+	//rm later
+	// console.log(`
+	// 	${firstname.value} &&
+	// 	${lastname.value} &&
+	// 	${date} &&
+	// 	${gender.value} &&
+	// 	${orientation.value} &&
+	// 	${selectedTags} &&
+	// 	${bio.value} &&
+	// 	${coordinates[0]} &&
+	// 	${coordinates[1]} &&
+	// 	${locationString}`);
+
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
 			loggedUser && (await profileService.updateProfile(loggedUser.id, newUserData));
@@ -106,11 +119,11 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<LightTooltip title="See how others see your profile" placement="top-start">
+				<LightTooltip title="Visit own profile page" placement="top-start">
 					<Typography variant="h5" mb={3}>
-						<StyledLink to={`/profile/${loggedUser?.id}`}>
+						<Link to={`/profile/${loggedUser?.id}`}>
 							@{loggedUser?.username.toUpperCase()}
-						</StyledLink>
+						</Link>
 					</Typography>
 				</LightTooltip>
 				<Grid container spacing={2}>
