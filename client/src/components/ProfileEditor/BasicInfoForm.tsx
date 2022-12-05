@@ -121,9 +121,9 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
 				<LightTooltip title="Visit own profile page" placement="top-start">
 					<Typography variant="h5" mb={3}>
-						<Link to={`/profile/${loggedUser?.id}`}>
+						<StyledLink to={`/profile/${loggedUser?.id}`}>
 							@{loggedUser?.username.toUpperCase()}
-						</Link>
+						</StyledLink>
 					</Typography>
 				</LightTooltip>
 				<Grid container spacing={2}>
