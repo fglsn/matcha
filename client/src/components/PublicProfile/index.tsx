@@ -116,22 +116,29 @@ const StyledReportButton = styled('div')`
 	border-bottom: 1px solid #80808070;
 `;
 
-const OnlineIndicator = ({ user_id }: {user_id: number}) => {
+const OnlineIndicator = ({ user_id }: {user_id: string}) => {
 	
+	const callback = (online: boolean) => {
+		setOnline(online);
+	}
 	const [online, setOnline] = useState(false);
 	// Query online status and listen for response
 	useEffect(() => {
+		console.log('uf');
 		try {
-			if (socket.disconnected)
-				socket.open()
-			socket.on('online_response', (data) => {
-				if (data.queried_id === user_id) setOnline(data.online);
-			});
-			socket.emit('online_query', user_id);
-		} catch (err) {}
-		return () => {
-			socket.removeAllListeners('online_response');
-		};
+			socket.emit('online_query', user_id, callback);
+		} catch (err) {
+			console.log(err);	
+		}
+		const intervalId = setInterval(() => {
+			console.log('interval');
+			try {
+				socket.emit('online_query', user_id, callback);
+			} catch (err) {
+				console.log(err);	
+			}
+		}, 5000);
+		return () => clearInterval(intervalId);
 	}, [user_id]);
 
 	return online ? (
@@ -276,7 +283,7 @@ const PublicProfile = () => {
 						<Typography sx={{ mt: 2 }}>
 							@{profileData.username.toLowerCase()}
 						</Typography>
-						<OnlineIndicator user_id={Number(profileData.id)} />
+						<OnlineIndicator user_id={profileData.id} />
 						<StyledRow sx={{ mt: 0.75 }}>
 							<GenderIcon gender={profileData.gender} />
 							<Typography

@@ -12,7 +12,7 @@ interface ClientToServerEvents {
 	send_notification: (receiver_id: number, notification: {}) => void;
 	set_user: (receiver_id: number) => void;
 	active_chat: (match_id: number) => void;
-	online_query: (user_id: number) => void;
+	online_query: (user_id: string, callback: (online: boolean) => void) => void;
 	auth: { token: string; user_id: number };
 }
 
@@ -58,7 +58,7 @@ export const getAuth = (): Auth => {
 // 	return null;
 // };
 
-export	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3002', {
+export	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3001', {
     autoConnect: true,
     reconnection: true,
     auth: getAuth()

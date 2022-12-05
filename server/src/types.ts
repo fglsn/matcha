@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { Socket } from 'socket.io';
 
 export type BaseUser = {
 	username: string;
@@ -120,3 +121,21 @@ export type LikeEntry = {
 export type LikeJSON = {
 	like: boolean;
 };
+
+export interface SocketCustom extends Socket {
+	session?: Session;
+}
+
+// export interface ServerToClientEvents {
+// 	noArg: () => void;
+// 	basicEmit: (a: number, b: string, c: Buffer) => void;
+// 	withAck: (d: string, callback: (e: number) => void) => void;
+// }
+
+// export interface ClientToServerEvents {
+// 	hello: () => void;
+// }
+  
+// export interface InterServerEvents {
+// 	ping: () => void;
+// }

@@ -42,7 +42,7 @@ export const sessionExtractorSocket = (socket: any, next: any) => {
 		return next(err);
 	}
 	findSessionBySessionId(sessionId).then(session => {
-		socket.request.session = session;
+		socket.session = session;
 		next();
 	}).catch(error => {
 		console.log(error);
