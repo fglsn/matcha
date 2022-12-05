@@ -9,7 +9,23 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likePublicProfile, dislikePublicProfile, getLikePublicProfile } from '../services/users';
+import {
+	activateAccount,
+	createNewUser,
+	sendActivationCode,
+	sendResetLink,
+	changeForgottenPassword,
+	updatePassword,
+	sendUpdateEmailLink,
+	changeUserEmail,
+	updateUserPhotos,
+	getUserPhotosById,
+	getAndUpdateUserCompletnessById,
+	getPublicProfileData,
+	likePublicProfile,
+	dislikePublicProfile,
+	getLikeAndMatchStatusOnVisitedProfile
+} from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -142,10 +158,11 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
-		const result = await getLikePublicProfile(req.params.id, req.session.userId);
+		const result = await getLikeAndMatchStatusOnVisitedProfile(req.params.id, req.session.userId);
 		res.status(200).json(result);
 	})
 );
+
 router.post(
 	'/:id/public_profile/like',
 	sessionExtractor,
