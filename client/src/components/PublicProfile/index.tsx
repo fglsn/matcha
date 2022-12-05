@@ -1,14 +1,14 @@
 import { styled, Alert, Container, Paper, Tooltip, Typography } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
 	dislikeProfile,
-	getLike,
+	getLikeAndMatchStatus,
 	getPhotos,
 	getPublicProfile,
 	likeProfile
 } from '../../services/profile';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { Images, Like, ProfilePublic } from '../../types';
+import { Images, LikeAndMatchStatus, ProfilePublic } from '../../types';
 import { useContext, useEffect, useState } from 'react';
 import { AlertContext } from '../AlertProvider';
 import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
@@ -116,14 +116,25 @@ const StyledReportButton = styled('div')`
 	border-bottom: 1px solid #80808070;
 `;
 
-const OnlineIndicator = ({ user_id }: {user_id: number}) => {
-	
+const StyledAlert = styled(Alert)`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin: 15px 0;
+`;
+
+const StyledLink = styled(Link)`
+	color: #ff9800;
+	text-decoration: none;
+`;
+
+const OnlineIndicator = ({ user_id }: { user_id: number }) => {
 	const [online, setOnline] = useState(false);
 	// Query online status and listen for response
 	useEffect(() => {
 		try {
-			if (socket.disconnected)
-				socket.open()
+			if (socket.disconnected) socket.open();
 			socket.on('online_response', (data) => {
 				if (data.queried_id === user_id) setOnline(data.online);
 			});
@@ -146,6 +157,8 @@ const PublicProfile = () => {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isBlocked, setIsBlocked] = useState<boolean>(false);
+	const [isMatch, setIsMatch] = useState<boolean>(false);
+
 	const navigate = useNavigate();
 
 	const {
@@ -165,34 +178,35 @@ const PublicProfile = () => {
 	);
 
 	const {
-		data: likeData,
-		error: likeError
-	}: { data: Like | undefined; error: Error | undefined } = useServiceCall(
-		async () => id && (await getLike(id)),
-		[]
-	);
+		data: likeAndMatchStatusData,
+		error: likeAndMatchStatusError
+	}: { data: LikeAndMatchStatus | undefined; error: Error | undefined } =
+		useServiceCall(async () => id && (await getLikeAndMatchStatus(id)), [isLiked]);
 
 	useEffect(() => {
-		if (likeData !== undefined) {
-			setIsLiked(likeData.like);
+		if (likeAndMatchStatusData !== undefined) {
+			setIsLiked(likeAndMatchStatusData.like);
+			setIsMatch(likeAndMatchStatusData.match);
 		}
-	}, [likeData, setIsLiked]);
+	}, [likeAndMatchStatusData, setIsLiked, setIsMatch]);
 
-	if (profileError || photosError || likeError)
+	console.log(likeAndMatchStatusData);
+
+	if (profileError || photosError || likeAndMatchStatusError)
 		return (
 			<Alert severity="error">
 				Error loading profile page, please try again...
 			</Alert>
 		);
 
-	if (!profileData || !photosData || !likeData) return <LoadingIcon />;
+	if (!profileData || !photosData || !likeAndMatchStatusData) return <LoadingIcon />;
 
 	const like = async (id: string) => {
 		try {
 			await likeProfile(id);
 			setIsLiked(!isLiked);
 		} catch (e) {
-			errorCallback(e.message);		
+			errorCallback(e.message);
 		}
 	};
 
@@ -200,6 +214,7 @@ const PublicProfile = () => {
 		try {
 			await dislikeProfile(id);
 			setIsLiked(!isLiked);
+			setIsMatch(false);
 		} catch (e) {
 			errorCallback(e.message);
 		}
@@ -247,6 +262,15 @@ const PublicProfile = () => {
 		<>
 			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
 				<Item>
+					{isMatch && (
+						<StyledAlert severity="info" color="warning">
+							<Typography variant="h6">
+								You have a match!{' '}
+								<StyledLink to={`/profile/chat`}>Open Chat</StyledLink>
+							</Typography>
+						</StyledAlert>
+					)}
+
 					<ProfileSlider photos={photosData.images} user={profileData} />
 					<IconGroup>
 						<Tooltip title="Pass / Block" arrow placement="top">
@@ -267,9 +291,9 @@ const PublicProfile = () => {
 								</IconWrapperPressed>
 							</Tooltip>
 						) : (
-								<IconWrapper onClick={handleLike}>
-									<StyledLikeIcon color="primary" />
-								</IconWrapper>
+							<IconWrapper onClick={handleLike}>
+								<StyledLikeIcon color="primary" />
+							</IconWrapper>
 						)}
 					</IconGroup>
 					<UserInfo>
