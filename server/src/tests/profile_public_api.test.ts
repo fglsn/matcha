@@ -16,8 +16,8 @@ let visited: { id: string; token: string };
 describe('check access to profile page', () => {
 	beforeAll(async () => {
 		await clearUsers();
-		visitor = await loginAndPrepareUser(newUser, loginUser);
-		visited = await loginAndPrepareUser(secondUser, loginUser2);
+		visited = await loginAndPrepareUser(newUser, loginUser);
+		visitor = await loginAndPrepareUser(secondUser, loginUser2);
 	});
 	test('logged user can visit public profile page of other user', async () => {
 		const resFromProfilePage = await api
@@ -73,7 +73,7 @@ describe('check access to profile page', () => {
 			.get(`/api/users/fghjk/public_profile`)
 			.set({ Authorization: `bearer ${visitor.token}` })
 			.expect(400);
-		expect(resFromProfilePage.body.error).toContain('No user with provided id');
+		expect(resFromProfilePage.body.error).toContain('Id path parameter is requried to find profile');
 	});
 
 	test('fails when no session in db', async () => {

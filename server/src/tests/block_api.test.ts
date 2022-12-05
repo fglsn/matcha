@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, infoProfilePublic, infoProfile2 } from './test_helper';
+import { newUser, loginUser, secondUser, loginUser2, infoProfilePublic, infoProfilePublic2 } from './test_helper';
 import { api, loginAndPrepareUser, putLike, twoUserLikeEachOther, userBlocksAnotherUser } from './test_helper_fns';
 import { clearLikes, getLikesByVisitorId } from '../repositories/likesRepository';
 import { checkMatchEntry } from '../repositories/matchesRepository';
@@ -75,7 +75,7 @@ describe('test block user functionality', () => {
 		expect(resFromProfilePage.body).toBeTruthy();
 		//console.log(resFromProfilePage.text);
 
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfile2, id: userToBlock.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: userThatBlocks.id });
 	});
 
 	test('user can still visit page of the user whom he blocked', async () => {
@@ -91,7 +91,7 @@ describe('test block user functionality', () => {
 		//console.log(resFromProfilePage.text);
 
 		expect(resFromProfilePage.text).toContain('lorem');
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: userToBlock.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic2, id: userToBlock.id });
 	});
 
 	test('user can remove another user from his block list', async () => {

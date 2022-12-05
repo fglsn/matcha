@@ -105,8 +105,7 @@ export const userBlocksAnotherUser = async (userToBlock: { id: string; token: st
 	await api
 		.post(`/api/users/${userToBlock.id}/block`)
 		.set({ Authorization: `bearer ${userThatBlocks.token}` })
-		.expect(200)
-		.expect('Content-Type', /application\/json/);
+		.expect(200);
 
 	const blockStatusAtEnd = await checkBlockEntry(userToBlock.id, userThatBlocks.id);
 	expect(blockStatusAtEnd).toBeTruthy();
