@@ -152,7 +152,7 @@ router.get(
 );
 
 router.get(
-	'/:id/public_profile/like',
+	'/:id/like',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
@@ -164,7 +164,7 @@ router.get(
 );
 
 router.post(
-	'/:id/public_profile/like',
+	'/:id/like',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
@@ -176,7 +176,7 @@ router.post(
 );
 
 router.delete(
-	'/:id/public_profile/like',
+	'/:id/like',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);

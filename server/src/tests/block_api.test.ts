@@ -5,6 +5,7 @@ import { newUser, loginUser, secondUser, loginUser2, infoProfilePublic, infoProf
 import { api, loginAndPrepareUser, putLike, twoUserLikeEachOther, userBlocksAnotherUser } from './test_helper_fns';
 import { clearLikes, getLikesByVisitorId } from '../repositories/likesRepository';
 import { checkMatchEntry } from '../repositories/matchesRepository';
+import { checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 
 jest.setTimeout(10000);
 jest.mock('../services/location');
