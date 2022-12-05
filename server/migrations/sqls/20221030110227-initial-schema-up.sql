@@ -82,3 +82,9 @@ create table users_online (
 	active bigint not null,
 	primary key (user_id)
 );
+
+create table block_entries (
+	blocked_user_id bigserial not null,
+	blocking_user_id bigserial not null,
+	primary key (blocked_user_id, blocking_user_id)
+)
