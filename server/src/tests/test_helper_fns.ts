@@ -99,3 +99,14 @@ export const twoUserLikeEachOther = async (userOne: { id: string; token: string 
 	expect(res1).toBeTruthy();
 	expect(res2).toBeTruthy();
 };
+
+export const userBlocksAnotherUser = async (userToBlock: { id: string; token: string }, userThatBlocks: { id: string; token: string }) => {
+	await api
+		.get(`/api/users/${userToBlock.id}/public_profile/block`)
+		.set({ Authorization: `bearer ${userThatBlocks.token}` })
+		.expect(200)
+		.expect('Content-Type', /application\/json/);
+
+	const blockStatusAtEnd = await checkBlockEntry(userToBlock.id, userThatBlocks.id);
+	expect(blockStatusAtEnd).toBeTruthy();
+};
