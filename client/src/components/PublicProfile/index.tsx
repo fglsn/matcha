@@ -63,7 +63,7 @@ const StyledAlert = styled(Alert)`
 `;
 
 const StyledLink = styled(Link)`
-	color: #ff9800;
+	color: #ffc600;
 	text-decoration: none;
 `;
 
