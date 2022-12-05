@@ -91,7 +91,7 @@ describe('send email reset link on email/update request', () => {
 			.send({ email: secondUser.email })
 			.expect(400);
 
-		console.log(resFromEmailUpdate.body.error);
+		// console.log(resFromEmailUpdate.body.error);
 		expect(resFromEmailUpdate.body.error).toContain('This email is already taken');
 		expect(sendMailMock).toBeCalledTimes(0);
 	});

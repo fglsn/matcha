@@ -20,6 +20,16 @@ describe('like history tests', () => {
 		visited = await loginAndPrepareUser(secondUser, loginUser2);
 	});
 
+	test('like value is false on GET when no like from visitor on visited profile', async () => {
+		const res = await api
+			.get(`/api/users/${visited.id}/public_profile/like`)
+			.set({ Authorization: `bearer ${visitor.token}` })
+			.expect(200)
+			.expect('Content-Type', /application\/json/);
+
+		expect(res.body.like).toBeFalsy();
+	});
+
 	test('valid user can like another valid user', async () => {
 		const likeStatusAtStart = await checkLikeEntry(visited.id, visitor.id);
 		expect(likeStatusAtStart).toBeFalsy();
@@ -31,6 +41,18 @@ describe('like history tests', () => {
 		const likesByVisited = await getLikesByVisitedId(visited.id);
 		expect(likesByVisited).toBeDefined();
 		expect(likesByVisited?.[0].likingUserId).toBe(visitor.id);
+	});
+
+	test('like value is true on GET when visitor already liked visited profile', async () => {
+		await putLike(visited, visitor);
+
+		const res = await api
+			.get(`/api/users/${visited.id}/public_profile/like`)
+			.set({ Authorization: `bearer ${visitor.token}` })
+			.expect(200)
+			.expect('Content-Type', /application\/json/);
+
+		expect(res.body.like).toBeTruthy();
 	});
 
 	test('user can like another user only once', async () => {
