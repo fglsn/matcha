@@ -9,7 +9,10 @@ export const getPublicProfile = async (userId: string) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(`${apiBaseUrl}/users/${userId}/public_profile`, config);
+		const response = await axios.get(
+			`${apiBaseUrl}/users/${userId}/public_profile`,
+			config
+		);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
@@ -61,18 +64,23 @@ export const getLikeAndMatchStatus = async (userId: string) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/like`, config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
 	}
 };
+
 export const likeProfile = async (userId: string) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.post(`${apiBaseUrl}/users/${userId}/public_profile/like`, undefined ,config);
+		const response = await axios.post(
+			`${apiBaseUrl}/users/${userId}/like`,
+			undefined,
+			config
+		);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
@@ -83,7 +91,50 @@ export const dislikeProfile = async (userId: string) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.delete(`${apiBaseUrl}/users/${userId}/public_profile/like`, config);
+		const response = await axios.delete(`${apiBaseUrl}/users/${userId}/like`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
+export const getBlockStatus = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/block`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
+export const blockProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.post(
+			`${apiBaseUrl}/users/${userId}/block`,
+			undefined,
+			config
+		);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
+export const unblockProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.delete(
+			`${apiBaseUrl}/users/${userId}/block`,
+			config
+		);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
@@ -197,6 +248,9 @@ const moduleExports = {
 	getLikeAndMatchStatus,
 	likeProfile,
 	dislikeProfile,
+	getBlockStatus,
+	blockProfile,
+	unblockProfile,
 	checkProfileCompleteness
 };
 

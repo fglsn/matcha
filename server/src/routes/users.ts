@@ -177,7 +177,7 @@ router.get(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
-		if (req.session.userId === req.params.id) throw new AppError(`You cannot block own profile`, 400);
+		// if (req.session.userId === req.params.id) throw new AppError(`You cannot block own profile`, 400);
 		const result = await getBlockStatus(req.params.id, req.session.userId);
 		res.status(200).json(result);
 	})
