@@ -77,3 +77,8 @@ create table matches (
 	primary key (matched_user_one, matched_user_two)
 );
 
+create table users_online (
+	user_id bigserial not null,
+	active bigint not null,
+	primary key (user_id)
+);
