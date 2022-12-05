@@ -118,8 +118,9 @@ export type LikeEntry = {
 	likingUserId: string;
 };
 
-export type LikeJSON = {
+export type LikeAndMatchStatus = {
 	like: boolean;
+	match: boolean;
 };
 
 export interface SocketCustom extends Socket {
@@ -139,3 +140,7 @@ export interface SocketCustom extends Socket {
 // export interface InterServerEvents {
 // 	ping: () => void;
 // }
+export type MatchEntry = {
+	matchedUserIdOne: string;
+	matchedUserIdTwo: string;
+};

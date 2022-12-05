@@ -70,3 +70,10 @@ create table likes_history (
 	liking_user_id bigserial not null,
 	primary key (liked_user_id, liking_user_id)
 );
+
+create table matches (
+	matched_user_one bigserial not null,
+	matched_user_two bigserial not null,
+	primary key (matched_user_one, matched_user_two)
+);
+

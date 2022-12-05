@@ -8,6 +8,8 @@ import { findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
 import { NewUser } from '../types';
+import { checkLikeEntry } from '../repositories/likesRepository';
+import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
 // import { clearSessions } from '../repositories/sessionRepository';
 
 export const api = supertest(app);
@@ -75,3 +77,25 @@ export const removeLike = async (visited: { id: string; token: string }, visitor
 	expect(resFromProfilePage.body).toBeTruthy();
 };
 
+export const twoUserLikeEachOther = async (userOne: { id: string; token: string }, userTwo: { id: string; token: string }) => {
+	const totalMatchesAtStart = await getMatchesByUserId(userOne.id);
+	expect(totalMatchesAtStart).not.toBeDefined();
+
+	const likeStatusAtStart = await checkLikeEntry(userOne.id, userTwo.id);
+	expect(likeStatusAtStart).toBeFalsy();
+	const likeStatusAtStartFromUserTwo = await checkLikeEntry(userTwo.id, userOne.id);
+	expect(likeStatusAtStartFromUserTwo).toBeFalsy();
+
+	await putLike(userOne, userTwo);
+
+	const likeStatusAtEnd = await checkLikeEntry(userOne.id, userTwo.id);
+	expect(likeStatusAtEnd).toBeTruthy();
+
+	await putLike(userTwo, userOne);
+	const likeStatusAtEndFromUserTwo = await checkLikeEntry(userTwo.id, userOne.id);
+	expect(likeStatusAtEndFromUserTwo).toBeTruthy();
+
+	const [res1, res2] = await Promise.all([checkMatchEntry(userOne.id, userTwo.id), checkMatchEntry(userTwo.id, userOne.id)]);
+	expect(res1).toBeTruthy();
+	expect(res2).toBeTruthy();
+};

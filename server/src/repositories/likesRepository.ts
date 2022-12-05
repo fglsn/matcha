@@ -3,7 +3,7 @@ import { getString } from '../dbUtils';
 import { LikeEntry } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const LikeEntryMapper = (row: any): LikeEntry => {
+const likeEntryMapper = (row: any): LikeEntry => {
 	return {
 		likedUserId: getString(row['liked_user_id']),
 		likingUserId: getString(row['liking_user_id'])
@@ -19,7 +19,7 @@ const getLikesByVisitedId = async (visitedUserId: string): Promise<LikeEntry[] |
 	if (!res.rowCount) {
 		return undefined;
 	}
-	return res.rows.map((row) => LikeEntryMapper(row));
+	return res.rows.map((row) => likeEntryMapper(row));
 };
 
 const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[] | undefined> => {
@@ -31,7 +31,7 @@ const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[] |
 	if (!res.rowCount) {
 		return undefined;
 	}
-	return res.rows.map((row) => LikeEntryMapper(row));
+	return res.rows.map((row) => likeEntryMapper(row));
 };
 
 const checkLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<boolean> => {

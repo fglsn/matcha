@@ -9,12 +9,13 @@ import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail,
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
-import { EmailUpdateRequest, LikeJSON, NewUser, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
+import { EmailUpdateRequest, LikeAndMatchStatus, NewUser, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import { getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
+import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -212,6 +213,9 @@ export const likePublicProfile = async (profileId: string, requestorId: string):
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
 	await addLikeEntry(profileId, requestorId);
+	if (await checkLikeEntry(requestorId, profileId)) {
+		await addMatchEntry(profileId, requestorId);
+	}
 };
 
 export const dislikePublicProfile = async (profileId: string, requestorId: string): Promise<void> => {
@@ -219,11 +223,15 @@ export const dislikePublicProfile = async (profileId: string, requestorId: strin
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
 	await removeLikeEntry(profileId, requestorId);
+	if (await checkMatchEntry(requestorId, profileId)) {
+		await removeMatchEntry(profileId, requestorId);
+	}
 };
 
-export const getLikePublicProfile = async (profileId: string, requestorId: string): Promise<LikeJSON> => {
+export const getLikeAndMatchStatusOnVisitedProfile = async (profileId: string, requestorId: string): Promise<LikeAndMatchStatus> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	return { like: await checkLikeEntry(profileId, requestorId) };
+	return { like: await checkLikeEntry(profileId, requestorId), match: await checkMatchEntry(profileId, requestorId) };
 };
+

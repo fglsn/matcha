@@ -56,7 +56,7 @@ export const getPhotos = async (userId: string) => {
 	}
 };
 
-export const getLike = async (userId: string) => {
+export const getLikeAndMatchStatus = async (userId: string) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
@@ -193,7 +193,11 @@ const moduleExports = {
 	requestUpdateEmail,
 	updateEmailbyToken,
 	updatePassword,
-	requestLocation
+	requestLocation,
+	getLikeAndMatchStatus,
+	likeProfile,
+	dislikeProfile,
+	checkProfileCompleteness
 };
 
 export default moduleExports;
