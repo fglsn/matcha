@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { ImageType, ProfilePublic } from '../../types';
 import { Chip, Grid, styled, Typography } from '@mui/material';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import TransgenderIcon from '@mui/icons-material/Transgender';
-import FemaleIcon from '@mui/icons-material/Female';
-import MaleIcon from '@mui/icons-material/Male';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import OrientationIcon from './OrientationIcon';
 
 const StyledContainer = styled('div')({
 	height: '450px',
@@ -79,28 +77,7 @@ const ProfileInfoWrapper = styled('div')`
 `;
 
 export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
-	const OrientationIcon = ({
-		orientation,
-		gender
-	}: {
-		orientation: string;
-		gender: string;
-	}) => {
-		switch (orientation) {
-			case 'straight':
-				if (gender === 'male') return <FemaleIcon color="secondary" />;
-				if (gender === 'female') return <MaleIcon color="secondary" />;
-				return <></>;
-			case 'gay':
-				if (gender === 'male') return <MaleIcon color="secondary" />;
-				if (gender === 'female') return <FemaleIcon color="secondary" />;
-				return <></>;
-			case 'bi':
-				return <TransgenderIcon color="secondary" />;
-			default:
-				return <></>;
-		}
-	};
+
 	return (
 		<ProfileInfoWrapper>
 			<Typography color="secondary">About {user.firstname}</Typography>

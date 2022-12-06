@@ -141,6 +141,22 @@ export const unblockProfile = async (userId: string) => {
 	}
 };
 
+export const reportProfile = async (userId: string) => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.post(
+			`${apiBaseUrl}/users/${userId}/report`,
+			undefined,
+			config
+		);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
 export const checkProfileCompleteness = async (userId: string) => {
 	try {
 		const config = {
@@ -251,6 +267,7 @@ const moduleExports = {
 	getBlockStatus,
 	blockProfile,
 	unblockProfile,
+	reportProfile,
 	checkProfileCompleteness
 };
 

@@ -6,12 +6,11 @@ import { getBlockStatus, getLikeAndMatchStatus, getPhotos, getPublicProfile } fr
 import { styled, Alert, Container, Paper, Typography } from '@mui/material';
 import { Images, LikeAndMatchStatus, ProfilePublic } from '../../types';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
-import FemaleIcon from '@mui/icons-material/Female';
-import MaleIcon from '@mui/icons-material/Male';
 import withProfileRequired from '../ProfileRequired';
 import ProfileSlider from './ProfileSlider';
+import ReportDialog from './ReportDialog';
 import LoadingIcon from '../LoadingIcon';
+import GenderIcon from './GenderIcon';
 import IconGroup from './IconGroup';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -39,19 +38,6 @@ export const StyledRow = styled('div')`
 	display: flex;
 	flex-direction: row;
 	align-items: baseline;
-`;
-
-const StyledReportButton = styled('div')`
-	cursor: pointer;
-	display: flex;
-	align-items: baseline;
-	font-size: 11px;
-	text-align: left;
-	// position: relative;
-	// bottom: 10px;
-	width: fit-content;
-	color: #808080d4;
-	border-bottom: 1px solid #80808070;
 `;
 
 const StyledAlert = styled(Alert)`
@@ -153,23 +139,6 @@ const PublicProfile = () => {
 		return <LoadingIcon />;
 	}
 
-	const handleReport = (event: any) => {
-		event.preventDefault();
-		//add confirmation pop up
-		console.log('report fake account');
-	};
-
-	const GenderIcon: React.FC<{ gender: string }> = ({ gender }) => {
-		switch (gender) {
-			case 'male':
-				return <MaleIcon color="primary" />;
-			case 'female':
-				return <FemaleIcon color="primary" />;
-			default:
-				return <></>;
-		}
-	};
-
 	return (
 		<>
 			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
@@ -226,12 +195,7 @@ const PublicProfile = () => {
 							{profileData.distance} km away
 						</Typography>
 					</UserInfo>
-					<StyledReportButton onClick={handleReport}>
-						<EmojiFlagsIcon
-							style={{ height: '10px', width: '10px', marginRight: 3 }}
-						/>
-						Report fake account
-					</StyledReportButton>
+					<ReportDialog id={id} username={profileData.username} />
 				</Item>
 			</StyledContainer>
 		</>
