@@ -52,7 +52,7 @@ const getReportsCountByUserId = async (reportedUserId: string): Promise<number> 
 		values: [reportedUserId]
 	};
 	const res = await pool.query(query);
-	return (Number(res.rows[0]['report_count']));
+	return Number(res.rows[0]['report_count']);
 };
 
 const clearReportEntries = async (): Promise<void> => {

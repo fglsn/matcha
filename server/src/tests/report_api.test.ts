@@ -52,7 +52,7 @@ describe('test report fake account functionality', () => {
 			userReportsAnotherUser(userToReport, reportingUser)
 		]);
 
-		const reportsCountAtEnd= await getReportsCountByUserId(userToReport.id);
+		const reportsCountAtEnd = await getReportsCountByUserId(userToReport.id);
 		expect(reportsCountAtEnd).toBe(1);
 	});
 });
