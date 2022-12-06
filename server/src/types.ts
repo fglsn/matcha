@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { Socket } from 'socket.io';
 
 export type BaseUser = {
 	username: string;
@@ -111,4 +112,39 @@ export type Images = {
 export type VisitEntry = {
 	visitedUserId: string;
 	visitorUserId: string;
+};
+export type LikeEntry = {
+	likedUserId: string;
+	likingUserId: string;
+};
+
+export type LikeAndMatchStatus = {
+	like: boolean;
+	match: boolean;
+};
+
+export interface SocketCustom extends Socket {
+	session?: Session;
+}
+
+export type BlockEntry = {
+	blockedUserId: string;
+	blockingUserId: string;
+};
+// export interface ServerToClientEvents {
+// 	noArg: () => void;
+// 	basicEmit: (a: number, b: string, c: Buffer) => void;
+// 	withAck: (d: string, callback: (e: number) => void) => void;
+// }
+
+// export interface ClientToServerEvents {
+// 	hello: () => void;
+// }
+  
+// export interface InterServerEvents {
+// 	ping: () => void;
+// }
+export type MatchEntry = {
+	matchedUserIdOne: string;
+	matchedUserIdTwo: string;
 };

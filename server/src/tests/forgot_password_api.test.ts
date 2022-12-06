@@ -1,13 +1,12 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
 import { app } from '../app';
+import { describe, expect } from '@jest/globals';
 import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
-import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
-import { requestCoordinatesByIp } from '../services/location';
-
-import { createNewUser } from '../services/users';
+import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { defaultCoordinates, ipAddress, newUser } from './test_helper';
+import { requestCoordinatesByIp } from '../services/location';
+import { createNewUser } from '../services/users';
 const api = supertest(app);
 
 jest.setTimeout(100000);

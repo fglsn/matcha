@@ -6,6 +6,7 @@ import { LoggedUser } from '../types';
 import { AlertContext } from './AlertProvider';
 import { logoutUser } from '../services/logout';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import { socket } from '../services/socket';
 
 const LoggedInUserButtons = ({
 	loggedUser,
@@ -49,6 +50,9 @@ const Navbar = () => {
 	const handleLogout = async (event: any) => {
 		event.preventDefault();
 		logoutUser(dispatch);
+		if (socket.connected) {
+			socket.disconnect();
+		} 
 		alert.success('Logged out');
 		navigate('/');
 	};

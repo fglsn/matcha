@@ -13,6 +13,7 @@ export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
 		const sessionId: string = authorization.substring(7);
 		req.sessionId = sessionId;
+
 		// console.log(req.sessionId); //rm later
 	}
 	next();
@@ -32,3 +33,20 @@ export const sessionExtractor = asyncHandler(async (req: CustomRequest, res: any
 	req.session = session;
 	next();
 });
+
+export const sessionExtractorSocket = (socket: any, next: any) => {
+	const sessionId = socket.handshake.auth.sessionId;
+	const user_id = socket.handshake.auth.user_id;
+    if (!sessionId || !user_id) {
+		const err = new Error('Error: Access denied, no token provided');
+		return next(err);
+	}
+	findSessionBySessionId(sessionId).then(session => {
+		socket.session = session;
+		next();
+	}).catch(error => {
+		console.log(error);
+		const err = new Error('Error: No sessions found or expired');
+		return next(err);
+	});
+};

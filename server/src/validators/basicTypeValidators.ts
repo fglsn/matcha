@@ -20,4 +20,11 @@ const isStringArray = (arr: any): arr is string[] => {
 	return true;
 };
 
-export { isString, isNumber, isDate, isStringArray };
+const isStringRepresentedInteger = (string: string) => {
+	const num = Number(string);
+	if (!Number.isInteger(num)) return false;
+	if (num <= 0) return false; 
+	return true;
+};
+
+export { isString, isNumber, isDate, isStringArray, isStringRepresentedInteger };

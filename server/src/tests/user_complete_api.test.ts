@@ -1,48 +1,49 @@
+import pool from '../db';
 import supertest from 'supertest';
-import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { newUser, loginUser, infoProfile, defaultCoordinates, ipAddress, completenessFalse, completenessTrue } from './test_helper';
+import { describe, expect } from '@jest/globals';
+import { newUser, loginUser, defaultCoordinates, ipAddress, completenessFalse, completenessTrue, infoProfile } from './test_helper';
+import { getLocationMock } from './test_helper_fns';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
-// import { clearSessions } from '../repositories/sessionRepository';
-import { requestCoordinatesByIp, getLocation } from '../services/location';
+import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
 import { DataURL } from './test_helper_images';
-import pool from '../db';
 
 const api = supertest(app);
-
 jest.setTimeout(10000);
-
 jest.mock('../services/location');
 const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
-const getLocationMock = jest.mocked(getLocation);
 
 let loginRes = <supertest.Response>{};
 let id = <string>'';
 
-const initLoggedUser = async () => {
+export const initLoggedUser = async () => {
 	const user = await findUserByUsername(newUser.username);
 	const activationCode = user?.activationCode;
 	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser);
+	const res = await api.post('/api/login').send(loginUser).expect(200);
 	return res;
 };
 
-const putToProfile = async () => {
+export const putToProfile = async () => {
 	getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 	await api
 		.put(`/api/users/${id}/profile`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
-		.send(infoProfile);
+		.send(infoProfile)
+		.expect(200);
 	// if (res.body.error)
 	// 	console.log(res.body.error);
 };
-const postToPhotos = async () => {
+
+export const postToPhotos = async () => {
 	await api
 		.post(`/api/users/${id}/photos`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
-		.send({ images: [{ dataURL: DataURL }] });
+		.send({ images: [{ dataURL: DataURL }] })
+		.expect(200);
 };
+
 describe('Check repsonse of GET to /api/users/:id/complete', () => {
 	beforeEach(async () => {
 		await clearUsers();

@@ -1,17 +1,17 @@
-import { styled, Alert, Container, Paper, Tooltip, Typography } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getPhotos, getPublicProfile } from '../../services/profile';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { socket } from '../../services/socket';
+//prettier-ignore
+import { getBlockStatus, getLikeAndMatchStatus, getPhotos, getPublicProfile } from '../../services/profile';
+import { styled, Alert, Container, Paper, Typography } from '@mui/material';
+import { Images, LikeAndMatchStatus, ProfilePublic } from '../../types';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { Images, ProfilePublic } from '../../types';
-import { useContext, useState } from 'react';
-import { AlertContext } from '../AlertProvider';
-import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FemaleIcon from '@mui/icons-material/Female';
-import MaleIcon from '@mui/icons-material/Male';
-import ClearIcon from '@mui/icons-material/Clear';
-import LoadingIcon from '../LoadingIcon';
+import withProfileRequired from '../ProfileRequired';
 import ProfileSlider from './ProfileSlider';
+import ReportDialog from './ReportDialog';
+import LoadingIcon from '../LoadingIcon';
+import GenderIcon from './GenderIcon';
+import IconGroup from './IconGroup';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: 'primary',
@@ -28,61 +28,6 @@ const StyledContainer = styled(Container)({
 	justifyContent: 'center'
 });
 
-const IconGroup = styled('div')({
-	display: 'flex',
-	flexDirection: 'row',
-	position: 'relative',
-	justifyContent: 'center',
-	height: '1rem',
-	bottom: '35px'
-});
-
-const IconWrapper = styled('div')`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 70px;
-	width: 70px;
-	border-radius: 50px;
-	background-color: white !important;
-	border: 1px solid #dcdcdc;
-	position: relative;
-	margin: 0 45px;
-	&:hover {
-		transition: 0.2s ease;
-		transform: scale(1.1);
-	}
-`;
-
-const IconWrapperPressed = styled('div')`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 80px;
-	width: 80px;
-	border-radius: 50px;
-	background-color: #ff0073 !important;
-	border: 1px;
-	size: scale(1.1);
-	position: relative;
-	bottom: 5px;
-	margin: 0 45px;
-	&:hover {
-		transition: 0.2s ease;
-		transform: scale(1.1);
-	}
-`;
-
-const StyledLikeIcon = styled(FavoriteIcon)({
-	color: 'primary',
-	zIndex: 1
-});
-
-const StyledDislikeIcon = styled(ClearIcon)({
-	color: 'primary',
-	zIndex: 1
-});
-
 const UserInfo = styled('div')`
 	display: flex;
 	align-items: flex-end;
@@ -95,25 +40,55 @@ export const StyledRow = styled('div')`
 	align-items: baseline;
 `;
 
-const StyledReportButton = styled('div')`
-	cursor: pointer;
+const StyledAlert = styled(Alert)`
 	display: flex;
-	align-items: baseline;
-	font-size: 11px;
-	text-align: left;
-	// position: relative;
-	// bottom: 10px;
-	width: fit-content;
-	color: #808080d4;
-	border-bottom: 1px solid #80808070;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin: 15px 0;
 `;
+
+const StyledLink = styled(Link)`
+	color: #ffc600;
+	text-decoration: none;
+`;
+
+const OnlineIndicator = ({ user_id }: { user_id: string }) => {
+	const callback = (online: boolean) => {
+		setOnline(online);
+	};
+	const [online, setOnline] = useState(false);
+	// Query online status and listen for response
+	useEffect(() => {
+		console.log('uf');
+		try {
+			socket.emit('online_query', user_id, callback);
+		} catch (err) {
+			console.log(err);
+		}
+		const intervalId = setInterval(() => {
+			console.log('interval');
+			try {
+				socket.emit('online_query', user_id, callback);
+			} catch (err) {
+				console.log(err);
+			}
+		}, 5000);
+		return () => clearInterval(intervalId);
+	}, [user_id]);
+
+	return online ? (
+		<div className="round-green">Online</div>
+	) : (
+		<div className="round-gray">Offline</div>
+	);
+};
 
 const PublicProfile = () => {
 	const { id } = useParams();
-	const { success: successCallback } = useContext(AlertContext);
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isBlocked, setIsBlocked] = useState<boolean>(false);
-	const navigate = useNavigate();
+	const [isMatch, setIsMatch] = useState<boolean>(false);
 
 	const {
 		data: profileData,
@@ -131,90 +106,72 @@ const PublicProfile = () => {
 		[]
 	);
 
-	if (profileError || photosError)
+	const {
+		data: likeAndMatchStatusData,
+		error: likeAndMatchStatusError
+	}: { data: LikeAndMatchStatus | undefined; error: Error | undefined } =
+		useServiceCall(async () => id && (await getLikeAndMatchStatus(id)), [isLiked]);
+
+	const {
+		data: blockStatusData,
+		error: blockStatusError
+	}: { data: { block: boolean } | undefined; error: Error | undefined } =
+		useServiceCall(async () => id && (await getBlockStatus(id)), [isBlocked]);
+
+	useEffect(() => {
+		if (likeAndMatchStatusData !== undefined) {
+			setIsLiked(likeAndMatchStatusData.like);
+			setIsMatch(likeAndMatchStatusData.match);
+		}
+		if (blockStatusData !== undefined) {
+			setIsBlocked(blockStatusData.block);
+		}
+	}, [blockStatusData, likeAndMatchStatusData, setIsLiked, setIsMatch]);
+
+	if (profileError || photosError || likeAndMatchStatusError || blockStatusError)
 		return (
 			<Alert severity="error">
-				Error loading account settings page, please try again...
+				Error loading profile page, please try again...
 			</Alert>
 		);
 
-	if (!profileData || !photosData) return <LoadingIcon />;
-
-	const handleLike = (event: any) => {
-		event.preventDefault();
-		setIsLiked(!isLiked);
-	};
-
-	const handleBlock = (event: any) => {
-		event.preventDefault();
-		setIsBlocked(true);
-		if (isLiked) {
-			setIsLiked(false);
-			successCallback(
-				`Like removed and ${profileData.username} won't appear again`
-			);
-		}
-		navigate('/');
-	};
-
-	const handleReport = (event: any) => {
-		event.preventDefault();
-		//add confirmation pop up
-		console.log('report fake account');
-	};
-
-	const GenderIcon: React.FC<{ gender: string }> = ({ gender }) => {
-		switch (gender) {
-			case 'male':
-				return <MaleIcon color="primary" />;
-			case 'female':
-				return <FemaleIcon color="primary" />;
-			default:
-				return <></>;
-		}
-	};
+	if (!profileData || !photosData || !likeAndMatchStatusData || !blockStatusData) {
+		return <LoadingIcon />;
+	}
 
 	return (
 		<>
 			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
 				<Item>
+					{isMatch && (
+						<StyledAlert severity="info" color="warning">
+							<Typography variant="h6">
+								You have a match!{' '}
+								<StyledLink to={`/profile/chat`}>Open Chat</StyledLink>
+							</Typography>
+						</StyledAlert>
+					)}
+
 					<ProfileSlider photos={photosData.images} user={profileData} />
-					<IconGroup>
-						<Tooltip title="Pass / Block" arrow placement="top">
-							{isBlocked ? (
-								<IconWrapperPressed onClick={handleBlock}>
-									<StyledDislikeIcon color="secondary" />
-								</IconWrapperPressed>
-							) : (
-								<IconWrapper onClick={handleBlock}>
-									<StyledDislikeIcon color="inherit" />
-								</IconWrapper>
-							)}
-						</Tooltip>
-						<Tooltip
-							title={isLiked ? 'Unlike' : 'Like'}
-							arrow
-							placement="top"
-						>
-							{isLiked ? (
-								<IconWrapperPressed onClick={handleLike}>
-									<StyledLikeIcon color="secondary" />
-								</IconWrapperPressed>
-							) : (
-								<IconWrapper onClick={handleLike}>
-									<StyledLikeIcon color="primary" />
-								</IconWrapper>
-							)}
-						</Tooltip>
-					</IconGroup>
+					<IconGroup
+						id={id}
+						username={profileData.username}
+						setIsMatch={setIsMatch}
+						isLiked={isLiked}
+						setIsLiked={setIsLiked}
+						isBlocked={isBlocked}
+						setIsBlocked={setIsBlocked}
+					/>
 					<UserInfo>
 						<Typography sx={{ mt: 2 }}>
 							@{profileData.username.toLowerCase()}
 						</Typography>
+						<OnlineIndicator user_id={profileData.id} />
 						<StyledRow sx={{ mt: 0.75 }}>
 							<GenderIcon gender={profileData.gender} />
 							<Typography
 								variant="h5"
+								noWrap
 								sx={{
 									ml: 0.75,
 									maxWidth: 'fit-content',
@@ -238,16 +195,11 @@ const PublicProfile = () => {
 							{profileData.distance} km away
 						</Typography>
 					</UserInfo>
-					<StyledReportButton onClick={handleReport}>
-						<EmojiFlagsIcon
-							style={{ height: '10px', width: '10px', marginRight: 3 }}
-						/>
-						Report fake account
-					</StyledReportButton>
+					<ReportDialog id={id} username={profileData.username} />
 				</Item>
 			</StyledContainer>
 		</>
 	);
 };
 
-export default PublicProfile;
+export default withProfileRequired(PublicProfile);

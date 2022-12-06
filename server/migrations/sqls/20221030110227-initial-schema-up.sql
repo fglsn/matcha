@@ -64,3 +64,27 @@ create table visit_history (
 	visitor_user_id bigserial not null,
 	primary key (visited_user_id, visitor_user_id)
 );
+
+create table likes_history (
+	liked_user_id bigserial not null,
+	liking_user_id bigserial not null,
+	primary key (liked_user_id, liking_user_id)
+);
+
+create table matches (
+	matched_user_one bigserial not null,
+	matched_user_two bigserial not null,
+	primary key (matched_user_one, matched_user_two)
+);
+
+create table users_online (
+	user_id bigserial not null,
+	active bigint not null,
+	primary key (user_id)
+);
+
+create table block_entries (
+	blocked_user_id bigserial not null,
+	blocking_user_id bigserial not null,
+	primary key (blocked_user_id, blocking_user_id)
+)

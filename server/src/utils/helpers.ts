@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf';
-import { UserData } from '../types';
+import { Coordinates } from '../types';
 
 export const convertUTCDateToLocalDate = (date: Date): Date => {
 	const newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
@@ -32,11 +32,10 @@ export const getAge = (dateString: string): number => {
 	return age;
 };
 
-export const getDistance = (a: UserData, b: UserData) => {
-	const from = turf.point([a.coordinates.lon, a.coordinates.lat]);
-	const to = turf.point([b.coordinates.lon, b.coordinates.lat]);
+export const getDistance = (a: Coordinates, b: Coordinates) => {
+	const from = turf.point([a.lon, a.lat]);
+	const to = turf.point([b.lon, b.lat]);
 	const distance = turf.distance(from, to);
-	if (distance <= 2)
-		return 2;
+	if (distance <= 2) return 2;
 	return Math.ceil(distance);
 };
