@@ -17,7 +17,8 @@ create table users
 	orientation varchar,
 	bio varchar,
 	tags varchar [],
-	is_complete boolean not null default false
+	is_complete boolean not null default false,
+	reports_count int not null default 0
 );
 
 create table user_sessions
@@ -69,4 +70,28 @@ create table likes_history (
 	liked_user_id bigserial not null,
 	liking_user_id bigserial not null,
 	primary key (liked_user_id, liking_user_id)
+);
+
+create table matches (
+	matched_user_one bigserial not null,
+	matched_user_two bigserial not null,
+	primary key (matched_user_one, matched_user_two)
+);
+
+create table users_online (
+	user_id bigserial not null,
+	active bigint not null,
+	primary key (user_id)
+);
+
+create table block_entries (
+	blocked_user_id bigserial not null,
+	blocking_user_id bigserial not null,
+	primary key (blocked_user_id, blocking_user_id)
+);
+
+create table report_entries (
+	reported_user_id bigserial not null,
+	reporting_user_id bigserial not null,
+	primary key (reported_user_id, reporting_user_id)
 );

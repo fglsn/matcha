@@ -6,6 +6,7 @@
 import asyncHandler from 'express-async-handler';
 import { CustomRequest } from '../types';
 import { findSessionBySessionId } from '../repositories/sessionRepository';
+import { updateOnlineUsers } from '../services/users';
 
 export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -31,5 +32,25 @@ export const sessionExtractor = asyncHandler(async (req: CustomRequest, res: any
 		return;
 	}
 	req.session = session;
+	await updateOnlineUsers(session.userId);
 	next();
 });
+
+export const sessionExtractorSocket = (socket: any, next: any) => {
+	const sessionId = socket.handshake.auth.sessionId;
+	const user_id = socket.handshake.auth.user_id;
+	if (!sessionId || !user_id) {
+		const err = new Error('Error: Access denied, no token provided');
+		return next(err);
+	}
+	findSessionBySessionId(sessionId)
+		.then((session) => {
+			socket.session = session;
+			next();
+		})
+		.catch((error) => {
+			console.log(error);
+			const err = new Error('Error: No sessions found or expired');
+			return next(err);
+		});
+};

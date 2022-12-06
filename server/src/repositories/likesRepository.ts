@@ -3,7 +3,7 @@ import { getString } from '../dbUtils';
 import { LikeEntry } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const LikeEntryMapper = (row: any): LikeEntry => {
+const likeEntryMapper = (row: any): LikeEntry => {
 	return {
 		likedUserId: getString(row['liked_user_id']),
 		likingUserId: getString(row['liking_user_id'])
@@ -19,7 +19,7 @@ const getLikesByVisitedId = async (visitedUserId: string): Promise<LikeEntry[] |
 	if (!res.rowCount) {
 		return undefined;
 	}
-	return res.rows.map((row) => LikeEntryMapper(row));
+	return res.rows.map((row) => likeEntryMapper(row));
 };
 
 const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[] | undefined> => {
@@ -31,7 +31,7 @@ const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[] |
 	if (!res.rowCount) {
 		return undefined;
 	}
-	return res.rows.map((row) => LikeEntryMapper(row));
+	return res.rows.map((row) => likeEntryMapper(row));
 };
 
 const checkLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<boolean> => {
@@ -53,6 +53,7 @@ const addLikeEntry = async (visitedUserId: string, visitorUserId: string): Promi
 	};
 	await pool.query(query);
 };
+
 const removeLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<void> => {
 	const query = {
 		text: 'delete from likes_history where liked_user_id = $1 and liking_user_id = $2',
@@ -70,4 +71,8 @@ const getLikesCount = async (visitedUserId: string): Promise<number> => {
 	return res.rowCount;
 };
 
-export { getLikesByVisitedId, getLikesByVisitorId, addLikeEntry, checkLikeEntry, getLikesCount, removeLikeEntry };
+const clearLikes = async (): Promise<void> => {
+	await pool.query('truncate table likes_history');
+};
+
+export { getLikesByVisitedId, getLikesByVisitorId, addLikeEntry, checkLikeEntry, getLikesCount, removeLikeEntry, clearLikes };

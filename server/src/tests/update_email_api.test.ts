@@ -2,13 +2,13 @@ import supertest from 'supertest';
 import { describe, expect } from '@jest/globals';
 import { app } from '../app';
 import { defaultCoordinates, ipAddress, loginUser, newEmail, newUser, secondUser } from './test_helper';
+import { initLoggedUser } from './test_helper_fns';
 import { clearUpdateEmailRequestsTable, findUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 import { clearUsers, findUserByEmail, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser, sendUpdateEmailLink } from '../services/users';
 import { requestCoordinatesByIp } from '../services/location';
 
 const api = supertest(app);
-
 jest.setTimeout(100000);
 const sendMailMock = jest.fn(); // this will return undefined if .sendMail() is called
 
@@ -23,19 +23,11 @@ jest.mock('nodemailer', () => ({
 jest.mock('../services/location');
 const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 
-let loginRes = <supertest.Response>{};
-
-const initLoggedUser = async () => {
-	const user = await findUserByUsername(newUser.username);
-	const activationCode = user?.activationCode;
-	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
-	return res;
-};
-
 beforeEach(() => {
 	sendMailMock.mockClear();
 });
+
+let loginRes = <supertest.Response>{};
 
 describe('send email reset link on email/update request', () => {
 	beforeAll(async () => {
@@ -43,7 +35,7 @@ describe('send email reset link on email/update request', () => {
 		await clearUpdateEmailRequestsTable();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 	});
 
 	test('logged user can request email update', async () => {
@@ -99,7 +91,7 @@ describe('send email reset link on email/update request', () => {
 			.send({ email: secondUser.email })
 			.expect(400);
 
-		console.log(resFromEmailUpdate.body.error);
+		// console.log(resFromEmailUpdate.body.error);
 		expect(resFromEmailUpdate.body.error).toContain('This email is already taken');
 		expect(sendMailMock).toBeCalledTimes(0);
 	});
@@ -112,7 +104,7 @@ describe('update email after request has been sent', () => {
 		await clearUpdateEmailRequestsTable();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 		id = <string>JSON.parse(loginRes.text).id;
 		await sendUpdateEmailLink(id, newEmail.email);
 	});

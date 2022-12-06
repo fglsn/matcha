@@ -88,8 +88,9 @@ export type Images = {
 	images: ImageType[];
 };
 
-export type Like = {
+export type LikeAndMatchStatus = {
 	like: boolean;
+	match: boolean;
 };
 
 export enum AlertStatus {

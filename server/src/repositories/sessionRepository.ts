@@ -53,6 +53,14 @@ const clearSessions = async (): Promise<void> => {
 	await pool.query('truncate table user_sessions');
 };
 
+const clearSessionsByUserId = async (userId: string): Promise<void> => {
+	const query = {
+		text: 'delete from user_sessions where user_id = $1',
+		values: [userId]
+	};
+	await pool.query(query);
+};
+
 const clearExpiredSessions = async (): Promise<void> => {
 	await pool.query('delete * from user_sessions where expires_at < now()');
 };
@@ -65,4 +73,4 @@ const updateSessionEmailByUserId = async (userId: string, email: string): Promis
 	await pool.query(query);
 };
 
-export { addSession, findSessionBySessionId, findSessionsByUserId, clearSessions, clearExpiredSessions, updateSessionEmailByUserId };
+export { addSession, findSessionBySessionId, findSessionsByUserId, clearSessions, clearSessionsByUserId, clearExpiredSessions, updateSessionEmailByUserId };

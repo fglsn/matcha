@@ -1,14 +1,14 @@
 import supertest from 'supertest';
-import { describe, expect } from '@jest/globals';
 import { app } from '../app';
+import { describe, expect } from '@jest/globals';
 import { newUser, loginUser, infoProfile, bioTooLong, bioMax, defaultCoordinates, ipAddress } from './test_helper';
-import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { initLoggedUser } from './test_helper_fns';
 import { clearSessions } from '../repositories/sessionRepository';
+import { clearUsers } from '../repositories/userRepository';
 import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
 
 const api = supertest(app);
-
 jest.setTimeout(10000);
 
 jest.mock('../services/location');
@@ -17,21 +17,13 @@ const getLocationMock = jest.mocked(getLocation);
 
 let loginRes = <supertest.Response>{};
 
-const initLoggedUser = async () => {
-	const user = await findUserByUsername(newUser.username);
-	const activationCode = user?.activationCode;
-	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
-	return res;
-};
-
 describe('check access to profile page', () => {
 	let id = <string>'';
 	beforeAll(async () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 		id = <string>JSON.parse(loginRes.text).id;
 	});
 	test('logged user can visit profile page', async () => {
@@ -91,7 +83,7 @@ describe('Check responses and requests to api/profile', () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser();
+		loginRes = await initLoggedUser(newUser.username, loginUser);
 		id = <string>JSON.parse(loginRes.text).id;
 		resFromProfile = await getResFromProfile(loginRes);
 	});

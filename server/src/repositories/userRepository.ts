@@ -221,6 +221,15 @@ const userHasPhotos = async (userId: string): Promise<boolean> => {
 	return true;
 };
 
+const increaseReportCount = async (userId: string): Promise<number> => {
+	const query = {
+		text: 'update users set reports_count = reports_count + 1 where id = $1 returning reports_count',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['reports_count'];
+};
+
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8, lat = $9, lon = $10, location_string = $11 where id = $1',
@@ -258,5 +267,6 @@ export {
 	getCompletenessByUserId,
 	userDataIsNotNULL,
 	userHasPhotos,
-	updateCompletenessByUserId
+	updateCompletenessByUserId,
+	increaseReportCount
 };
