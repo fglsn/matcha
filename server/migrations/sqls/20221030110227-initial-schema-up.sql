@@ -17,7 +17,8 @@ create table users
 	orientation varchar,
 	bio varchar,
 	tags varchar [],
-	is_complete boolean not null default false
+	is_complete boolean not null default false,
+	reports_count int not null default 0
 );
 
 create table user_sessions
@@ -87,4 +88,10 @@ create table block_entries (
 	blocked_user_id bigserial not null,
 	blocking_user_id bigserial not null,
 	primary key (blocked_user_id, blocking_user_id)
-)
+);
+
+create table report_entries (
+	reported_user_id bigserial not null,
+	reporting_user_id bigserial not null,
+	primary key (reported_user_id, reporting_user_id)
+);

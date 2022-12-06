@@ -9,7 +9,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -207,6 +207,17 @@ router.delete(
 	})
 );
 
+router.post(
+	'/:id/report',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`ID path parameter is requried to find profile`, 400);
+		if (req.session.userId === req.params.id) throw new AppError(`You cannot report own profile`, 400);
+		await reportFakeUser(req.params.id, req.session.userId);
+		res.status(200).end();
+	})
+);
 router.post(
 	'/:id/update_email',
 	sessionExtractor,

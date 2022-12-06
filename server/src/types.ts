@@ -148,3 +148,8 @@ export type MatchEntry = {
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };
+
+export type ReportEntry = {
+	reportedUserId: string;
+	reportingUserId: string;
+};
