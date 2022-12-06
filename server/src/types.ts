@@ -144,3 +144,8 @@ export type MatchEntry = {
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };
+
+export interface IOnlineUser {
+	user_id: string;
+	active: number;
+}

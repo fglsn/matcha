@@ -1,6 +1,14 @@
 import pool from '../db';
-// import { getNumber } from '../dbUtils';
+import { getString } from '../dbUtils';
+import { IOnlineUser } from '../types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const userOnlineMapper = (row: any): IOnlineUser => {
+	return {
+		user_id: getString(row['user_id']),
+        active: Number(getString(row['active']))
+	};
+};
 
 const addUserOnline = async (user_id: string, active: number): Promise<void> => {
 	const query = {
@@ -18,12 +26,16 @@ const updateUserOnline = async (user_id: string, active: number): Promise<void> 
 	await pool.query(query);
 };
 
-const isOnlineUser = async (user_id: string, active: number): Promise<void> => {
+const getOnlineUser = async (user_id: string): Promise<IOnlineUser | undefined> => {
 	const query = {
-		text: 'select * where user_id=$1',
-		values: [user_id, active]
+		text: 'select * from users_online where user_id=$1',
+		values: [user_id]
 	};
-	await pool.query(query);
+    const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userOnlineMapper(res.rows[0]);
 };
 
-export {addUserOnline, updateUserOnline, isOnlineUser};
+export {addUserOnline, updateUserOnline, getOnlineUser};

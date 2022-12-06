@@ -6,6 +6,7 @@
 import asyncHandler from 'express-async-handler';
 import { CustomRequest } from '../types';
 import { findSessionBySessionId } from '../repositories/sessionRepository';
+import { updateOnlineUsers } from '../services/users';
 
 export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -31,6 +32,7 @@ export const sessionExtractor = asyncHandler(async (req: CustomRequest, res: any
 		return;
 	}
 	req.session = session;
+	await updateOnlineUsers(session.userId);
 	next();
 });
 

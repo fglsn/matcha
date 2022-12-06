@@ -16,6 +16,7 @@ import { AppError } from '../errors';
 import { getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
 import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
+import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -235,3 +236,14 @@ export const getLikeAndMatchStatusOnVisitedProfile = async (profileId: string, r
 	return { like: await checkLikeEntry(profileId, requestorId), match: await checkMatchEntry(profileId, requestorId) };
 };
 
+export const updateOnlineUsers = async (user_id: string) => {
+	await addUserOnline(user_id, Date.now());
+};
+
+export const queryOnlineUsers = async (user_id: string) => {
+	const maxTimeInactive = 1000 * 10;
+	const onlineUser = await getOnlineUser(user_id);
+	if (!onlineUser) return false;
+	if (Date.now() - onlineUser.active < maxTimeInactive) return true;
+	return false;
+};
