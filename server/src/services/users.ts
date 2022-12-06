@@ -272,6 +272,8 @@ export const reportFakeUser = async (profileId: string, requestorId: string): Pr
 			await clearSessionsByUserId(profileId);
 		}
 	}
+};
+
 export const updateOnlineUsers = async (user_id: string) => {
 	await addUserOnline(user_id, Date.now());
 };
