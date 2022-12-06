@@ -60,6 +60,19 @@ export const infoProfile = {
 	location: 'Helsinki, Finland'
 };
 
+export const infoProfile2 = {
+	username: 'matcha2',
+	firstname: 'lorem',
+	lastname: 'ipsum',
+	birthday: new Date('1999-03-22').toISOString(),
+	gender: 'male',
+	orientation: 'straight',
+	bio: 'born sleepy',
+	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
+	coordinates: defaultCoordinates,
+	location: 'Helsinki, Finland'
+};
+
 export const infoProfilePublic = {
 	username: 'matcha',
 	firstname: 'lorem',
@@ -73,16 +86,16 @@ export const infoProfilePublic = {
 	location: 'Helsinki, Finland'
 };
 
-export const infoProfile2 = {
+export const infoProfilePublic2 = {
 	username: 'matcha2',
 	firstname: 'lorem',
 	lastname: 'ipsum',
-	birthday: new Date('1999-03-22').toISOString(),
+	age: 23,
 	gender: 'male',
 	orientation: 'straight',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
-	coordinates: defaultCoordinates,
+	distance: 2,
 	location: 'Helsinki, Finland'
 };
 

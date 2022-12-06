@@ -127,6 +127,10 @@ export interface SocketCustom extends Socket {
 	session?: Session;
 }
 
+export type BlockEntry = {
+	blockedUserId: string;
+	blockingUserId: string;
+};
 // export interface ServerToClientEvents {
 // 	noArg: () => void;
 // 	basicEmit: (a: number, b: string, c: Buffer) => void;

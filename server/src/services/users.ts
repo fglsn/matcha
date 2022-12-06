@@ -17,6 +17,7 @@ import { getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
 import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
+import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -209,7 +210,14 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 	return profilePublic;
 };
 
-export const likePublicProfile = async (profileId: string, requestorId: string): Promise<void> => {
+export const getLikeAndMatchStatusOnVisitedProfile = async (profileId: string, requestorId: string): Promise<LikeAndMatchStatus> => {
+	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
+	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
+	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	return { like: await checkLikeEntry(profileId, requestorId), match: await checkMatchEntry(profileId, requestorId) };
+};
+
+export const likeUser = async (profileId: string, requestorId: string): Promise<void> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
@@ -219,7 +227,7 @@ export const likePublicProfile = async (profileId: string, requestorId: string):
 	}
 };
 
-export const dislikePublicProfile = async (profileId: string, requestorId: string): Promise<void> => {
+export const dislikeUser = async (profileId: string, requestorId: string): Promise<void> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
@@ -229,11 +237,29 @@ export const dislikePublicProfile = async (profileId: string, requestorId: strin
 	}
 };
 
-export const getLikeAndMatchStatusOnVisitedProfile = async (profileId: string, requestorId: string): Promise<LikeAndMatchStatus> => {
+export const getBlockStatus = async (profileId: string, requestorId: string): Promise<{block: boolean}> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	return { like: await checkLikeEntry(profileId, requestorId), match: await checkMatchEntry(profileId, requestorId) };
+	return { block: await checkBlockEntry(profileId, requestorId)};
+};
+
+export const blockUser = async (profileId: string, requestorId: string): Promise<void> => {
+	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
+	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
+	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	await addBlockEntry(profileId, requestorId);
+	if (await checkLikeEntry(profileId, requestorId))
+		await removeLikeEntry(profileId, requestorId);
+	if (await checkMatchEntry(requestorId, profileId))
+		await removeMatchEntry(profileId, requestorId);
+};
+
+export const unblockUser = async (profileId: string, requestorId: string): Promise<void> => {
+	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
+	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
+	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	await removeBlockEntry(profileId, requestorId);
 };
 
 export const updateOnlineUsers = async (user_id: string) => {

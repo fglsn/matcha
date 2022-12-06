@@ -10,6 +10,7 @@ import { createNewUser } from '../services/users';
 import { NewUser } from '../types';
 import { checkLikeEntry } from '../repositories/likesRepository';
 import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
+import { checkBlockEntry } from '../repositories/blockEntriesRepository';
 // import { clearSessions } from '../repositories/sessionRepository';
 
 export const api = supertest(app);
@@ -59,7 +60,7 @@ export const loginAndPrepareUser = async (user: NewUser, loginUser: { username: 
 
 export const putLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
 	const resFromProfilePage = await api
-		.post(`/api/users/${visited.id}/public_profile/like`)
+		.post(`/api/users/${visited.id}/like`)
 		.set({ Authorization: `bearer ${visitor.token}` })
 		.expect(200);
 
@@ -69,7 +70,7 @@ export const putLike = async (visited: { id: string; token: string }, visitor: {
 
 export const removeLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
 	const resFromProfilePage = await api
-		.delete(`/api/users/${visited.id}/public_profile/like`)
+		.delete(`/api/users/${visited.id}/like`)
 		.set({ Authorization: `bearer ${visitor.token}` })
 		.expect(200);
 
@@ -98,4 +99,14 @@ export const twoUserLikeEachOther = async (userOne: { id: string; token: string 
 	const [res1, res2] = await Promise.all([checkMatchEntry(userOne.id, userTwo.id), checkMatchEntry(userTwo.id, userOne.id)]);
 	expect(res1).toBeTruthy();
 	expect(res2).toBeTruthy();
+};
+
+export const userBlocksAnotherUser = async (userToBlock: { id: string; token: string }, userThatBlocks: { id: string; token: string }) => {
+	await api
+		.post(`/api/users/${userToBlock.id}/block`)
+		.set({ Authorization: `bearer ${userThatBlocks.token}` })
+		.expect(200);
+
+	const blockStatusAtEnd = await checkBlockEntry(userToBlock.id, userThatBlocks.id);
+	expect(blockStatusAtEnd).toBeTruthy();
 };

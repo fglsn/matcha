@@ -22,7 +22,7 @@ describe('like history tests', () => {
 
 	test('like value is false on GET when no like from visitor on visited profile', async () => {
 		const res = await api
-			.get(`/api/users/${visited.id}/public_profile/like`)
+			.get(`/api/users/${visited.id}/like`)
 			.set({ Authorization: `bearer ${visitor.token}` })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -47,7 +47,7 @@ describe('like history tests', () => {
 		await putLike(visited, visitor);
 
 		const res = await api
-			.get(`/api/users/${visited.id}/public_profile/like`)
+			.get(`/api/users/${visited.id}/like`)
 			.set({ Authorization: `bearer ${visitor.token}` })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -137,7 +137,7 @@ describe('like fails on non-valid users', () => {
 		expect(likeStatusAtStart).toBeFalsy();
 
 		const res = await api
-			.post(`/api/users/${visited.id}/public_profile/like`)
+			.post(`/api/users/${visited.id}/like`)
 			.set({ Authorization: `bearer ${token}` })
 			.expect(400)
 			.expect('Content-Type', /application\/json/);
@@ -163,7 +163,7 @@ describe('like fails on non-valid users', () => {
 		expect(likeStatusAtStart).toBeFalsy();
 
 		const res = await api
-			.post(`/api/users/${id}/public_profile/like`)
+			.post(`/api/users/${id}/like`)
 			.set({ Authorization: `bearer ${visitor.token}` })
 			.expect(400)
 			.expect('Content-Type', /application\/json/);

@@ -20,11 +20,11 @@ describe('test matches', () => {
 		userTwo = await loginAndPrepareUser(secondUser, loginUser2);
 	});
 
-	test('match value is false on GET public_profile/like request when no match between users', async () => {
+	test('match value is false on GET user/:id/like request when no match between users', async () => {
 		await putLike(userOne, userTwo);
 
 		const res = await api
-			.get(`/api/users/${userOne.id}/public_profile/like`)
+			.get(`/api/users/${userOne.id}/like`)
 			.set({ Authorization: `bearer ${userTwo.token}` })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -36,12 +36,12 @@ describe('test matches', () => {
 		await twoUserLikeEachOther(userOne, userTwo);
 	});
 
-	test('match value is true on GET public_profile/like request when match between users', async () => {
+	test('match value is true on GET  user/:id/like request when match between users', async () => {
 		await putLike(userOne, userTwo);
 		await putLike(userTwo, userOne);
 
 		const res = await api
-			.get(`/api/users/${userOne.id}/public_profile/like`)
+			.get(`/api/users/${userOne.id}/like`)
 			.set({ Authorization: `bearer ${userTwo.token}` })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
