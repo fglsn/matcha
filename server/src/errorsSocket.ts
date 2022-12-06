@@ -8,9 +8,9 @@ export const socketErrorHandler = (handler: any) => {
 	};
 
 	return (...args: any) => {
-        // const [Socket] = args;
-        // console.log(Socket);
-        
+		// const [Socket] = args;
+		// console.log(Socket);
+
 		try {
 			const ret = handler.apply(this, args);
 			if (ret && typeof ret.catch === 'function') {

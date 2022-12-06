@@ -28,27 +28,33 @@ export const io = new Server(httpServer, {
 });
 io.use(sessionExtractorSocket);
 
-io.on('connection', socketErrorHandler(async (socket: SocketCustom) => {
-	if (!socket.session) return;
-	await updateOnlineUsers(socket.session.userId);
-	void socket.join(socket.session.userId);
-	console.log('client connected: ', socket.id);
-	
-	socket.on('connect_error', (err: { message: any }) => {
-		console.log(`connect_error due to ${err.message}`);
-	});
-	
-	// Online query
-	socket.on('online_query', socketErrorHandler(async (user_id: string, callback: (online: boolean) => void) => {
-		const onlineStatus = await queryOnlineUsers(user_id);
-		callback(onlineStatus);
-		console.log(`online_query: ${onlineStatus}`);
-	}));
+io.on(
+	'connection',
+	socketErrorHandler(async (socket: SocketCustom) => {
+		if (!socket.session) return;
+		await updateOnlineUsers(socket.session.userId);
+		void socket.join(socket.session.userId);
+		console.log('client connected: ', socket.id);
 
-	socket.on('disconnect', (reason: any) => {
-		console.log('client disconnected: ', socket.id, reason);
-	});
-}));
+		socket.on('connect_error', (err: { message: any }) => {
+			console.log(`connect_error due to ${err.message}`);
+		});
+
+		// Online query
+		socket.on(
+			'online_query',
+			socketErrorHandler(async (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => {
+				const onlineStatus = await queryOnlineUsers(user_id);
+				callback(onlineStatus);
+				console.log(`online_query: ${onlineStatus.online}`);
+			})
+		);
+
+		socket.on('disconnect', (reason: any) => {
+			console.log('client disconnected: ', socket.id, reason);
+		});
+	})
+);
 
 app.use(express.json({ limit: '50mb' }));
 

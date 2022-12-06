@@ -140,7 +140,7 @@ export type BlockEntry = {
 // export interface ClientToServerEvents {
 // 	hello: () => void;
 // }
-  
+
 // export interface InterServerEvents {
 // 	ping: () => void;
 // }

@@ -237,11 +237,11 @@ export const dislikeUser = async (profileId: string, requestorId: string): Promi
 	}
 };
 
-export const getBlockStatus = async (profileId: string, requestorId: string): Promise<{block: boolean}> => {
+export const getBlockStatus = async (profileId: string, requestorId: string): Promise<{ block: boolean }> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	return { block: await checkBlockEntry(profileId, requestorId)};
+	return { block: await checkBlockEntry(profileId, requestorId) };
 };
 
 export const blockUser = async (profileId: string, requestorId: string): Promise<void> => {
@@ -249,10 +249,8 @@ export const blockUser = async (profileId: string, requestorId: string): Promise
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
 	await addBlockEntry(profileId, requestorId);
-	if (await checkLikeEntry(profileId, requestorId))
-		await removeLikeEntry(profileId, requestorId);
-	if (await checkMatchEntry(requestorId, profileId))
-		await removeMatchEntry(profileId, requestorId);
+	if (await checkLikeEntry(profileId, requestorId)) await removeLikeEntry(profileId, requestorId);
+	if (await checkMatchEntry(requestorId, profileId)) await removeMatchEntry(profileId, requestorId);
 };
 
 export const unblockUser = async (profileId: string, requestorId: string): Promise<void> => {
@@ -267,9 +265,9 @@ export const updateOnlineUsers = async (user_id: string) => {
 };
 
 export const queryOnlineUsers = async (user_id: string) => {
-	const maxTimeInactive = 1000 * 10;
+	const maxTimeInactive = 1000 * 60 * 2;
 	const onlineUser = await getOnlineUser(user_id);
-	if (!onlineUser) return false;
-	if (Date.now() - onlineUser.active < maxTimeInactive) return true;
-	return false;
+	if (!onlineUser) throw new Error('No record of this user being active');
+	if (Date.now() - onlineUser.active < maxTimeInactive) return { online: true, lastActive: onlineUser.active };
+	return { online: false, lastActive: onlineUser.active };
 };
