@@ -16,6 +16,7 @@ import { AppError } from '../errors';
 import { getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
 import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
+import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 import { addReportEntry } from '../repositories/reportEntriesRepository';
 
@@ -271,4 +272,14 @@ export const reportFakeUser = async (profileId: string, requestorId: string): Pr
 			await clearSessionsByUserId(profileId);
 		}
 	}
+export const updateOnlineUsers = async (user_id: string) => {
+	await addUserOnline(user_id, Date.now());
+};
+
+export const queryOnlineUsers = async (user_id: string) => {
+	const maxTimeInactive = 1000 * 60 * 2;
+	const onlineUser = await getOnlineUser(user_id);
+	if (!onlineUser) throw new Error('No record of this user being active');
+	if (Date.now() - onlineUser.active < maxTimeInactive) return { online: true, lastActive: onlineUser.active };
+	return { online: false, lastActive: onlineUser.active };
 };

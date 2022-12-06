@@ -140,7 +140,7 @@ export type BlockEntry = {
 // export interface ClientToServerEvents {
 // 	hello: () => void;
 // }
-  
+
 // export interface InterServerEvents {
 // 	ping: () => void;
 // }
@@ -153,3 +153,7 @@ export type ReportEntry = {
 	reportedUserId: string;
 	reportingUserId: string;
 };
+export interface IOnlineUser {
+	user_id: string;
+	active: number;
+}
