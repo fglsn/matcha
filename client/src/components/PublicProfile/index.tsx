@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { socket } from '../../services/socket';
 //prettier-ignore
 import { getBlockStatus, getLikeAndMatchStatus, getPhotos, getPublicProfile } from '../../services/profile';
 import { styled, Alert, Container, Paper, Typography } from '@mui/material';
@@ -12,6 +11,7 @@ import ReportDialog from './ReportDialog';
 import LoadingIcon from '../LoadingIcon';
 import GenderIcon from './GenderIcon';
 import IconGroup from './IconGroup';
+import { OnlineIndicator } from './OnlineIndicator';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: 'primary',
@@ -52,37 +52,6 @@ const StyledLink = styled(Link)`
 	color: #ffc600;
 	text-decoration: none;
 `;
-
-const OnlineIndicator = ({ user_id }: { user_id: string }) => {
-	const callback = (online: boolean) => {
-		setOnline(online);
-	};
-	const [online, setOnline] = useState(false);
-	// Query online status and listen for response
-	useEffect(() => {
-		console.log('uf');
-		try {
-			socket.emit('online_query', user_id, callback);
-		} catch (err) {
-			console.log(err);
-		}
-		const intervalId = setInterval(() => {
-			console.log('interval');
-			try {
-				socket.emit('online_query', user_id, callback);
-			} catch (err) {
-				console.log(err);
-			}
-		}, 5000);
-		return () => clearInterval(intervalId);
-	}, [user_id]);
-
-	return online ? (
-		<div className="round-green">Online</div>
-	) : (
-		<div className="round-gray">Offline</div>
-	);
-};
 
 const PublicProfile = () => {
 	const { id } = useParams();
