@@ -59,7 +59,7 @@ export const getAuth = (): Auth => {
 // };
 
 export	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3001', {
-    autoConnect: true,
+    autoConnect: false,
     reconnection: true,
     auth: getAuth()
 });

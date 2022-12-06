@@ -12,7 +12,7 @@ import Footer from './components/Footer';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { StateContext } from './state';
 import TestAuth from './components/TestAuth';
 //import AuthRequired from './components/AuthRequired';
@@ -21,6 +21,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { SnackbarProvider } from 'notistack';
 import UpdateEmail from './components/UpdateEmail';
 import PublicProfile from './components/PublicProfile';
+import { socket } from './services/socket';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -40,6 +41,15 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: any, resetErrorBo
 const App = () => {
 	const [{ loggedUser }] = useContext(StateContext);
 
+	useEffect(() => {
+		if (loggedUser) {
+			socket.auth = {
+				sessionId: loggedUser.token,
+				user_id: loggedUser.id,
+			};
+			if (!socket.connected) socket.connect();
+		}
+	}, [loggedUser]);
 	console.log(loggedUser); //rm later
 
 	return (
