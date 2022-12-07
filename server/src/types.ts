@@ -14,7 +14,6 @@ export type Coordinates = {
 };
 
 export type UserData = {
-	//add tags & photos later
 	id: string;
 	username: string;
 	firstname: string;
@@ -140,7 +139,7 @@ export type BlockEntry = {
 // export interface ClientToServerEvents {
 // 	hello: () => void;
 // }
-  
+
 // export interface InterServerEvents {
 // 	ping: () => void;
 // }
@@ -148,3 +147,12 @@ export type MatchEntry = {
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };
+
+export type ReportEntry = {
+	reportedUserId: string;
+	reportingUserId: string;
+};
+export interface IOnlineUser {
+	user_id: string;
+	active: number;
+}

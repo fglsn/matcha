@@ -11,6 +11,7 @@ import { NewUser } from '../types';
 import { checkLikeEntry } from '../repositories/likesRepository';
 import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
 import { checkBlockEntry } from '../repositories/blockEntriesRepository';
+import { checkReportEntry } from '../repositories/reportEntriesRepository';
 // import { clearSessions } from '../repositories/sessionRepository';
 
 export const api = supertest(app);
@@ -109,4 +110,14 @@ export const userBlocksAnotherUser = async (userToBlock: { id: string; token: st
 
 	const blockStatusAtEnd = await checkBlockEntry(userToBlock.id, userThatBlocks.id);
 	expect(blockStatusAtEnd).toBeTruthy();
+};
+
+export const userReportsAnotherUser = async (userToRepot: { id: string; token: string }, reportingUser: { id: string; token: string }) => {
+	await api
+		.post(`/api/users/${userToRepot.id}/report`)
+		.set({ Authorization: `bearer ${reportingUser.token}` })
+		.expect(200);
+
+	const reportStatusAtEnd = await checkReportEntry(userToRepot.id, reportingUser.id);
+	expect(reportStatusAtEnd).toBeTruthy();
 };

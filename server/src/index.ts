@@ -10,7 +10,6 @@ const PORT = 3001;
 
 // io.listen(SOCKET_PORT);
 
-
 httpServer.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });

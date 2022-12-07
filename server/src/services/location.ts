@@ -56,7 +56,7 @@ export const getLocation = async (coordinates: Coordinates) => {
 		if (!response.data) {
 			return '';
 		}
-		console.log(response.data);
+		// console.log(response.data);
 		const location = response.data.data[0];
 		const neighbourhood = location.neighbourhood ? `${location.neighbourhood}, ` : '';
 		const city = location.locality ? `${location.locality}, ` : '';
