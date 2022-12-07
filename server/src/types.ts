@@ -14,7 +14,6 @@ export type Coordinates = {
 };
 
 export type UserData = {
-	//add tags & photos later
 	id: string;
 	username: string;
 	firstname: string;
