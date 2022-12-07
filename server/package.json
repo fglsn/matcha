@@ -15,7 +15,8 @@
 		"prettier": "prettier --config .prettierrc '**/*.ts' --write",
 		"lint": "eslint --ext .ts .",
 		"tsc": "tsc",
-		"populate": "NODE_ENV=development ts-node-dev src/populateDb.ts"
+		"populate": "NODE_ENV=development ts-node-dev src/populateUsers.ts",
+		"populate:likes": "NODE_ENV=development ts-node-dev src/populateLikes.ts"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^7.6.0",

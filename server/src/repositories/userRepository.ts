@@ -45,10 +45,20 @@ const userDataMapper = (row: any): UserData => {
 	};
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const idMapper = (row: any): { id: string } => {
+	return { id: getString(row['id']) };
+};
+
 //for tests
 const getAllUsers = async (): Promise<User[]> => {
 	const res = await pool.query('select * from users');
 	return res.rows.map((row) => userMapper(row));
+};
+
+const getIdList = async (): Promise<{id: string}[]> => {
+	const res = await pool.query('select id from users');
+	return res.rows.map((row) => idMapper(row));
 };
 
 const getPasswordHash = async (userId: string): Promise<string> => {
@@ -252,6 +262,7 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 
 export {
 	getAllUsers,
+	getIdList,
 	getPasswordHash,
 	addNewUser,
 	clearUsers,
