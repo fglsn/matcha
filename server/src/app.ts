@@ -36,10 +36,6 @@ io.on(
 		void socket.join(socket.session.userId);
 		console.log('client connected: ', socket.id);
 
-		socket.on('connect_error', (err: { message: any }) => {
-			console.log(`connect_error due to ${err.message}`);
-		});
-
 		// Online query
 		socket.on(
 			'online_query',
@@ -50,6 +46,10 @@ io.on(
 			})
 		);
 
+		socket.on('connect_error', (err: { message: any }) => {
+			console.log(`connect_error due to ${err.message}`);
+		});
+		
 		socket.on('disconnect', (reason: any) => {
 			console.log('client disconnected: ', socket.id, reason);
 		});
