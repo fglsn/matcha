@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -14,7 +12,7 @@ import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { SocketCustom } from './types';
+import { CallbackSucess, SocketCustom } from './types';
 import { socketErrorHandler } from './errorsSocket';
 import { queryOnlineUsers, updateOnlineUsers } from './services/users';
 
@@ -39,18 +37,18 @@ io.on(
 		// Online query
 		socket.on(
 			'online_query',
-			socketErrorHandler(async (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => {
+			socketErrorHandler(async (user_id: string, callback: CallbackSucess) => {
 				const onlineStatus = await queryOnlineUsers(user_id);
 				callback(onlineStatus);
 				console.log(`online_query: ${onlineStatus.online}`);
 			})
 		);
 
-		socket.on('connect_error', (err: { message: any }) => {
+		socket.on('connect_error', (err: { message: string }) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
 
-		socket.on('disconnect', (reason: any) => {
+		socket.on('disconnect', (reason: string) => {
 			console.log('client disconnected: ', socket.id, reason);
 		});
 	})

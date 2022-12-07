@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const socketErrorHandler = (handler: any) => {
-	const handleError = (err: any) => {
+	const handleError = (err: Error) => {
 		console.error('please handle me', err);
 	};
 
