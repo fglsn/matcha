@@ -49,7 +49,7 @@ io.on(
 		socket.on('connect_error', (err: { message: any }) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
-		
+
 		socket.on('disconnect', (reason: any) => {
 			console.log('client disconnected: ', socket.id, reason);
 		});
