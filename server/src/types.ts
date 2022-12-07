@@ -130,19 +130,22 @@ export type BlockEntry = {
 	blockedUserId: string;
 	blockingUserId: string;
 };
-// export interface ServerToClientEvents {
-// 	noArg: () => void;
-// 	basicEmit: (a: number, b: string, c: Buffer) => void;
-// 	withAck: (d: string, callback: (e: number) => void) => void;
-// }
 
-// export interface ClientToServerEvents {
-// 	hello: () => void;
-// }
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ServerToClientEvents {
+	// receive_message: (message: any) => void;
+	// receive_notification: (message: any) => void;
+	// online_response: (data: any) => void;
+}
 
-// export interface InterServerEvents {
-// 	ping: () => void;
-// }
+export interface ClientToServerEvents {
+	// send_message: (match_id: number, payload: {}) => void;
+	// send_notification: (receiver_id: number, notification: {}) => void;
+	// set_user: (receiver_id: number) => void;
+	// active_chat: (match_id: number) => void;
+	online_query: (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => void;
+	auth: { token: string; user_id: number };
+}
 export type MatchEntry = {
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
@@ -156,3 +159,6 @@ export interface IOnlineUser {
 	user_id: string;
 	active: number;
 }
+
+export type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number }) => void;
+export type CallbackTimeout = () => void;

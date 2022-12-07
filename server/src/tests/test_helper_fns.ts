@@ -7,7 +7,7 @@ import { DataURL } from './test_helper_images';
 import { findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
-import { NewUser } from '../types';
+import { CallbackSucess, CallbackTimeout, NewUser } from '../types';
 import { checkLikeEntry } from '../repositories/likesRepository';
 import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
 import { checkBlockEntry } from '../repositories/blockEntriesRepository';
@@ -120,4 +120,28 @@ export const userReportsAnotherUser = async (userToRepot: { id: string; token: s
 
 	const reportStatusAtEnd = await checkReportEntry(userToRepot.id, reportingUser.id);
 	expect(reportStatusAtEnd).toBeTruthy();
+};
+
+export const socketAuth = (id: string, token: string) => {
+	return {
+		sessionId: token,
+		user_id: id
+	};
+};
+
+export const withTimeout = (onSuccess: CallbackSucess, onTimeout: CallbackTimeout, timeout: number) => {
+	let called = false;
+
+	const timer = setTimeout(() => {
+		if (called) return;
+		called = true;
+		onTimeout();
+	}, timeout);
+
+	return (...args: [{ online: boolean; lastActive: number }]) => {
+		if (called) return;
+		called = true;
+		clearTimeout(timer);
+		onSuccess.apply(this, args);
+	};
 };
