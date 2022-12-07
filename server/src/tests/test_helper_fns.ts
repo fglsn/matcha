@@ -122,23 +122,23 @@ export const userReportsAnotherUser = async (userToRepot: { id: string; token: s
 	expect(reportStatusAtEnd).toBeTruthy();
 };
 
-export const socketAuth = (id: string, token: string) =>{
+export const socketAuth = (id: string, token: string) => {
 	return {
 		sessionId: token,
 		user_id: id
 	};
 };
 
-export const withTimeout = (onSuccess: CallbackSucess, onTimeout: CallbackTimeout, timeout:number) => {
+export const withTimeout = (onSuccess: CallbackSucess, onTimeout: CallbackTimeout, timeout: number) => {
 	let called = false;
-  
+
 	const timer = setTimeout(() => {
 		if (called) return;
 		called = true;
 		onTimeout();
 	}, timeout);
-  
-	return (...args: [{ online: boolean; lastActive: number; }]) => {
+
+	return (...args: [{ online: boolean; lastActive: number }]) => {
 		if (called) return;
 		called = true;
 		clearTimeout(timer);

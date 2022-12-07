@@ -144,16 +144,7 @@ export interface ClientToServerEvents {
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
 	// active_chat: (match_id: number) => void;
-	online_query: (
-		user_id: string,
-		callback: ({
-			online,
-			lastActive
-		}: {
-			online: boolean;
-			lastActive: number;
-		}) => void
-	) => void;
+	online_query: (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => void;
 	auth: { token: string; user_id: number };
 }
 export type MatchEntry = {
@@ -170,5 +161,5 @@ export interface IOnlineUser {
 	active: number;
 }
 
-export type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number; }) => void;
+export type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number }) => void;
 export type CallbackTimeout = () => void;
