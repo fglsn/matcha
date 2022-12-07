@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { updateCompletenessByUserId, updateUserDataByUserId } from './repositories/userRepository';
-import { activateAccount, createNewUser } from './services/users';
+import { activateAccount, createNewUser, updateUserPhotos } from './services/users';
 import { NewUser, Orientation, UpdateUserProfile } from './types';
+import { parseImages } from './validators/imgValidators';
 import { getLocation } from './services/location';
 import { Tags } from './utils/tags';
 
 import { faker } from '@faker-js/faker/locale/fi';
+import { createAvatar } from '@dicebear/avatars';
+import * as style from '@dicebear/big-ears';
+import { Resvg } from '@resvg/resvg-js';
 
 const generateFakeUser = () => {
 	const gender = faker.name.sexType();
@@ -69,6 +73,12 @@ export const createAndPrepareUser = async () => {
 
 	await updateUserDataByUserId(createdUser.id, fakeProfileData);
 
+	const size = 612;
+	const avatar = createAvatar(style, { size });
+	const resvg = new Resvg(avatar);
+	const png = `data:image/png;base64,${resvg.render().asPng().toString('base64')}`;
+	const images = await parseImages({ images: [{ dataURL: png }] });
+	await updateUserPhotos(images, createdUser.id);
 
 	await updateCompletenessByUserId(createdUser.id, true);
 };
