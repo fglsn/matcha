@@ -14,7 +14,8 @@
 		"migrate:test": "db-migrate up -e test",
 		"prettier": "prettier --config .prettierrc '**/*.ts' --write",
 		"lint": "eslint --ext .ts .",
-		"tsc": "tsc"
+		"tsc": "tsc",
+		"populate": "NODE_ENV=development ts-node-dev src/populateDb.ts"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^7.6.0",

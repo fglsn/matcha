@@ -17,7 +17,6 @@ import { Server } from 'socket.io';
 import { SocketCustom } from './types';
 import { socketErrorHandler } from './errorsSocket';
 import { queryOnlineUsers, updateOnlineUsers } from './services/users';
-import { createAndPrepareUser } from './populateDb';
 
 export const app = express();
 export const httpServer = createServer(app);
@@ -64,17 +63,6 @@ app.use(cors());
 dotenv.config();
 
 app.use(sessionIdExtractor);
-
-void (async () => {
-	try {
-		for (let i = 0; i < 15; i++) {
-			await createAndPrepareUser();
-		}
-	} catch (e) {
-		console.log(e);
-	}
-})();
-
 
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
