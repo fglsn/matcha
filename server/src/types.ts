@@ -67,6 +67,7 @@ export type User = BaseUser & {
 	coordinates: Coordinates;
 	location: string;
 	complete: boolean;
+	reportsCount: number;
 };
 
 export type UserCompletness = { complete: boolean };
