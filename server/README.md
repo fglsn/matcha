@@ -50,9 +50,11 @@ If Postgres drop database error: pq: cannot drop the currently open database:
 &emsp; `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'tablename';`  
 After that can drop all tables.  
   
-**Populate**
-  
+**Populate**  
+Populate users table:  
 &emsp; `npm run populate`  
+Populate likes and matches:  
+&emsp; `npm run populate:likes`  
   
 **Tests**  
 Run test migration:  
