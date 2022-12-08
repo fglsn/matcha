@@ -95,3 +95,10 @@ create table report_entries (
 	reporting_user_id bigserial not null,
 	primary key (reported_user_id, reporting_user_id)
 );
+
+create table notification_entries (
+	id bigserial primary key,
+	notified_user_id bigserial not null,
+	acting_user_id bigserial not null,
+	type varchar not null
+);

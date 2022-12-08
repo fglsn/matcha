@@ -163,3 +163,16 @@ export interface IOnlineUser {
 
 export type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number }) => void;
 export type CallbackTimeout = () => void;
+
+export type NotificationEntry = {
+	notified_user_id: string,
+	acting_user_id: string,
+	type: string
+};
+
+export type NotificationMessage = {
+	type: string,
+	message: string
+};
+
+export type NotificationType = 'like' | 'dislike' | 'visit' | 'match';

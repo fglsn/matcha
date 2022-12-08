@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { AppError } from '../errors';
+import { AppError, ValidationError } from '../errors';
 import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 import { getAllUsers, getUserDataByUserId, updateUserDataByUserId } from '../repositories/userRepository';
@@ -9,7 +9,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -308,6 +308,36 @@ router.get(
 		res.status(200).json(completeness);
 	})
 );
+
+router.get(
+	'/notifications/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		if (!req.query.page && !req.query.limit) {
+			const notifications = await getNotifications(req.session.userId);
+			res.status(200).json(notifications);
+		} 
+		if (req.query.page && req.query.limit) {
+			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit)) throw new ValidationError(`Limit and offset should be string represented integers`);
+			const notifications = await getNotificationsPage(req.session.userId, req.query.page , req.query.limit);
+			res.status(200).json(notifications);
+		}
+		throw new AppError(`This api expects page and limit query params or no params to get all notifications`, 400);
+	})
+);
+
+// router.get(
+// 	'/notifications_page/',
+// 	sessionExtractor,
+// 	asyncHandler(async (req: CustomRequest, res) => {
+// 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+// 		if (!req.query.page || !req.query.limit) throw new ValidationError(`Limit and offset were not provided`);
+// 		if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit)) throw new ValidationError(`Limit and offset should be string represented integers`);
+// 		const notifications = await getNotificationsPage(req.session.userId, req.query.page , req.query.limit);
+// 		res.status(200).json(notifications);
+// 	})
+// );
 
 // router.get(
 // 	'/:id',
