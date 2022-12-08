@@ -7,6 +7,7 @@ export const newUser: NewUser = {
 	firstname: 'lorem',
 	lastname: 'ipsum'
 };
+
 export const secondUser: NewUser = {
 	username: 'matcha2',
 	email: 'matcha2@test.com',
@@ -61,7 +62,8 @@ export const infoProfile = {
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	coordinates: defaultCoordinates,
-	location: 'Helsinki, Finland'
+	location: 'Helsinki, Finland',
+	fameRating: 45
 };
 
 export const infoProfile2 = {
@@ -74,7 +76,8 @@ export const infoProfile2 = {
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	coordinates: defaultCoordinates,
-	location: 'Helsinki, Finland'
+	location: 'Helsinki, Finland',
+	fameRating: 47
 };
 
 export const infoProfilePublic = {
@@ -87,7 +90,8 @@ export const infoProfilePublic = {
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	distance: 2,
-	location: 'Helsinki, Finland'
+	location: 'Helsinki, Finland',
+	fameRating: 47
 };
 
 export const infoProfilePublic2 = {
@@ -100,7 +104,8 @@ export const infoProfilePublic2 = {
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	distance: 2,
-	location: 'Helsinki, Finland'
+	location: 'Helsinki, Finland',
+	fameRating: 46
 };
 
 export const bioTooLong =
