@@ -15,6 +15,7 @@ import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 import Tags from './Tags';
 import Location from './Location';
+import FameRating from './FameRating';
 
 import profileService from '../../services/profile';
 import { useStateValue } from '../../state';
@@ -36,6 +37,13 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 	}
 }));
 
+const StyledRow = styled('div')`
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+`;
+
 export const StyledLink = styled(Link)`
 	color: #ffc600;
 	text-decoration: none;
@@ -48,7 +56,7 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 		backgroundColor: theme.palette.common.white,
 		color: 'rgba(0, 0, 0, 0.87)',
 		boxShadow: theme.shadows[1],
-		fontSize: 11,
+		fontSize: 11
 	}
 }));
 
@@ -90,7 +98,8 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
-			loggedUser && (await profileService.updateProfile(loggedUser.id, newUserData));
+			loggedUser &&
+				(await profileService.updateProfile(loggedUser.id, newUserData));
 			successCallback(`Profile settings were updated!.`);
 		} catch (err) {
 			console.log('Error in updateUserData (BasicInfoSection on Profile) ' + err); //rm later
@@ -119,13 +128,17 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<LightTooltip title="Visit own profile page" placement="top-start">
-					<Typography variant="h5" mb={3}>
-						<StyledLink to={`/profile/${loggedUser?.id}`}>
-							@{loggedUser?.username.toUpperCase()}
-						</StyledLink>
-					</Typography>
-				</LightTooltip>
+				<StyledRow>
+					<LightTooltip title="Visit own profile page" placement="top-start">
+						<Typography variant="h5" mb={3}>
+							<StyledLink to={`/profile/${loggedUser?.id}`}>
+								@{loggedUser?.username.toUpperCase()}
+							</StyledLink>
+						</Typography>
+					</LightTooltip>
+					<FameRating fameRating={userData.fameRating} />
+				</StyledRow>
+
 				<Grid container spacing={2}>
 					<Grid item xs={12} mt={1}>
 						<strong>First name*</strong>

@@ -42,6 +42,7 @@ export type UserData = {
 	bio: string | undefined;
 	coordinates: Coordinates;
 	location: string;
+	fameRating: number;
 };
 
 export type ProfilePublic = {
@@ -56,6 +57,7 @@ export type ProfilePublic = {
 	tags: string[];
 	distance: number;
 	location: string;
+	fameRating: number;
 };
 
 export type NewUserData = {
