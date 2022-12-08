@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { faker } from '@faker-js/faker/locale/fi';
-import { updateCompletenessByUserId, updateUserDataByUserId } from './repositories/userRepository';
+import { updateCompletenessByUserId, updateFameRatingByUserId, updateUserDataByUserId } from './repositories/userRepository';
 import { activateAccount, createNewUser, updateUserPhotos } from './services/users';
 import { NewUser, Orientation, UpdateUserProfile } from './types';
 import { parseImages } from './validators/imgValidators';
@@ -134,8 +134,6 @@ const createAndPrepareUser = async () => {
 		location
 	};
 
-	await updateUserDataByUserId(createdUser.id, fakeProfileData);
-
 	const size = 612;
 	const hair = fakeUser.gender === 'male' ? faker.helpers.arrayElement(shortHair) : faker.helpers.arrayElement(longHair);
 	const avatar = createAvatar(style, { size, hair: [hair], mouth: [faker.helpers.arrayElement(mouth)] });
@@ -144,14 +142,17 @@ const createAndPrepareUser = async () => {
 	const images = await parseImages({ images: [{ dataURL: png }] });
 	await updateUserPhotos(images, createdUser.id);
 
+	await updateUserDataByUserId(createdUser.id, fakeProfileData);
+
 	await updateCompletenessByUserId(createdUser.id, true);
+	await updateFameRatingByUserId(createdUser.id, 5);
 };
 
 dotenv.config();
 
 void (async () => {
 	try {
-		for (let i = 0; i < 150; i++) {
+		for (let i = 0; i < 75; i++) {
 			await createAndPrepareUser();
 		}
 	} catch (e) {
