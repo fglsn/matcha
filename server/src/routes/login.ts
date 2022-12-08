@@ -35,6 +35,11 @@ router.post(
 			return;
 		}
 
+		if (user.reportsCount > 10) {
+			res.status(401).json({ error: 'Account is blocked due to too many reports. We are sorry.' });
+			return;
+		}
+
 		const session = await addSession({ userId: user.id, username: user.username, email: user.email });
 		res.status(200).send({ token: session.sessionId, username: user?.username, id: user?.id, complete: user?.complete });
 	})

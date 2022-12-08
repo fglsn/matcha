@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
-import { clearUsers } from '../repositories/userRepository';
+import { clearUsers, findUserByUsername, increaseReportCount } from '../repositories/userRepository';
 import { newUser, loginUser, secondUser, loginUser2 } from './test_helper';
-import { loginAndPrepareUser, userReportsAnotherUser } from './test_helper_fns';
+import { api, loginAndPrepareUser, userReportsAnotherUser } from './test_helper_fns';
 import { clearLikes } from '../repositories/likesRepository';
 import { checkBlockEntry, clearBlockEntries } from '../repositories/blockEntriesRepository';
 import { checkReportEntry, getReportsCountByUserId } from '../repositories/reportEntriesRepository';
+import { findSessionsByUserId } from '../repositories/sessionRepository';
 
 jest.setTimeout(10000);
 jest.mock('../services/location');
@@ -54,5 +55,28 @@ describe('test report fake account functionality', () => {
 
 		const reportsCountAtEnd = await getReportsCountByUserId(userToReport.id);
 		expect(reportsCountAtEnd).toBe(1);
+	});
+
+	test('user cannot login after 10 fake reports ', async () => {
+		const sessionAtStart = await findSessionsByUserId(userToReport.id);
+		expect(sessionAtStart).toBeDefined();
+
+		let reportCount;
+		for (let i = 0; i < 10; i++) {
+			reportCount = await increaseReportCount(userToReport.id);
+		}
+		expect(reportCount).toBe(10);
+
+		await userReportsAnotherUser(userToReport, reportingUser);
+
+		const newReportsCount = await findUserByUsername(secondUser?.username);
+		expect(newReportsCount?.reportsCount).toBe(11);
+
+		const sessions = await findSessionsByUserId(userToReport.id);
+		expect(sessions).not.toBeDefined();
+
+		const res = await api.post('/api/login').send(loginUser2).expect(401);
+
+		expect(res.body.error).toContain('Account is blocked');
 	});
 });

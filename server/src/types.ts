@@ -14,7 +14,6 @@ export type Coordinates = {
 };
 
 export type UserData = {
-	//add tags & photos later
 	id: string;
 	username: string;
 	firstname: string;
@@ -68,6 +67,7 @@ export type User = BaseUser & {
 	coordinates: Coordinates;
 	location: string;
 	complete: boolean;
+	reportsCount: number;
 };
 
 export type UserCompletness = { complete: boolean };
