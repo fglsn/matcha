@@ -4,7 +4,7 @@ import { loginAndPrepareUser, socketAuth } from './test_helper_fns';
 import { clearUsers } from '../repositories/userRepository';
 import { newUser, loginUser } from './test_helper';
 import { ServerToClientEvents, ClientToServerEvents } from '../types';
-jest.setTimeout(1000);
+jest.setTimeout(5000);
 jest.mock('../services/location');
 
 let userOne: { id: string; token: string };
