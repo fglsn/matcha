@@ -17,7 +17,8 @@ const userMapper = (row: any): User => {
 		activationCode: getString(row['activation_code']),
 		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) },
 		location: getString(row['location_string']),
-		complete: getBoolean(row['is_complete'])
+		complete: getBoolean(row['is_complete']),
+		reportsCount: getNumber(row['reports_count'])
 	};
 };
 
@@ -45,10 +46,20 @@ const userDataMapper = (row: any): UserData => {
 	};
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const idMapper = (row: any): { id: string } => {
+	return { id: getString(row['id']) };
+};
+
 //for tests
 const getAllUsers = async (): Promise<User[]> => {
 	const res = await pool.query('select * from users');
 	return res.rows.map((row) => userMapper(row));
+};
+
+const getIdList = async (): Promise<{id: string}[]> => {
+	const res = await pool.query('select id from users');
+	return res.rows.map((row) => idMapper(row));
 };
 
 const getPasswordHash = async (userId: string): Promise<string> => {
@@ -230,6 +241,15 @@ const increaseReportCount = async (userId: string): Promise<number> => {
 	return <number>res.rows[0]['reports_count'];
 };
 
+const getReportCount = async (userId: string): Promise<number> => {
+	const query = {
+		text: 'select reports_count from users where id = $1 returning reports_count',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['reports_count'];
+};
+
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8, lat = $9, lon = $10, location_string = $11 where id = $1',
@@ -252,6 +272,7 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 
 export {
 	getAllUsers,
+	getIdList,
 	getPasswordHash,
 	addNewUser,
 	clearUsers,
@@ -268,5 +289,6 @@ export {
 	userDataIsNotNULL,
 	userHasPhotos,
 	updateCompletenessByUserId,
-	increaseReportCount
+	increaseReportCount,
+	getReportCount
 };
