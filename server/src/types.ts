@@ -25,6 +25,7 @@ export type UserData = {
 	tags: string[] | undefined;
 	coordinates: Coordinates;
 	location: string;
+	fameRating: number;
 };
 
 export type ProfilePublic = {
@@ -39,6 +40,7 @@ export type ProfilePublic = {
 	tags: string[];
 	distance: number;
 	location: string;
+	fameRating: number;
 };
 
 export type UpdateUserProfile = UpdateUserProfileWithoutLocation & { location: string };
@@ -68,6 +70,7 @@ export type User = BaseUser & {
 	location: string;
 	complete: boolean;
 	reportsCount: number;
+	fameRating: number;
 };
 
 export type UserCompletness = { complete: boolean };

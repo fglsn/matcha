@@ -46,21 +46,28 @@ const checkBlockEntry = async (blockedUserId: string, blockingUserId: string): P
 	return true;
 };
 
-const addBlockEntry = async (blockedUserId: string, blockingUserId: string): Promise<void> => {
+const addBlockEntry = async (blockedUserId: string, blockingUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'insert into block_entries(blocked_user_id, blocking_user_id) values($1, $2) on conflict do nothing',
 		values: [blockedUserId, blockingUserId]
 	};
-	await pool.query(query);
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
 };
 
-const removeBlockEntry = async (blockedUserId: string, blockingUserId: string): Promise<void> => {
+const removeBlockEntry = async (blockedUserId: string, blockingUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'delete from block_entries where blocked_user_id = $1 and blocking_user_id = $2',
 		values: [blockedUserId, blockingUserId]
 	};
-	await pool.query(query);
-};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;};
 
 const clearBlockEntries = async (): Promise<void> => {
 	await pool.query('truncate table block_entries');
