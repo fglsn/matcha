@@ -39,3 +39,7 @@ export const getDistance = (a: Coordinates, b: Coordinates) => {
 	if (distance <= 2) return 2;
 	return Math.ceil(distance);
 };
+
+export const assertNever = (value: string): never => {
+	throw new Error(`Unhandled discriminated union member: ${value}`);
+};
