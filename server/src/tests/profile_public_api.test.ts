@@ -5,6 +5,7 @@ import { newUser, loginUser, infoProfilePublic, secondUser, loginUser2 } from '.
 import { loginAndPrepareUser } from './test_helper_fns';
 import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers } from '../repositories/userRepository';
+import { clearVisitHistory } from '../repositories/visitHistoryRepository';
 
 const api = supertest(app);
 jest.setTimeout(10000);
@@ -12,10 +13,12 @@ jest.mock('../services/location');
 
 let visitor: { id: string; token: string };
 let visited: { id: string; token: string };
+const baseFameRating = 47;
 
 describe('check access to profile page', () => {
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await clearUsers();
+		await clearVisitHistory();
 		visited = await loginAndPrepareUser(newUser, loginUser);
 		visitor = await loginAndPrepareUser(secondUser, loginUser2);
 	});
@@ -30,7 +33,7 @@ describe('check access to profile page', () => {
 		//console.log(resFromProfilePage.text);
 
 		expect(resFromProfilePage.text).toContain('lorem');
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: visited.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, fameRating: baseFameRating + 1, id: visited.id });
 	});
 	test('logged user can visit own public profile page', async () => {
 		const resFromProfilePage = await api
@@ -43,7 +46,7 @@ describe('check access to profile page', () => {
 		//console.log(resFromProfilePage.text);
 
 		expect(resFromProfilePage.text).toContain('lorem');
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: visited.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, fameRating: baseFameRating, id: visited.id });
 	});
 	test('not logged user cannot access profile page', async () => {
 		const resFromProfilePage = await api

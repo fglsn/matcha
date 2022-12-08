@@ -46,20 +46,28 @@ const checkLikeEntry = async (visitedUserId: string, visitorUserId: string): Pro
 	return true;
 };
 
-const addLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<void> => {
+const addLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'insert into likes_history(liked_user_id, liking_user_id) values($1, $2) on conflict do nothing',
 		values: [visitedUserId, visitorUserId]
 	};
-	await pool.query(query);
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
 };
 
-const removeLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<void> => {
+const removeLikeEntry = async (visitedUserId: string, visitorUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'delete from likes_history where liked_user_id = $1 and liking_user_id = $2',
 		values: [visitedUserId, visitorUserId]
 	};
-	await pool.query(query);
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
 };
 
 const getLikesCount = async (visitedUserId: string): Promise<number> => {

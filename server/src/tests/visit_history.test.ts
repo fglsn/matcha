@@ -2,7 +2,7 @@
 import supertest from 'supertest';
 import { app } from '../app';
 import { describe, expect } from '@jest/globals';
-import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
+import { clearVisitHistory, getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
 import { clearUsers } from '../repositories/userRepository';
 import { newUser, loginUser, secondUser, loginUser2 } from './test_helper';
 import { loginAndPrepareUser } from './test_helper_fns';
@@ -17,6 +17,7 @@ let visited: { id: string; token: string };
 describe('visit history tests', () => {
 	beforeAll(async () => {
 		await clearUsers();
+		await clearVisitHistory();
 		visitor = await loginAndPrepareUser(newUser, loginUser);
 		visited = await loginAndPrepareUser(secondUser, loginUser2);
 	});

@@ -5,7 +5,7 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, findUsernameById } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
@@ -122,26 +122,26 @@ export const sendUpdateEmailLink = async (id: string, email: string): Promise<vo
 			throw new AppError('This email is already taken. Please try another email address.', 400);
 		}
 	}
-	const updateRequset = await findUpdateEmailRequestByUserId(id);
-	if (updateRequset) {
-		await removeUpdateEmailRequest(updateRequset.token);
+	const updateRequest = await findUpdateEmailRequestByUserId(id);
+	if (updateRequest) {
+		await removeUpdateEmailRequest(updateRequest.token);
 	}
 
-	const newUpdateRequset = await addUpdateEmailRequest(id, email);
-	if (!newUpdateRequset) {
+	const newUpdateRequest = await addUpdateEmailRequest(id, email);
+	if (!newUpdateRequest) {
 		throw new AppError('Error creating reset link, please try again', 400);
 	}
-	mailEmailUpdateLink(email, newUpdateRequset);
+	mailEmailUpdateLink(email, newUpdateRequest);
 };
 
-export const mailEmailUpdateLink = (email: User['email'], newUpdateRequset: EmailUpdateRequest): void => {
+export const mailEmailUpdateLink = (email: User['email'], newUpdateRequest: EmailUpdateRequest): void => {
 	sendMail(
 		email,
 		'Confirm email reset for Matcha-account',
 		`<h1>Hi, here you can confirm email reset!</h1>
 			<p>Visit the link below to reset your email:</p>
-			<a href='http://localhost:3000/update_email?update=${newUpdateRequset.token}'>Reset email here</a>
-			<p>Link will be active until ${newUpdateRequset.expiresAt}.</p>
+			<a href='http://localhost:3000/update_email?update=${newUpdateRequest.token}'>Reset email here</a>
+			<p>Link will be active until ${newUpdateRequest.expiresAt}.</p>
 			<p>Ignore this message if you haven't requested email reset.</p>
 
 			<p> See you at Matcha! <3 </p>`
@@ -159,6 +159,9 @@ export const updateUserPhotos = async (images: Photo[], userId: string) => {
 	// for (let i = 0; i < images.length; i++) {
 	// 	await addPhotoByUserId(userId, images[i]);
 	// }
+	const photos = await getPhotosByUserId(userId);
+	const photosCount = photos.images ? photos.images.length : 0;
+	await updateFameRatingByUserId(userId, (-photosCount + images.length) * 2);
 	await updatePhotoByUserId(userId, images);
 };
 
@@ -195,6 +198,14 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 	const distance = getDistance(requestor.coordinates, profile.coordinates);
 	const age = getAge(String(profile.birthday));
 
+	if (profileId !== requestorId) {
+		if (await addEntryToVisitHistory(profileId, requestorId)) {
+      //add notification
+			await updateFameRatingByUserId(profileId, 1);
+			profile.fameRating = profile.fameRating + 1;
+		}
+	}
+
 	const profilePublic = {
 		id: profile.id,
 		username: profile.username,
@@ -206,12 +217,10 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		bio: profile.bio as string,
 		tags: profile.tags as string[],
 		distance: distance,
-		location: profile.location
+		location: profile.location,
+		fameRating: profile.fameRating
 	};
-	if (profileId !== requestorId) {
-		await addEntryToVisitHistory(profileId, requestorId); //this check will be avoided when we will check that user is visiting not own page
-		//add notification
-	}
+  
 	return profilePublic;
 };
 
@@ -226,11 +235,25 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	await addLikeEntry(profileId, requestorId);
-	//add notigication
+  
+	if (await addLikeEntry(profileId, requestorId)) {
+    await updateFameRatingByUserId(profileId, 2);
+    	//add notigication
+  }
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
-		//add notification
+    //add notification
+		if ((await getFameRatingByUserId(requestorId)) >= 75) {
+			await updateFameRatingByUserId(profileId, 2);
+		} else if ((await getFameRatingByUserId(requestorId)) <= 25) {
+			await updateFameRatingByUserId(profileId, -2);
+		}
+
+		if ((await getFameRatingByUserId(profileId)) >= 75) {
+			await updateFameRatingByUserId(requestorId, 2);
+		} else if ((await getFameRatingByUserId(profileId)) <= 25) {
+			await updateFameRatingByUserId(requestorId, -2);
+		}
 	}
 };
 
@@ -238,7 +261,7 @@ export const dislikeUser = async (profileId: string, requestorId: string): Promi
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	await removeLikeEntry(profileId, requestorId);
+	if (await removeLikeEntry(profileId, requestorId)) await updateFameRatingByUserId(profileId, -2);
 	if (await checkMatchEntry(requestorId, profileId)) {
 		await removeMatchEntry(profileId, requestorId);
 		//add notification
@@ -256,16 +279,20 @@ export const blockUser = async (profileId: string, requestorId: string): Promise
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	await addBlockEntry(profileId, requestorId);
-	if (await checkLikeEntry(profileId, requestorId)) await removeLikeEntry(profileId, requestorId);
-	if (await checkMatchEntry(requestorId, profileId)) await removeMatchEntry(profileId, requestorId);
+	if (await addBlockEntry(profileId, requestorId)) {
+		await updateFameRatingByUserId(profileId, -2);
+		if (await checkLikeEntry(profileId, requestorId)) await removeLikeEntry(profileId, requestorId);
+		if (await checkMatchEntry(requestorId, profileId)) await removeMatchEntry(profileId, requestorId);
+	}
 };
 
 export const unblockUser = async (profileId: string, requestorId: string): Promise<void> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	await removeBlockEntry(profileId, requestorId);
+	if (await removeBlockEntry(profileId, requestorId)) {
+		await updateFameRatingByUserId(profileId, 2);
+	}
 };
 
 export const reportFakeUser = async (profileId: string, requestorId: string): Promise<void> => {
@@ -275,8 +302,10 @@ export const reportFakeUser = async (profileId: string, requestorId: string): Pr
 	if (await addReportEntry(profileId, requestorId)) {
 		const reportCount = await increaseReportCount(profileId);
 		await blockUser(profileId, requestorId);
+		await updateFameRatingByUserId(profileId, -3);
 		if (reportCount > 10) {
 			await clearSessionsByUserId(profileId);
+			await updateFameRatingByUserId(profileId, -100);
 		}
 	}
 };

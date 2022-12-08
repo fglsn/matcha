@@ -18,7 +18,8 @@ create table users
 	bio varchar,
 	tags varchar [],
 	is_complete boolean not null default false,
-	reports_count int not null default 0
+	reports_count int not null default 0,
+	fame_rating int not null default 40
 );
 
 create table user_sessions

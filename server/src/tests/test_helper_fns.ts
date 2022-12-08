@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import supertest from 'supertest';
 import { app } from '../app';
-import { infoProfile, defaultCoordinates, ipAddress } from './test_helper';
+import { infoProfile, defaultCoordinates, ipAddress, LoginUser, TokenAndId, loginUser } from './test_helper';
 import { DataURL } from './test_helper_images';
-import { findUserByUsername } from '../repositories/userRepository';
+import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
 import { CallbackSucess, CallbackTimeout, NewUser } from '../types';
@@ -17,13 +17,14 @@ import { checkReportEntry } from '../repositories/reportEntriesRepository';
 export const api = supertest(app);
 
 export let id = <string>'';
+export let token = <string>'';
 export let loginRes = <supertest.Response>{};
 
 jest.mock('../services/location');
 export const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 export const getLocationMock = jest.mocked(getLocation);
 
-export const initLoggedUser = async (username: string, loginUser: { username: string; password: string }) => {
+export const initLoggedUser = async (username: string, loginUser: LoginUser) => {
 	const user = await findUserByUsername(username);
 	const activationCode = user?.activationCode;
 	await api.post(`/api/users/activate/${activationCode}`);
@@ -50,7 +51,17 @@ export const postToPhotos = async (id: string) => {
 		.expect(200);
 };
 
-export const loginAndPrepareUser = async (user: NewUser, loginUser: { username: string; password: string }) => {
+export const createAndLoginUser = async (user: NewUser) => {
+	await clearUsers();
+	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+	await createNewUser(user, ipAddress);
+	loginRes = await initLoggedUser(user.username, loginUser);
+	id = <string>JSON.parse(loginRes.text).id;
+	token = <string>JSON.parse(loginRes.text).token;
+	return { id, token };
+};
+
+export const loginAndPrepareUser = async (user: NewUser, loginUser: LoginUser) => {
 	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 	await createNewUser(user, ipAddress);
 	loginRes = await initLoggedUser(user.username, loginUser);
@@ -59,7 +70,17 @@ export const loginAndPrepareUser = async (user: NewUser, loginUser: { username: 
 	return { id: id, token: loginRes.body.token };
 };
 
-export const putLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
+export const userVisitsAnotherUsersProfile = async (visited: TokenAndId, visitor: TokenAndId) => {
+	const resFromProfilePage = await api
+		.get(`/api/users/${visited.id}/public_profile`)
+		.set({ Authorization: `bearer ${visitor.token}` })
+		.expect('Content-Type', /application\/json/);
+
+	expect(resFromProfilePage.statusCode).toBe(200);
+	expect(resFromProfilePage.body).toBeTruthy();
+};
+
+export const putLike = async (visited: TokenAndId, visitor: TokenAndId) => {
 	const resFromProfilePage = await api
 		.post(`/api/users/${visited.id}/like`)
 		.set({ Authorization: `bearer ${visitor.token}` })
@@ -69,7 +90,7 @@ export const putLike = async (visited: { id: string; token: string }, visitor: {
 	expect(resFromProfilePage.body).toBeTruthy();
 };
 
-export const removeLike = async (visited: { id: string; token: string }, visitor: { id: string; token: string }) => {
+export const removeLike = async (visited: TokenAndId, visitor: TokenAndId) => {
 	const resFromProfilePage = await api
 		.delete(`/api/users/${visited.id}/like`)
 		.set({ Authorization: `bearer ${visitor.token}` })
@@ -79,7 +100,7 @@ export const removeLike = async (visited: { id: string; token: string }, visitor
 	expect(resFromProfilePage.body).toBeTruthy();
 };
 
-export const twoUserLikeEachOther = async (userOne: { id: string; token: string }, userTwo: { id: string; token: string }) => {
+export const twoUserLikeEachOther = async (userOne: TokenAndId, userTwo: TokenAndId) => {
 	const totalMatchesAtStart = await getMatchesByUserId(userOne.id);
 	expect(totalMatchesAtStart).not.toBeDefined();
 
@@ -102,7 +123,7 @@ export const twoUserLikeEachOther = async (userOne: { id: string; token: string 
 	expect(res2).toBeTruthy();
 };
 
-export const userBlocksAnotherUser = async (userToBlock: { id: string; token: string }, userThatBlocks: { id: string; token: string }) => {
+export const userBlocksAnotherUser = async (userToBlock: TokenAndId, userThatBlocks: TokenAndId) => {
 	await api
 		.post(`/api/users/${userToBlock.id}/block`)
 		.set({ Authorization: `bearer ${userThatBlocks.token}` })
@@ -112,7 +133,7 @@ export const userBlocksAnotherUser = async (userToBlock: { id: string; token: st
 	expect(blockStatusAtEnd).toBeTruthy();
 };
 
-export const userReportsAnotherUser = async (userToRepot: { id: string; token: string }, reportingUser: { id: string; token: string }) => {
+export const userReportsAnotherUser = async (userToRepot: TokenAndId, reportingUser: TokenAndId) => {
 	await api
 		.post(`/api/users/${userToRepot.id}/report`)
 		.set({ Authorization: `bearer ${reportingUser.token}` })
