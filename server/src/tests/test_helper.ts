@@ -15,6 +15,10 @@ export const secondUser: NewUser = {
 	lastname: 'ipsum'
 };
 
+export type LoginUser = { username: string; password: string };
+
+export type TokenAndId = { id: string; token: string };
+
 export const newUserWithHashedPwd: NewUserWithHashedPwd = {
 	username: 'matcha',
 	email: 'matcha@test.com',
