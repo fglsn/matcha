@@ -57,7 +57,7 @@ const getAllUsers = async (): Promise<User[]> => {
 	return res.rows.map((row) => userMapper(row));
 };
 
-const getIdList = async (): Promise<{id: string}[]> => {
+const getIdList = async (): Promise<{ id: string }[]> => {
 	const res = await pool.query('select id from users');
 	return res.rows.map((row) => idMapper(row));
 };
@@ -250,6 +250,24 @@ const getReportCount = async (userId: string): Promise<number> => {
 	return <number>res.rows[0]['reports_count'];
 };
 
+const getFameRatingByUserId = async (userId: string): Promise<number> => {
+	const query = {
+		text: 'select fame_rating from users where id = $1 returning fame_rating',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['fame_rating'];
+};
+
+const updateFameRatingByUserId = async (userId: string, points: number): Promise<number> => {
+	const query = {
+		text: 'update users set fame_rating = fame_raing + $2 where id = $1 returning fame_rating',
+		values: [userId, points]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['fame_rating'];
+};
+
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8, lat = $9, lon = $10, location_string = $11 where id = $1',
@@ -290,5 +308,7 @@ export {
 	userHasPhotos,
 	updateCompletenessByUserId,
 	increaseReportCount,
-	getReportCount
+	getReportCount,
+	getFameRatingByUserId,
+	updateFameRatingByUserId
 };
