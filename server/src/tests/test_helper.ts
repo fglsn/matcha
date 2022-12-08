@@ -108,6 +108,7 @@ export const bioMax =
 export const completenessFalse = { complete: false };
 export const completenessTrue = { complete: true };
 
+export const maxTimeInactive = 1000 * 60 * 2;
 export const positionstackResponseDataAllThree = {
 	data: [
 		{
