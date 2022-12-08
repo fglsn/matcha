@@ -18,7 +18,8 @@ const userMapper = (row: any): User => {
 		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) },
 		location: getString(row['location_string']),
 		complete: getBoolean(row['is_complete']),
-		reportsCount: getNumber(row['reports_count'])
+		reportsCount: getNumber(row['reports_count']),
+		fameRating: getNumber(row['fame_rating'])
 	};
 };
 
@@ -42,7 +43,8 @@ const userDataMapper = (row: any): UserData => {
 		bio: getStringOrUndefined(row['bio']),
 		tags: getStringArrayOrUndefined(row['tags']),
 		coordinates: { lat: getNumber(row['lat']), lon: getNumber(row['lon']) },
-		location: getString(row['location_string'])
+		location: getString(row['location_string']),
+		fameRating: getNumber(row['fame_rating'])
 	};
 };
 
@@ -57,7 +59,7 @@ const getAllUsers = async (): Promise<User[]> => {
 	return res.rows.map((row) => userMapper(row));
 };
 
-const getIdList = async (): Promise<{id: string}[]> => {
+const getIdList = async (): Promise<{ id: string }[]> => {
 	const res = await pool.query('select id from users');
 	return res.rows.map((row) => idMapper(row));
 };
@@ -178,7 +180,7 @@ const clearUsers = async (): Promise<void> => {
 
 const getUserDataByUserId = async (userId: string): Promise<UserData | undefined> => {
 	const query = {
-		text: 'select id, username, firstname, lastname, birthday, gender, orientation, bio, tags, lat, lon, location_string from users where id = $1',
+		text: 'select id, username, firstname, lastname, birthday, gender, orientation, bio, tags, lat, lon, location_string, fame_rating from users where id = $1',
 		values: [userId]
 	};
 	const res = await pool.query(query);
@@ -250,6 +252,41 @@ const getReportCount = async (userId: string): Promise<number> => {
 	return <number>res.rows[0]['reports_count'];
 };
 
+const getFameRatingByUserId = async (userId: string): Promise<number> => {
+	const query = {
+		text: 'select fame_rating from users where id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['fame_rating'];
+};
+
+const updateFameRatingByUserId = async (userId: string, points: number): Promise<number> => {
+	const query = {
+		text: `
+			update users
+			set fame_rating = (case
+								when fame_rating + $2 >= 100 then 100
+								when fame_rating + $2 <= 0 then 0
+								else fame_rating + $2 end)
+			where id = $1
+			returning fame_rating
+		`,
+		values: [userId, points]
+	};
+	const res = await pool.query(query);
+	return <number>res.rows[0]['fame_rating'];
+};
+
+const getTagsByUserId = async (userId: string): Promise<string[] | undefined> => {
+		const query = {
+			text: 'select tags from users where id = $1',
+			values: [userId]
+		};
+		const res = await pool.query(query);
+		return getStringArrayOrUndefined(res.rows[0]['tags']);
+};
+
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
 	const query = {
 		text: 'update users set firstname = $2, lastname = $3, birthday = $4, gender = $5, orientation = $6, bio = $7, tags = $8, lat = $9, lon = $10, location_string = $11 where id = $1',
@@ -290,5 +327,8 @@ export {
 	userHasPhotos,
 	updateCompletenessByUserId,
 	increaseReportCount,
-	getReportCount
+	getReportCount,
+	getFameRatingByUserId,
+	updateFameRatingByUserId,
+	getTagsByUserId
 };

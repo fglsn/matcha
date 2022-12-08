@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 import { AppError } from '../errors';
 import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
-import { getAllUsers, getUserDataByUserId, updateUserDataByUserId } from '../repositories/userRepository';
+import { getAllUsers, getTagsByUserId, getUserDataByUserId, updateFameRatingByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import { CustomRequest } from '../types';
 import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
@@ -116,9 +116,16 @@ router.put(
 		if (!req.session || !req.session.userId || req.session.userId !== req.params.id) {
 			throw new AppError(`No rights to update profile data`, 400);
 		}
+		const userId = req.session.userId;
+		const tags = await getTagsByUserId(userId);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const updatedProfile = parseUserProfilePayload(req.body);
 		const location = await getLocation(updatedProfile.coordinates);
+		if (!tags) {
+			await updateFameRatingByUserId(userId, updatedProfile.tags.length);
+		} else {
+			await updateFameRatingByUserId(userId, (-tags.length + updatedProfile.tags.length));
+		}
 		await updateUserDataByUserId(req.session.userId, { ...updatedProfile, location });
 		res.status(200).end();
 	})
@@ -131,6 +138,7 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		const result = await getPublicProfileData(req.params.id, req.session.userId);
+		
 		res.status(200).json(result);
 	})
 );

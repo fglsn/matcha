@@ -34,12 +34,20 @@ const getVisitHistoryByVisitorId = async (visitorUserId: string): Promise<VisitE
 	return res.rows.map((row) => visitHistoryEntryMapper(row));
 };
 
-const addEntryToVisitHistory = async (visitedUserId: string, visitorUserId: string): Promise<void> => {
+const addEntryToVisitHistory = async (visitedUserId: string, visitorUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'insert into visit_history(visited_user_id, visitor_user_id) values($1, $2) on conflict do nothing',
 		values: [visitedUserId, visitorUserId]
 	};
-	await pool.query(query);
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return false;
+	}
+	return true;
 };
 
-export { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId, addEntryToVisitHistory };
+const clearVisitHistory = async (): Promise<void> => {
+	await pool.query('truncate table visit_history');
+};
+
+export { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId, addEntryToVisitHistory, clearVisitHistory };

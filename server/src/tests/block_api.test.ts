@@ -6,6 +6,7 @@ import { api, loginAndPrepareUser, putLike, twoUserLikeEachOther, userBlocksAnot
 import { clearLikes, getLikesByVisitorId } from '../repositories/likesRepository';
 import { checkMatchEntry } from '../repositories/matchesRepository';
 import { checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
+import { clearVisitHistory } from '../repositories/visitHistoryRepository';
 
 jest.setTimeout(10000);
 jest.mock('../services/location');
@@ -13,10 +14,12 @@ jest.mock('../services/location');
 let userThatBlocks: { id: string; token: string };
 let userToBlock: { id: string; token: string };
 
+const baseFameRating = 47;
 describe('test block user functionality', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		await clearLikes();
+		await clearVisitHistory();
 		userThatBlocks = await loginAndPrepareUser(newUser, loginUser);
 		userToBlock = await loginAndPrepareUser(secondUser, loginUser2);
 	});
@@ -75,7 +78,7 @@ describe('test block user functionality', () => {
 		expect(resFromProfilePage.body).toBeTruthy();
 		//console.log(resFromProfilePage.text);
 
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, id: userThatBlocks.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic, fameRating: baseFameRating + 1, id: userThatBlocks.id }); //1 point for visit
 	});
 
 	test('user can still visit page of the user whom he blocked', async () => {
@@ -91,7 +94,7 @@ describe('test block user functionality', () => {
 		//console.log(resFromProfilePage.text);
 
 		expect(resFromProfilePage.text).toContain('lorem');
-		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic2, id: userToBlock.id });
+		expect(JSON.parse(resFromProfilePage.text)).toEqual({ ...infoProfilePublic2, fameRating: baseFameRating - 1, id: userToBlock.id }); // -2 point for block + 1 for visit = total -1
 	});
 
 	test('user can remove another user from his block list', async () => {

@@ -108,6 +108,7 @@ describe('Check responses and requests to api/profile', () => {
 				username: 'matcha',
 				firstname: 'lorem',
 				lastname: 'ipsum',
+				fameRating: 40,
 				coordinates: defaultCoordinates,
 				location: ''
 			});
