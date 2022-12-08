@@ -4,15 +4,15 @@ import { NotificationEntry } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const notificationEntryMapper = (row: any): NotificationEntry => {
-    return {
-        notified_user_id: getString(row['notified_user_id']),
-        acting_user_id: getString(row['acting_user_id']),
-        type: getString(row['type'])
-    };
+	return {
+		notified_user_id: getString(row['notified_user_id']),
+		acting_user_id: getString(row['acting_user_id']),
+		type: getString(row['type'])
+	};
 };
 
 const getNotificationsByNotifiedUserId = async (notified_user_id: string): Promise<NotificationEntry[] | undefined> => {
-    const query = {
+	const query = {
 		text: 'select * from notification_entries where notified_user_id = $1',
 		values: [notified_user_id]
 	};
@@ -24,10 +24,10 @@ const getNotificationsByNotifiedUserId = async (notified_user_id: string): Promi
 };
 
 const getNotificationsPageByNotifiedUserId = async (notified_user_id: string, page: number, limit: number): Promise<NotificationEntry[] | undefined> => {
-    if (page <= 0 || limit <=0) return undefined;
-    const offset = (page - 1) * limit;
-    
-    const query = {
+	if (page <= 0 || limit <= 0) return undefined;
+	const offset = (page - 1) * limit;
+
+	const query = {
 		text: `
             select * from notification_entries 
             where notified_user_id = $1 
@@ -43,7 +43,7 @@ const getNotificationsPageByNotifiedUserId = async (notified_user_id: string, pa
 };
 
 const getNotificationByActingUserId = async (acting_user_id: string): Promise<NotificationEntry[] | undefined> => {
-    const query = {
+	const query = {
 		text: 'select * from notification_entries where acting_user_id = $1',
 		values: [acting_user_id]
 	};
@@ -66,5 +66,4 @@ const clearNotifications = async (): Promise<void> => {
 	await pool.query('truncate table notification_entries');
 };
 
-export {getNotificationsByNotifiedUserId, getNotificationByActingUserId, addNotificationEntry, getNotificationsPageByNotifiedUserId, clearNotifications};
-
+export { getNotificationsByNotifiedUserId, getNotificationByActingUserId, addNotificationEntry, getNotificationsPageByNotifiedUserId, clearNotifications };

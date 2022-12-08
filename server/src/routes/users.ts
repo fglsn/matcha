@@ -317,10 +317,11 @@ router.get(
 		if (!req.query.page && !req.query.limit) {
 			const notifications = await getNotifications(req.session.userId);
 			res.status(200).json(notifications);
-		} 
+		}
 		if (req.query.page && req.query.limit) {
-			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit)) throw new ValidationError(`Limit and offset should be string represented integers`);
-			const notifications = await getNotificationsPage(req.session.userId, req.query.page , req.query.limit);
+			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit))
+				throw new ValidationError(`Limit and offset should be string represented integers`);
+			const notifications = await getNotificationsPage(req.session.userId, req.query.page, req.query.limit);
 			res.status(200).json(notifications);
 		}
 		throw new AppError(`This api expects page and limit query params or no params to get all notifications`, 400);

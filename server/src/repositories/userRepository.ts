@@ -57,7 +57,7 @@ const getAllUsers = async (): Promise<User[]> => {
 	return res.rows.map((row) => userMapper(row));
 };
 
-const getIdList = async (): Promise<{id: string}[]> => {
+const getIdList = async (): Promise<{ id: string }[]> => {
 	const res = await pool.query('select id from users');
 	return res.rows.map((row) => idMapper(row));
 };
@@ -275,9 +275,9 @@ const findUsernameById = async (userId: string): Promise<string | undefined> => 
 		text: 'select username from users where id = $1',
 		values: [userId]
 	};
-	
+
 	const res = await pool.query(query);
-	
+
 	if (!res.rowCount) {
 		return undefined;
 	}

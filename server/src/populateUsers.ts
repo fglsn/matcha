@@ -79,7 +79,7 @@ const mouth: style.Options['mouth'] = [
 	'variant0204',
 	'variant0203',
 	'variant0202',
-	'variant0201',
+	'variant0201'
 ];
 
 const shortHair: style.Options['hair'] = [

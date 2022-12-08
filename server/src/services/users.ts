@@ -211,7 +211,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 	if (profileId !== requestorId) {
 		await addEntryToVisitHistory(profileId, requestorId); //this check will be avoided when we will check that user is visiting not own page
 		//add notification
-	} 
+	}
 	return profilePublic;
 };
 
@@ -230,7 +230,7 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	//add notigication
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
-		//add notification 
+		//add notification
 	}
 };
 
@@ -294,19 +294,18 @@ export const queryOnlineUsers = async (user_id: string) => {
 };
 
 const generateMessage = async (acting_user_id: string, type: string) => {
-	
 	const username = await findUsernameById(acting_user_id);
 	if (!username) throw new AppError('Failed to find username!', 500);
-	
+
 	switch (type) {
-		case 'like': 
-			return {type: type, message: `@${username} liked your profile!`};
-		case 'dislike': 
-			return {type: type, message: `@${username} disliked your profile!`};
-		case 'visit': 
-			return {type: type, message: `@${username} visited your profile!`};
-		case 'match': 
-			return  {type: type, message: `You matched with @${username}!`};
+		case 'like':
+			return { type: type, message: `@${username} liked your profile!` };
+		case 'dislike':
+			return { type: type, message: `@${username} disliked your profile!` };
+		case 'visit':
+			return { type: type, message: `@${username} visited your profile!` };
+		case 'match':
+			return { type: type, message: `You matched with @${username}!` };
 		default:
 			return assertNever(type);
 	}
@@ -315,15 +314,15 @@ const generateMessage = async (acting_user_id: string, type: string) => {
 export const getNotifications = async (id: string) => {
 	const notificatonEtries = await getNotificationsByNotifiedUserId(id);
 	if (!notificatonEtries) return undefined;
-	const promises = notificatonEtries.map(item => generateMessage(item.acting_user_id, item.type));
+	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
 	const notifications = await Promise.all(promises);
-	return {notifications: notifications};
+	return { notifications: notifications };
 };
 
 export const getNotificationsPage = async (id: string, page: string, limit: string) => {
 	const notificatonEtries = await getNotificationsPageByNotifiedUserId(id, Number(page), Number(limit));
 	if (!notificatonEtries) return undefined;
-	const promises = notificatonEtries.map(item => generateMessage(item.acting_user_id, item.type));
+	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
 	const notifications = await Promise.all(promises);
-	return {notifications: notifications};
+	return { notifications: notifications };
 };

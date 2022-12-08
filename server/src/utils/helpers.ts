@@ -41,7 +41,5 @@ export const getDistance = (a: Coordinates, b: Coordinates) => {
 };
 
 export const assertNever = (value: string): never => {
-    throw new Error(
-      `Unhandled discriminated union member: ${value}`
-    );
+	throw new Error(`Unhandled discriminated union member: ${value}`);
 };
