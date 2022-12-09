@@ -31,7 +31,7 @@ io.on(
 	socketErrorHandler(async (socket: SocketCustom) => {
 		if (!socket.session) return;
 		await updateOnlineUsers(socket.session.userId);
-		void socket.join(socket.session.userId);
+		await socket.join(socket.session.userId);
 		console.log('client connected: ', socket.id);
 
 		// Online query

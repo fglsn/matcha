@@ -140,6 +140,7 @@ export interface ServerToClientEvents {
 	// receive_message: (message: any) => void;
 	// receive_notification: (message: any) => void;
 	// online_response: (data: any) => void;
+	notification: (notification_message: string) => void;
 }
 
 export interface ClientToServerEvents {
