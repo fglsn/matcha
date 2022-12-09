@@ -22,6 +22,8 @@ import { SnackbarProvider } from 'notistack';
 import UpdateEmail from './components/UpdateEmail';
 import PublicProfile from './components/PublicProfile';
 import { socket } from './services/socket';
+import Drawer from './components/Drawer';
+import Likes from './components/Likes';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -63,8 +65,9 @@ const App = () => {
 				<SnackbarProvider>
 					<AlertProvider>
 						<Box>
-							<Navbar />
+							{/* <Navbar /> */}
 							<AlertSnackBar />
+							<Drawer />
 							<Routes>
 								<Route path="/" element={<Main />} />
 								{/* prettier-ignore */}
@@ -76,6 +79,10 @@ const App = () => {
 								<Route path="/profile" element={<ProfileEditor />} />
 								<Route path="/profile/:id" element={<PublicProfile />} />
 								<Route path="/update_email" element={<UpdateEmail />} />
+								{/* <Route path="/visit_history" element={<VisitHistory />} /> */}
+								<Route path="/likes" element={<Likes />} />
+								{/* <Route path="/matches" element={<Matches />} /> */}
+								{/* <Route path="/blocks" element={<Blocks />} /> */}
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />
 							</Routes>

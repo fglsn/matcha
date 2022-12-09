@@ -18,9 +18,9 @@ const LoggedInUserButtons = ({
 	return (
 		<>
 			<em>{loggedUser?.username} logged in </em>
-			<Button color="inherit" component={Link} to="/profile">
+			{/* <Button color="inherit" component={Link} to="/profile">
 				Profile
-			</Button>
+			</Button> */}
 			<Button onClick={handleLogout} color="inherit">
 				Logout
 			</Button>
@@ -59,9 +59,11 @@ const Navbar = () => {
 
 	return (
 		<AppBar
-			position="static"
+			position="fixed"
 			color="secondary"
 			sx={{
+				mb: 5,
+				zIndex: (theme) => theme.zIndex.drawer + 1,
 				justifyContent: 'space-between',
 				'& .MuiAppBar-root': {
 					borderRadius: '0!important'
