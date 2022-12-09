@@ -86,7 +86,7 @@ const LoginForm = () => {
 	};
 
 	return (
-		<Box>
+		<Box sx={{ mt: 15, mb: 8 }}>
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<Box
@@ -124,19 +124,12 @@ const LoginForm = () => {
 							autoComplete="current-password"
 						/>
 						<FormControlLabel
-							control={
-								<Checkbox
-									value="Show password"
-									color="primary"
-								/>
-							}
+							control={<Checkbox value="Show password" color="primary" />}
 							label="Show password"
 							onChange={() => setShow(!showPassword)}
 						/>
 						<FormControlLabel
-							control={
-								<Checkbox value="remember" color="primary" />
-							}
+							control={<Checkbox value="remember" color="primary" />}
 							label="Remember me"
 						/>
 						{validateLoginForm(username.value, password.value) ? (

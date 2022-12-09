@@ -69,7 +69,7 @@ const SignUpForm = () => {
 	};
 
 	return (
-		<Box>
+		<Box sx={{ mt: 15, mb: 8 }}>
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<Box
@@ -136,10 +136,7 @@ const SignUpForm = () => {
 							<Grid item xs={12}>
 								<FormControlLabel
 									control={
-										<Checkbox
-											value="Show password"
-											color="primary"
-										/>
+										<Checkbox value="Show password" color="primary" />
 									}
 									label="Show password"
 									onChange={() => setShow(!showPassword)}

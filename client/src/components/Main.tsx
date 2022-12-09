@@ -1,6 +1,7 @@
 // import { useEffect } from "react";
 // import { setLoggedUser, useStateValue } from "../state";
 
+import { Container } from "@mui/material";
 import withProfileRequired from "./ProfileRequired";
 
 const Main = () => {
@@ -17,7 +18,7 @@ const Main = () => {
 	// 	void fetchLoggedUser();
 	// }, [dispatch])
 
-	return <>HELLO</>;
+	return <Container sx={{ mt: 15, mb: 8 }}>HELLO</Container>;
 };
 
 export default withProfileRequired(Main);

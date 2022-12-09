@@ -111,7 +111,7 @@ const PublicProfile = () => {
 
 	return (
 		<>
-			<StyledContainer maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
+			<StyledContainer maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
 				<Item>
 					{isMatch && (
 						<StyledAlert severity="info" color="warning">
