@@ -5,6 +5,7 @@ import { getBlockStatus, getLikeAndMatchStatus, getPhotos, getPublicProfile } fr
 import { styled, Alert, Container, Paper, Typography } from '@mui/material';
 import { Images, LikeAndMatchStatus, ProfilePublic } from '../../types';
 import { useServiceCall } from '../../hooks/useServiceCall';
+import FameRating from '../ProfileEditor/FameRating';
 import withProfileRequired from '../ProfileRequired';
 import ProfileSlider from './ProfileSlider';
 import ReportDialog from './ReportDialog';
@@ -120,7 +121,7 @@ const PublicProfile = () => {
 							</Typography>
 						</StyledAlert>
 					)}
-
+					<FameRating fameRating={profileData.fameRating} />
 					<ProfileSlider photos={photosData.images} user={profileData} />
 					<IconGroup
 						id={id}

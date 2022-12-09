@@ -65,7 +65,9 @@ const ProfileEditor = () => {
 		tags: profileData.tags,
 		bio: profileData.bio,
 		coordinates: profileData.coordinates,
-		location: profileData.location
+		location: profileData.location,
+		fameRating: profileData.fameRating
+
 	};
 
 	return (
