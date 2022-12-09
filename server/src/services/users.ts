@@ -249,11 +249,31 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 			await updateFameRatingByUserId(profileId, -2);
 		}
 
-		if ((await getFameRatingByUserId(profileId)) >= 75) {
-			await updateFameRatingByUserId(requestorId, 2);
-		} else if ((await getFameRatingByUserId(profileId)) <= 25) {
-			await updateFameRatingByUserId(requestorId, -2);
-		}
+		const updateFameOfVisited = async () => {
+			const fameVisitor = await getFameRatingByUserId(requestorId);
+			if (fameVisitor >= 75) await updateFameRatingByUserId(profileId, 2);
+			if (fameVisitor <= 25) await updateFameRatingByUserId(profileId, -2);
+		};
+
+		const updateFameOfVisitor = async () => {
+			const fameVisited = await getFameRatingByUserId(profileId);
+			if (fameVisited >= 75) await updateFameRatingByUserId(requestorId, 2);
+			if (fameVisited <= 25) await updateFameRatingByUserId(requestorId, -2);
+		};
+
+		await Promise.all([updateFameOfVisited(), updateFameOfVisitor()]);
+
+		// if ((await getFameRatingByUserId(requestorId)) >= 75) {
+		// 	await updateFameRatingByUserId(profileId, 2);
+		// } else if ((await getFameRatingByUserId(requestorId)) <= 25) {
+		// 	await updateFameRatingByUserId(profileId, -2);
+		// }
+
+		// if ((await getFameRatingByUserId(profileId)) >= 75) {
+		// 	await updateFameRatingByUserId(requestorId, 2);
+		// } else if ((await getFameRatingByUserId(profileId)) <= 25) {
+		// 	await updateFameRatingByUserId(requestorId, -2);
+		// }
 	}
 };
 
