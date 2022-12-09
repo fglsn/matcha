@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import Navbar from './components/Navbar';
 import Main from './components/Main';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
@@ -24,6 +23,9 @@ import PublicProfile from './components/PublicProfile';
 import { socket } from './services/socket';
 import Drawer from './components/Drawer';
 import Likes from './components/Likes';
+import VisitHistory from './components/VIsitHistory';
+import Matches from './components/Matches';
+import Blocks from './components/Blocks';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -79,10 +81,10 @@ const App = () => {
 								<Route path="/profile" element={<ProfileEditor />} />
 								<Route path="/profile/:id" element={<PublicProfile />} />
 								<Route path="/update_email" element={<UpdateEmail />} />
-								{/* <Route path="/visit_history" element={<VisitHistory />} /> */}
+								<Route path="/visit_history" element={<VisitHistory />} />
 								<Route path="/likes" element={<Likes />} />
-								{/* <Route path="/matches" element={<Matches />} /> */}
-								{/* <Route path="/blocks" element={<Blocks />} /> */}
+								<Route path="/matches" element={<Matches />} />
+								<Route path="/blocks" element={<Blocks />} />
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />
 							</Routes>

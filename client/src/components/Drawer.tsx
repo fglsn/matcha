@@ -1,13 +1,17 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+//prettier-ignore
+import {
+	Box,
+	Drawer,
+	Toolbar,
+	List,
+	Divider,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText
+} from '@mui/material';
+
 import Navbar from './Navbar';
 import HistoryIcon from '@mui/icons-material/History';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -17,11 +21,11 @@ import { styled } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
-import { useStateValue } from '../state';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { AlertContext } from './AlertProvider';
 import { logoutUser } from '../services/logout';
 import { socket } from '../services/socket';
-import { AlertContext } from './AlertProvider';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { useStateValue } from '../state';
 
 export const StyledLink = styled(Link)`
 	color: rgba(0, 0, 0, 0.87);
