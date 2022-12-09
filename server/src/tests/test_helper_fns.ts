@@ -81,21 +81,17 @@ export const userVisitsAnotherUsersProfile = async (visited: TokenAndId, visitor
 };
 
 export const putLike = async (visited: TokenAndId, visitor: TokenAndId) => {
-	const resFromProfilePage = await api
-		.post(`/api/users/${visited.id}/like`)
-		.set({ Authorization: `bearer ${visitor.token}` })
-		.expect(200);
+	const resFromProfilePage = await api.post(`/api/users/${visited.id}/like`).set({ Authorization: `bearer ${visitor.token}` });
 
+	// console.log(resFromProfilePage.error);
 	expect(resFromProfilePage.statusCode).toBe(200);
 	expect(resFromProfilePage.body).toBeTruthy();
 };
 
 export const removeLike = async (visited: TokenAndId, visitor: TokenAndId) => {
-	const resFromProfilePage = await api
-		.delete(`/api/users/${visited.id}/like`)
-		.set({ Authorization: `bearer ${visitor.token}` })
-		.expect(200);
+	const resFromProfilePage = await api.delete(`/api/users/${visited.id}/like`).set({ Authorization: `bearer ${visitor.token}` });
 
+	// console.log(resFromProfilePage.error);
 	expect(resFromProfilePage.statusCode).toBe(200);
 	expect(resFromProfilePage.body).toBeTruthy();
 };
