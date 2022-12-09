@@ -279,12 +279,12 @@ const updateFameRatingByUserId = async (userId: string, points: number): Promise
 };
 
 const getTagsByUserId = async (userId: string): Promise<string[] | undefined> => {
-		const query = {
-			text: 'select tags from users where id = $1',
-			values: [userId]
-		};
-		const res = await pool.query(query);
-		return getStringArrayOrUndefined(res.rows[0]['tags']);
+	const query = {
+		text: 'select tags from users where id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return getStringArrayOrUndefined(res.rows[0]['tags']);
 };
 
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {

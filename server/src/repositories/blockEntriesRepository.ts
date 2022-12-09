@@ -67,7 +67,8 @@ const removeBlockEntry = async (blockedUserId: string, blockingUserId: string): 
 	if (!res.rowCount) {
 		return false;
 	}
-	return true;};
+	return true;
+};
 
 const clearBlockEntries = async (): Promise<void> => {
 	await pool.query('truncate table block_entries');
