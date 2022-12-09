@@ -5,7 +5,7 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
@@ -13,12 +13,13 @@ import { EmailUpdateRequest, LikeAndMatchStatus, NewUser, PasswordResetRequest, 
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
-import { getAge, getDistance } from '../utils/helpers';
+import { assertNever, getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
 import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 import { addReportEntry } from '../repositories/reportEntriesRepository';
+import { getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -199,6 +200,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 
 	if (profileId !== requestorId) {
 		if (await addEntryToVisitHistory(profileId, requestorId)) {
+      //add notification
 			await updateFameRatingByUserId(profileId, 1);
 			profile.fameRating = profile.fameRating + 1;
 		}
@@ -218,7 +220,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		location: profile.location,
 		fameRating: profile.fameRating
 	};
-
+  
 	return profilePublic;
 };
 
@@ -233,10 +235,14 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-	if (await addLikeEntry(profileId, requestorId)) await updateFameRatingByUserId(profileId, 2);
+  
+	if (await addLikeEntry(profileId, requestorId)) {
+    await updateFameRatingByUserId(profileId, 2);
+    	//add notigication
+  }
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
-
+    //add notification
 		if ((await getFameRatingByUserId(requestorId)) >= 75) {
 			await updateFameRatingByUserId(profileId, 2);
 		} else if ((await getFameRatingByUserId(requestorId)) <= 25) {
@@ -258,6 +264,7 @@ export const dislikeUser = async (profileId: string, requestorId: string): Promi
 	if (await removeLikeEntry(profileId, requestorId)) await updateFameRatingByUserId(profileId, -2);
 	if (await checkMatchEntry(requestorId, profileId)) {
 		await removeMatchEntry(profileId, requestorId);
+		//add notification
 	}
 };
 
@@ -313,4 +320,38 @@ export const queryOnlineUsers = async (user_id: string) => {
 	if (!onlineUser) throw new Error('No record of this user being active');
 	if (Date.now() - onlineUser.active < maxTimeInactive) return { online: true, lastActive: onlineUser.active };
 	return { online: false, lastActive: onlineUser.active };
+};
+
+const generateMessage = async (acting_user_id: string, type: string) => {
+	const username = await findUsernameById(acting_user_id);
+	if (!username) throw new AppError('Failed to find username!', 500);
+
+	switch (type) {
+		case 'like':
+			return { type: type, message: `@${username} liked your profile!` };
+		case 'dislike':
+			return { type: type, message: `@${username} disliked your profile!` };
+		case 'visit':
+			return { type: type, message: `@${username} visited your profile!` };
+		case 'match':
+			return { type: type, message: `You matched with @${username}!` };
+		default:
+			return assertNever(type);
+	}
+};
+
+export const getNotifications = async (id: string) => {
+	const notificatonEtries = await getNotificationsByNotifiedUserId(id);
+	if (!notificatonEtries) return undefined;
+	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
+	const notifications = await Promise.all(promises);
+	return { notifications: notifications };
+};
+
+export const getNotificationsPage = async (id: string, page: string, limit: string) => {
+	const notificatonEtries = await getNotificationsPageByNotifiedUserId(id, Number(page), Number(limit));
+	if (!notificatonEtries) return undefined;
+	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
+	const notifications = await Promise.all(promises);
+	return { notifications: notifications };
 };

@@ -307,6 +307,20 @@ const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUser
 	await pool.query(query);
 };
 
+const findUsernameById = async (userId: string): Promise<string | undefined> => {
+	const query = {
+		text: 'select username from users where id = $1',
+		values: [userId]
+	};
+
+	const res = await pool.query(query);
+
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return getString(res.rows[0]['username']);
+};
+
 export {
 	getAllUsers,
 	getIdList,
@@ -328,6 +342,7 @@ export {
 	updateCompletenessByUserId,
 	increaseReportCount,
 	getReportCount,
+	findUsernameById,
 	getFameRatingByUserId,
 	updateFameRatingByUserId,
 	getTagsByUserId

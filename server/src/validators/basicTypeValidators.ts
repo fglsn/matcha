@@ -20,7 +20,8 @@ const isStringArray = (arr: any): arr is string[] => {
 	return true;
 };
 
-const isStringRepresentedInteger = (string: string) => {
+const isStringRepresentedInteger = (string: unknown): string is string => {
+	if (typeof string !== 'string') return false;
 	const num = Number(string);
 	if (!Number.isInteger(num)) return false;
 	if (num <= 0) return false;
