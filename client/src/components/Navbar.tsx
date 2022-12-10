@@ -7,6 +7,8 @@ import { AlertContext } from './AlertProvider';
 import { logoutUser } from '../services/logout';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { socket } from '../services/socket';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const LoggedInUserButtons = ({
 	loggedUser,
@@ -41,18 +43,30 @@ const LoggedOutButtons = () => {
 	);
 };
 
-const Navbar = () => {
+const drawerWidth = 200;
+
+const Navbar = ({
+	setMobileOpen,
+	mobileOpen
+}: {
+	setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	mobileOpen: boolean;
+}) => {
 	const [, dispatch] = useStateValue();
 	const loggedUser = useContext(StateContext);
 	const navigate = useNavigate();
 	const alert = useContext(AlertContext);
+
+	const handleDrawerToggle = () => {
+		setMobileOpen(!mobileOpen);
+	};
 
 	const handleLogout = async (event: any) => {
 		event.preventDefault();
 		logoutUser(dispatch);
 		if (socket.connected) {
 			socket.disconnect();
-		} 
+		}
 		alert.success('Logged out');
 		navigate('/');
 	};
@@ -62,6 +76,7 @@ const Navbar = () => {
 			position="fixed"
 			color="secondary"
 			sx={{
+				ml: { sm: `${drawerWidth}px` },
 				mb: 5,
 				zIndex: (theme) => theme.zIndex.drawer + 1,
 				justifyContent: 'space-between',
@@ -78,6 +93,15 @@ const Navbar = () => {
 					}
 				}}
 			>
+				<IconButton
+					color="inherit"
+					aria-label="open drawer"
+					edge="start"
+					onClick={handleDrawerToggle}
+					sx={{ mr: 2, display: { sm: 'none' } }}
+				>
+					<MenuIcon />
+				</IconButton>
 				<Typography
 					color="primary"
 					component={Link}

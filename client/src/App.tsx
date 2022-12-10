@@ -21,11 +21,11 @@ import { SnackbarProvider } from 'notistack';
 import UpdateEmail from './components/UpdateEmail';
 import PublicProfile from './components/PublicProfile';
 import { socket } from './services/socket';
-import Drawer from './components/Drawer';
 import Likes from './components/Likes';
 import VisitHistory from './components/VIsitHistory';
 import Matches from './components/Matches';
 import Blocks from './components/Blocks';
+import ResponsiveDrawer from './components/Drawer';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -49,7 +49,7 @@ const App = () => {
 		if (loggedUser) {
 			socket.auth = {
 				sessionId: loggedUser.token,
-				user_id: loggedUser.id,
+				user_id: loggedUser.id
 			};
 			if (!socket.connected) socket.connect();
 		}
@@ -69,7 +69,7 @@ const App = () => {
 						<Box>
 							{/* <Navbar /> */}
 							<AlertSnackBar />
-							<Drawer />
+							<ResponsiveDrawer />
 							<Routes>
 								<Route path="/" element={<Main />} />
 								{/* prettier-ignore */}
