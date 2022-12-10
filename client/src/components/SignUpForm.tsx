@@ -1,38 +1,26 @@
+//prettier-ignore
+import { Avatar, Box, Button, TextField, FormControlLabel, Checkbox, Grid, Container, Link, Typography, Paper, styled } from '@mui/material';
+//prettier-ignore
+import { validateEmail, validateFirstame, validateLastname, validatePassword, validateUsername, validateSignUpForm } from '../utils/inputValidators';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import {
-	Avatar,
-	Box,
-	Button,
-	CssBaseline,
-	TextField,
-	FormControlLabel,
-	Checkbox,
-	Grid,
-	Container,
-	Link,
-	Typography
-} from '@mui/material';
-
-import userService from '../services/users';
-import { NewUser } from '../types';
-import { useField } from '../hooks/useField';
 import { AlertContext } from './AlertProvider';
-import {
-	validateEmail,
-	validateFirstame,
-	validateLastname,
-	validatePassword,
-	validateUsername,
-	validateSignUpForm
-} from '../utils/inputValidators';
+import { useField } from '../hooks/useField';
+import { NewUser } from '../types';
+import userService from '../services/users';
 
-// import { NewUser, User } from '../types';
+const Item = styled(Paper)(({ theme }) => ({
+	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+	...theme.typography.body2,
+	margin: '3rem',
+	padding: '1rem 3rem 5rem 3rem',
+	textAlign: 'left',
+	color: theme.palette.text.secondary
+}));
 
 const SignUpForm = () => {
-	const firstname = useField('text', 'Name', validateFirstame);
-	const lastname = useField('text', 'Surname', validateLastname);
+	const firstname = useField('text', 'First Name', validateFirstame);
+	const lastname = useField('text', 'Last Name', validateLastname);
 	const username = useField('text', 'Username', validateUsername);
 	const email = useField('text', 'Email', validateEmail);
 	const password = useField('text', 'Password', validatePassword);
@@ -52,7 +40,9 @@ const SignUpForm = () => {
 			navigate('/login');
 		} catch (err) {
 			console.log('Error in addNewUser (signup form) ' + err); //rm later
-			alert.error(err.response?.data?.error || 'Unable to add a user. Please try again.');
+			alert.error(
+				err.response?.data?.error || 'Unable to add a user. Please try again.'
+			);
 		}
 	};
 
@@ -69,115 +59,121 @@ const SignUpForm = () => {
 	};
 
 	return (
-		<Box sx={{ mt: 15, mb: 8 }}>
-			<Container component="main" maxWidth="xs">
-				<CssBaseline />
-				<Box
-					sx={{
-						marginTop: 8,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center'
-					}}
-				>
-					<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
-					<Typography component="h1" variant="h5">
-						Sign up
-					</Typography>
+		<Box sx={{ mt: 5, mb: 6 }}>
+			<Container component="main" maxWidth="sm">
+				<Item>
 					<Box
-						component="form"
-						noValidate
-						onSubmit={submitNewUser}
-						sx={{ mt: 3 }}
+						sx={{
+							marginTop: 8,
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center'
+						}}
 					>
-						<Grid container spacing={2}>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									{...firstname}
-									required
+						<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
+						<Typography component="h1" variant="h5">
+							Sign up
+						</Typography>
+						<Box
+							component="form"
+							noValidate
+							onSubmit={submitNewUser}
+							sx={{ mt: 4 }}
+						>
+							<Grid container spacing={2}>
+								<Grid item xs={12} sm={6}>
+									<TextField
+										{...firstname}
+										required
+										fullWidth
+										autoFocus
+										style={{ margin: '0 2 0 9' }}
+										autoComplete="given-name"
+									/>
+								</Grid>
+								<Grid item xs={12} sm={6}>
+									<TextField
+										{...lastname}
+										required
+										fullWidth
+										style={{ margin: '0 2 0 9' }}
+										autoComplete="family-name"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<TextField
+										{...username}
+										required
+										fullWidth
+										autoComplete="username"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<TextField
+										{...email}
+										required
+										fullWidth
+										autoComplete="email"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<TextField
+										{...password}
+										required
+										fullWidth
+										type={showPassword ? 'text' : 'password'}
+										autoComplete="new-password"
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<FormControlLabel
+										control={
+											<Checkbox
+												value="Show password"
+												color="primary"
+											/>
+										}
+										label="Show password"
+										onChange={() => setShow(!showPassword)}
+									/>
+								</Grid>
+							</Grid>
+							{validateSignUpForm(
+								username.value,
+								email.value,
+								password.value,
+								firstname.value,
+								lastname.value
+							) ? (
+								<Button
+									type="submit"
 									fullWidth
-									autoFocus
-									autoComplete="given-name"
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									{...lastname}
-									required
+									variant="contained"
+									sx={{ mt: 3, mb: 2 }}
+								>
+									Sign Up
+								</Button>
+							) : (
+								<Button
+									type="submit"
 									fullWidth
-									autoComplete="family-name"
-								/>
+									disabled
+									variant="contained"
+									sx={{ mt: 3, mb: 2 }}
+								>
+									Sign Up
+								</Button>
+							)}
+							<Grid container justifyContent="flex-end">
+								<Grid item>
+									<Link href="/login" variant="body2">
+										Already have an account? Sign in
+									</Link>
+								</Grid>
 							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									{...username}
-									required
-									fullWidth
-									autoComplete="username"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									{...email}
-									required
-									fullWidth
-									autoComplete="email"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									{...password}
-									required
-									fullWidth
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="new-password"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<FormControlLabel
-									control={
-										<Checkbox value="Show password" color="primary" />
-									}
-									label="Show password"
-									onChange={() => setShow(!showPassword)}
-								/>
-							</Grid>
-						</Grid>
-						{validateSignUpForm(
-							username.value,
-							email.value,
-							password.value,
-							firstname.value,
-							lastname.value
-						) ? (
-							<Button
-								type="submit"
-								fullWidth
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Sign Up
-							</Button>
-						) : (
-							<Button
-								type="submit"
-								fullWidth
-								disabled
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Sign Up
-							</Button>
-						)}
-						<Grid container justifyContent="flex-end">
-							<Grid item>
-								<Link href="/login" variant="body2">
-									Already have an account? Sign in
-								</Link>
-							</Grid>
-						</Grid>
+						</Box>
 					</Box>
-				</Box>
+				</Item>
 			</Container>
 		</Box>
 	);
