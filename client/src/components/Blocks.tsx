@@ -3,6 +3,7 @@ import { Container, Grid, Paper, styled, Typography} from '@mui/material';
 import withAuthRequired from './AuthRequired';
 import UserList from './UserList';
 import BlockIcon from '@mui/icons-material/Block';
+
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -24,7 +25,7 @@ export const ItemContent = styled(Paper)`
 
 const Blocks = () => {
 	return (
-		<Container maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
+		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
 			<Grid
 				container
 				columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
@@ -36,13 +37,11 @@ const Blocks = () => {
 			>
 				<Grid item xs={12} sm={6}>
 					<StatisticItem>
-						<BlockIcon/>
+						<BlockIcon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Removed from search list
 						</Typography>
-						<ItemContent>
-							<UserList />
-						</ItemContent>
+						<ItemContent>{/* <UserList /> */}</ItemContent>
 					</StatisticItem>
 				</Grid>
 			</Grid>

@@ -25,7 +25,7 @@ export const ItemContent = styled(Paper)`
 
 const Matches = () => {
 	return (
-		<Container maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
+		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
 			<Grid
 				container
 				columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
@@ -43,7 +43,7 @@ const Matches = () => {
 							Matches
 						</Typography>
 						<ItemContent>
-							<UserList />
+							{/* <UserList /> */}
 						</ItemContent>
 					</StatisticItem>
 				</Grid>

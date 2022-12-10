@@ -4,6 +4,10 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
 import withAuthRequired from './AuthRequired';
 import UserList from './UserList';
+import { useServiceCall } from '../hooks/useServiceCall';
+import { getVisitHistory } from '../services/stats';
+import { useStateValue } from '../state';
+import { VisitEntry } from '../types';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -25,8 +29,25 @@ export const ItemContent = styled(Paper)`
 `;
 
 const Likes = () => {
+	const [{ loggedUser }] = useStateValue();
+
+	const {
+		data: likesData,
+		error: likesError
+	}: {
+		data:
+			| [VisitEntry[], VisitEntry[]]
+			| [VisitEntry[], undefined]
+			| [undefined, VisitEntry[]]
+			| undefined;
+		error: Error | undefined;
+	} = useServiceCall(
+		async () => loggedUser && (await getVisitHistory(loggedUser.id)),
+		[]
+	);
+
 	return (
-		<Container maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
+		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
 			<Grid
 				container
 				columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
@@ -38,9 +59,7 @@ const Likes = () => {
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Who liked you
 						</Typography>
-						<ItemContent>
-							<UserList />
-						</ItemContent>
+						<ItemContent>{/* <UserList /> */}</ItemContent>
 					</StatisticItem>
 				</Grid>
 				<Grid item xs={12} sm={6}>
@@ -49,9 +68,7 @@ const Likes = () => {
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Whom you liked
 						</Typography>
-						<ItemContent>
-							<UserList />
-						</ItemContent>
+						<ItemContent>{/* <UserList /> */}</ItemContent>
 					</StatisticItem>
 				</Grid>
 			</Grid>
