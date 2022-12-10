@@ -12,13 +12,14 @@ import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { CallbackSucess, SocketCustom } from './types';
+import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom } from './types';
 import { socketErrorHandler } from './errorsSocket';
 import { queryOnlineUsers, updateOnlineUsers } from './services/users';
+import { removeNotificationsQueueById } from './repositories/notificationsQueueRepository';
 
 export const app = express();
 export const httpServer = createServer(app);
-export const io = new Server(httpServer, {
+export const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 	cors: {
 		origin: 'http://localhost:3000',
 		methods: ['GET', 'POST']
@@ -41,6 +42,13 @@ io.on(
 				const onlineStatus = await queryOnlineUsers(user_id);
 				callback(onlineStatus);
 				console.log(`online_query: ${onlineStatus.online}`);
+			})
+		);
+		// Clear notification queue
+		socket.on(
+			'clear_notifications',
+			socketErrorHandler(async () => {
+				if (socket.session) await removeNotificationsQueueById(socket.session.userId);
 			})
 		);
 

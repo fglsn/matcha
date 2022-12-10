@@ -103,3 +103,8 @@ create table notification_entries (
 	acting_user_id bigserial not null,
 	type varchar not null
 );
+
+create table notifications_queue (
+	id bigserial primary key,
+	notified_user_id bigserial not null
+);

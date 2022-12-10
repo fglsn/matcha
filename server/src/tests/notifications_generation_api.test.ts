@@ -8,6 +8,7 @@ import { clearNotifications, getNotificationsByNotifiedUserId } from '../reposit
 import { clearLikes } from '../repositories/likesRepository';
 import { clearMatches } from '../repositories/matchesRepository';
 import { clearVisitHistory } from '../repositories/visitHistoryRepository';
+import { addNotificationsQueueEntry, getNotificationsQueueCount, removeNotificationsQueueById } from '../repositories/notificationsQueueRepository';
 
 jest.setTimeout(5000);
 jest.mock('../services/location');
@@ -131,5 +132,14 @@ describe('test notification emitters on working connection', () => {
 			}
 		});
 		void twoUserLikeEachOther(userOne, userTwo);
+	});
+	test('should clear notifications queue', async () => {
+		await addNotificationsQueueEntry(userOne.id);
+		await addNotificationsQueueEntry(userOne.id);
+		await addNotificationsQueueEntry(userOne.id);
+		const initialCount = await getNotificationsQueueCount(userOne.id);
+		await removeNotificationsQueueById(userOne.id);
+		expect(initialCount).toBe(3);
+		expect(await getNotificationsQueueCount(userOne.id)).toBe(0);
 	});
 });
