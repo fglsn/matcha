@@ -179,3 +179,9 @@ export type NotificationMessage = {
 };
 
 export type NotificationType = 'like' | 'dislike' | 'visit' | 'match';
+
+export type UserEntry = {
+	id: string;
+	username: string;
+	avatar: string;
+};

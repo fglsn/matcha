@@ -3,16 +3,18 @@ import asyncHandler from 'express-async-handler';
 import { AppError, ValidationError } from '../errors';
 import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
-import { getAllUsers, getTagsByUserId, getUserDataByUserId, updateFameRatingByUserId, updateUserDataByUserId } from '../repositories/userRepository';
+import { getAllUsers, getTagsByUserId, getUserDataByUserId, getUserEntries, updateFameRatingByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import { CustomRequest } from '../types';
 import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
-import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload } from '../validators/userPayloadValidators';
+import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload, parseIdList } from '../validators/userPayloadValidators';
 //prettier-ignore
 import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
+import { getLikesByVisitedId, getLikesByVisitorId } from '../repositories/likesRepository';
+import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
 
 const router = express.Router();
 
@@ -20,7 +22,6 @@ router.get(
 	'/',
 	asyncHandler(async (_req, res) => {
 		const result = await getAllUsers();
-		console.log(result);
 		res.send(result);
 	})
 ); //rm later
@@ -124,7 +125,7 @@ router.put(
 		if (!tags) {
 			await updateFameRatingByUserId(userId, updatedProfile.tags.length);
 		} else {
-			await updateFameRatingByUserId(userId, (-tags.length + updatedProfile.tags.length));
+			await updateFameRatingByUserId(userId, -tags.length + updatedProfile.tags.length);
 		}
 		await updateUserDataByUserId(req.session.userId, { ...updatedProfile, location });
 		res.status(200).end();
@@ -138,7 +139,7 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		const result = await getPublicProfileData(req.params.id, req.session.userId);
-		
+
 		res.status(200).json(result);
 	})
 );
@@ -176,6 +177,41 @@ router.delete(
 		if (req.session.userId === req.params.id) throw new AppError(`You cannot dislike own profile`, 400);
 		await dislikeUser(req.params.id, req.session.userId);
 		res.status(200).end();
+	})
+);
+
+router.get(
+	'/:id/visit_history',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
+		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
+		const result = await Promise.all([getVisitHistoryByVisitedId(req.session.userId), getVisitHistoryByVisitorId(req.session.userId)]);
+		res.status(200).json(result);
+	})
+);
+
+router.get(
+	'/:id/likes',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
+		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
+		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
+		const result = await Promise.all([getLikesByVisitedId(req.session.userId), getLikesByVisitorId(req.session.userId)]);
+		res.status(200).json(result);
+	})
+);
+
+router.post(
+	'/entries',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
+		const idList = parseIdList(req.body);
+		const result = await getUserEntries(idList);
+		res.status(200).json(result);
 	})
 );
 

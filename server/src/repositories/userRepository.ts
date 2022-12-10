@@ -1,7 +1,7 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
 import { ValidationError } from '../errors';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -279,12 +279,12 @@ const updateFameRatingByUserId = async (userId: string, points: number): Promise
 };
 
 const getTagsByUserId = async (userId: string): Promise<string[] | undefined> => {
-		const query = {
-			text: 'select tags from users where id = $1',
-			values: [userId]
-		};
-		const res = await pool.query(query);
-		return getStringArrayOrUndefined(res.rows[0]['tags']);
+	const query = {
+		text: 'select tags from users where id = $1',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	return getStringArrayOrUndefined(res.rows[0]['tags']);
 };
 
 const updateUserDataByUserId = async (userId: string, updatedProfile: UpdateUserProfile): Promise<void> => {
@@ -321,6 +321,33 @@ const findUsernameById = async (userId: string): Promise<string | undefined> => 
 	return getString(res.rows[0]['username']);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const userEntryMapper = (row: any): UserEntry => {
+	const photo_type = getString(row['photo_type']);
+	const photo = getString(row['photo']);
+	const image = `data:${photo_type};base64,${photo}`;
+	return {
+		id: getString(row['id']),
+		username: getString(row['username']),
+		avatar: image
+	};
+};
+
+const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
+	const query = {
+		text: `select distinct on (users.id) users.id, users.username, photos.photo, photos.photo_type
+				from users
+					join photos on users.id = photos.user_id
+				where users.id = any ($1 :: int[]) `,
+		values: [idList]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return [];
+	}
+	return (res.rows).map(row => {return userEntryMapper(row);});
+};
+
 export {
 	getAllUsers,
 	getIdList,
@@ -345,5 +372,6 @@ export {
 	findUsernameById,
 	getFameRatingByUserId,
 	updateFameRatingByUserId,
-	getTagsByUserId
+	getTagsByUserId,
+	getUserEntries
 };

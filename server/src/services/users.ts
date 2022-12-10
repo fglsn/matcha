@@ -200,7 +200,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 
 	if (profileId !== requestorId) {
 		if (await addEntryToVisitHistory(profileId, requestorId)) {
-      //add notification
+			//add notification
 			await updateFameRatingByUserId(profileId, 1);
 			profile.fameRating = profile.fameRating + 1;
 		}
@@ -220,7 +220,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		location: profile.location,
 		fameRating: profile.fameRating
 	};
-  
+
 	return profilePublic;
 };
 
@@ -235,14 +235,14 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-  
+
 	if (await addLikeEntry(profileId, requestorId)) {
-    await updateFameRatingByUserId(profileId, 2);
-    	//add notigication
-  }
+		await updateFameRatingByUserId(profileId, 2);
+		//add notigication
+	}
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
-    //add notification
+		//add notification
 		if ((await getFameRatingByUserId(requestorId)) >= 75) {
 			await updateFameRatingByUserId(profileId, 2);
 		} else if ((await getFameRatingByUserId(requestorId)) <= 25) {

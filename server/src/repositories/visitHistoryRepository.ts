@@ -10,26 +10,26 @@ const visitHistoryEntryMapper = (row: any): VisitEntry => {
 	};
 };
 
-const getVisitHistoryByVisitedId = async (visitedUserId: string): Promise<VisitEntry[] | undefined> => {
+const getVisitHistoryByVisitedId = async (visitedUserId: string): Promise<VisitEntry[]> => {
 	const query = {
 		text: 'select * from visit_history where visited_user_id = $1',
 		values: [visitedUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => visitHistoryEntryMapper(row));
 };
 
-const getVisitHistoryByVisitorId = async (visitorUserId: string): Promise<VisitEntry[] | undefined> => {
+const getVisitHistoryByVisitorId = async (visitorUserId: string): Promise<VisitEntry[]> => {
 	const query = {
 		text: 'select * from visit_history where visitor_user_id = $1',
 		values: [visitorUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => visitHistoryEntryMapper(row));
 };
