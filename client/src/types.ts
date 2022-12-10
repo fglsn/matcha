@@ -100,3 +100,14 @@ export enum AlertStatus {
 	Success = 'SUCCSESS',
 	Error = 'ERROR'
 }
+
+export type UserEntry = {
+	id: string;
+	username: string;
+	avatar: string;
+};
+
+export type VisitEntry = {
+	visitedUserId: string;
+	visitorUserId: string;
+};

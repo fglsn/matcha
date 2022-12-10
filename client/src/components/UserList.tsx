@@ -1,33 +1,73 @@
 //prettier-ignore
-import { ListItemButton, ListItemAvatar, Avatar, ListItemText, List, ListItem, Divider } from '@mui/material';
+import { ListItemButton, ListItemAvatar, Avatar, ListItemText, List, ListItem, Divider, Typography, Alert, styled } from '@mui/material';
+import { useServiceCall } from '../hooks/useServiceCall';
+import { getUserEntries } from '../services/stats';
+import { Link } from 'react-router-dom';
+import { UserEntry } from '../types';
 import withAuthRequired from './AuthRequired';
 
-const UserList = () => {
+export const StyledLink = styled(Link)`
+	color: rgba(0, 0, 0, 0.6);
+	text-decoration: none;
+`;
+
+const User = ({ user }: { user: UserEntry }) => {
 	return (
-		<List style={{ width: '100%' }}>
-			{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => {
-				const labelId = `checkbox-list-secondary-label-${value}`;
-				return (
-					<>
-						<ListItem key={value} disablePadding>
-							<ListItemButton>
-								<ListItemAvatar>
-									<Avatar
-										alt={`Avatar n°${value + 1}`}
-										src={`/static/images/avatar/${value + 1}.jpg`}
-									/>
-								</ListItemAvatar>
-								<ListItemText
-									id={labelId}
-									primary={`User ${value + 1}`}
-								/>
-							</ListItemButton>
-						</ListItem>
-						<Divider />
-					</>
-				);
-			})}
-		</List>
+		<>
+			<ListItem disablePadding>
+				<ListItemButton>
+					<ListItemAvatar>
+						<Avatar
+							alt={`Avatar of user ${user.username}`}
+							src={`${user.avatar}`}
+						/>
+					</ListItemAvatar>
+					<ListItemText
+						primary={
+							<StyledLink to={`/profile/${user.id}`}>
+								{user.username}
+							</StyledLink>
+						}
+					/>
+				</ListItemButton>
+			</ListItem>
+			<Divider />
+		</>
+	);
+};
+
+const UserList: React.FC<{
+	users: string[] | undefined;
+}> = ({ users: idList }) => {
+	const {
+		data: userEntriesData,
+		error: userEntriesError
+	}: {
+		data: UserEntry[];
+		error: Error | undefined;
+	} = useServiceCall(async () => idList && (await getUserEntries(idList)), []);
+
+	if (userEntriesError)
+		return (
+			<Alert severity="error">Error loading user list, please try again...</Alert>
+		);
+
+	if (!userEntriesData) {
+		return (
+			<Typography variant="h6" color="rgba(0, 0, 0, 0.6)" textAlign="center">
+				No history yet
+			</Typography>
+		);
+	}
+
+	return (
+		userEntriesData && (
+			<List style={{ width: '100%' }}>
+				{userEntriesData.map((value) => (
+					<User key={value.id} user={value} />
+				))}
+			</List>
+		)
 	);
 };
 
