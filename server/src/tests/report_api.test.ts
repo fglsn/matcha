@@ -1,4 +1,4 @@
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
 import { clearUsers, findUserByUsername, increaseReportCount } from '../repositories/userRepository';
 import { newUser, loginUser, secondUser, loginUser2 } from './test_helper';

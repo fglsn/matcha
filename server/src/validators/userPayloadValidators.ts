@@ -4,7 +4,7 @@ import { isDate, isString, isStringArray, isStringRepresentedInteger } from './b
 import { ValidationError } from '../errors';
 import { checkIfDuplicatesExist, getAge } from '../utils/helpers';
 
-const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
+const usernameRegex = /^[a-zA-Z0-9_\-.ÄÖäöÅåßÜü]{4,21}$/;
 const emailRegex =
 	/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;

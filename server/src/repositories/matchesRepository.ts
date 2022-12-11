@@ -60,4 +60,8 @@ const checkMatchEntry = async (matchedUserIdOne: string, matchedUserIdTwo: strin
 	return true;
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry };
+const clearMatches = async (): Promise<void> => {
+	await pool.query('truncate table matches');
+};
+
+export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches };

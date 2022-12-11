@@ -4,7 +4,8 @@ export const validateUsername = (username: string) => {
 	if (username.length < 4) {
 		return 'Too short (Length: 4-21 charachters)';
 	}
-	const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
+	// const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
+	const usernameRegex = /^[a-zA-Z0-9_\-.ÄÖäöÅåßÜü]{4,21}$/;
 	if (!usernameRegex.test(username)) {
 		return 'Invalid username';
 	}
