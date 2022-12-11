@@ -30,6 +30,30 @@ export const getLikes = async (userId: string): Promise<any> => {
 	}
 };
 
+export const getMatches = async (userId: string): Promise<any> => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/matches`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
+export const getBlocks = async (userId: string): Promise<any> => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/blocks`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};
+
 export const getUserEntries = async (idList: string[]): Promise<any> => {
 	try {
 		const config = {

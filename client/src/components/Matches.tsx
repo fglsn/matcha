@@ -1,8 +1,13 @@
 //prettier-ignore
-import { Container, Grid, Paper, styled, Typography} from '@mui/material';
+import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
 import withAuthRequired from './AuthRequired';
 import UserList from './UserList';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import { MatchEntry } from '../types';
+import { getMatches } from '../services/stats';
+import { useStateValue } from '../state';
+import { useServiceCall } from '../hooks/useServiceCall';
+import LoadingIcon from './LoadingIcon';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -24,6 +29,27 @@ export const ItemContent = styled(Paper)`
 `;
 
 const Matches = () => {
+	const [{ loggedUser }] = useStateValue();
+
+	const {
+		data: matchesData,
+		error: matchesError
+	}: {
+		data: MatchEntry[] | undefined;
+		error: Error | undefined;
+	} = useServiceCall(async () => loggedUser && (await getMatches(loggedUser.id)), []);
+
+	if (matchesError)
+		return (
+			<Alert severity="error">
+				Error loading visit history page, please try again...
+			</Alert>
+		);
+
+	if (!matchesData) {
+		return <LoadingIcon />;
+	}
+
 	return (
 		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
 			<Grid
@@ -37,13 +63,22 @@ const Matches = () => {
 			>
 				<Grid item xs={12} sm={6}>
 					<StatisticItem>
-						<LoyaltyIcon/>
+						<LoyaltyIcon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
-							
 							Matches
 						</Typography>
 						<ItemContent>
-							{/* <UserList /> */}
+							<UserList
+								users={
+									matchesData
+										? matchesData
+										.flatMap((entry) => {
+												return [entry.matchedUserIdOne, entry.matchedUserIdTwo]
+										})
+										.filter((id) => loggedUser?.id !== id)
+										: undefined
+								}
+							/>
 						</ItemContent>
 					</StatisticItem>
 				</Grid>

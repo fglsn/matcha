@@ -1,8 +1,13 @@
 //prettier-ignore
-import { Container, Grid, Paper, styled, Typography} from '@mui/material';
+import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
 import withAuthRequired from './AuthRequired';
 import UserList from './UserList';
 import BlockIcon from '@mui/icons-material/Block';
+import { useServiceCall } from '../hooks/useServiceCall';
+import { getBlocks } from '../services/stats';
+import { useStateValue } from '../state';
+import { BlockEntry } from '../types';
+import LoadingIcon from './LoadingIcon';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -24,6 +29,27 @@ export const ItemContent = styled(Paper)`
 `;
 
 const Blocks = () => {
+	const [{ loggedUser }] = useStateValue();
+
+	const {
+		data: blocksData,
+		error: blocksError
+	}: {
+		data: BlockEntry[] | undefined;
+		error: Error | undefined;
+	} = useServiceCall(async () => loggedUser && (await getBlocks(loggedUser.id)), []);
+
+	if (blocksError)
+		return (
+			<Alert severity="error">
+				Error loading visit history page, please try again...
+			</Alert>
+		);
+
+	if (!blocksData) {
+		return <LoadingIcon />;
+	}
+
 	return (
 		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
 			<Grid
@@ -41,7 +67,17 @@ const Blocks = () => {
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Removed from search list
 						</Typography>
-						<ItemContent>{/* <UserList /> */}</ItemContent>
+						<ItemContent>
+							<UserList
+								users={
+									blocksData
+										? blocksData.map((entry) => {
+												return entry.blockedUserId;
+										  })
+										: undefined
+								}
+							/>
+						</ItemContent>
 					</StatisticItem>
 				</Grid>
 			</Grid>

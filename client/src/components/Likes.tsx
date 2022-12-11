@@ -1,13 +1,14 @@
 //prettier-ignore
-import { Container, Grid, Paper, styled, Typography} from '@mui/material';
+import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
 import withAuthRequired from './AuthRequired';
 import UserList from './UserList';
 import { useServiceCall } from '../hooks/useServiceCall';
-import { getVisitHistory } from '../services/stats';
+import { getLikes } from '../services/stats';
 import { useStateValue } from '../state';
-import { VisitEntry } from '../types';
+import { LikeEntry } from '../types';
+import LoadingIcon from './LoadingIcon';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -35,16 +36,22 @@ const Likes = () => {
 		data: likesData,
 		error: likesError
 	}: {
-		data:
-			| [VisitEntry[], VisitEntry[]]
-			| [VisitEntry[], undefined]
-			| [undefined, VisitEntry[]]
-			| undefined;
+		data: [LikeEntry[], LikeEntry[]] | undefined;
 		error: Error | undefined;
-	} = useServiceCall(
-		async () => loggedUser && (await getVisitHistory(loggedUser.id)),
-		[]
-	);
+	} = useServiceCall(async () => loggedUser && (await getLikes(loggedUser.id)), []);
+
+	if (likesError)
+		return (
+			<Alert severity="error">
+				Error loading visit history page, please try again...
+			</Alert>
+		);
+
+	if (!likesData) {
+		return <LoadingIcon />;
+	}
+
+	const [likesBy, likesFrom] = likesData;
 
 	return (
 		<Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
@@ -59,7 +66,17 @@ const Likes = () => {
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Who liked you
 						</Typography>
-						<ItemContent>{/* <UserList /> */}</ItemContent>
+						<ItemContent>
+							<UserList
+								users={
+									likesBy
+										? likesBy.map((entry) => {
+												return entry.likingUserId;
+										  })
+										: undefined
+								}
+							/>
+						</ItemContent>
 					</StatisticItem>
 				</Grid>
 				<Grid item xs={12} sm={6}>
@@ -68,7 +85,17 @@ const Likes = () => {
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Whom you liked
 						</Typography>
-						<ItemContent>{/* <UserList /> */}</ItemContent>
+						<ItemContent>
+							<UserList
+								users={
+									likesFrom
+										? likesFrom.map((entry) => {
+												return entry.likedUserId;
+										  })
+										: undefined
+								}
+							/>
+						</ItemContent>
 					</StatisticItem>
 				</Grid>
 			</Grid>
