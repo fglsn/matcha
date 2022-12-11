@@ -148,7 +148,7 @@ describe('like fails on non-valid users', () => {
 		const likeStatusAtEnd = await checkLikeEntry(visited.id, id);
 		expect(likeStatusAtEnd).toBeFalsy();
 		const likesByVisited = await getLikesByVisitedId(visited.id);
-		expect(likesByVisited).not.toBeDefined();
+		expect(likesByVisited).toStrictEqual([]);
 	});
 
 	test('fails if user profile that is getting a like id not complete', async () => {
@@ -174,6 +174,6 @@ describe('like fails on non-valid users', () => {
 		const likeStatusAtEnd = await checkLikeEntry(id, visitor.id);
 		expect(likeStatusAtEnd).toBeFalsy();
 		const likesByVisited = await getLikesByVisitedId(id);
-		expect(likesByVisited).not.toBeDefined();
+		expect(likesByVisited).toStrictEqual([]);
 	});
 });
