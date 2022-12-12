@@ -1,7 +1,7 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
-import { ValidationError } from '../errors';
 import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry } from '../types';
+import { ValidationError } from '../errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -329,7 +329,7 @@ const userEntryMapper = (row: any): UserEntry => {
 	return {
 		id: getString(row['users_id']),
 		username: getString(row['username']),
-		avatar: image,
+		avatar: image
 	};
 };
 
