@@ -52,7 +52,7 @@ const UserList: React.FC<{
 			<Alert severity="error">Error loading user list, please try again...</Alert>
 		);
 
-	if (!userEntriesData) {
+	if (!userEntriesData || !userEntriesData.length) {
 		return (
 			<Typography variant="h6" color="rgba(0, 0, 0, 0.6)" textAlign="center">
 				No history yet

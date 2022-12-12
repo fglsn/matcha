@@ -6,9 +6,14 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OrientationIcon from './OrientationIcon';
 
 const StyledContainer = styled('div')({
-	height: '450px',
-	width: '600px',
-	margin: '0 auto'
+	width: '100vw',
+	maxWidth: '600px',
+	minWidth: '320px',
+	height: 'calc(600px * (3/4))',
+	maxHeight: 'calc(600px * (3/4))',
+	minHeight: '320px',
+	paddingBottom: '1rem',
+	margin: '0 auto',
 });
 
 const StyledBeforeIcon = styled(NavigateBeforeIcon)`
@@ -58,7 +63,7 @@ const Photo = styled('img')`
 	max-height: 100%;
 	margin: auto;
 	border-radius: 7px;
-	object-fit: scale-down;
+	object-fit: contain;
 `;
 
 const ProfileInfoWrapper = styled('div')`
@@ -81,15 +86,22 @@ export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 		<ProfileInfoWrapper>
 			<Typography color="secondary">About {user.firstname}</Typography>
 			<Typography
+				sx={{
+					typography: { sm: 'h5', xs: 'body2' },
+					mt: 1.5,
+					mb: 1,
+					fontStyle: 'italic'
+				}}
 				color="secondary"
-				sx={{ mt: 1.5, mb: 1, fontStyle: 'italic' }}
-				variant="h5"
+				// sx={{ mt: 1.5, mb: 1, fontStyle: 'italic' }}
+				// variant="h5"
 			>
 				« {user.bio} »
 			</Typography>
 			<Typography
 				color="secondary"
 				sx={{
+					typography: { sm: 'h6', xs: { fontSize: '0.9rem' } },
 					m: 1,
 					mb: 2,
 					display: 'flex',
@@ -105,7 +117,7 @@ export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 					return (
 						<Chip
 							size="small"
-							sx={{ m: 1, p: '15px' }}
+							sx={{ m: 1, p: '10px' }}
 							key={tag}
 							color="secondary"
 							label={tag}
@@ -135,6 +147,7 @@ const ProfileSlider: React.FC<{ photos: ImageType[]; user: ProfilePublic }> = ({
 		setCurrentIndex(newIndex);
 	};
 
+	// useMediaQuery((theme: any) => theme.breakpoints.up('sm'));
 	return (
 		<StyledContainer>
 			<Slider>

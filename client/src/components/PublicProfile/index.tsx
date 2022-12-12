@@ -23,7 +23,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const StyledContainer = styled(Container)({
-	maxHeight: '750px',
 	maxWidth: 'auto',
 	display: 'flex',
 	justifyContent: 'center'
@@ -111,7 +110,7 @@ const PublicProfile = () => {
 
 	return (
 		<>
-			<StyledContainer maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
+			<StyledContainer maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
 				<Item>
 					{isMatch && (
 						<StyledAlert severity="info" color="warning">
