@@ -77,12 +77,28 @@ const ProfileInfoWrapper = styled('div')`
 `;
 
 export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
-
 	return (
 		<ProfileInfoWrapper>
 			<Typography color="secondary">About {user.firstname}</Typography>
-			<Typography color="secondary" sx={{ mt: 1.5, mb: 1.5 }} variant="h5">
+			<Typography
+				color="secondary"
+				sx={{ mt: 1.5, mb: 1, fontStyle: 'italic' }}
+				variant="h5"
+			>
 				« {user.bio} »
+			</Typography>
+			<Typography
+				color="secondary"
+				sx={{
+					m: 1,
+					mb: 2,
+					display: 'flex',
+					fontSize: '1.1rem',
+					alignItems: 'center'
+				}}
+			>
+				Sexual preferenses:
+				<OrientationIcon gender={user.gender} orientation={user.orientation} />
 			</Typography>
 			<Grid>
 				{user.tags.map((tag: string) => {
@@ -97,10 +113,6 @@ export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 					);
 				})}
 			</Grid>
-			<Typography color="secondary" sx={{ m: 1 }}>
-				Sexual preferenses
-			</Typography>
-			<OrientationIcon gender={user.gender} orientation={user.orientation} />
 		</ProfileInfoWrapper>
 	);
 };

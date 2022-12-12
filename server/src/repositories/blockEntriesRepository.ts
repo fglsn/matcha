@@ -10,26 +10,26 @@ const blockEntryMapper = (row: any): BlockEntry => {
 	};
 };
 
-const getBlockedUsersByBlockingUserId = async (blockingUserId: string): Promise<BlockEntry[] | undefined> => {
+const getBlockedUsersByBlockingUserId = async (blockingUserId: string): Promise<BlockEntry[]> => {
 	const query = {
 		text: 'select * from block_entries where blocking_user_id = $1',
 		values: [blockingUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => blockEntryMapper(row));
 };
 
-const getListOfUsersWhoBlockedThisUser = async (blockedUserId: string): Promise<BlockEntry[] | undefined> => {
+const getListOfUsersWhoBlockedThisUser = async (blockedUserId: string): Promise<BlockEntry[]> => {
 	const query = {
 		text: 'select * from block_entries where blocked_user_id = $1',
 		values: [blockedUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => blockEntryMapper(row));
 };

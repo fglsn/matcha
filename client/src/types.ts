@@ -100,3 +100,29 @@ export enum AlertStatus {
 	Success = 'SUCCSESS',
 	Error = 'ERROR'
 }
+
+export type UserEntry = {
+	id: string;
+	username: string;
+	avatar: string;
+};
+
+export type VisitEntry = {
+	visitedUserId: string;
+	visitorUserId: string;
+};
+
+export type LikeEntry = {
+	likedUserId: string;
+	likingUserId: string;
+};
+
+export type MatchEntry = {
+	matchedUserIdOne: string;
+	matchedUserIdTwo: string;
+};
+
+export type BlockEntry = {
+	blockedUserId: string;
+	blockingUserId: string;
+};

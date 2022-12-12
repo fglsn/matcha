@@ -6,7 +6,7 @@ const withAuthRequired =
 	<P extends object>(
 		Component: React.ComponentType<P>
 	): React.FC<P> =>
-	(...props) => {
+	(props) => {
 		const [{ loggedUser }] = useContext(StateContext);
 
 		if (!loggedUser) {

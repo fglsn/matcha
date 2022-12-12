@@ -10,26 +10,26 @@ const likeEntryMapper = (row: any): LikeEntry => {
 	};
 };
 
-const getLikesByVisitedId = async (visitedUserId: string): Promise<LikeEntry[] | undefined> => {
+const getLikesByVisitedId = async (visitedUserId: string): Promise<LikeEntry[]> => {
 	const query = {
 		text: 'select * from likes_history where liked_user_id = $1',
 		values: [visitedUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => likeEntryMapper(row));
 };
 
-const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[] | undefined> => {
+const getLikesByVisitorId = async (visitorUserId: string): Promise<LikeEntry[]> => {
 	const query = {
 		text: 'select * from likes_history where liking_user_id = $1',
 		values: [visitorUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => likeEntryMapper(row));
 };

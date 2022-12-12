@@ -1,6 +1,6 @@
 import { Coordinates, Gender, NewUser, Orientation, UpdateUserProfileWithoutLocation } from '../types';
 import { Tags } from '../utils/tags';
-import { isDate, isString, isStringArray } from './basicTypeValidators';
+import { isDate, isString, isStringArray, isStringRepresentedInteger } from './basicTypeValidators';
 import { ValidationError } from '../errors';
 import { checkIfDuplicatesExist, getAge } from '../utils/helpers';
 
@@ -235,6 +235,17 @@ export const parseLocationString = (location: unknown): string => {
 		throw new ValidationError(`Expected location to be string, got: ${typeof location}`);
 	}
 	return location;
+};
+
+export const parseIdList = (idList: unknown): string[] => {
+	if (!idList) {
+		throw new ValidationError(`Missing user id list`);
+	}
+	if (!isStringArray(idList)) throw new ValidationError(`Invalid user list format: strings expected`);
+	idList.map((id) => {
+		if (!isStringRepresentedInteger(id)) throw new ValidationError('Wrong user id format');
+	});
+	return idList;
 };
 
 type Fields1 = {

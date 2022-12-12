@@ -10,14 +10,14 @@ const matchEntryMapper = (row: any): MatchEntry => {
 	};
 };
 
-const getMatchesByUserId = async (matchedUserId: string): Promise<MatchEntry[] | undefined> => {
+const getMatchesByUserId = async (matchedUserId: string): Promise<MatchEntry[]> => {
 	const query = {
 		text: 'select * from matches where matched_user_one = $1 or matched_user_two = $1',
 		values: [matchedUserId]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return undefined;
+		return [];
 	}
 	return res.rows.map((row) => matchEntryMapper(row));
 };

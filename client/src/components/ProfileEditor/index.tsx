@@ -72,7 +72,7 @@ const ProfileEditor = () => {
 
 	return (
 		<>
-			<Container maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
+			<Container maxWidth="lg" sx={{ mt: 15, mb: 8 }}>
 				<Grid
 					container
 					columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
