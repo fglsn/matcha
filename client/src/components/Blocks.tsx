@@ -11,7 +11,6 @@ import LoadingIcon from './LoadingIcon';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
-	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
 	padding: theme.spacing(4),
 	textAlign: 'center',

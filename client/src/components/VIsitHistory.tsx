@@ -11,7 +11,6 @@ import UserList from './UserList';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
-	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
 	padding: theme.spacing(4),
 	textAlign: 'center',
@@ -22,7 +21,7 @@ export const StatisticItem = styled(Paper)(({ theme }) => ({
 
 export const ItemContent = styled(Paper)`
 	display: flex;
-	padding: 2rem;
+	padding: 1.5rem;
 	margin-top: 2rem;
 	height: 80%;
 	background-color: ##ffc600db;
