@@ -131,6 +131,7 @@ export type NotificationQueue = {
 	initialCount: number;
 };
 
+//prettier-ignore
 export type NotificationMsg =
 	| {
 			type: 'like';
