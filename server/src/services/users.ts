@@ -9,7 +9,7 @@ import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail,
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
-import { EmailUpdateRequest, LikeAndMatchStatus, NewUser, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
+import { EmailUpdateRequest, LikeAndMatchStatus, NewUser, Notifications, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
@@ -357,17 +357,17 @@ const generateMessage = async (acting_user_id: string, type: string) => {
 	}
 };
 
-export const getNotifications = async (id: string) => {
+export const getNotifications = async (id: string): Promise<Notifications> => {
 	const notificatonEtries = await getNotificationsByNotifiedUserId(id);
-	if (!notificatonEtries) return undefined;
+	if (!notificatonEtries) return { notifications: [] };
 	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
 	const notifications = await Promise.all(promises);
 	return { notifications: notifications };
 };
 
-export const getNotificationsPage = async (id: string, page: string, limit: string) => {
+export const getNotificationsPage = async (id: string, page: string, limit: string): Promise<Notifications> => {
 	const notificatonEtries = await getNotificationsPageByNotifiedUserId(id, Number(page), Number(limit));
-	if (!notificatonEtries) return undefined;
+	if (!notificatonEtries) return { notifications: [] };
 	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
 	const notifications = await Promise.all(promises);
 	return { notifications: notifications };

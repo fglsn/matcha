@@ -13,7 +13,11 @@ const notificationEntryMapper = (row: any): NotificationEntry => {
 
 const getNotificationsByNotifiedUserId = async (notified_user_id: string): Promise<NotificationEntry[] | undefined> => {
 	const query = {
-		text: 'select * from notification_entries where notified_user_id = $1',
+		text: `
+				select * from notification_entries 
+				where notified_user_id = $1
+				order by id desc
+			`,
 		values: [notified_user_id]
 	};
 	const res = await pool.query(query);
