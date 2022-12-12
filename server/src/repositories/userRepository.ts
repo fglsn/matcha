@@ -327,18 +327,19 @@ const userEntryMapper = (row: any): UserEntry => {
 	const photo = getString(row['photo']);
 	const image = `data:${photo_type};base64,${photo}`;
 	return {
-		id: getString(row['id']),
+		id: getString(row['users_id']),
 		username: getString(row['username']),
-		avatar: image
+		avatar: image,
 	};
 };
 
 const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	const query = {
-		text: `select distinct on (users.id) users.id, users.username, photos.photo, photos.photo_type
+		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
 				from users
 					join photos on users.id = photos.user_id
-				where users.id = any ($1 :: int[]) `,
+				where users.id = any ($1 :: int[])
+				order by users.id, photos.id`,
 		values: [idList]
 	};
 	const res = await pool.query(query);
