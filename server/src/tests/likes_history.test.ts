@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, defaultCoordinates, ipAddress } from './test_helper';
+import { newUser, loginUser, secondUser, loginUser2, defaultCoordinates, ipAddress, TokenAndId } from './test_helper';
 import { api, initLoggedUser, loginAndPrepareUser, putLike, removeLike, requestCoordinatesByIpMock } from './test_helper_fns';
 import { checkLikeEntry, clearLikes, getLikesByVisitedId, getLikesCount } from '../repositories/likesRepository';
 import { createNewUser } from '../services/users';
@@ -12,6 +13,16 @@ jest.mock('../services/location');
 let visitor: { id: string; token: string };
 let visited: { id: string; token: string };
 
+export const checkLikesHistoryStats = async (owner: TokenAndId) => {
+	const resFromStatsPage = await api
+		.get(`/api/users/${owner.id}/likes`)
+		.set({ Authorization: `bearer ${owner.token}` })
+		.expect('Content-Type', /application\/json/);
+
+	expect(resFromStatsPage.statusCode).toBe(200);
+	return resFromStatsPage.body;
+};
+
 describe('like history tests', () => {
 	beforeEach(async () => {
 		await clearUsers();
@@ -21,6 +32,12 @@ describe('like history tests', () => {
 	});
 
 	test('like value is false on GET when no like from visitor on visited profile', async () => {
+		const visitedStats = await checkLikesHistoryStats(visited);
+		expect(visitedStats).toStrictEqual([[], []]);
+
+		const visitorStats = await checkLikesHistoryStats(visitor);
+		expect(visitorStats).toStrictEqual([[], []]);
+
 		const res = await api
 			.get(`/api/users/${visited.id}/like`)
 			.set({ Authorization: `bearer ${visitor.token}` })
@@ -41,6 +58,12 @@ describe('like history tests', () => {
 		const likesByVisited = await getLikesByVisitedId(visited.id);
 		expect(likesByVisited).toBeDefined();
 		expect(likesByVisited?.[0].likingUserId).toBe(visitor.id);
+
+		const visitedStats = await checkLikesHistoryStats(visited);
+		expect(visitedStats).toStrictEqual([[{ likedUserId: visited.id, likingUserId: visitor.id }], []]);
+
+		const visitorStats = await checkLikesHistoryStats(visitor);
+		expect(visitorStats).toStrictEqual([[], [{ likedUserId: visited.id, likingUserId: visitor.id }]]);
 	});
 
 	test('like value is true on GET when visitor already liked visited profile', async () => {
@@ -67,11 +90,23 @@ describe('like history tests', () => {
 		const likeStatusAtEnd = await checkLikeEntry(visited.id, visitor.id);
 		expect(likeStatusAtEnd).toBeTruthy();
 
+		const visitedStats = await checkLikesHistoryStats(visited);
+		expect(visitedStats).toStrictEqual([[{ likedUserId: visited.id, likingUserId: visitor.id }], []]);
+
+		const visitorStats = await checkLikesHistoryStats(visitor);
+		expect(visitorStats).toStrictEqual([[], [{ likedUserId: visited.id, likingUserId: visitor.id }]]);
+
 		await putLike(visited, visitor);
 		await putLike(visited, visitor);
 
 		const likesCountAtEnd = await getLikesCount(visited.id);
 		expect(likesCountAtEnd).toBe(1);
+
+		const visitedStatsEnd = await checkLikesHistoryStats(visited);
+		expect(visitedStatsEnd).toStrictEqual(visitedStats);
+
+		const visitorStatsEnd = await checkLikesHistoryStats(visitor);
+		expect(visitorStatsEnd).toStrictEqual(visitorStats);
 	});
 
 	test('user can remove a like that he put to another user', async () => {
@@ -87,9 +122,21 @@ describe('like history tests', () => {
 		expect(likesByVisited).toBeDefined();
 		expect(likesByVisited?.[0].likingUserId).toBe(visitor.id);
 
+		const visitedStats = await checkLikesHistoryStats(visited);
+		expect(visitedStats).toStrictEqual([[{ likedUserId: visited.id, likingUserId: visitor.id }], []]);
+
+		const visitorStats = await checkLikesHistoryStats(visitor);
+		expect(visitorStats).toStrictEqual([[], [{ likedUserId: visited.id, likingUserId: visitor.id }]]);
+
 		await removeLike(visited, visitor);
 		const likeStatusAtEnd = await checkLikeEntry(visited.id, visitor.id);
 		expect(likeStatusAtEnd).toBeFalsy();
+
+		const visitedStatsEnd = await checkLikesHistoryStats(visited);
+		expect(visitedStatsEnd).toStrictEqual([[], []]);
+
+		const visitorStatsEnd = await checkLikesHistoryStats(visitor);
+		expect(visitorStatsEnd).toStrictEqual([[], []]);
 	});
 
 	test('no errors if user sends request to remove like that wasnt there', async () => {
@@ -149,6 +196,7 @@ describe('like fails on non-valid users', () => {
 		expect(likeStatusAtEnd).toBeFalsy();
 		const likesByVisited = await getLikesByVisitedId(visited.id);
 		expect(likesByVisited).toStrictEqual([]);
+
 	});
 
 	test('fails if user profile that is getting a like id not complete', async () => {
