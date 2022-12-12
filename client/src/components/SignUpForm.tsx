@@ -10,10 +10,11 @@ import { NewUser } from '../types';
 import userService from '../services/users';
 
 const Item = styled(Paper)(({ theme }) => ({
-	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
-	margin: '3rem',
-	padding: '1rem 3rem 5rem 3rem',
+	margin: '0 auto',
+	padding: '1rem 2.5rem 4rem 2.5rem',
+	minWidth: '320px',
+	maxWidth: '420px',
 	textAlign: 'left',
 	color: theme.palette.text.secondary
 }));
@@ -64,7 +65,7 @@ const SignUpForm = () => {
 				<Item>
 					<Box
 						sx={{
-							marginTop: 8,
+							marginTop: 6,
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'center'
