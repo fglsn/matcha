@@ -273,7 +273,7 @@ const Navbar = ({
 					aria-label="open drawer"
 					edge="start"
 					onClick={handleDrawerToggle}
-					sx={{ mr: 2, ml: 0.5, display: { sm: 'none' } }}
+					sx={{ mr: 2, ml: 0.5, display: { md: 'none' } }}
 				>
 					<MenuIcon />
 				</IconButton>
@@ -281,7 +281,7 @@ const Navbar = ({
 					color="primary"
 					sx={{
 						ml: 1,
-						display: { xs: 'none', sm: 'block' }
+						display: { xs: 'none', sm: 'none', md: 'block' }
 					}}
 				/>
 				<div>

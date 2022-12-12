@@ -22,7 +22,7 @@ import UpdateEmail from './components/UpdateEmail';
 import PublicProfile from './components/PublicProfile';
 import { socket } from './services/socket';
 import Likes from './components/Likes';
-import VisitHistory from './components/VIsitHistory';
+import VisitHistory from './components/VisitHistory';
 import Matches from './components/Matches';
 import Blocks from './components/Blocks';
 import ResponsiveDrawer from './components/Drawer';
@@ -63,13 +63,12 @@ const App = () => {
 				// reset the state of your app so the error doesn't happen again
 			}}
 		>
-			<MinWidthContainer>
+			<MinWidthContainer style={{ display: 'flex' }}>
 				<SnackbarProvider>
 					<AlertProvider>
-						<Box>
-							{/* <Navbar /> */}
+						<ResponsiveDrawer />
+						<Box style={{ textAlign: 'center', flexGrow: 1, position: 'relative', top: '5rem' }}>
 							<AlertSnackBar />
-							<ResponsiveDrawer />
 							<Routes>
 								<Route path="/" element={<Main />} />
 								{/* prettier-ignore */}

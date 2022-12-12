@@ -234,7 +234,7 @@ router.get(
 );
 
 router.post(
-	'/entries',
+	'/user_entries',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
