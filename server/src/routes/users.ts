@@ -124,7 +124,7 @@ router.put(
 		if (!tags) {
 			await updateFameRatingByUserId(userId, updatedProfile.tags.length);
 		} else {
-			await updateFameRatingByUserId(userId, (-tags.length + updatedProfile.tags.length));
+			await updateFameRatingByUserId(userId, -tags.length + updatedProfile.tags.length);
 		}
 		await updateUserDataByUserId(req.session.userId, { ...updatedProfile, location });
 		res.status(200).end();
@@ -138,7 +138,7 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		const result = await getPublicProfileData(req.params.id, req.session.userId);
-		
+
 		res.status(200).json(result);
 	})
 );

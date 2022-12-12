@@ -139,7 +139,7 @@ describe('test how actions are affecting fame rating', () => {
 	});
 
 	test('fame rating stays the same when user visits his own profile', async () => {
-		const  fameRating = await getFameRatingByUserId(userOne.id);
+		const fameRating = await getFameRatingByUserId(userOne.id);
 		expect(fameRating).toBe(defaultFameRating + 7);
 
 		const resFromProfilePage = await api
@@ -195,7 +195,7 @@ describe('test how actions are affecting fame rating', () => {
 		await removeLike(userOne, userTwo);
 
 		const fameRatingNew = await getFameRatingByUserId(userOne.id);
-		expect(fameRatingNew).toBe(fameRating -2);
+		expect(fameRatingNew).toBe(fameRating - 2);
 	});
 
 	test('user lost -2 points wheh someone blocked him', async () => {

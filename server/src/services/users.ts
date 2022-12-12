@@ -19,7 +19,9 @@ import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositorie
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 import { addReportEntry } from '../repositories/reportEntriesRepository';
-import { getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
+import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
+import { io } from '../app';
+import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -200,7 +202,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 
 	if (profileId !== requestorId) {
 		if (await addEntryToVisitHistory(profileId, requestorId)) {
-      //add notification
+			await addVisitNotification(profileId, requestorId);
 			await updateFameRatingByUserId(profileId, 1);
 			profile.fameRating = profile.fameRating + 1;
 		}
@@ -220,7 +222,7 @@ export const getPublicProfileData = async (profileId: string, requestorId: strin
 		location: profile.location,
 		fameRating: profile.fameRating
 	};
-  
+
 	return profilePublic;
 };
 
@@ -235,25 +237,40 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
-  
+
 	if (await addLikeEntry(profileId, requestorId)) {
-    await updateFameRatingByUserId(profileId, 2);
-    	//add notigication
-  }
+		await addLikeNotification(profileId, requestorId);
+		await updateFameRatingByUserId(profileId, 2);
+	}
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
-    //add notification
-		if ((await getFameRatingByUserId(requestorId)) >= 75) {
-			await updateFameRatingByUserId(profileId, 2);
-		} else if ((await getFameRatingByUserId(requestorId)) <= 25) {
-			await updateFameRatingByUserId(profileId, -2);
-		}
+		await addMatchNotification(profileId, requestorId);
 
-		if ((await getFameRatingByUserId(profileId)) >= 75) {
-			await updateFameRatingByUserId(requestorId, 2);
-		} else if ((await getFameRatingByUserId(profileId)) <= 25) {
-			await updateFameRatingByUserId(requestorId, -2);
-		}
+		const updateFameOfVisited = async () => {
+			const fameVisitor = await getFameRatingByUserId(requestorId);
+			if (fameVisitor >= 75) await updateFameRatingByUserId(profileId, 2);
+			if (fameVisitor <= 25) await updateFameRatingByUserId(profileId, -2);
+		};
+
+		const updateFameOfVisitor = async () => {
+			const fameVisited = await getFameRatingByUserId(profileId);
+			if (fameVisited >= 75) await updateFameRatingByUserId(requestorId, 2);
+			if (fameVisited <= 25) await updateFameRatingByUserId(requestorId, -2);
+		};
+
+		await Promise.all([updateFameOfVisited(), updateFameOfVisitor()]);
+
+		// if ((await getFameRatingByUserId(requestorId)) >= 75) {
+		// 	await updateFameRatingByUserId(profileId, 2);
+		// } else if ((await getFameRatingByUserId(requestorId)) <= 25) {
+		// 	await updateFameRatingByUserId(profileId, -2);
+		// }
+
+		// if ((await getFameRatingByUserId(profileId)) >= 75) {
+		// 	await updateFameRatingByUserId(requestorId, 2);
+		// } else if ((await getFameRatingByUserId(profileId)) <= 25) {
+		// 	await updateFameRatingByUserId(requestorId, -2);
+		// }
 	}
 };
 
@@ -264,7 +281,7 @@ export const dislikeUser = async (profileId: string, requestorId: string): Promi
 	if (await removeLikeEntry(profileId, requestorId)) await updateFameRatingByUserId(profileId, -2);
 	if (await checkMatchEntry(requestorId, profileId)) {
 		await removeMatchEntry(profileId, requestorId);
-		//add notification
+		await addDislikeNotification(profileId, requestorId);
 	}
 };
 
@@ -354,4 +371,31 @@ export const getNotificationsPage = async (id: string, page: string, limit: stri
 	const promises = notificatonEtries.map((item) => generateMessage(item.acting_user_id, item.type));
 	const notifications = await Promise.all(promises);
 	return { notifications: notifications };
+};
+
+export const addLikeNotification = async (notified_user_id: string, acting_user_id: string) => {
+	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'like'), addNotificationsQueueEntry(notified_user_id)]);
+	io.to(notified_user_id).emit('notification', 'Someone liked your profile!');
+};
+
+export const addMatchNotification = async (notified_user_id: string, acting_user_id: string) => {
+	await Promise.all([
+		addNotificationEntry(notified_user_id, acting_user_id, 'match'),
+		addNotificationEntry(acting_user_id, notified_user_id, 'match'),
+		addNotificationsQueueEntry(notified_user_id),
+		addNotificationsQueueEntry(acting_user_id)
+	]);
+
+	io.to(notified_user_id).emit('notification', 'New match is waiting!!!');
+	io.to(acting_user_id).emit('notification', 'New match is waiting!!!');
+};
+
+export const addDislikeNotification = async (notified_user_id: string, acting_user_id: string) => {
+	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'dislike'), addNotificationsQueueEntry(notified_user_id)]);
+	io.to(notified_user_id).emit('notification', 'Someone you matched disliked you ;(');
+};
+
+export const addVisitNotification = async (notified_user_id: string, acting_user_id: string) => {
+	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'visit'), addNotificationsQueueEntry(notified_user_id)]);
+	io.to(notified_user_id).emit('notification', 'Someone visited your profile!');
 };
