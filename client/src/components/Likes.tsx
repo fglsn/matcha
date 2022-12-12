@@ -2,7 +2,7 @@
 import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
-import withAuthRequired from './AuthRequired';
+import withProfileRequired from './ProfileRequired';
 import UserList from './UserList';
 import { useServiceCall } from '../hooks/useServiceCall';
 import { getLikes } from '../services/stats';
@@ -103,4 +103,4 @@ const Likes = () => {
 	);
 };
 
-export default withAuthRequired(Likes);
+export default withProfileRequired(Likes);

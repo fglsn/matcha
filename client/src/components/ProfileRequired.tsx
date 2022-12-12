@@ -11,7 +11,7 @@ import { logoutUser } from '../services/logout';
 
 const withProfileRequired =
 	<P extends object>(Component: React.ComponentType<P>): React.FC<P> =>
-	(...props) => {
+	(props) => {
 		const [{ loggedUser }, dispatch] = useContext(StateContext);
 		const navigate = useNavigate();
 		const { error: errorCallback } = useContext(AlertContext);
@@ -38,7 +38,9 @@ const withProfileRequired =
 				profileCompleteness(loggedUser);
 			}
 			if (completenessData && !completenessData.complete) {
-				errorCallback('Please, complete all the required fields on your profile in order to use the service!');
+				errorCallback(
+					'Please, complete all the required fields on your profile in order to use the service!'
+				);
 				navigate('/profile');
 				return;
 			}
@@ -57,7 +59,14 @@ const withProfileRequired =
 					})
 				);
 			}
-		}, [loggedUser, errorCallback, navigate, dispatch, completenessData, completenessError]);
+		}, [
+			loggedUser,
+			errorCallback,
+			navigate,
+			dispatch,
+			completenessData,
+			completenessError
+		]);
 
 		if (loggedUser?.complete === true) return <Component {...(props as P)} />;
 		else if (completenessError)

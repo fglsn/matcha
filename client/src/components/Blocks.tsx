@@ -1,13 +1,13 @@
 //prettier-ignore
 import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
-import withAuthRequired from './AuthRequired';
-import UserList from './UserList';
 import BlockIcon from '@mui/icons-material/Block';
 import { useServiceCall } from '../hooks/useServiceCall';
 import { getBlocks } from '../services/stats';
 import { useStateValue } from '../state';
 import { BlockEntry } from '../types';
+import withProfileRequired from './ProfileRequired';
 import LoadingIcon from './LoadingIcon';
+import UserList from './UserList';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -84,4 +84,4 @@ const Blocks = () => {
 	);
 };
 
-export default withAuthRequired(Blocks);
+export default withProfileRequired(Blocks);

@@ -5,7 +5,7 @@ import { getVisitHistory } from '../services/stats';
 import { useStateValue } from '../state';
 import { VisitEntry } from '../types';
 import HistoryIcon from '@mui/icons-material/History';
-import withAuthRequired from './AuthRequired';
+import withProfileRequired from './ProfileRequired';
 import LoadingIcon from './LoadingIcon';
 import UserList from './UserList';
 
@@ -105,4 +105,4 @@ const VisitHistory = () => {
 	);
 };
 
-export default withAuthRequired(VisitHistory);
+export default withProfileRequired(VisitHistory);

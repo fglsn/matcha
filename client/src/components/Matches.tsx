@@ -1,6 +1,6 @@
 //prettier-ignore
 import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
-import withAuthRequired from './AuthRequired';
+import withProfileRequired from './ProfileRequired';
 import UserList from './UserList';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { MatchEntry } from '../types';
@@ -86,4 +86,4 @@ const Matches = () => {
 	);
 };
 
-export default withAuthRequired(Matches);
+export default withProfileRequired(Matches);
