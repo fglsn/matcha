@@ -32,7 +32,7 @@ describe('visit history tests', () => {
 		expect(resFromProfilePage.body).toBeTruthy();
 
 		const visitHistoryAtEnd = await getVisitHistoryByVisitedId(visited.id);
-		expect(visitHistoryAtEnd).toBeDefined();
+		expect(visitHistoryAtEnd).toBeTruthy();
 		expect(visitHistoryAtEnd).toHaveLength(1);
 		expect(visitHistoryAtEnd?.[0]).toEqual({ visitedUserId: visited.id, visitorUserId: visitor.id });
 	});
@@ -58,7 +58,7 @@ describe('visit history tests', () => {
 			.expect('Content-Type', /application\/json/);
 
 		const visitHistoryAtEnd = await getVisitHistoryByVisitedId(visited.id);
-		expect(visitHistoryAtEnd).toBeDefined();
+		expect(visitHistoryAtEnd).toBeTruthy();
 		expect(visitHistoryAtEnd).toHaveLength(1);
 		expect(visitHistoryAtEnd?.[0]).toEqual({ visitedUserId: visited.id, visitorUserId: visitor.id });
 	});
@@ -74,6 +74,6 @@ describe('visit history tests', () => {
 		// console.log(resFromProfilePage.text);
 
 		const visitHistoryAtEnd = await getVisitHistoryByVisitorId(visited.id);
-		expect(visitHistoryAtEnd).not.toBeDefined();
+		expect(visitHistoryAtEnd).toStrictEqual([]);
 	});
 });

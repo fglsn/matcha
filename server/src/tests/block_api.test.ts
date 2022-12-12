@@ -37,13 +37,13 @@ describe('test block user functionality', () => {
 
 		await putLike(userToBlock, userThatBlocks);
 		const likesByVisitor = await getLikesByVisitorId(userThatBlocks.id);
-		expect(likesByVisitor).toBeDefined();
+		expect(likesByVisitor).toBeTruthy();
 		expect(likesByVisitor?.[0].likingUserId).toBe(userThatBlocks.id);
 
 		await userBlocksAnotherUser(userToBlock, userThatBlocks);
 
 		const likesByVisitorAfterBlock = await getLikesByVisitorId(userThatBlocks.id);
-		expect(likesByVisitorAfterBlock).not.toBeDefined();
+		expect(likesByVisitorAfterBlock).toStrictEqual([]);
 	});
 
 	test('match disappears after user has been blocked', async () => {

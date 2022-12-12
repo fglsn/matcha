@@ -98,7 +98,7 @@ export const removeLike = async (visited: TokenAndId, visitor: TokenAndId) => {
 
 export const twoUserLikeEachOther = async (userOne: TokenAndId, userTwo: TokenAndId) => {
 	const totalMatchesAtStart = await getMatchesByUserId(userOne.id);
-	expect(totalMatchesAtStart).not.toBeDefined();
+	expect(totalMatchesAtStart).toStrictEqual([]);
 
 	const likeStatusAtStart = await checkLikeEntry(userOne.id, userTwo.id);
 	expect(likeStatusAtStart).toBeFalsy();
