@@ -8,6 +8,17 @@ import { logoutUser } from '../services/logout';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { socket } from '../services/socket';
 
+const NotificationsButton = () => {
+
+	return (
+		<>
+			<Button color="inherit" component={Link} to="/profile">
+				Profile
+			</Button>
+		</>
+	);
+};
+
 const LoggedInUserButtons = ({
 	loggedUser,
 	handleLogout
@@ -17,6 +28,7 @@ const LoggedInUserButtons = ({
 }) => {
 	return (
 		<>
+			<NotificationsButton />
 			<em>{loggedUser?.username} logged in </em>
 			<Button color="inherit" component={Link} to="/profile">
 				Profile
