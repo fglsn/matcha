@@ -59,7 +59,7 @@ export const getUserEntries = async (idList: string[]): Promise<any> => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.post(`${apiBaseUrl}/users/entries`, idList, config);
+		const response = await axios.post(`${apiBaseUrl}/users/user_entries`, idList, config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
