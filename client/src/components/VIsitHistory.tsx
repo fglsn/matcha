@@ -23,7 +23,7 @@ export const ItemContent = styled(Paper)`
 	display: flex;
 	padding: 1.5rem;
 	margin-top: 2rem;
-	height: 80%;
+	height: 85%;
 	background-color: ##ffc600db;
 	overflow-y: scroll;
 `;
