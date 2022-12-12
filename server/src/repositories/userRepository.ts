@@ -345,7 +345,9 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	if (!res.rowCount) {
 		return [];
 	}
-	return (res.rows).map(row => {return userEntryMapper(row);});
+	return res.rows.map((row) => {
+		return userEntryMapper(row);
+	});
 };
 
 export {

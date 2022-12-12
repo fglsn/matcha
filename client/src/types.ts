@@ -126,3 +126,30 @@ export type BlockEntry = {
 	blockedUserId: string;
 	blockingUserId: string;
 };
+
+export type NotificationQueue = {
+	initialCount: number;
+};
+
+//prettier-ignore
+export type NotificationMsg =
+	| {
+			type: 'like';
+			message: string;
+	  }
+	| {
+			type: 'dislike';
+			message: string;
+	  }
+	| {
+			type: 'visit';
+			message: string;
+	  }
+	| {
+			type: 'match';
+			message: string;
+	  };
+
+export type Notifications = {
+	notifications: NotificationMsg[];
+};

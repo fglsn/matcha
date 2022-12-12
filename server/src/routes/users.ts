@@ -18,6 +18,7 @@ import { getLikesByVisitedId, getLikesByVisitorId } from '../repositories/likesR
 import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
 import { getMatchesByUserId } from '../repositories/matchesRepository';
 import { getBlockedUsersByBlockingUserId } from '../repositories/blockEntriesRepository';
+import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
 
 const router = express.Router();
 
@@ -397,6 +398,16 @@ router.get(
 			res.status(200).json(notifications);
 		}
 		throw new AppError(`This api expects page and limit query params or no params to get all notifications`, 400);
+	})
+);
+
+router.get(
+	'/notifications_queue/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		const initialCount = await getNotificationsQueueCount(req.session.userId);
+		res.status(200).json({ initialCount: initialCount }).end();
 	})
 );
 

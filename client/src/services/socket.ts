@@ -5,6 +5,7 @@ interface ServerToClientEvents {
 	// receive_message: (message: any) => void;
 	// receive_notification: (message: any) => void;
 	// online_response: (data: any) => void;
+	notification: (notification_message: string) => void;
 }
 
 interface ClientToServerEvents {
@@ -12,6 +13,7 @@ interface ClientToServerEvents {
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
 	// active_chat: (match_id: number) => void;
+	clear_notifications: () => void;
 	online_query: (
 		user_id: string,
 		callback: ({
