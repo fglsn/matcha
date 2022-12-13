@@ -124,6 +124,7 @@ export default function ResponsiveDrawer() {
 						variant="temporary"
 						open={mobileOpen}
 						onClose={handleDrawerToggle}
+						disableScrollLock={true}
 						ModalProps={{
 							keepMounted: true // Better open performance on mobile.
 						}}
