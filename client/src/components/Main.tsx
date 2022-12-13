@@ -1,24 +1,45 @@
 // import { useEffect } from "react";
 // import { setLoggedUser, useStateValue } from "../state";
 
-import { Container } from "@mui/material";
-import withProfileRequired from "./ProfileRequired";
+import { Alert, Container } from '@mui/material';
+import { useServiceCall } from '../hooks/useServiceCall';
+import { getMatchSuggestions } from '../services/search';
+import { useStateValue } from '../state';
+import { ProfilePublic } from '../types';
+import LoadingIcon from './LoadingIcon';
+import withProfileRequired from './ProfileRequired';
+// import PublicProfile from './PublicProfile';
 
 const Main = () => {
-	// const [, dispatch] = useStateValue();
+	const [{ loggedUser }] = useStateValue();
 
-	// useEffect(() => {
-	// 	const fetchLoggedUser = () => {
-	// 		const loggedUserJSON = window.localStorage.getItem('loggedUser')
-	// 		if (loggedUserJSON) {
-	// 			const user = JSON.parse(loggedUserJSON)
-	// 			dispatch(setLoggedUser(user));
-	// 		};
-	// 	}
-	// 	void fetchLoggedUser();
-	// }, [dispatch])
+	const {
+		data: matchSuggestionsData,
+		error: matchSuggestionsError
+	}: {
+		data: ProfilePublic[];
+		error: Error | undefined;
+	} = useServiceCall(async () => loggedUser && (await getMatchSuggestions()), []);
 
-	return <Container sx={{ mt: 15, mb: 8 }}>HELLO</Container>;
+	if (matchSuggestionsError)
+		return <Alert severity="error">Error loading page, please try again...</Alert>;
+
+	if (!matchSuggestionsData) {
+		return <LoadingIcon />;
+	}
+
+	return (
+		<Container sx={{ mt: 15, mb: 8 }}>
+			{/* 
+				here we can use PublicProfile component, but in order to do so we need to correct PublicProfile a bit (see comments in PublicProfile)
+				currently PublicProfile is not accepting any props. we need to change it to get profileData as props.
+				{matchSuggestionsData.map((profile) => {
+				<>
+					<PublicProfile profileData={profile}></PublicProfile>
+				</>;
+			})} */}
+		</Container>
+	);
 };
 
 export default withProfileRequired(Main);
