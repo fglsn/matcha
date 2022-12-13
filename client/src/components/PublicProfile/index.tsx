@@ -64,7 +64,7 @@ const PublicProfile = () => {
 		error: profileError
 	}: { data: ProfilePublic | undefined; error: Error | undefined } = useServiceCall(
 		async () => id && (await getPublicProfile(id)),
-		[]
+		[id]
 	);
 
 	const {
@@ -72,20 +72,20 @@ const PublicProfile = () => {
 		error: photosError
 	}: { data: Images | undefined; error: Error | undefined } = useServiceCall(
 		async () => id && (await getPhotos(id)),
-		[]
+		[id]
 	);
 
 	const {
 		data: likeAndMatchStatusData,
 		error: likeAndMatchStatusError
 	}: { data: LikeAndMatchStatus | undefined; error: Error | undefined } =
-		useServiceCall(async () => id && (await getLikeAndMatchStatus(id)), [isLiked]);
+		useServiceCall(async () => id && (await getLikeAndMatchStatus(id)), [isLiked, id]);
 
 	const {
 		data: blockStatusData,
 		error: blockStatusError
 	}: { data: { block: boolean } | undefined; error: Error | undefined } =
-		useServiceCall(async () => id && (await getBlockStatus(id)), [isBlocked]);
+		useServiceCall(async () => id && (await getBlockStatus(id)), [isBlocked, id]);
 
 	useEffect(() => {
 		if (likeAndMatchStatusData !== undefined) {
