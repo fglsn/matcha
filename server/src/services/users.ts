@@ -348,13 +348,31 @@ const generateMessage = async (acting_user_id: string, type: string) => {
 
 	switch (type) {
 		case 'like':
-			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username:userEntry.username, message: `${userEntry.username} liked your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} liked your profile!`
+			};
 		case 'dislike':
-			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username:userEntry.username, message: `${userEntry.username} disliked your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} disliked your profile!`
+			};
 		case 'visit':
-			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username:userEntry.username, message: `${userEntry.username} visited your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} visited your profile!`
+			};
 		case 'match':
-			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username:userEntry.username, message: `${userEntry.username} matched with you!` };
+			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username: userEntry.username, message: `${userEntry.username} matched with you!` };
 		default:
 			return assertNever(type);
 	}

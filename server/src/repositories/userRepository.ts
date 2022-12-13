@@ -362,7 +362,7 @@ const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
 	const res = await pool.query(query);
 	if (!res.rowCount) {
 		return undefined;
-	}	
+	}
 	return userEntryMapper(res.rows[0]);
 };
 
