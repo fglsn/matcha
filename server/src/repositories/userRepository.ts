@@ -351,6 +351,21 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	});
 };
 
+const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
+	const query = {
+		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
+				from users
+					join photos on users.id = photos.user_id
+				where users.id = $1`,
+		values: [id]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}	
+	return userEntryMapper(res.rows[0]);
+};
+
 export {
 	getAllUsers,
 	getIdList,
@@ -376,5 +391,6 @@ export {
 	getFameRatingByUserId,
 	updateFameRatingByUserId,
 	getTagsByUserId,
-	getUserEntries
+	getUserEntries,
+	getUserEntry
 };
