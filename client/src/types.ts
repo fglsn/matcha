@@ -133,22 +133,31 @@ export type NotificationQueue = {
 
 //prettier-ignore
 export type NotificationMsg =
-	| {
-			type: 'like';
-			message: string;
-	  }
-	| {
-			type: 'dislike';
-			message: string;
-	  }
-	| {
-			type: 'visit';
-			message: string;
-	  }
-	| {
-			type: 'match';
-			message: string;
-	  };
+{
+	id: string;
+	avatar: string;
+	username: string;
+	type: "like";
+	message: string;
+} | {
+	id: string;
+	avatar: string;
+	username: string;
+	type: "dislike";
+	message: string;
+} | {
+	id: string;
+	avatar: string;
+	username: string;
+	type: "visit";
+	message: string;
+} | {
+	id: string;
+	avatar: string;
+	username: string;
+	type: "match";
+	message: string;
+};
 
 export type Notifications = {
 	notifications: NotificationMsg[];

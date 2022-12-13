@@ -5,7 +5,7 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById, getUserEntry } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
@@ -341,20 +341,53 @@ export const queryOnlineUsers = async (user_id: string) => {
 
 const generateMessage = async (acting_user_id: string, type: string) => {
 	const username = await findUsernameById(acting_user_id);
+	const userEntry = await getUserEntry(acting_user_id);
+
+	if (!userEntry) throw new AppError('Failed to find user!', 500);
 	if (!username) throw new AppError('Failed to find username!', 500);
 
 	switch (type) {
 		case 'like':
-			return { type: type, message: `@${username} liked your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} liked your profile!`
+			};
 		case 'dislike':
-			return { type: type, message: `@${username} disliked your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} disliked your profile!`
+			};
 		case 'visit':
-			return { type: type, message: `@${username} visited your profile!` };
+			return {
+				id: userEntry.id,
+				avatar: userEntry.avatar,
+				type: type,
+				username: userEntry.username,
+				message: `${userEntry.username} visited your profile!`
+			};
 		case 'match':
-			return { type: type, message: `You matched with @${username}!` };
+			return { id: userEntry.id, avatar: userEntry.avatar, type: type, username: userEntry.username, message: `${userEntry.username} matched with you!` };
 		default:
 			return assertNever(type);
 	}
+	// switch (type) {
+	// 	case 'like':
+	// 		return { type: type, message: `@${username} liked your profile!` };
+	// 	case 'dislike':
+	// 		return { type: type, message: `@${username} disliked your profile!` };
+	// 	case 'visit':
+	// 		return { type: type, message: `@${username} visited your profile!` };
+	// 	case 'match':
+	// 		return { type: type, message: `You matched with @${username}!` };
+	// 	default:
+	// 		return assertNever(type);
+	// }
 };
 
 export const getNotifications = async (id: string): Promise<Notifications> => {

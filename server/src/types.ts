@@ -195,15 +195,27 @@ export type NotificationQueue = {
 //prettier-ignore
 export type NotificationMsg = 
 	{
+		id: string;
+		avatar: string;
+		username: string;
 		type: "like";
 		message: string;
 	} | {
+		id: string;
+		avatar: string;
+		username: string;
 		type: "dislike";
 		message: string;
 	} | {
+		id: string;
+		avatar: string;
+		username: string;
 		type: "visit";
 		message: string;
 	} | {
+		id: string;
+		avatar: string;
+		username: string;
 		type: "match";
 		message: string;
 	};
