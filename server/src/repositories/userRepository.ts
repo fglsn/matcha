@@ -1,7 +1,7 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
-import { ValidationError } from '../errors';
 import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry } from '../types';
+import { ValidationError } from '../errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -327,7 +327,7 @@ const userEntryMapper = (row: any): UserEntry => {
 	const photo = getString(row['photo']);
 	const image = `data:${photo_type};base64,${photo}`;
 	return {
-		id: getString(row['id']),
+		id: getString(row['users_id']),
 		username: getString(row['username']),
 		avatar: image
 	};
@@ -335,10 +335,11 @@ const userEntryMapper = (row: any): UserEntry => {
 
 const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	const query = {
-		text: `select distinct on (users.id) users.id, users.username, photos.photo, photos.photo_type
+		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
 				from users
 					join photos on users.id = photos.user_id
-				where users.id = any ($1 :: int[]) `,
+				where users.id = any ($1 :: int[])
+				order by users.id, photos.id`,
 		values: [idList]
 	};
 	const res = await pool.query(query);

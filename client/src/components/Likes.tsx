@@ -2,7 +2,7 @@
 import { Alert, Container, Grid, Paper, styled, Typography} from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
-import withAuthRequired from './AuthRequired';
+import withProfileRequired from './ProfileRequired';
 import UserList from './UserList';
 import { useServiceCall } from '../hooks/useServiceCall';
 import { getLikes } from '../services/stats';
@@ -24,7 +24,7 @@ export const ItemContent = styled(Paper)`
 	display: flex;
 	padding: 1.5rem;
 	margin-top: 2rem;
-	height: 80%;
+	height: 85%;
 	background-color: ##ffc600db;
 	overflow-y: scroll;
 `;
@@ -103,4 +103,4 @@ const Likes = () => {
 	);
 };
 
-export default withAuthRequired(Likes);
+export default withProfileRequired(Likes);
