@@ -53,19 +53,22 @@ const StyledLink = styled(Link)`
 	text-decoration: none;
 `;
 
+//this shoud get profileData as props to make it reusable! (profileData: ProfilePublic)
 const PublicProfile = () => {
-	const { id } = useParams();
+	const { id } = useParams(); // <-- this to another component
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isBlocked, setIsBlocked] = useState<boolean>(false);
 	const [isMatch, setIsMatch] = useState<boolean>(false);
 
+
+	// --> this should be moved to another component 
 	const {
 		data: profileData,
 		error: profileError
 	}: { data: ProfilePublic | undefined; error: Error | undefined } = useServiceCall(
 		async () => id && (await getPublicProfile(id)),
 		[]
-	);
+	); // <-- and pass to this componen as a prop
 
 	const {
 		data: photosData,
