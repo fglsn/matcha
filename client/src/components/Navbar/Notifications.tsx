@@ -1,20 +1,15 @@
-import { Button, AppBar, Toolbar, Typography, Badge, Divider } from '@mui/material';
-import { StateContext, useStateValue } from '../state';
+import {  Badge, Divider } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LoggedUser, NotificationQueue, Notifications } from '../types';
-import { AlertContext } from './AlertProvider';
-import { logoutUser } from '../services/logout';
-import LoyaltyIcon from '@mui/icons-material/Loyalty';
-import { socket } from '../services/socket';
+import { NotificationQueue, Notifications } from '../../types';
+import { AlertContext } from '../AlertProvider';
+import { socket } from '../../services/socket';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import { useServiceCall } from '../hooks/useServiceCall';
-import { getNotifications, getNotificationsQueue } from '../services/notifications';
-import LoadingIcon from './LoadingIcon';
+import { useServiceCall } from '../../hooks/useServiceCall';
+import { getNotifications, getNotificationsQueue } from '../../services/notifications';
+import LoadingIcon from '../LoadingIcon';
 
 const ITEM_HEIGHT = 48;
 
@@ -31,13 +26,6 @@ const NotificationsList = ({ ...props }: NotificationsListProps) => {
 		async () => await getNotifications(),
 		[]
 	);
-
-	// useEffect(() => {
-	// 	console.log('uf for data');
-	// 	if (NotifQueueData) {
-	// 		setInitialCount(NotifQueueData.initialCount);
-	// 	};
-	// }, []);
 
 	if (NotificationsData) {
 		return (
@@ -60,12 +48,12 @@ const NotificationsList = ({ ...props }: NotificationsListProps) => {
 			>
 				{
 					NotificationsData.notifications.map((option, index) => (
-						<>
-							<MenuItem key={index} onClick={props.handleClose}>
+						<div key={index}>
+							<MenuItem onClick={props.handleClose}>
 								{option.message}
 							</MenuItem>
 							<Divider />
-						</>
+						</div>
 					))
 				}
 			</Menu>
@@ -97,7 +85,6 @@ const NotificationsList = ({ ...props }: NotificationsListProps) => {
 	);
 };
 
-// const NotificationsButton = ({id}: {id:string}) => {
 const NotificationsButton = () => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -114,7 +101,6 @@ const NotificationsButton = () => {
 	const [initialCount, setInitialCount] = useState<number>(0);
 
 	useEffect(() => {
-		console.log('uf for data');
 		if (NotifQueueData) {
 			setInitialCount(NotifQueueData.initialCount);
 		}
@@ -123,15 +109,14 @@ const NotificationsButton = () => {
 	const [counter, setCounter] = useState<number>(0);
 
 	useEffect(() => {
-		console.log('uf');
 		socket.on('notification', (msg) => {
+			setCounter(prev => prev + 1);
 			alert.success(msg);
-			setCounter(counter + 1);
 		});
 		return () => {
 			socket.off('notification');
 		};
-	}, [alert, counter]);
+	}, [alert]);
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -184,128 +169,4 @@ const NotificationsButton = () => {
 	);
 };
 
-const LoggedInUserButtons = ({
-	loggedUser,
-	handleLogout
-}: {
-	loggedUser: LoggedUser;
-	handleLogout: any;
-}) => {
-	return (
-		<>
-			<NotificationsButton />
-			<em>{loggedUser?.username} logged in </em>
-			{/* <Button color="inherit" component={Link} to="/profile">
-				Profile
-			</Button> */}
-			<Button onClick={handleLogout} color="inherit">
-				Logout
-			</Button>
-		</>
-	);
-};
-
-const LoggedOutButtons = () => {
-	return (
-		<>
-			<Button color="inherit" component={Link} to="/login">
-				Login
-			</Button>
-			<Button color="inherit" component={Link} to="/signup">
-				Sign Up
-			</Button>
-		</>
-	);
-};
-
-const drawerWidth = 200;
-
-const Navbar = ({
-	setMobileOpen,
-	mobileOpen
-}: {
-	setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	mobileOpen: boolean;
-}) => {
-	const [, dispatch] = useStateValue();
-	const loggedUser = useContext(StateContext);
-	const navigate = useNavigate();
-	const alert = useContext(AlertContext);
-
-	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
-	};
-
-	const handleLogout = async (event: any) => {
-		event.preventDefault();
-		logoutUser(dispatch);
-		if (socket.connected) {
-			socket.disconnect();
-		}
-		alert.success('Logged out');
-		navigate('/');
-	};
-
-	return (
-		<AppBar
-			position="fixed"
-			color="secondary"
-			sx={{
-				ml: { sm: `${drawerWidth}px` },
-				mb: 5,
-				zIndex: (theme) => theme.zIndex.drawer + 1,
-				justifyContent: 'space-between',
-				'& .MuiAppBar-root': {
-					borderRadius: '0!important'
-				}
-			}}
-		>
-			<Toolbar
-				sx={{
-					justifyContent: 'space-between',
-					'& .MuiPaper-root': {
-						borderRadius: '0!important'
-					}
-				}}
-			>
-				<IconButton
-					color="inherit"
-					aria-label="open drawer"
-					edge="start"
-					onClick={handleDrawerToggle}
-					sx={{ mr: 2, ml: 0.5, display: { md: 'none' } }}
-				>
-					<MenuIcon />
-				</IconButton>
-				<LoyaltyIcon
-					color="primary"
-					sx={{
-						ml: 1,
-						display: { xs: 'none', sm: 'none', md: 'block' }
-					}}
-				/>
-				<div>
-					<Typography
-						color="primary"
-						component={Link}
-						to="/"
-						sx={{
-							flexGrow: 1,
-							display: { xs: 'none', sm: 'block' }
-						}}
-					></Typography>
-					{loggedUser[0].loggedUser !== undefined ? (
-						<LoggedInUserButtons
-							loggedUser={loggedUser[0].loggedUser}
-							handleLogout={handleLogout}
-						/>
-					) : (
-						<LoggedOutButtons />
-					)}
-				</div>
-			</Toolbar>
-		</AppBar>
-	);
-};
-
-export default Navbar;
+export default NotificationsButton;

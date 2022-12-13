@@ -13,7 +13,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import HistoryIcon from '@mui/icons-material/History';
 import BlockIcon from '@mui/icons-material/Block';
-import Navbar from './Navbar';
+import Navbar from './Navbar/Navbar';
 
 const drawerWidth = 240;
 
