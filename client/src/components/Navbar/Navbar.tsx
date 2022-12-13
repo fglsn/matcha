@@ -1,4 +1,4 @@
-import { Button, AppBar, Toolbar, Typography } from '@mui/material';
+import { Button, AppBar, Toolbar, Box } from '@mui/material';
 import { StateContext, useStateValue } from '../../state';
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,16 +20,12 @@ const LoggedInUserButtons = ({
 	handleLogout: any;
 }) => {
 	return (
-		<>
+		<Box sx={{pr: 0}}>
 			<NotificationsButton />
-			<em>{loggedUser?.username} logged in </em>
-			{/* <Button color="inherit" component={Link} to="/profile">
-				Profile
-			</Button> */}
 			<Button onClick={handleLogout} color="inherit">
 				Logout
 			</Button>
-		</>
+		</Box>
 	);
 };
 
@@ -113,15 +109,7 @@ const Navbar = ({
 					}}
 				/>
 				<div>
-					<Typography
-						color="primary"
-						component={Link}
-						to="/"
-						sx={{
-							flexGrow: 1,
-							display: { xs: 'none', sm: 'block' }
-						}}
-					></Typography>
+
 					{loggedUser[0].loggedUser !== undefined ? (
 						<LoggedInUserButtons
 							loggedUser={loggedUser[0].loggedUser}

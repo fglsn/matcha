@@ -396,6 +396,21 @@ const getInitialMatchSuggestions = async (userId: string, gender: Gender, orient
 	});
 };
 
+const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
+	const query = {
+		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
+				from users
+					join photos on users.id = photos.user_id
+				where users.id = $1`,
+		values: [id]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userEntryMapper(res.rows[0]);
+};
+
 export {
 	getAllUsers,
 	getIdList,
@@ -422,5 +437,6 @@ export {
 	updateFameRatingByUserId,
 	getTagsByUserId,
 	getUserEntries,
-	getInitialMatchSuggestions
+	getInitialMatchSuggestions,
+	getUserEntry
 };
