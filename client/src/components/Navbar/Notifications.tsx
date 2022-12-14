@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, CircularProgress, Divider } from '@mui/material';
+import { Avatar, Badge, Box, CircularProgress, Divider, styled } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { NotificationQueue, Notifications, NotificationMsg } from '../../types';
 import { AlertContext } from '../AlertProvider';
@@ -21,17 +21,24 @@ interface NotificationsListProps {
 
 const LoadingNotficationIcon = () => {
 	return (
-		<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+		<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 			<CircularProgress />
 		</Box>
 	);
 };
+
+const StyledBox = styled(Box)`
+	color: rgba(0, 0, 0, 0.6);
+	text-decoration: none;
+`;
 
 const NotificationItem = ({
 	NotificationData
 }: {
 	NotificationData: NotificationMsg;
 }) => {
+	// In case we decide to customise different messages
+	//
 	// switch (NotificationData.type) {
 	// 	case 'like':
 	// 		return (
@@ -114,18 +121,30 @@ const NotificationsList = ({ ...props }: NotificationsListProps) => {
 			anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 		>
 			{NotificationsData ? (
-				NotificationsData.notifications.map((item, index) => (
-					<div key={index}>
+				NotificationsData.notifications.length ? (
+					NotificationsData.notifications.map((item, index) => (
+						<div key={index}>
+							<MenuItem onClick={props.handleClose}>
+								<StyledLink to={`/profile/${item.id}`}>
+									<NotificationItem NotificationData={item} />
+								</StyledLink>
+							</MenuItem>
+							<Divider />
+						</div>
+					))
+				) : (
+					<StyledBox>
 						<MenuItem onClick={props.handleClose}>
-							<StyledLink to={`/profile/${item.id}`}>
-								<NotificationItem NotificationData={item} />
-							</StyledLink>
+							{`You haven't received any notification yet!`}
 						</MenuItem>
-						<Divider />
-					</div>
-				))
+					</StyledBox>
+				)
 			) : NotificationsError ? (
-				'Fail loading notifications'
+				<StyledBox>
+						<MenuItem onClick={props.handleClose}>
+							{`Notifications loading failed, try again!`}
+						</MenuItem>
+				</StyledBox>
 			) : (
 				<LoadingNotficationIcon />
 			)}
@@ -194,7 +213,10 @@ const NotificationsButton = () => {
 					aria-haspopup="true"
 					onClick={handleClick}
 				>
-					<NotificationsActiveOutlinedIcon fontSize="medium" color={NotifQueueData ? 'primary' : 'disabled'} />
+					<NotificationsActiveOutlinedIcon
+						fontSize="medium"
+						color={NotifQueueData ? 'primary' : 'disabled'}
+					/>
 				</IconButton>
 			</Badge>
 			{open && (
