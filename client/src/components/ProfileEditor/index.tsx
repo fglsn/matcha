@@ -15,7 +15,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	padding: theme.spacing(2),
 	textAlign: 'left',
-	color: theme.palette.text.secondary,
+	color: theme.palette.text.secondary
 }));
 
 const StyledButtons = styled('div')(() => ({
@@ -67,7 +67,6 @@ const ProfileEditor = () => {
 		coordinates: profileData.coordinates,
 		location: profileData.location,
 		fameRating: profileData.fameRating
-
 	};
 
 	return (
@@ -76,14 +75,33 @@ const ProfileEditor = () => {
 				<Grid
 					container
 					columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
-					sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
+					rowSpacing={{ xs: 2, sm: 3 }}
+					sx={{
+						flexDirection: { xs: 'column', sm: 'row' },
+						justifyContent: 'center',
+						alignContent: 'center'
+					}}
 				>
-					<Grid item xs={12} sm={6}>
+					<Grid
+						sx={{ width: '100%' }}
+						maxWidth={{ xs: '100%', sm: '55%', md: '55%', lg: '50%' }}
+						flexBasis={{ xs: '100%', sm: '55%', md: '55%', lg: '50%' }}
+						item
+						xs={12}
+						sm={6}
+					>
 						<Item>
 							<BasicInfoForm userData={userData} />
 						</Item>
 					</Grid>
-					<Grid item xs={12} sm={6}>
+					<Grid
+						sx={{ width: '100%' }}
+						maxWidth={{ xs: '100%', sm: '45%', md: '45%', lg: '50%' }}
+						flexBasis={{ xs: '100%', sm: '45%', md: '45%', lg: '50%' }}
+						item
+						xs={12}
+						sm={6}
+					>
 						<Item>
 							<Photos photos={photosData.images} />
 						</Item>
