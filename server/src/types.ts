@@ -153,6 +153,7 @@ export interface ClientToServerEvents {
 	auth: { token: string; user_id: number };
 }
 export type MatchEntry = {
+	matchId: string;
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };

@@ -50,9 +50,9 @@ describe('test matches', () => {
 	test('match appears when user likes another user back', async () => {
 		await twoUserLikeEachOther(userOne, userTwo);
 		const firstUserStats = await checkMatchesStats(userOne);
-		expect(firstUserStats).toStrictEqual([{ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id }]);
+		expect(firstUserStats).toEqual(expect.arrayContaining([expect.objectContaining({ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id })]));
 		const secondUserStats = await checkMatchesStats(userTwo);
-		expect(secondUserStats).toStrictEqual([{ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id }]);
+		expect(secondUserStats).toEqual(expect.arrayContaining([expect.objectContaining({ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id })]));
 	});
 
 	test('match value is true on GET  user/:id/like request when match between users', async () => {
@@ -68,9 +68,9 @@ describe('test matches', () => {
 		expect(res.body.match).toBeTruthy();
 
 		const firstUserStats = await checkMatchesStats(userOne);
-		expect(firstUserStats).toStrictEqual([{ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id }]);
+		expect(firstUserStats).toEqual(expect.arrayContaining([expect.objectContaining({ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id })]));
 		const secondUserStats = await checkMatchesStats(userTwo);
-		expect(secondUserStats).toStrictEqual([{ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id }]);
+		expect(secondUserStats).toEqual(expect.arrayContaining([expect.objectContaining({ matchedUserIdOne: userOne.id, matchedUserIdTwo: userTwo.id })]));
 	});
 
 	test('match disappears when user removes a like', async () => {

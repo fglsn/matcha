@@ -118,6 +118,7 @@ export type LikeEntry = {
 };
 
 export type MatchEntry = {
+	matchId: string;
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };

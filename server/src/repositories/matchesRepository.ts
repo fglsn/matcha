@@ -5,6 +5,7 @@ import { MatchEntry } from '../types';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const matchEntryMapper = (row: any): MatchEntry => {
 	return {
+		matchId: getString(row['match_id']),
 		matchedUserIdOne: getString(row['matched_user_one']),
 		matchedUserIdTwo: getString(row['matched_user_two'])
 	};

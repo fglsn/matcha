@@ -73,10 +73,17 @@ create table likes_history (
 	primary key (liked_user_id, liking_user_id)
 );
 
+-- create table matches (
+-- 	matched_user_one bigserial not null,
+-- 	matched_user_two bigserial not null,
+-- 	primary key (matched_user_one, matched_user_two)
+-- );
+
 create table matches (
+	match_id bigserial primary key,
 	matched_user_one bigserial not null,
 	matched_user_two bigserial not null,
-	primary key (matched_user_one, matched_user_two)
+	unique (matched_user_one, matched_user_two)
 );
 
 create table users_online (
