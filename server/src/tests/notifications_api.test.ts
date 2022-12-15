@@ -55,7 +55,7 @@ describe('notifications api tests', () => {
 
 		expect(res.body.notifications).toHaveLength(100);
 		(res.body.notifications as NotificationMessage[]).forEach((item: NotificationMessage) => {
-			expect(item.message).toBe(`@matcha2 liked your profile!`);
+			expect(item.message).toBe(`matcha2 liked your profile!`);
 			expect(item.type).toBe(`like`);
 		});
 	});
@@ -72,7 +72,7 @@ describe('notifications api tests', () => {
 
 		expect(res.body.notifications).toHaveLength(100);
 		(res.body.notifications as NotificationMessage[]).forEach((item: NotificationMessage) => {
-			expect(item.message).toBe(`@matcha2 liked your profile!`);
+			expect(item.message).toBe(`matcha2 liked your profile!`);
 			expect(item.type).toBe(`like`);
 		});
 	});
@@ -89,7 +89,7 @@ describe('notifications api tests', () => {
 
 		expect(res.body.notifications).toHaveLength(100);
 		(res.body.notifications as NotificationMessage[]).forEach((item: NotificationMessage) => {
-			expect(item.message).toBe(`@matcha2 disliked your profile!`);
+			expect(item.message).toBe(`matcha2 disliked your profile!`);
 			expect(item.type).toBe(`dislike`);
 		});
 	});
@@ -102,7 +102,7 @@ describe('notifications api tests', () => {
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
-		expect(res.body.notifications).toBeFalsy();
+		expect(res.body.notifications).toEqual([]);
 	});
 
 	test('should return error on missing limit', async () => {
@@ -146,7 +146,7 @@ describe('notifications api tests', () => {
 
 		expect(res.body.notifications).toHaveLength(100);
 		(res.body.notifications as NotificationMessage[]).forEach((item: NotificationMessage) => {
-			expect(item.message).toBe(`@matcha2 liked your profile!`);
+			expect(item.message).toBe(`matcha2 liked your profile!`);
 			expect(item.type).toBe(`like`);
 		});
 	});
