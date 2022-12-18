@@ -14,3 +14,15 @@ export const getChats = async (): Promise<any> => {
 		handleAxiosError(err);
 	}
 };
+
+export const getChatNotifications = async (): Promise<any> => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/chat_notificatoins`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};

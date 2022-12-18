@@ -1,42 +1,46 @@
 import { Badge } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { NotificationQueue } from '../../types';
+import { MessageNotification } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import { socket } from '../../services/socket';
 import IconButton from '@mui/material/IconButton';
-import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import { useServiceCall } from '../../hooks/useServiceCall';
-import { getNotificationsQueue } from '../../services/notifications';
+import { getChatNotifications } from '../../services/chats';
+import { useStateValue } from '../../state';
+import EmailIcon from '@mui/icons-material/Email';
 
-const NotificationsButton = () => {
+const ChatButton = () => {
 	const alert = useContext(AlertContext);
 
 	const {
 		data: NotifQueueData,
 		error: NotifQueueError
-	}: { data: NotificationQueue | undefined; error: Error | undefined } = useServiceCall(
-		async () => await getNotificationsQueue(),
+	}: { data: MessageNotification[] | undefined; error: Error | undefined } = useServiceCall(
+		async () => await getChatNotifications(),
 		[]
 	);
 	void NotifQueueError;
 
 	const [initialCount, setInitialCount] = useState<number>(0);
+    const [{ openChats, msgNotifications }, dispatch] = useStateValue();
 
 	useEffect(() => {
 		if (NotifQueueData) {
-			setInitialCount(NotifQueueData.initialCount);
+            console.log(NotifQueueData.length);
+			setInitialCount(NotifQueueData.length);
 		}
 	}, [NotifQueueData]);
 
 	const [counter, setCounter] = useState<number>(0);
 
 	useEffect(() => {
-		socket.on('notification', (msg) => {
-			setCounter((prev) => prev + 1);
-			alert.success(msg);
+		socket.on('chat_notification', (chatNotification) => {
+			console.log(chatNotification);
+            // setCounter((prev) => prev + 1);
+			// alert.success(msg);
 		});
 		return () => {
-			socket.off('notification');
+			socket.off('chat_notification');
 		};
 	}, [alert]);
 
@@ -61,7 +65,7 @@ const NotificationsButton = () => {
 					// aria-haspopup="true"
 					onClick={handleClick}
 				>
-					<NotificationsActiveOutlinedIcon
+					<EmailIcon
 						fontSize="medium"
 						color={NotifQueueData ? 'primary' : 'disabled'}
 					/>
@@ -71,4 +75,4 @@ const NotificationsButton = () => {
 	);
 };
 
-export default NotificationsButton;
+export default ChatButton;
