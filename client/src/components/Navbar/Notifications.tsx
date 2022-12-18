@@ -124,11 +124,11 @@ const NotificationsList = ({ ...props }: NotificationsListProps) => {
 				NotificationsData.notifications.length ? (
 					NotificationsData.notifications.map((item, index) => (
 						<div key={index}>
-							<MenuItem onClick={props.handleClose}>
-								<StyledLink to={`/profile/${item.id}`}>
+							<StyledLink to={`/profile/${item.id}`}>
+								<MenuItem sx= {{my: 1}} onClick={props.handleClose}>
 									<NotificationItem NotificationData={item} />
-								</StyledLink>
-							</MenuItem>
+								</MenuItem>
+							</StyledLink>
 							<Divider />
 						</div>
 					))

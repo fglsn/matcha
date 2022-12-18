@@ -41,7 +41,7 @@ const Matches = () => {
 	if (matchesError)
 		return (
 			<Alert severity="error">
-				Error loading visit history page, please try again...
+				Error loading match statistics page, please try again...
 			</Alert>
 		);
 
