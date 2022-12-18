@@ -26,6 +26,7 @@ import VisitHistory from './components/VisitHistory';
 import Matches from './components/Matches';
 import Blocks from './components/Blocks';
 import ResponsiveDrawer from './components/Drawer';
+import Chats from './components/Chats';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;
@@ -84,6 +85,7 @@ const App = () => {
 								<Route path="/likes" element={<Likes />} />
 								<Route path="/matches" element={<Matches />} />
 								<Route path="/blocks" element={<Blocks />} />
+								<Route path="/chats" element={<Chats />} />
 								<Route path="/testAuth" element={<TestAuth />} />
 								<Route path="*" element={<Navigate to="/" replace />} />
 							</Routes>

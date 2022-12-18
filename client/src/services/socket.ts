@@ -1,10 +1,11 @@
 import { io, Socket } from 'socket.io-client';
-import { LoggedUser } from '../types';
+import { LoggedUser, MessageNotification } from '../types';
 
 interface ServerToClientEvents {
 	// receive_message: (message: any) => void;
 	// receive_notification: (message: any) => void;
 	// online_response: (data: any) => void;
+	chat_notification: (chatNotification: MessageNotification) => void;
 	notification: (notification_message: string) => void;
 }
 
@@ -12,7 +13,7 @@ interface ClientToServerEvents {
 	// send_message: (match_id: number, payload: {}) => void;
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
-	// active_chat: (match_id: number) => void;
+	active_chat: (match_id: number) => void;
 	clear_notifications: () => void;
 	online_query: (
 		user_id: string,

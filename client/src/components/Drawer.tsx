@@ -56,6 +56,14 @@ export default function ResponsiveDrawer() {
 							<ListItemText primary="Search" />
 						</ListItemButton>
 					</ListItem>
+					<ListItem disablePadding component={StyledLink} to="/chats">
+						<ListItemButton>
+							<ListItemIcon>
+								<PersonSearchOutlinedIcon />
+							</ListItemIcon>
+							<ListItemText primary="Chats" />
+						</ListItemButton>
+					</ListItem>
 					<ListItem disablePadding component={StyledLink} to="/visit_history">
 						<ListItemButton>
 							<ListItemIcon>
