@@ -19,6 +19,7 @@ import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repos
 import { getMatchesByUserId } from '../repositories/matchesRepository';
 import { getBlockedUsersByBlockingUserId } from '../repositories/blockEntriesRepository';
 import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
+import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 
 const router = express.Router();
 
@@ -422,6 +423,17 @@ router.get(
 		res.status(200).json(chats).end();
 	})
 );
+
+router.get(
+	'/chat_notificatoins/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		const chatNotifications = await getChatNotificationsByReceiver(req.session.userId);
+		res.status(200).json(chatNotifications).end();
+	})
+);
+
 // router.get(
 // 	'/notifications_page/',
 // 	sessionExtractor,
