@@ -13,7 +13,7 @@ const matchEntryMapper = (row: any): MatchEntry => {
 
 const getMatchesByUserId = async (matchedUserId: string): Promise<MatchEntry[]> => {
 	const query = {
-		text: 'select * from matches where matched_user_one = $1 or matched_user_two = $1',
+		text: 'select * from matches where matched_user_one = $1 or matched_user_two = $1 order by match_id desc',
 		values: [matchedUserId]
 	};
 	const res = await pool.query(query);
@@ -21,6 +21,18 @@ const getMatchesByUserId = async (matchedUserId: string): Promise<MatchEntry[]> 
 		return [];
 	}
 	return res.rows.map((row) => matchEntryMapper(row));
+};
+
+const getMatchByMatchId = async (matchId: string): Promise<MatchEntry | undefined> => {
+	const query = {
+		text: 'select * from matches where match_id = $1',
+		values: [matchId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return matchEntryMapper(res.rows[0]);
 };
 
 const addMatchEntry = async (matchedUserIdOne: string, matchedUserIdTwo: string): Promise<MatchEntry | undefined> => {
@@ -65,4 +77,4 @@ const clearMatches = async (): Promise<void> => {
 	await pool.query('truncate table matches');
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches };
+export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId };

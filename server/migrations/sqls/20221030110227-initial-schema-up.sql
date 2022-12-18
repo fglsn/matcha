@@ -115,3 +115,18 @@ create table notifications_queue (
 	id bigserial primary key,
 	notified_user_id bigserial not null
 );
+
+create table chat_messages (
+	message_id bigserial primary key,
+	receiver_id bigserial not null,
+	sender_id bigserial not null,
+	message_text text not null,
+	message_time timestamptz not null default now()
+);
+
+create table chat_notifications (
+	id bigserial primary key,
+	match_id bigserial not null,
+	sender_id bigserial not null,
+	receiver_id bigserial not null
+);

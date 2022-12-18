@@ -5,23 +5,39 @@ import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswo
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById, getUserEntry } from '../repositories/userRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById, getUserEntry, getUserEntryForChat } from '../repositories/userRepository';
 import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
-import { EmailUpdateRequest, LikeAndMatchStatus, NewUser, Notifications, PasswordResetRequest, Photo, ProfilePublic, User, UserData } from '../types';
+import {
+	Chat,
+	ChatHeader,
+	ChatMsg,
+	EmailUpdateRequest,
+	LikeAndMatchStatus,
+	MessageNotification,
+	NewUser,
+	Notifications,
+	PasswordResetRequest,
+	Photo,
+	ProfilePublic,
+	User,
+	UserData
+} from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import { assertNever, getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
-import { addMatchEntry, checkMatchEntry, removeMatchEntry } from '../repositories/matchesRepository';
+import { addMatchEntry, checkMatchEntry, getMatchByMatchId, getMatchesByUserId, removeMatchEntry } from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 import { addReportEntry } from '../repositories/reportEntriesRepository';
 import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
 import { io } from '../app';
 import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
+import { addMessageEntry, getMessagesByID } from '../repositories/chatRepository';
+import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -431,4 +447,51 @@ export const addDislikeNotification = async (notified_user_id: string, acting_us
 export const addVisitNotification = async (notified_user_id: string, acting_user_id: string) => {
 	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'visit'), addNotificationsQueueEntry(notified_user_id)]);
 	io.to(notified_user_id).emit('notification', 'Someone visited your profile!');
+};
+
+export const getChatMessages = async (matchId: string, userId: string): Promise<Chat> => {
+	const match = await getMatchByMatchId(matchId);
+	if (!match || (match.matchedUserIdOne !== userId && match.matchedUserIdTwo !== userId)) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo);
+	return { messages: messages };
+};
+
+export const addChatMessage = async (matchId: string, userId: string, msg: string): Promise<ChatMsg> => {
+	const match = await getMatchByMatchId(matchId);
+	if (!match) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	const matchedUsersArr = Object.values(match).slice(1);
+	const sender = matchedUsersArr.find((element) => element === userId);
+	const receiver = matchedUsersArr.find((element) => element !== userId);
+	if (!sender || !receiver) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	const createdMsg = await addMessageEntry(sender, receiver, msg);
+	if (!createdMsg) throw new AppError(`Fail to save new message`, 500);
+	return createdMsg;
+};
+
+export const getUserChats = async (userId: string): Promise<ChatHeader[]> => {
+	const matchEntries = await getMatchesByUserId(userId);
+	if (!matchEntries.length) return [];
+	// const matchUsersIds = matchEntries
+	// 	.flatMap((entry) => {
+	// 		return [entry.matchedUserIdOne, entry.matchedUserIdTwo];
+	// 	})
+	// 	.filter((id) => userId !== id);
+
+	const chats = await Promise.all(matchEntries.map(async (matchEntry) => {
+		const matchedUserId = Object.values(matchEntry).slice(1).find((id) => id !== userId);
+		if (!matchedUserId) throw new AppError(`Failed to identify matched user in chat`, 500);
+		const matchedUser = await getUserEntryForChat(matchedUserId);
+		if (!matchedUser) throw new AppError(`Failed to get matched user information (in chat)`, 500);
+		const [ lastMsg ]  = await getMessagesByID(matchedUserId, userId, 1, 1);
+		return { matchId: matchEntry.matchId, matchedUser:  matchedUser, lastMessage: lastMsg};
+	}));
+	return chats;
+};
+
+export const getChatNotifications = async (userId: string): Promise<MessageNotification[]> => {
+
+	const chatNotifications = await getChatNotificationsByReceiver(userId);
+
+	return chatNotifications;
+
 };

@@ -12,10 +12,11 @@ import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom } from './types';
+import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom, ChatCallback, Chat, ChatMsg} from './types';
 import { socketErrorHandler } from './errorsSocket';
-import { queryOnlineUsers, updateOnlineUsers } from './services/users';
+import { addChatMessage, getChatMessages, queryOnlineUsers, updateOnlineUsers } from './services/users';
 import { removeNotificationsQueueById } from './repositories/notificationsQueueRepository';
+import { addChatNotificationsEntry } from './repositories/chatNotificationsRepostiory';
 
 export const app = express();
 export const httpServer = createServer(app);
@@ -44,6 +45,31 @@ io.on(
 				console.log(`online_query: ${onlineStatus.online}`);
 			})
 		);
+
+		socket.on(
+			'active_chat', 
+			socketErrorHandler(async (match_id: string, cb: ChatCallback) => {
+				if (!socket.session) return;
+				//session id is used to check that user accessing api has rights to access
+				const chat: Chat =  await getChatMessages(match_id, socket.session.userId);
+				await socket.join(match_id);
+				cb(chat);
+			})
+		);
+
+		socket.on(
+			'send_message', 
+			socketErrorHandler(async (match_id: string, message: string) => {
+				if (!socket.session) return;
+				//session id is used to check that user accessing api has rights to access
+				const createdMsg: ChatMsg =  await addChatMessage(match_id, socket.session.userId, message);
+				socket.to(match_id).emit('receive_message', createdMsg);
+				const newChatNotification = await addChatNotificationsEntry(match_id, createdMsg.sender_id, createdMsg.receiver_id);
+				if (newChatNotification) socket.to(createdMsg.receiver_id).emit('chat_notification', newChatNotification);
+			})
+		);
+
+
 		// Clear notification queue
 		socket.on(
 			'clear_notifications',

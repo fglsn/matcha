@@ -10,7 +10,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload, parseIdList } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -413,6 +413,15 @@ router.get(
 	})
 );
 
+router.get(
+	'/chats/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		const chats = await getUserChats(req.session.userId);
+		res.status(200).json(chats).end();
+	})
+);
 // router.get(
 // 	'/notifications_page/',
 // 	sessionExtractor,

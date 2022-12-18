@@ -136,18 +136,19 @@ export type BlockEntry = {
 };
 
 export interface ServerToClientEvents {
-	// receive_message: (message: any) => void;
+	receive_message: (message: ChatMsg) => void;
 	// receive_notification: (message: any) => void;
 	// online_response: (data: any) => void;
+	chat_notification: (chatNotification: MessageNotification) => void;
 	notification: (notification_message: string) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface ClientToServerEvents {
-	// send_message: (match_id: number, payload: {}) => void;
+	send_message: (match_id: number, message: string) => void;
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
-	// active_chat: (match_id: number) => void;
+	active_chat: (match_id: number, callback: ChatCallback) => void;
 	clear_notifications: () => void;
 	online_query: (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => void;
 	auth: { token: string; user_id: number };
@@ -223,4 +224,37 @@ export type NotificationMsg =
 
 export type Notifications = {
 	notifications: NotificationMsg[];
+};
+
+export type ChatMsg = { 
+	receiver_id: string;
+    sender_id: string;
+    message_text: string;
+    message_time: Date;
+};
+
+export type Chat = {
+	messages: ChatMsg[];
+};
+
+export type ChatCallback = ({messages}: Chat) => void;
+
+export type UserEntryForChat = {
+    id: string;
+    username: string;
+    firstname: string;
+    age: number;
+    avatar: string;
+};
+
+export type ChatHeader = {
+    matchId: string;
+    matchedUser: UserEntryForChat;
+    lastMessage: ChatMsg;
+};
+
+export type MessageNotification = {
+	matchId: string,
+	senderId: string,
+	receiverId: string
 };
