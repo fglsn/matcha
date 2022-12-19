@@ -70,6 +70,20 @@ export const validateBio = (bio: string) => {
 	}
 	return undefined;
 };
+export const validateMsg = (msg: string) => {
+	let trimmedMsg = msg.trim().replace(/\s\s+/g, ' ');
+	if (trimmedMsg.length < 1 || trimmedMsg.length > 255) {
+		return 'This field should be 1-255 characters long. (Note that we are removing recurring spaces)';
+	}
+	return undefined;
+};
+
+export const validateMsgForm = (msg: string) => {
+	return !validateMsg(msg) 
+	? true
+	: false;
+	
+};
 
 export const validateSignUpForm = (
 	username: string,
