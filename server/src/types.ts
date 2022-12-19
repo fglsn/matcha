@@ -148,7 +148,7 @@ export interface ClientToServerEvents {
 	send_message: (match_id: number, message: string) => void;
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
-	active_chat: (match_id: number, callback: ChatCallback) => void;
+	active_chat: (match_id: string, callback: ChatCallback) => void;
 	clear_notifications: () => void;
 	online_query: (user_id: string, callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void) => void;
 	auth: { token: string; user_id: number };

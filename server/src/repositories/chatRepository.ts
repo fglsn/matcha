@@ -12,11 +12,11 @@ const messageEntryMapper = (row: any)  => {
 	};
 };
 
-const getMessagesByID = async (sender_id: string, receiver_id: string, page = 1, limit: number | 'ALL' = 'ALL'): Promise<ChatMsg[]>  => {
+const getMessagesByID = async (sender_id: string, receiver_id: string, page = 1, limit: number | null = null): Promise<ChatMsg[]>  => {
     
-    if (page <= 0 || (limit !== 'ALL' && limit <= 0)) return [];
+    if (page <= 0 || (limit !== null && limit <= 0)) return [];
 	
-    const offset = limit !== 'ALL' ? (page - 1) * limit : 0;
+    const offset = limit !== null ? (page - 1) * limit : 0;
 
 	const query = {
 		text: `
