@@ -1,5 +1,5 @@
 //prettier-ignore
-import { Alert, Avatar, Box, Container, Divider, Grid, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Paper, styled, Typography} from '@mui/material';
+import { Alert, Avatar, Badge, Box, Container, Divider, Grid, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Paper, styled, Typography} from '@mui/material';
 import withProfileRequired from './ProfileRequired';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { ChatHeader, ChatMsg, UserEntryForChat } from '../types';
@@ -13,6 +13,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import { useEffect, useState } from 'react';
 import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
 import { socket } from '../services/socket';
+import { useStateValue } from '../state';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -64,7 +65,8 @@ const User = ({ user, matchId, lastMsg }: { user: UserEntryForChat, matchId: str
 	};
 
 	const [online, setOnline] = useState(false);
-	
+    const [{ msgNotifications }] = useStateValue();
+
     // Query online status and get response in callback
 	useEffect(() => {
 		socket.emit('online_query', user.id, withTimeout(callbackSuccess, callbackTimeout, 2000));
@@ -74,17 +76,29 @@ const User = ({ user, matchId, lastMsg }: { user: UserEntryForChat, matchId: str
 		return () => clearInterval(intervalId);
 	}, [user.id]);
 
+
+    const counter = msgNotifications.filter(msg => msg.matchId === matchId).length;
+    // const [counter, setCounter] = useState<number>(0);
     
     return (
 		<>
+
 			<StyledLink to={`/chats/${matchId}`}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
-                            <Avatar
-                                alt={`Avatar of user ${user.username}`}
-                                src={`${user.avatar}`}
-                            />
+                            <Badge
+                                badgeContent={counter}
+                                max={999}
+                                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                // overlap="circular"
+                                color="error"
+			                >
+                                <Avatar
+                                    alt={`Avatar of user ${user.username}`}
+                                    src={`${user.avatar}`}
+                                />
+                            </Badge>
                         </ListItemAvatar>
                         <ListItemText
                             primary={

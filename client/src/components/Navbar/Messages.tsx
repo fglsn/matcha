@@ -6,46 +6,54 @@ import { socket } from '../../services/socket';
 import IconButton from '@mui/material/IconButton';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getChatNotifications } from '../../services/chats';
-import { useStateValue } from '../../state';
+import { setMsgNotifications, useStateValue } from '../../state';
 import EmailIcon from '@mui/icons-material/Email';
+import { useNavigate } from 'react-router';
 
 const ChatButton = () => {
 	const alert = useContext(AlertContext);
+    const navigate = useNavigate();
+    const [{ openChats, msgNotifications }, dispatch] = useStateValue();
 
 	const {
 		data: NotifQueueData,
 		error: NotifQueueError
 	}: { data: MessageNotification[] | undefined; error: Error | undefined } = useServiceCall(
 		async () => await getChatNotifications(),
-		[]
+		[openChats]
 	);
 	void NotifQueueError;
 
 	const [initialCount, setInitialCount] = useState<number>(0);
-    const [{ openChats, msgNotifications }, dispatch] = useStateValue();
 
 	useEffect(() => {
 		if (NotifQueueData) {
             console.log(NotifQueueData.length);
-			setInitialCount(NotifQueueData.length);
+            const filteredMsgNotifs = NotifQueueData.filter(item => !openChats.includes(item.matchId));
+            console.log(filteredMsgNotifs.length);
+            dispatch(setMsgNotifications(filteredMsgNotifs));
+			setInitialCount(filteredMsgNotifs.length);
 		}
-	}, [NotifQueueData]);
+	}, [NotifQueueData, dispatch, openChats]);
 
 	const [counter, setCounter] = useState<number>(0);
 
 	useEffect(() => {
 		socket.on('chat_notification', (chatNotification) => {
 			console.log(chatNotification);
-            // setCounter((prev) => prev + 1);
-			// alert.success(msg);
+            if (!openChats.includes(chatNotification.matchId)) {
+                setCounter((prev) => prev + 1);
+                alert.success('You have new message!');
+                dispatch(setMsgNotifications([...msgNotifications, chatNotification]))
+            }
 		});
 		return () => {
 			socket.off('chat_notification');
 		};
-	}, [alert]);
+	}, [alert, dispatch, msgNotifications, openChats]);
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        
+        navigate('/chats');
 	};
 
 	return (
