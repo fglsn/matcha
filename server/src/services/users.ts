@@ -487,21 +487,23 @@ export const getUserChats = async (userId: string): Promise<ChatHeader[]> => {
 	// 	})
 	// 	.filter((id) => userId !== id);
 
-	const chats = await Promise.all(matchEntries.map(async (matchEntry) => {
-		const matchedUserId = Object.values(matchEntry).slice(1).find((id) => id !== userId);
-		if (!matchedUserId) throw new AppError(`Failed to identify matched user in chat`, 500);
-		const matchedUser = await getUserEntryForChat(matchedUserId);
-		if (!matchedUser) throw new AppError(`Failed to get matched user information (in chat)`, 500);
-		const [ lastMsg ]  = await getMessagesByID(matchedUserId, userId, 1, 1);
-		return { matchId: matchEntry.matchId, matchedUser:  matchedUser, lastMessage: lastMsg};
-	}));
+	const chats = await Promise.all(
+		matchEntries.map(async (matchEntry) => {
+			const matchedUserId = Object.values(matchEntry)
+				.slice(1)
+				.find((id) => id !== userId);
+			if (!matchedUserId) throw new AppError(`Failed to identify matched user in chat`, 500);
+			const matchedUser = await getUserEntryForChat(matchedUserId);
+			if (!matchedUser) throw new AppError(`Failed to get matched user information (in chat)`, 500);
+			const [lastMsg] = await getMessagesByID(matchedUserId, userId, 1, 1);
+			return { matchId: matchEntry.matchId, matchedUser: matchedUser, lastMessage: lastMsg };
+		})
+	);
 	return chats;
 };
 
 export const getChatNotifications = async (userId: string): Promise<MessageNotification[]> => {
-
 	const chatNotifications = await getChatNotificationsByReceiver(userId);
 
 	return chatNotifications;
-
 };

@@ -78,4 +78,4 @@ const getDateOrUndefined = (value: unknown): Date | undefined => {
 	throw `Expected value to be date, got: ${typeof value}`;
 };
 
-export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getBdDate};
+export { getString, getStringOrUndefined, getNumber, getBoolean, getDate, getDateOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getBdDate };

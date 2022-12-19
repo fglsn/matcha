@@ -3,20 +3,19 @@ import { getDate, getString } from '../dbUtils';
 import { ChatMsg } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const messageEntryMapper = (row: any)  => {
+const messageEntryMapper = (row: any) => {
 	return {
 		receiver_id: getString(row['receiver_id']),
 		sender_id: getString(row['sender_id']),
-        message_text:  getString(row['message_text']),
+		message_text: getString(row['message_text']),
 		message_time: getDate(row['message_time'])
 	};
 };
 
-const getMessagesByID = async (sender_id: string, receiver_id: string, page = 1, limit: number | null = null): Promise<ChatMsg[]>  => {
-    
-    if (page <= 0 || (limit !== null && limit <= 0)) return [];
-	
-    const offset = limit !== null ? (page - 1) * limit : 0;
+const getMessagesByID = async (sender_id: string, receiver_id: string, page = 1, limit: number | null = null): Promise<ChatMsg[]> => {
+	if (page <= 0 || (limit !== null && limit <= 0)) return [];
+
+	const offset = limit !== null ? (page - 1) * limit : 0;
 
 	const query = {
 		text: `
@@ -42,9 +41,9 @@ const addMessageEntry = async (sender_id: string, receiver_id: string, message_t
 		text: 'insert into chat_messages(sender_id, receiver_id, message_text) values($1, $2, $3) returning *',
 		values: [sender_id, receiver_id, message_text]
 	};
-	
-    const res = await pool.query(query);
-    if (!res.rowCount) {
+
+	const res = await pool.query(query);
+	if (!res.rowCount) {
 		return undefined;
 	}
 	return messageEntryMapper(res.rows[0]);
@@ -54,4 +53,4 @@ const clearMessages = async (): Promise<void> => {
 	await pool.query('truncate table chat_messages');
 };
 
-export {messageEntryMapper, getMessagesByID, addMessageEntry, clearMessages};
+export { messageEntryMapper, getMessagesByID, addMessageEntry, clearMessages };

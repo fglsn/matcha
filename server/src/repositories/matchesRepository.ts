@@ -91,4 +91,4 @@ const clearMatches = async (): Promise<void> => {
 	await pool.query('truncate table matches');
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn};
+export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn };

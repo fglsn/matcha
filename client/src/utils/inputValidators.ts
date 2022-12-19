@@ -79,10 +79,7 @@ export const validateMsg = (msg: string) => {
 };
 
 export const validateMsgForm = (msg: string) => {
-	return !validateMsg(msg) 
-	? true
-	: false;
-	
+	return !validateMsg(msg) ? true : false;
 };
 
 export const validateSignUpForm = (
