@@ -59,6 +59,20 @@ const removeMatchEntry = async (matchedUserIdOne: string, matchedUserIdTwo: stri
 	await pool.query(query);
 };
 
+const removeMatchEntryWithReturn = async (matchedUserIdOne: string, matchedUserIdTwo: string): Promise<string | undefined> => {
+	[matchedUserIdOne, matchedUserIdTwo] = matchedUserIdOne > matchedUserIdTwo ? [matchedUserIdTwo, matchedUserIdOne] : [matchedUserIdOne, matchedUserIdTwo];
+
+	const query = {
+		text: 'delete from matches where matched_user_one = $1 and matched_user_two = $2 returning match_id',
+		values: [matchedUserIdOne, matchedUserIdTwo]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return getString(res.rows[0]['match_id']);
+};
+
 const checkMatchEntry = async (matchedUserIdOne: string, matchedUserIdTwo: string): Promise<boolean> => {
 	[matchedUserIdOne, matchedUserIdTwo] = matchedUserIdOne > matchedUserIdTwo ? [matchedUserIdTwo, matchedUserIdOne] : [matchedUserIdOne, matchedUserIdTwo];
 
@@ -77,4 +91,4 @@ const clearMatches = async (): Promise<void> => {
 	await pool.query('truncate table matches');
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId };
+export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn};

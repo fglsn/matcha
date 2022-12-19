@@ -16,7 +16,7 @@ import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCusto
 import { socketErrorHandler } from './errorsSocket';
 import { addChatMessage, getChatMessages, queryOnlineUsers, updateOnlineUsers } from './services/users';
 import { removeNotificationsQueueById } from './repositories/notificationsQueueRepository';
-import { addChatNotificationsEntry } from './repositories/chatNotificationsRepostiory';
+import { addChatNotificationsEntry, deleteNotificationsByMatchAndReceiver } from './repositories/chatNotificationsRepostiory';
 
 export const app = express();
 export const httpServer = createServer(app);
@@ -52,8 +52,11 @@ io.on(
 				if (!socket.session) return;
 				//session id is used to check that user accessing api has rights to access
 				const chat: Chat =  await getChatMessages(match_id, socket.session.userId);
+				//add here notifications queue cleaner for notifs where matchId, receiverId
 				await socket.join(match_id);
 				cb(chat);
+				await deleteNotificationsByMatchAndReceiver(match_id,  socket.session.userId);
+
 			})
 		);
 
@@ -63,7 +66,7 @@ io.on(
 				if (!socket.session) return;
 				//session id is used to check that user accessing api has rights to access
 				const createdMsg: ChatMsg =  await addChatMessage(match_id, socket.session.userId, message);
-				socket.to(match_id).emit('receive_message', createdMsg);
+				io.in(match_id).emit('receive_message', createdMsg);
 				const newChatNotification = await addChatNotificationsEntry(match_id, createdMsg.sender_id, createdMsg.receiver_id);
 				if (newChatNotification) socket.to(createdMsg.receiver_id).emit('chat_notification', newChatNotification);
 			})
@@ -75,6 +78,12 @@ io.on(
 			'clear_notifications',
 			socketErrorHandler(async () => {
 				if (socket.session) await removeNotificationsQueueById(socket.session.userId);
+			})
+		);
+		socket.on(
+			'clear_chat_notifications',
+			socketErrorHandler(async (matchId: string) => {
+				if (socket.session) await deleteNotificationsByMatchAndReceiver(matchId, socket.session.userId);
 			})
 		);
 

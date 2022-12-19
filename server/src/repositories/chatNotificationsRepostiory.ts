@@ -39,8 +39,28 @@ const addChatNotificationsEntry = async (matchId: string, senderId: string, rece
 	return chatNotificationMapper(res.rows[0]);
 };
 
+const deleteNotificationsByMatchAndReceiver = async (matchId: string, receiverId: string): Promise<void> => {
+    const query = {
+		text: 'delete from chat_notifications where match_id = $1 and receiver_id = $2',
+		values: [matchId, receiverId]
+	};
+    await pool.query(query);
+};
+
+const deleteNotificationsByMatchId = async (senderId: string, receiverId: string): Promise<void> => {
+    const query = {
+		text: `
+                delete from chat_notifications 
+                where sender_id = $1 and receiver_id = $2
+                or sender_id = $2 and receiver_id = $1
+        `,
+		values: [senderId, receiverId]
+	};
+    await pool.query(query);
+};
+
 const clearNotifications = async (): Promise<void> => {
 	await pool.query('truncate table chat_notifications');
 };
 
-export { getChatNotificationsByReceiver, addChatNotificationsEntry, clearNotifications };
+export { getChatNotificationsByReceiver, addChatNotificationsEntry, clearNotifications, deleteNotificationsByMatchAndReceiver, deleteNotificationsByMatchId };

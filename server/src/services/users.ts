@@ -29,7 +29,7 @@ import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import { assertNever, getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
-import { addMatchEntry, checkMatchEntry, getMatchByMatchId, getMatchesByUserId, removeMatchEntry } from '../repositories/matchesRepository';
+import { addMatchEntry, checkMatchEntry, getMatchByMatchId, getMatchesByUserId, removeMatchEntryWithReturn } from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
 import { addReportEntry } from '../repositories/reportEntriesRepository';
@@ -37,7 +37,7 @@ import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotification
 import { io } from '../app';
 import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
 import { addMessageEntry, getMessagesByID } from '../repositories/chatRepository';
-import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
+import { deleteNotificationsByMatchId, getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -261,6 +261,7 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	if (await checkLikeEntry(requestorId, profileId)) {
 		await addMatchEntry(profileId, requestorId);
 		await addMatchNotification(profileId, requestorId);
+		io.to([requestorId, profileId]).emit('reload_chat', undefined);
 
 		const updateFameOfVisited = async () => {
 			const fameVisitor = await getFameRatingByUserId(requestorId);
@@ -296,7 +297,10 @@ export const dislikeUser = async (profileId: string, requestorId: string): Promi
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
 	if (await removeLikeEntry(profileId, requestorId)) await updateFameRatingByUserId(profileId, -2);
 	if (await checkMatchEntry(requestorId, profileId)) {
-		await removeMatchEntry(profileId, requestorId);
+		const matchId = await removeMatchEntryWithReturn(profileId, requestorId);
+		// await removeMatchEntry(profileId, requestorId);
+		await deleteNotificationsByMatchId(profileId, requestorId);
+		io.to([requestorId, profileId]).emit('reload_chat', matchId);
 		await addDislikeNotification(profileId, requestorId);
 	}
 };
@@ -315,7 +319,13 @@ export const blockUser = async (profileId: string, requestorId: string): Promise
 	if (await addBlockEntry(profileId, requestorId)) {
 		await updateFameRatingByUserId(profileId, -2);
 		if (await checkLikeEntry(profileId, requestorId)) await removeLikeEntry(profileId, requestorId);
-		if (await checkMatchEntry(requestorId, profileId)) await removeMatchEntry(profileId, requestorId);
+		if (await checkMatchEntry(requestorId, profileId)) {
+			const matchId = await removeMatchEntryWithReturn(profileId, requestorId);
+			// await removeMatchEntry(profileId, requestorId);
+			await deleteNotificationsByMatchId(profileId, requestorId);
+			io.to([requestorId, profileId]).emit('reload_chat', matchId);
+			await addDislikeNotification(profileId, requestorId);
+		}
 	}
 };
 

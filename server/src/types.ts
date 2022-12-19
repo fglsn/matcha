@@ -137,15 +137,17 @@ export type BlockEntry = {
 
 export interface ServerToClientEvents {
 	receive_message: (message: ChatMsg) => void;
+	reload_chat: (match_id: string | undefined) => void;
 	// receive_notification: (message: any) => void;
 	// online_response: (data: any) => void;
+	clear_chat_notifications: (matchId: string) => void;
 	chat_notification: (chatNotification: MessageNotification) => void;
 	notification: (notification_message: string) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface ClientToServerEvents {
-	send_message: (match_id: number, message: string) => void;
+	send_message: (match_id: string, message: string) => void;
 	// send_notification: (receiver_id: number, notification: {}) => void;
 	// set_user: (receiver_id: number) => void;
 	active_chat: (match_id: string, callback: ChatCallback) => void;
