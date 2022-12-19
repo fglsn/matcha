@@ -1,16 +1,19 @@
 import { LoggedUser, MessageNotification } from '../types';
 import { State } from './state';
-
-export type Action = {
-	type: 'SET_LOGGED_USER';
-	payload: LoggedUser | undefined;
-} | {
-	type: 'SET_OPEN_CHATS';
-	payload: string[];
-} | {
-	type: 'SET_MSG_NOTIFICATIONS';
-	payload: MessageNotification[];
-};
+//prettier-ignore
+export type Action =
+	{
+			type: 'SET_LOGGED_USER';
+			payload: LoggedUser | undefined;
+	  }
+	| {
+			type: 'SET_OPEN_CHATS';
+			payload: string[];
+	  }
+	| {
+			type: 'SET_MSG_NOTIFICATIONS';
+			payload: MessageNotification[];
+	  };
 
 export const setLoggedUser = (loggedUser: LoggedUser | undefined): Action => {
 	return {
