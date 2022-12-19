@@ -9,9 +9,11 @@ import { getChatNotifications } from '../../services/chats';
 import { setMsgNotifications, useStateValue } from '../../state';
 import EmailIcon from '@mui/icons-material/Email';
 import { useNavigate } from 'react-router';
+import { useStateChatReload } from '../ChatReloadProvider';
 
 const ChatButton = () => {
 	const alert = useContext(AlertContext);
+    const reload = useStateChatReload();
     const navigate = useNavigate();
     const [{ openChats, msgNotifications }, dispatch] = useStateValue();
 
@@ -20,7 +22,7 @@ const ChatButton = () => {
 		error: NotifQueueError
 	}: { data: MessageNotification[] | undefined; error: Error | undefined } = useServiceCall(
 		async () => await getChatNotifications(),
-		[openChats]
+		[openChats, reload.reason]
 	);
 	void NotifQueueError;
 
@@ -28,11 +30,10 @@ const ChatButton = () => {
 
 	useEffect(() => {
 		if (NotifQueueData) {
-            console.log(NotifQueueData.length);
             const filteredMsgNotifs = NotifQueueData.filter(item => !openChats.includes(item.matchId));
-            console.log(filteredMsgNotifs.length);
             dispatch(setMsgNotifications(filteredMsgNotifs));
 			setInitialCount(filteredMsgNotifs.length);
+            setCounter(0);
 		}
 	}, [NotifQueueData, dispatch, openChats]);
 
@@ -40,7 +41,6 @@ const ChatButton = () => {
 
 	useEffect(() => {
 		socket.on('chat_notification', (chatNotification) => {
-			console.log(chatNotification);
             if (!openChats.includes(chatNotification.matchId)) {
                 setCounter((prev) => prev + 1);
                 alert.success('You have new message!');
@@ -52,9 +52,19 @@ const ChatButton = () => {
 		};
 	}, [alert, dispatch, msgNotifications, openChats]);
 
+    useEffect(() => {
+		socket.on('reload_chat', (matchId) => {
+			reload.initReload(matchId);
+		});
+		return () => {
+			socket.off('reload_chat');
+		};
+	}, [reload]);
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         navigate('/chats');
 	};
+
 
 	return (
 		<>

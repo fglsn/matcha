@@ -171,6 +171,12 @@ export type ChatMsg = {
     message_time: Date;
 };
 
+export type Chat = {
+	messages: ChatMsg[];
+};
+
+export type ChatCallback = ({messages}: Chat) => void;
+
 export type UserEntryForChat = {
     id: string;
     username: string;

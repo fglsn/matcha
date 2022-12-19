@@ -27,6 +27,7 @@ import Matches from './components/Matches';
 import Blocks from './components/Blocks';
 import ResponsiveDrawer from './components/Drawer';
 import Chats from './components/Chats';
+import ChatWindow from './components/ChatWindow';
 import { ChatReloadProvider } from './components/ChatReloadProvider';
 
 const MinWidthContainer = styled.div`

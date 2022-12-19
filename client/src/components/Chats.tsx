@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
 import { socket } from '../services/socket';
 import { useStateValue } from '../state';
+import { useStateChatReload } from './ChatReloadProvider';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -161,14 +162,16 @@ const ChatList: React.FC<{
 
 const Chats = () => {
 	// const [{ loggedUser }] = useStateValue();
-
-	const {
+    const [{ msgNotifications }] = useStateValue();
+    const reload = useStateChatReload();
+	
+    const {
 		data: chatsData,
 		error: chatsError
 	}: {
 		data: ChatHeader[] | undefined;
 		error: Error | undefined;
-	} = useServiceCall(async () => await getChats(), []);
+	} = useServiceCall(async () => await getChats(), [msgNotifications, reload.reason]);
 
 	if (chatsError)
 		return (
