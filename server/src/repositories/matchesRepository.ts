@@ -1,6 +1,6 @@
 import pool from '../db';
 import { getString } from '../dbUtils';
-import { MatchEntry } from '../types';
+import { matchCheck, MatchEntry } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const matchEntryMapper = (row: any): MatchEntry => {
@@ -86,9 +86,22 @@ const checkMatchEntry = async (matchedUserIdOne: string, matchedUserIdTwo: strin
 	}
 	return true;
 };
+const checkMatchEntryWithReturn = async (matchedUserIdOne: string, matchedUserIdTwo: string): Promise<matchCheck> => {
+	[matchedUserIdOne, matchedUserIdTwo] = matchedUserIdOne > matchedUserIdTwo ? [matchedUserIdTwo, matchedUserIdOne] : [matchedUserIdOne, matchedUserIdTwo];
+
+	const query = {
+		text: 'select * from matches where matched_user_one = $1 and matched_user_two = $2',
+		values: [matchedUserIdOne, matchedUserIdTwo]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return {match: false, matchId: undefined };
+	}
+	return {match: true, matchId: getString(res.rows[0]['match_id'])};
+};
 
 const clearMatches = async (): Promise<void> => {
 	await pool.query('truncate table matches');
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn };
+export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn, checkMatchEntryWithReturn };

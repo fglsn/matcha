@@ -116,7 +116,7 @@ const PublicProfile = () => {
 						<StyledAlert severity="info" color="warning">
 							<Typography variant="h6">
 								You have a match!{' '}
-								<StyledLink to={`/profile/chat`}>Open Chat</StyledLink>
+								<StyledLink to={`/chats/${likeAndMatchStatusData.matchId}`}>Open Chat</StyledLink>
 							</Typography>
 						</StyledAlert>
 					)}

@@ -121,9 +121,15 @@ export type LikeEntry = {
 	likingUserId: string;
 };
 
+export type matchCheck = {
+	match: boolean;
+	matchId: string | undefined;
+};
+
 export type LikeAndMatchStatus = {
 	like: boolean;
 	match: boolean;
+	matchId: string | undefined;
 };
 
 export interface SocketCustom extends Socket {

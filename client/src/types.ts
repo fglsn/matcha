@@ -93,6 +93,7 @@ export type Images = {
 export type LikeAndMatchStatus = {
 	like: boolean;
 	match: boolean;
+	matchId: string | undefined;
 };
 
 export enum AlertStatus {
