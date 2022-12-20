@@ -22,7 +22,8 @@ import {
 	Photo,
 	ProfilePublic,
 	User,
-	UserData
+	UserData,
+	UserEntryForChat
 } from '../types';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
@@ -507,4 +508,23 @@ export const getChatNotifications = async (userId: string): Promise<MessageNotif
 	const chatNotifications = await getChatNotificationsByReceiver(userId);
 
 	return chatNotifications;
+};
+
+export const getChatUsers = async (matchId: string, userId: string): Promise<UserEntryForChat[]> => {
+	const match = await getMatchByMatchId(matchId);
+	if (!match) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	const matchedUsersArr = Object.values(match).slice(1);
+	const senderId = matchedUsersArr.find((element) => element === userId);
+	const receiverId = matchedUsersArr.find((element) => element !== userId);
+	
+	if (!senderId || !receiverId) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	
+	const [sender, receiver] = await Promise.all([
+		getUserEntryForChat(senderId),
+		getUserEntryForChat(receiverId)
+	]);
+	
+	if (!sender || !receiver) throw new AppError('Failed to get chat users data', 500);
+
+	return [sender, receiver];
 };
