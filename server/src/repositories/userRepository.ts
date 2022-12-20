@@ -1,7 +1,8 @@
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, Orientation, Gender } from '../types';
 import { ValidationError } from '../errors';
+import { assertNever } from '../utils/helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -351,6 +352,50 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	});
 };
 
+const getInitialMatchSuggestions = async (userId: string, gender: Gender, orientation: Orientation): Promise<UserData[]> => {
+
+	const oppositeGender = gender === 'male' ? 'female' : 'male';
+
+	let sexualPreference;
+	switch (orientation) {
+		case 'straight':
+			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')`;
+			break;
+		case 'gay':
+			sexualPreference = `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
+			break;
+		case 'bi':
+			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = bi)
+				or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
+			break;
+		default:
+			assertNever(orientation);
+	}
+
+	const query = {
+		text:
+			`select id, username, firstname, lastname, birthday, gender, orientation, bio, tags, lat, lon, location_string, fame_rating 
+				from users
+				left join likes_history on likes_history.liked_user_id = users.id and likes_history.liking_user_id = $1
+				left join block_entries on block_entries.blocked_user_id = users.id and block_entries.blocking_user_id = $1
+				left join report_entries on report_entries.reported_user_id = users.id and report_entries.reporting_user_id = $1
+				where id != $1 and 
+					likes_history.liked_user_id is null and 
+					block_entries.blocked_user_id is null and 
+					report_entries.reported_user_id is null and (` +
+			sexualPreference +
+			')',
+		values: [userId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return [];
+	}
+	return res.rows.map((row) => {
+		return userDataMapper(row);
+	});
+};
+
 const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
 	const query = {
 		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
@@ -392,5 +437,6 @@ export {
 	updateFameRatingByUserId,
 	getTagsByUserId,
 	getUserEntries,
+	getInitialMatchSuggestions,
 	getUserEntry
 };
