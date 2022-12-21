@@ -59,7 +59,13 @@ const SpaceBetween = styled('div')`
 `;
 
 //this shoud get profileData as props to make it reusable! (profileData: ProfilePublic)
-const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
+const PublicProfile = ({
+	profileData,
+	onAction
+}: {
+	profileData: ProfilePublic;
+	onAction?: (profile: ProfilePublic) => void;
+}) => {
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isBlocked, setIsBlocked] = useState<boolean>(false);
 	const [isMatch, setIsMatch] = useState<boolean>(false);
@@ -140,16 +146,19 @@ const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 					<IconGroup
 						id={id}
 						username={profileData.username}
-						setIsMatch={setIsMatch}
+						setIsMatch={(value) => {
+							onAction && onAction(profileData);
+							setIsMatch(value);
+						}}
 						isLiked={isLiked}
 						setIsLiked={setIsLiked}
 						isBlocked={isBlocked}
-						setIsBlocked={setIsBlocked}
+						setIsBlocked={(value) => {
+							onAction && onAction(profileData);
+							setIsBlocked(value);
+						}}
 					/>
 					<UserInfo sx={{ mt: 3 }}>
-						{/* <Typography sx={{ mt: 2 }}>
-							@{profileData.username.toLowerCase()}
-						</Typography> */}
 						<OnlineIndicator user_id={profileData.id} />
 						<StyledRow sx={{ mt: 0.75 }}>
 							<GenderIcon gender={profileData.gender} />
@@ -179,7 +188,14 @@ const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 							{profileData.distance} km away
 						</Typography>
 					</UserInfo>
-					<ReportDialog id={id} username={profileData.username} />
+					<ReportDialog
+						id={id}
+						username={profileData.username}
+						setIsBlocked={(value) => {
+							onAction && onAction(profileData);
+							setIsBlocked(value);
+						}}
+					/>
 				</Item>
 			</StyledContainer>
 		</>
