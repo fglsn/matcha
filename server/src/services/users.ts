@@ -33,7 +33,7 @@ import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/l
 import { addMatchEntry, checkMatchEntry, checkMatchEntryWithReturn, getMatchByMatchId, getMatchesByUserId, removeMatchEntryWithReturn } from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
 import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
-import { addReportEntry } from '../repositories/reportEntriesRepository';
+import { addReportEntry, checkReportEntry } from '../repositories/reportEntriesRepository';
 import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
 import { io } from '../app';
 import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
@@ -255,6 +255,7 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	if (await checkReportEntry(profileId, requestorId)) throw new AppError('This account reported as fake, cannot be liked.', 400);
 
 	if (await addLikeEntry(profileId, requestorId)) {
 		await addLikeNotification(profileId, requestorId);
@@ -335,6 +336,7 @@ export const unblockUser = async (profileId: string, requestorId: string): Promi
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	if (await checkReportEntry(profileId, requestorId)) throw new AppError('This account reported as fake, cannot be unblocked.', 400);
 	if (await removeBlockEntry(profileId, requestorId)) {
 		await updateFameRatingByUserId(profileId, 2);
 	}
