@@ -53,6 +53,11 @@ const StyledLink = styled(Link)`
 	text-decoration: none;
 `;
 
+const SpaceBetween = styled('div')`
+	display: flex;
+	justify-content: space-between;
+`;
+
 //this shoud get profileData as props to make it reusable! (profileData: ProfilePublic)
 const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 	const [isLiked, setIsLiked] = useState<boolean>(false);
@@ -120,7 +125,17 @@ const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 							</Typography>
 						</StyledAlert>
 					)}
-					<FameRating fameRating={profileData.fameRating} />
+					<SpaceBetween>
+						<FameRating fameRating={profileData.fameRating} />
+						<Typography>
+							<Link
+								style={{ textDecoration: 'none', color: 'inherit' }}
+								to={`/profile/${profileData.id}`}
+							>
+								@{profileData.username.toLowerCase()}
+							</Link>
+						</Typography>
+					</SpaceBetween>
 					<ProfileSlider photos={photosData.images} user={profileData} />
 					<IconGroup
 						id={id}
@@ -132,9 +147,9 @@ const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 						setIsBlocked={setIsBlocked}
 					/>
 					<UserInfo>
-						<Typography sx={{ mt: 2 }}>
+						{/* <Typography sx={{ mt: 2 }}>
 							@{profileData.username.toLowerCase()}
-						</Typography>
+						</Typography> */}
 						<OnlineIndicator user_id={profileData.id} />
 						<StyledRow sx={{ mt: 0.75 }}>
 							<GenderIcon gender={profileData.gender} />
