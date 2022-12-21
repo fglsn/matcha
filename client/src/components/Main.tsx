@@ -1,6 +1,3 @@
-// import { useEffect } from "react";
-// import { setLoggedUser, useStateValue } from "../state";
-
 import { Alert, Container } from '@mui/material';
 import { useServiceCall } from '../hooks/useServiceCall';
 import { getMatchSuggestions } from '../services/search';
@@ -8,7 +5,7 @@ import { useStateValue } from '../state';
 import { ProfilePublic } from '../types';
 import LoadingIcon from './LoadingIcon';
 import withProfileRequired from './ProfileRequired';
-// import PublicProfile from './PublicProfile';
+import PublicProfile from './PublicProfile/PublicProfile';
 
 const Main = () => {
 	const [{ loggedUser }] = useStateValue();
@@ -30,14 +27,9 @@ const Main = () => {
 
 	return (
 		<Container sx={{ mt: 15, mb: 8 }}>
-			{/* 
-				here we can use PublicProfile component, but in order to do so we need to correct PublicProfile a bit (see comments in PublicProfile)
-				currently PublicProfile is not accepting any props. we need to change it to get profileData as props.
-				{matchSuggestionsData.map((profile) => {
-				<>
-					<PublicProfile profileData={profile}></PublicProfile>
-				</>;
-			})} */}
+			{matchSuggestionsData.map((profile, key) => (
+				<PublicProfile profileData={profile} key={key}/>
+			))}
 		</Container>
 	);
 };
