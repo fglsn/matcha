@@ -10,8 +10,8 @@ const divOnlineStyle = {
     color: 'green'
 }
 
-type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number; }) => void;
-type CallbackTimeout = () => void;
+export type CallbackSucess = ({ online, lastActive }: { online: boolean; lastActive: number; }) => void;
+export type CallbackTimeout = () => void;
 
 
 export const withTimeout = (onSuccess: CallbackSucess, onTimeout: CallbackTimeout, timeout:number) => {

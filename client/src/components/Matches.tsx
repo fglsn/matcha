@@ -41,7 +41,7 @@ const Matches = () => {
 	if (matchesError)
 		return (
 			<Alert severity="error">
-				Error loading visit history page, please try again...
+				Error loading match statistics page, please try again...
 			</Alert>
 		);
 
@@ -55,12 +55,20 @@ const Matches = () => {
 				container
 				columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
 				sx={{
-					flexDirection: { xs: 'column', sm: 'row' },
+					flexDirection: { xs: 'column' },
 					height: '80%',
-					justifyContent: 'center'
+					justifyContent: 'center',
+					alignContent: 'center'
 				}}
 			>
-				<Grid item xs={12} sm={6}>
+				<Grid
+					sx={{ width: '100%' }}
+					maxWidth={{ xs: '100%', sm: '75%', md: '65%', lg: '50%' }}
+					flexBasis="100%"
+					item
+					xs={12}
+					sm={6}
+				>
 					<StatisticItem>
 						<LoyaltyIcon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
@@ -71,10 +79,13 @@ const Matches = () => {
 								users={
 									matchesData
 										? matchesData
-										.flatMap((entry) => {
-												return [entry.matchedUserIdOne, entry.matchedUserIdTwo]
-										})
-										.filter((id) => loggedUser?.id !== id)
+												.flatMap((entry) => {
+													return [
+														entry.matchedUserIdOne,
+														entry.matchedUserIdTwo
+													];
+												})
+												.filter((id) => loggedUser?.id !== id)
 										: undefined
 								}
 							/>
