@@ -5,13 +5,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LoggedUser } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import { logoutUser } from '../../services/logout';
-import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { socket } from '../../services/socket';
+import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsButton from './Notifications';
 import ChatButton from './Messages';
-
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
 const LoggedInUserButtons = ({
 	loggedUser,
@@ -21,12 +21,12 @@ const LoggedInUserButtons = ({
 	handleLogout: any;
 }) => {
 	return (
-		<Box sx={{pr: 0}}>
+		<Box sx={{ pr: 0 }}>
 			<ChatButton />
 			<NotificationsButton />
-			<Button onClick={handleLogout} color="inherit">
-				Logout
-			</Button>
+			<IconButton onClick={handleLogout}>
+				<MeetingRoomIcon color="primary" />
+			</IconButton>
 		</Box>
 	);
 };
@@ -103,15 +103,30 @@ const Navbar = ({
 				>
 					<MenuIcon />
 				</IconButton>
-				<LoyaltyIcon
-					color="primary"
+				<Box
+					component={Link}
+					to="/"
 					sx={{
+						textDecoration: 'none',
 						ml: 1,
-						display: { xs: 'none', sm: 'none', md: 'block' }
+						display: { xs: 'none', sm: 'none', md: 'flex' },
+						alignItems: 'center'
 					}}
-				/>
-				<div>
+				>
+					<div
+						style={{
+							fontFamily: "'Paytone One', cursive",
+							fontSize: '1.6rem',
+							color: '#ffc600',
+							textAlign: 'center'
+						}}
+					>
+						Match
+					</div>
+					<BrightnessAutoIcon style={{ marginTop: '4px' }} color="primary" />
+				</Box>
 
+				<div>
 					{loggedUser[0].loggedUser !== undefined ? (
 						<LoggedInUserButtons
 							loggedUser={loggedUser[0].loggedUser}

@@ -28,6 +28,8 @@ export const getInitialMatchSuggestionsIds = async (userId: string) => {
 		};
 	});
 
-	console.log(suggestedProfiles);
+	suggestedProfiles.sort((a, b) => a.distance - b.distance);
+
+	//console.log(suggestedProfiles); //rm later
 	return suggestedProfiles;
 };
