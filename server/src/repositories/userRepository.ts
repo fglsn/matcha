@@ -1,9 +1,8 @@
 import pool from '../db';
-import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber } from '../dbUtils';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, Orientation, Gender, UserEntryForChat } from '../types';
-import { assertNever } from '../utils/helpers';
+import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, Orientation, Gender } from '../types';
 import { ValidationError } from '../errors';
-import { getAge } from '../utils/helpers';
+import { getAge, assertNever } from '../utils/helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -468,7 +467,7 @@ export {
 	updateFameRatingByUserId,
 	getTagsByUserId,
 	getUserEntries,
-	getInitialMatchSuggestions,
 	getUserEntry,
-	getUserEntryForChat
+	getUserEntryForChat,
+	getInitialMatchSuggestions
 };
