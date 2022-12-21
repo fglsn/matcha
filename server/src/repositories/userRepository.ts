@@ -468,6 +468,6 @@ export {
 	getTagsByUserId,
 	getUserEntries,
 	getUserEntry,
-	getUserEntryForChat
-	getInitialMatchSuggestions,
+	getUserEntryForChat,
+	getInitialMatchSuggestions
 };
