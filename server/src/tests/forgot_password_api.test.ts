@@ -72,7 +72,7 @@ describe('send password reset link on forgot pwd request', () => {
 			.send({ email: 'wrong.com' })
 			.expect(400)
 			.expect('Content-Type', /application\/json/);
-		expect(res.body.error).toContain('ValidationError: Invalid email');
+		expect(res.body.error).toContain('Invalid email');
 	});
 
 	test('fails with valid but not existing email', async () => {
