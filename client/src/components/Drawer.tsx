@@ -8,8 +8,9 @@ import { socket } from '../services/socket';
 import { Box, Drawer, Toolbar, List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
+import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined';
 import JoinInnerIcon from '@mui/icons-material/JoinInner';
 import HistoryIcon from '@mui/icons-material/History';
 import BlockIcon from '@mui/icons-material/Block';
@@ -59,7 +60,7 @@ export default function ResponsiveDrawer() {
 					<ListItem disablePadding component={StyledLink} to="/chats">
 						<ListItemButton>
 							<ListItemIcon>
-								<PersonSearchOutlinedIcon />
+								<MailOutlineOutlinedIcon />
 							</ListItemIcon>
 							<ListItemText primary="Chats" />
 						</ListItemButton>
@@ -110,7 +111,7 @@ export default function ResponsiveDrawer() {
 					<ListItem onClick={handleLogout} disablePadding>
 						<ListItemButton>
 							<ListItemIcon>
-								<LogoutOutlinedIcon />
+								<MeetingRoomOutlinedIcon />
 							</ListItemIcon>
 							<ListItemText primary="Logout" />
 						</ListItemButton>

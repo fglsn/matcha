@@ -6,7 +6,7 @@ import { socket } from '../../services/socket';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getNotifications, getNotificationsQueue } from '../../services/notifications';
 import { StyledLink } from '../UserList';
@@ -213,7 +213,7 @@ const NotificationsButton = () => {
 					aria-haspopup="true"
 					onClick={handleClick}
 				>
-					<NotificationsActiveOutlinedIcon
+					<NotificationsActiveIcon
 						fontSize="medium"
 						color={NotifQueueData ? 'primary' : 'disabled'}
 					/>

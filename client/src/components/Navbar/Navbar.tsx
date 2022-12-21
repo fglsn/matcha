@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsButton from './Notifications';
 import ChatButton from './Messages';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
 const LoggedInUserButtons = ({
 	loggedUser,
@@ -23,9 +24,9 @@ const LoggedInUserButtons = ({
 		<Box sx={{ pr: 0 }}>
 			<ChatButton />
 			<NotificationsButton />
-			<Button onClick={handleLogout} color="inherit">
-				Logout
-			</Button>
+			<IconButton onClick={handleLogout}>
+				<MeetingRoomIcon color="primary" />
+			</IconButton>
 		</Box>
 	);
 };

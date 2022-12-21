@@ -13,9 +13,9 @@ import { useStateChatReload } from '../ChatReloadProvider';
 
 const ChatButton = () => {
 	const alert = useContext(AlertContext);
-    const reload = useStateChatReload();
-    const navigate = useNavigate();
-    const [{ openChats, msgNotifications }, dispatch] = useStateValue();
+	const reload = useStateChatReload();
+	const navigate = useNavigate();
+	const [{ openChats, msgNotifications }, dispatch] = useStateValue();
 
 	const {
 		data: NotifQueueData,
@@ -30,10 +30,10 @@ const ChatButton = () => {
 
 	useEffect(() => {
 		if (NotifQueueData) {
-            const filteredMsgNotifs = NotifQueueData.filter(item => !openChats.includes(item.matchId));
-            dispatch(setMsgNotifications(filteredMsgNotifs));
+			const filteredMsgNotifs = NotifQueueData.filter(item => !openChats.includes(item.matchId));
+			dispatch(setMsgNotifications(filteredMsgNotifs));
 			setInitialCount(filteredMsgNotifs.length);
-            setCounter(0);
+			setCounter(0);
 		}
 	}, [NotifQueueData, dispatch, openChats]);
 
@@ -41,18 +41,18 @@ const ChatButton = () => {
 
 	useEffect(() => {
 		socket.on('chat_notification', (chatNotification) => {
-            if (!openChats.includes(chatNotification.matchId)) {
-                setCounter((prev) => prev + 1);
-                alert.success('You have new message!');
-                dispatch(setMsgNotifications([...msgNotifications, chatNotification]))
-            }
+			if (!openChats.includes(chatNotification.matchId)) {
+				setCounter((prev) => prev + 1);
+				alert.success('You have new message!');
+				dispatch(setMsgNotifications([...msgNotifications, chatNotification]))
+			}
 		});
 		return () => {
 			socket.off('chat_notification');
 		};
 	}, [alert, dispatch, msgNotifications, openChats]);
 
-    useEffect(() => {
+	useEffect(() => {
 		socket.on('reload_chat', (matchId) => {
 			reload.initReload(matchId);
 		});
@@ -62,7 +62,7 @@ const ChatButton = () => {
 	}, [reload]);
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        navigate('/chats');
+		navigate('/chats');
 	};
 
 
