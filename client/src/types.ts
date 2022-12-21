@@ -93,6 +93,7 @@ export type Images = {
 export type LikeAndMatchStatus = {
 	like: boolean;
 	match: boolean;
+	matchId: string | undefined;
 };
 
 export enum AlertStatus {
@@ -118,6 +119,7 @@ export type LikeEntry = {
 };
 
 export type MatchEntry = {
+	matchId: string;
 	matchedUserIdOne: string;
 	matchedUserIdTwo: string;
 };
@@ -161,4 +163,37 @@ export type NotificationMsg =
 
 export type Notifications = {
 	notifications: NotificationMsg[];
+};
+
+export type ChatMsg = {
+	receiver_id: string;
+	sender_id: string;
+	message_text: string;
+	message_time: Date;
+};
+
+export type Chat = {
+	messages: ChatMsg[];
+};
+
+export type ChatCallback = ({ messages }: Chat) => void;
+
+export type UserEntryForChat = {
+	id: string;
+	username: string;
+	firstname: string;
+	age: number;
+	avatar: string;
+};
+
+export type ChatHeader = {
+	matchId: string;
+	matchedUser: UserEntryForChat;
+	lastMessage: ChatMsg;
+};
+
+export type MessageNotification = {
+	matchId: string;
+	senderId: string;
+	receiverId: string;
 };

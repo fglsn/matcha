@@ -10,7 +10,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload, parseIdList } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats, getChatUsers } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -20,6 +20,7 @@ import { getMatchesByUserId } from '../repositories/matchesRepository';
 import { getBlockedUsersByBlockingUserId } from '../repositories/blockEntriesRepository';
 import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
 import { getInitialMatchSuggestionsIds } from '../services/search';
+import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 
 const router = express.Router();
 
@@ -426,6 +427,36 @@ router.get(
 	})
 );
 
+router.get(
+	'/chats/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		const chats = await getUserChats(req.session.userId);
+		res.status(200).json(chats).end();
+	})
+);
+
+router.get(
+	'/chat_users/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		if (!req.query.id || !isStringRepresentedInteger(req.query.id)) throw new AppError(`Please, provide correct user id`, 400);
+		const users = await getChatUsers(req.query.id, req.session.userId);
+		res.status(200).json(users).end();
+	})
+);
+
+router.get(
+	'/chat_notificatoins/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		const chatNotifications = await getChatNotificationsByReceiver(req.session.userId);
+		res.status(200).json(chatNotifications).end();
+	})
+);
 
 // router.get(
 // 	'/notifications_page/',

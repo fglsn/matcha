@@ -40,6 +40,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 const StyledRow = styled('div')`
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: baseline;
 	justify-content: space-between;
 `;
@@ -128,9 +129,9 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<StyledRow>
+				<StyledRow style={{marginBottom: 20}}>
 					<LightTooltip title="Visit own profile page" placement="top-start">
-						<Typography variant="h5" mb={3}>
+						<Typography sx= {{typography: { xs: 'h6', lg:'h5'} }} >
 							<StyledLink to={`/profile/${loggedUser?.id}`}>
 								@{loggedUser?.username.toUpperCase()}
 							</StyledLink>

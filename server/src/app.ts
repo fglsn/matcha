@@ -12,10 +12,11 @@ import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom } from './types';
+import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom, ChatCallback, Chat, ChatMsg } from './types';
 import { socketErrorHandler } from './errorsSocket';
-import { queryOnlineUsers, updateOnlineUsers } from './services/users';
+import { addChatMessage, getChatMessages, queryOnlineUsers, updateOnlineUsers } from './services/users';
 import { removeNotificationsQueueById } from './repositories/notificationsQueueRepository';
+import { addChatNotificationsEntry, deleteNotificationsByMatchAndReceiver } from './repositories/chatNotificationsRepostiory';
 
 export const app = express();
 export const httpServer = createServer(app);
@@ -44,11 +45,43 @@ io.on(
 				console.log(`online_query: ${onlineStatus.online}`);
 			})
 		);
+
+		socket.on(
+			'active_chat',
+			socketErrorHandler(async (match_id: string, cb: ChatCallback) => {
+				if (!socket.session) return;
+				//session id is used to check that user accessing api has rights to access
+				const chat: Chat = await getChatMessages(match_id, socket.session.userId);
+				//add here notifications queue cleaner for notifs where matchId, receiverId
+				await socket.join(match_id);
+				cb(chat);
+				await deleteNotificationsByMatchAndReceiver(match_id, socket.session.userId);
+			})
+		);
+
+		socket.on(
+			'send_message',
+			socketErrorHandler(async (match_id: string, message: string) => {
+				if (!socket.session) return;
+				//session id is used to check that user accessing api has rights to access
+				const createdMsg: ChatMsg = await addChatMessage(match_id, socket.session.userId, message);
+				io.in(match_id).emit('receive_message', createdMsg);
+				const newChatNotification = await addChatNotificationsEntry(match_id, createdMsg.sender_id, createdMsg.receiver_id);
+				if (newChatNotification) socket.to(createdMsg.receiver_id).emit('chat_notification', newChatNotification);
+			})
+		);
+
 		// Clear notification queue
 		socket.on(
 			'clear_notifications',
 			socketErrorHandler(async () => {
 				if (socket.session) await removeNotificationsQueueById(socket.session.userId);
+			})
+		);
+		socket.on(
+			'clear_chat_notifications',
+			socketErrorHandler(async (matchId: string) => {
+				if (socket.session) await deleteNotificationsByMatchAndReceiver(matchId, socket.session.userId);
 			})
 		);
 

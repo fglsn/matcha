@@ -58,9 +58,21 @@ const Likes = () => {
 			<Grid
 				container
 				columnSpacing={{ xs: 2, sm: 3, md: 4, lg: 10 }}
-				sx={{ flexDirection: { xs: 'column', sm: 'row' }, height: '80%' }}
+				sx={{
+					flexDirection: { xs: 'column', md: 'row' },
+					height: '80%',
+					justifyContent: 'center',
+					alignContent: 'center'
+				}}
 			>
-				<Grid item xs={12} sm={6}>
+				<Grid
+					sx={{ width: '100%' }}
+					maxWidth={{ xs: '100%', sm: '75%', md: '65%', lg: '50%' }}
+					flexBasis={{ xs: '100%', sm: '75%', md: '65%', lg: '50%' }}
+					item
+					xs={12}
+					sm={6}
+				>
 					<StatisticItem>
 						<FavoriteBorderIcon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
@@ -79,7 +91,14 @@ const Likes = () => {
 						</ItemContent>
 					</StatisticItem>
 				</Grid>
-				<Grid item xs={12} sm={6}>
+				<Grid
+					sx={{ width: '100%' }}
+					maxWidth={{ xs: '100%', sm: '75%', md: '65%', lg: '50%' }}
+					flexBasis={{ xs: '100%', sm: '75%', md: '65%', lg: '50%' }}
+					item
+					xs={12}
+					sm={6}
+				>
 					<StatisticItem>
 						<Diversity1Icon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
