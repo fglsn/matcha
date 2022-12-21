@@ -365,7 +365,7 @@ const getInitialMatchSuggestions = async (userId: string, gender: Gender, orient
 			sexualPreference = `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
 			break;
 		case 'bi':
-			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = bi)
+			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')
 				or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
 			break;
 		default:
