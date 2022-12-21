@@ -104,7 +104,10 @@ const Navbar = ({
 					<MenuIcon />
 				</IconButton>
 				<Box
+					component={Link}
+					to="/"
 					sx={{
+						textDecoration: 'none',
 						ml: 1,
 						display: { xs: 'none', sm: 'none', md: 'flex' },
 						alignItems: 'center'
@@ -120,7 +123,7 @@ const Navbar = ({
 					>
 						Match
 					</div>
-					<BrightnessAutoIcon style={{ marginTop: '4px' }} color='primary'/>
+					<BrightnessAutoIcon style={{ marginTop: '4px' }} color="primary" />
 				</Box>
 
 				<div>
