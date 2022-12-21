@@ -77,6 +77,7 @@ const ChatButton = () => {
 			>
 				<IconButton
 					aria-label="Chats button"
+                    sx={{mx:1}}
 					// id="long-button"
 					// aria-controls={open ? 'long-menu' : undefined}
 					// aria-expanded={open ? 'true' : undefined}
