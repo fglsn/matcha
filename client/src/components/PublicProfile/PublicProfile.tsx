@@ -146,7 +146,7 @@ const PublicProfile = ({ profileData }: { profileData: ProfilePublic }) => {
 						isBlocked={isBlocked}
 						setIsBlocked={setIsBlocked}
 					/>
-					<UserInfo>
+					<UserInfo sx={{ mt: 3 }}>
 						{/* <Typography sx={{ mt: 2 }}>
 							@{profileData.username.toLowerCase()}
 						</Typography> */}

@@ -26,7 +26,7 @@ const Main = () => {
 	}
 
 	return (
-		<Container sx={{ mt: 15, mb: 8 }}>
+		<Container sx={{ mt: 5, mb: 8 }}>
 			{matchSuggestionsData.map((profile, key) => (
 				<PublicProfile profileData={profile} key={key}/>
 			))}
