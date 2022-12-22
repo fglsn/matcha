@@ -6,7 +6,8 @@ import { findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
+import { ipAddress, defaultCoordinates } from './test_helper';
+import { credentialsNewUser, newUser } from './test_helper_users';
 
 const api = supertest(app);
 
@@ -40,7 +41,7 @@ describe('user login', () => {
 
 		const res = await api
 			.post('/api/login')
-			.send(loginUser)
+			.send(credentialsNewUser)
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
@@ -62,7 +63,7 @@ describe('user login', () => {
 		}
 		const res = await api
 			.post('/api/login')
-			.send(loginUser)
+			.send(credentialsNewUser)
 			.expect(401)
 			.expect('Content-Type', /application\/json/);
 

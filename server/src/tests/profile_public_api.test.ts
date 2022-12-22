@@ -1,11 +1,12 @@
 import supertest from 'supertest';
 import { app } from '../app';
 import { describe, expect } from '@jest/globals';
-import { newUser, loginUser, infoProfilePublic, secondUser, loginUser2 } from './test_helper';
-import { loginAndPrepareUser } from './test_helper_fns';
+import { clearVisitHistory } from '../repositories/visitHistoryRepository';
 import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers } from '../repositories/userRepository';
-import { clearVisitHistory } from '../repositories/visitHistoryRepository';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
+import { loginAndPrepareUser } from './test_helper_fns';
+import { infoProfilePublic } from './test_helper';
 
 const api = supertest(app);
 jest.setTimeout(10000);
@@ -19,8 +20,8 @@ describe('check access to profile page', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		await clearVisitHistory();
-		visited = await loginAndPrepareUser(newUser, loginUser);
-		visitor = await loginAndPrepareUser(secondUser, loginUser2);
+		visited = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		visitor = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 	test('logged user can visit public profile page of other user', async () => {
 		const resFromProfilePage = await api

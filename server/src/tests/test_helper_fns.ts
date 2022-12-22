@@ -3,16 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import supertest from 'supertest';
 import { app } from '../app';
-import { infoProfile, defaultCoordinates, ipAddress, LoginUser, TokenAndId, loginUser } from './test_helper';
 import { DataURL } from './test_helper_images';
-import { clearUsers, findUserByUsername } from '../repositories/userRepository';
-import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { createNewUser } from '../services/users';
 import { CallbackSucess, CallbackTimeout, NewUser } from '../types';
+import { requestCoordinatesByIp, getLocation } from '../services/location';
 import { checkLikeEntry } from '../repositories/likesRepository';
-import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
 import { checkBlockEntry } from '../repositories/blockEntriesRepository';
 import { checkReportEntry } from '../repositories/reportEntriesRepository';
+import { clearUsers, findUserByUsername } from '../repositories/userRepository';
+import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
+import { defaultCoordinates, ipAddress, TokenAndId } from './test_helper';
+import { credentialsNewUser, ProfileData, Credentials, profileDataNewUser } from './test_helper_users';
 
 export const api = supertest(app);
 
@@ -24,11 +25,11 @@ jest.mock('../services/location');
 export const requestCoordinatesByIpMock = jest.mocked(requestCoordinatesByIp);
 export const getLocationMock = jest.mocked(getLocation);
 
-export const initLoggedUser = async (username: string, loginUser: LoginUser) => {
+export const initLoggedUser = async (username: string, credentials: Credentials) => {
 	const user = await findUserByUsername(username);
 	const activationCode = user?.activationCode;
 	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
+	const res = await api.post('/api/login').send(credentials).expect(200);
 	return res;
 };
 
@@ -37,7 +38,7 @@ export const putToProfile = async (id: string) => {
 	await api
 		.put(`/api/users/${id}/profile`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
-		.send(infoProfile)
+		.send(profileDataNewUser)
 		.expect(200);
 	// if (res.body.error)
 	// 	console.log(res.body.error);
@@ -55,22 +56,13 @@ export const createAndLoginUser = async (user: NewUser) => {
 	await clearUsers();
 	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 	await createNewUser(user, ipAddress);
-	loginRes = await initLoggedUser(user.username, loginUser);
+	loginRes = await initLoggedUser(user.username, credentialsNewUser);
 	id = <string>JSON.parse(loginRes.text).id;
 	token = <string>JSON.parse(loginRes.text).token;
 	return { id, token };
 };
 
-export const loginAndPrepareUser = async (user: NewUser, loginUser: LoginUser) => {
-	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
-	await createNewUser(user, ipAddress);
-	loginRes = await initLoggedUser(user.username, loginUser);
-	id = <string>JSON.parse(loginRes.text).id;
-	await Promise.all([putToProfile(id), postToPhotos(id)]);
-	return { id: id, token: loginRes.body.token };
-};
-
-export const loginAndPrepareCustomUser = async (user: NewUser, credentials: LoginUser, profileData: object) => {
+export const loginAndPrepareUser = async (user: NewUser, credentials: Credentials, profileData: ProfileData) => {
 	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 	await createNewUser(user, ipAddress);
 	const loginData = await initLoggedUser(user.username, credentials);
@@ -86,13 +78,12 @@ export const prepareTestUser = async (loginData: TokenAndId, profileData: object
 		.set({ Authorization: `bearer ${loginData.token}` })
 		.send(profileData)
 		.expect(200);
-	
+
 	await api
 		.post(`/api/users/${loginData.id}/photos`)
 		.set({ Authorization: `bearer ${loginData.token}` })
 		.send({ images: [{ dataURL: DataURL }] })
 		.expect(200);
-
 };
 
 export const userVisitsAnotherUsersProfile = async (visited: TokenAndId, visitor: TokenAndId) => {

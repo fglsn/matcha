@@ -1,15 +1,31 @@
-import { NewUser } from "../types";
+import { Coordinates, NewUser } from "../types";
 import { defaultCoordinates } from "./test_helper";
 
-export const loginUser1 = { username: 'matcha', password: 'Test!111' };
-export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
-export const loginUser3 = { username: 'matcha3', password: 'Test!111' };
-export const loginUser4 = { username: 'matcha4', password: 'Test!111' };
-export const loginUser5 = { username: 'matcha5', password: 'Test!111' };
-export const loginUser6 = { username: 'matcha6', password: 'Test!111' };
-export const loginUser7 = { username: 'matcha7', password: 'Test!111' };
+export const credentialsNewUser = { username: 'matcha', password: 'Test!111' };
+export const credentialsSecondUser = { username: 'matcha2', password: 'Test!111' };
+export const credentials3 = { username: 'matcha3', password: 'Test!111' };
+export const credentials4 = { username: 'matcha4', password: 'Test!111' };
+export const credentials5 = { username: 'matcha5', password: 'Test!111' };
+export const credentials6 = { username: 'matcha6', password: 'Test!111' };
+export const credentials7 = { username: 'matcha7', password: 'Test!111' };
 
-export const user1: NewUser = {
+export type Credentials = { username: string; password: string };
+
+export type ProfileData = {
+	username: string;
+	firstname: string;
+	lastname: string;
+	birthday: string;
+	gender: string;
+	orientation: string;
+	bio: string;
+	tags: string[];
+	coordinates: Coordinates;
+	location: string;
+	fameRating: number;
+};
+
+export const newUser: NewUser = {
 	username: 'matcha',
 	email: 'matcha@test.com',
 	passwordPlain: 'Test!111',
@@ -17,7 +33,7 @@ export const user1: NewUser = {
 	lastname: 'ipsum'
 };
 
-export const profileData1 = {
+export const profileDataNewUser = {
 	username: 'matcha',
 	firstname: 'lorem',
 	lastname: 'ipsum',
@@ -31,7 +47,7 @@ export const profileData1 = {
 	fameRating: 45
 };
 
-export const user2: NewUser = {
+export const secondUser: NewUser = {
 	username: 'matcha2',
 	email: 'matcha2@test.com',
 	passwordPlain: 'Test!111',
@@ -39,7 +55,7 @@ export const user2: NewUser = {
 	lastname: 'ipsum'
 };
 
-export const profileData2 = {
+export const profileDataSecondUser = {
 	username: 'matcha2',
 	firstname: 'lorem',
 	lastname: 'ipsum',

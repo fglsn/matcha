@@ -1,7 +1,8 @@
 import supertest from 'supertest';
 import { app } from '../app';
 import { describe, expect } from '@jest/globals';
-import { newUser, loginUser, infoProfile, bioTooLong, bioMax, defaultCoordinates, ipAddress } from './test_helper';
+import { bioTooLong, bioMax, defaultCoordinates, ipAddress } from './test_helper';
+import { newUser, credentialsNewUser, profileDataNewUser } from './test_helper_users';
 import { initLoggedUser } from './test_helper_fns';
 import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers } from '../repositories/userRepository';
@@ -23,7 +24,7 @@ describe('check access to profile page', () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		id = <string>JSON.parse(loginRes.text).id;
 	});
 	test('logged user can visit profile page', async () => {
@@ -83,7 +84,7 @@ describe('Check responses and requests to api/profile', () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		id = <string>JSON.parse(loginRes.text).id;
 		resFromProfile = await getResFromProfile(loginRes);
 	});
@@ -93,7 +94,7 @@ describe('Check responses and requests to api/profile', () => {
 			await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
-				.send(infoProfile)
+				.send(profileDataNewUser)
 				.expect(200);
 			// if (res.body.error)
 			// 	console.log(res.body.error);
@@ -120,7 +121,7 @@ describe('Check responses and requests to api/profile', () => {
 			await putToProfile();
 			const newResFromProfile = await getResFromProfile(loginRes);
 			expect(newResFromProfile.body).toBeTruthy();
-			expect(JSON.parse(newResFromProfile.text)).toEqual({ ...infoProfile, id: id });
+			expect(JSON.parse(newResFromProfile.text)).toEqual({ ...profileDataNewUser, id: id });
 			// console.log(JSON.parse(resFromProfile.text));
 		});
 	});
@@ -143,23 +144,23 @@ describe('Check responses and requests to api/profile', () => {
 			await api
 				.put(`/api/users/${id}/profile`)
 				.set({ Authorization: `bearer ${loginRes.body.token}` })
-				.send(infoProfile)
+				.send(profileDataNewUser)
 				.expect(200);
 			const newResFromProfile = await getResFromProfile(loginRes);
 			expect(newResFromProfile.body).toBeTruthy();
-			expect(JSON.parse(newResFromProfile.text)).toEqual({ ...infoProfile, id: id });
+			expect(JSON.parse(newResFromProfile.text)).toEqual({ ...profileDataNewUser, id: id });
 		});
 
 		it.each([
-			// [{ ...infoProfile, username: undefined }, 'Missing username'],
-			// [{ ...infoProfile, email: undefined }, 'Missing email'],
-			[{ ...infoProfile, firstname: undefined }, 'Missing first name'],
-			[{ ...infoProfile, lastname: undefined }, 'Missing last name'],
-			[{ ...infoProfile, birthday: undefined }, 'Missing birthay date'],
-			[{ ...infoProfile, gender: undefined }, 'Missing gender'],
-			[{ ...infoProfile, orientation: undefined }, 'Missing orientation'],
-			[{ ...infoProfile, bio: undefined }, 'Missing bio'],
-			[{ ...infoProfile, tags: undefined }, 'Missing tags']
+			// [{ ...profileData1, username: undefined }, 'Missing username'],
+			// [{ ...profileData1, email: undefined }, 'Missing email'],
+			[{ ...profileDataNewUser, firstname: undefined }, 'Missing first name'],
+			[{ ...profileDataNewUser, lastname: undefined }, 'Missing last name'],
+			[{ ...profileDataNewUser, birthday: undefined }, 'Missing birthay date'],
+			[{ ...profileDataNewUser, gender: undefined }, 'Missing gender'],
+			[{ ...profileDataNewUser, orientation: undefined }, 'Missing orientation'],
+			[{ ...profileDataNewUser, bio: undefined }, 'Missing bio'],
+			[{ ...profileDataNewUser, tags: undefined }, 'Missing tags']
 		])(`put fails with missing profile payload values`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -172,13 +173,13 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		// it.each([
-		// 	[{ ...infoProfile, username: '			' }, 'Missing username'],
-		// 	[{ ...infoProfile, username: 'mat' }, 'Username is too short'],
-		// 	[{ ...infoProfile, username: 'matcmatchamatchamatchaha' }, 'Username is too long'], //22chars
-		// 	[{ ...infoProfile, username: 'tes<3>' }, 'Invalid username'],
-		// 	[{ ...infoProfile, username: 'te st' }, 'Invalid username'],
-		// 	[{ ...infoProfile, username: 'te	st' }, 'Invalid username'],
-		// 	[{ ...infoProfile, username: 'te{st' }, 'Invalid username']
+		// 	[{ ...profileData1, username: '			' }, 'Missing username'],
+		// 	[{ ...profileData1, username: 'mat' }, 'Username is too short'],
+		// 	[{ ...profileData1, username: 'matcmatchamatchamatchaha' }, 'Username is too long'], //22chars
+		// 	[{ ...profileData1, username: 'tes<3>' }, 'Invalid username'],
+		// 	[{ ...profileData1, username: 'te st' }, 'Invalid username'],
+		// 	[{ ...profileData1, username: 'te	st' }, 'Invalid username'],
+		// 	[{ ...profileData1, username: 'te{st' }, 'Invalid username']
 		// ])(`put fails with misformatted username`, async (invalidInputs, expectedErrorMessage) => {
 		// 	const res = await api
 		// 		.put(`/api/users/${id}/profile`)
@@ -190,14 +191,14 @@ describe('Check responses and requests to api/profile', () => {
 		// 	expect(res.body.error).toContain(expectedErrorMessage);
 		// });
 		// it.each([
-		// 	[{ ...infoProfile, email: '			' }, 'Missing email'],
-		// 	[{ ...infoProfile, email: 'mat' }, 'Invalid email'],
-		// 	[{ ...infoProfile, email: 'aalleex2222@yango' }, 'Invalid email'],
-		// 	[{ ...infoProfile, email: 1 }, 'Missing email'],
-		// 	[{ ...infoProfile, email: '@yangoo' }, 'Invalid email'],
-		// 	[{ ...infoProfile, email: '@hive.fi' }, 'Invalid email']
-		// 	// [{ ...infoProfile, email: 'a@hive.fi' }, 'Invalid email'],
-		// 	// [{ ...infoProfile, email: 'allex@hive.fi' }, 'Invalid email'],
+		// 	[{ ...profileData1, email: '			' }, 'Missing email'],
+		// 	[{ ...profileData1, email: 'mat' }, 'Invalid email'],
+		// 	[{ ...profileData1, email: 'aalleex2222@yango' }, 'Invalid email'],
+		// 	[{ ...profileData1, email: 1 }, 'Missing email'],
+		// 	[{ ...profileData1, email: '@yangoo' }, 'Invalid email'],
+		// 	[{ ...profileData1, email: '@hive.fi' }, 'Invalid email']
+		// 	// [{ ...profileData1, email: 'a@hive.fi' }, 'Invalid email'],
+		// 	// [{ ...profileData1, email: 'allex@hive.fi' }, 'Invalid email'],
 		// ])(`put fails with misformatted email`, async (invalidInputs, expectedErrorMessage) => {
 		// 	const res = await api
 		// 		.put(`/api/users/${id}/profile`)
@@ -209,17 +210,17 @@ describe('Check responses and requests to api/profile', () => {
 		// 	expect(res.body.error).toContain(expectedErrorMessage);
 		// });
 		it.each([
-			[{ ...infoProfile, birthday: '11-03-b' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '32/09/1999' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '28/09/1999' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: 1999 }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '1999-13-23' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '1999-10-32' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '1999-10-32' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '1900-01-00' }, 'Invalid birthday'],
-			[{ ...infoProfile, birthday: '1899-12-31' }, 'Maximum age is exceeded'],
-			[{ ...infoProfile, birthday: '2006-11-15' }, 'User must be at least 18'],
-			[{ ...infoProfile, birthday: '2005-11-16' }, 'User must be at least 18']
+			[{ ...profileDataNewUser, birthday: '11-03-b' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '32/09/1999' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '28/09/1999' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: 1999 }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '1999-13-23' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '1999-10-32' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '1999-10-32' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '1900-01-00' }, 'Invalid birthday'],
+			[{ ...profileDataNewUser, birthday: '1899-12-31' }, 'Maximum age is exceeded'],
+			[{ ...profileDataNewUser, birthday: '2006-11-15' }, 'User must be at least 18'],
+			[{ ...profileDataNewUser, birthday: '2005-11-16' }, 'User must be at least 18']
 		])(`put fails with invalid birthday`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -232,9 +233,9 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
-			[{ ...infoProfile, gender: 'boy' }, 'Invalid gender'],
-			[{ ...infoProfile, gender: 'male  ' }, 'Invalid gender'],
-			[{ ...infoProfile, gender: 'femal' }, 'Invalid gender']
+			[{ ...profileDataNewUser, gender: 'boy' }, 'Invalid gender'],
+			[{ ...profileDataNewUser, gender: 'male  ' }, 'Invalid gender'],
+			[{ ...profileDataNewUser, gender: 'femal' }, 'Invalid gender']
 		])(`put fails with misformatted gender`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -247,9 +248,9 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
-			[{ ...infoProfile, orientation: 'boy' }, 'Invalid orientation'],
-			[{ ...infoProfile, orientation: 'gay  ' }, 'Invalid orientation'],
-			[{ ...infoProfile, orientation: 'straite' }, 'Invalid orientation']
+			[{ ...profileDataNewUser, orientation: 'boy' }, 'Invalid orientation'],
+			[{ ...profileDataNewUser, orientation: 'gay  ' }, 'Invalid orientation'],
+			[{ ...profileDataNewUser, orientation: 'straite' }, 'Invalid orientation']
 		])(`put fails with misformatted orientation`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -262,9 +263,9 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
-			[{ ...infoProfile, bio: 'aaaaa' }, 'Invalid bio'],
-			[{ ...infoProfile, bio: bioTooLong }, 'Invalid bio'],
-			[{ ...infoProfile, bio: 'aaaaaaaaa' }, 'Invalid bio']
+			[{ ...profileDataNewUser, bio: 'aaaaa' }, 'Invalid bio'],
+			[{ ...profileDataNewUser, bio: bioTooLong }, 'Invalid bio'],
+			[{ ...profileDataNewUser, bio: 'aaaaaaaaa' }, 'Invalid bio']
 		])(`put fails with invalid bio`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -277,11 +278,11 @@ describe('Check responses and requests to api/profile', () => {
 			expect(res.body.error).toContain(expectedErrorMessage);
 		});
 		it.each([
-			[{ ...infoProfile, tags: [] }, 'Invalid tags'],
-			[{ ...infoProfile, tags: [''] }, 'Invalid tags'],
-			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer', 'Rave'] }, 'Invalid tags'],
-			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 1] }, 'Invalid tags'],
-			[{ ...infoProfile, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Sauna'] }, 'Invalid tags']
+			[{ ...profileDataNewUser, tags: [] }, 'Invalid tags'],
+			[{ ...profileDataNewUser, tags: [''] }, 'Invalid tags'],
+			[{ ...profileDataNewUser, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer', 'Rave'] }, 'Invalid tags'],
+			[{ ...profileDataNewUser, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 1] }, 'Invalid tags'],
+			[{ ...profileDataNewUser, tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Sauna'] }, 'Invalid tags']
 		])(`put fails with invalid tags`, async (invalidInputs, expectedErrorMessage) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
 			const res = await api
@@ -295,56 +296,56 @@ describe('Check responses and requests to api/profile', () => {
 		});
 		it.each([
 			[
-				{ ...infoProfile, firstname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
-				{ ...infoProfile, firstname: 'Alekse-öäÖÄ ßÜügggggg' }
+				{ ...profileDataNewUser, firstname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...profileDataNewUser, firstname: 'Alekse-öäÖÄ ßÜügggggg' }
 			],
 			[
-				{ ...infoProfile, lastname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
-				{ ...infoProfile, lastname: 'Alekse-öäÖÄ ßÜügggggg' }
+				{ ...profileDataNewUser, lastname: '  Alekse-öäÖÄ    ßÜügggggg   ' },
+				{ ...profileDataNewUser, lastname: 'Alekse-öäÖÄ ßÜügggggg' }
 			],
 			[
-				{ ...infoProfile, orientation: 'gay' },
-				{ ...infoProfile, orientation: 'gay' }
+				{ ...profileDataNewUser, orientation: 'gay' },
+				{ ...profileDataNewUser, orientation: 'gay' }
 			],
 			[
-				{ ...infoProfile, orientation: 'straight' },
-				{ ...infoProfile, orientation: 'straight' }
+				{ ...profileDataNewUser, orientation: 'straight' },
+				{ ...profileDataNewUser, orientation: 'straight' }
 			],
 			[
-				{ ...infoProfile, orientation: 'bi' },
-				{ ...infoProfile, orientation: 'bi' }
+				{ ...profileDataNewUser, orientation: 'bi' },
+				{ ...profileDataNewUser, orientation: 'bi' }
 			],
 			[
-				{ ...infoProfile, gender: 'female' },
-				{ ...infoProfile, gender: 'female' }
+				{ ...profileDataNewUser, gender: 'female' },
+				{ ...profileDataNewUser, gender: 'female' }
 			],
 			[
-				{ ...infoProfile, gender: 'male' },
-				{ ...infoProfile, gender: 'male' }
+				{ ...profileDataNewUser, gender: 'male' },
+				{ ...profileDataNewUser, gender: 'male' }
 			],
 			[
-				{ ...infoProfile, bio: '1234567890' },
-				{ ...infoProfile, bio: '1234567890' }
+				{ ...profileDataNewUser, bio: '1234567890' },
+				{ ...profileDataNewUser, bio: '1234567890' }
 			],
 			[
-				{ ...infoProfile, bio: bioMax },
-				{ ...infoProfile, bio: bioMax }
+				{ ...profileDataNewUser, bio: bioMax },
+				{ ...profileDataNewUser, bio: bioMax }
 			],
 			[
-				{ ...infoProfile, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] },
-				{ ...infoProfile, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] }
+				{ ...profileDataNewUser, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] },
+				{ ...profileDataNewUser, tags: ['Rave', 'Pimms', 'BBQ', 'Drummer', 'Tea'] }
 			],
 			[
-				{ ...infoProfile, birthday: exactly18() },
-				{ ...infoProfile, birthday: new Date(exactly18()).toISOString() }
+				{ ...profileDataNewUser, birthday: exactly18() },
+				{ ...profileDataNewUser, birthday: new Date(exactly18()).toISOString() }
 			],
 			[
-				{ ...infoProfile, birthday: new Date('1900-01-01').toISOString() },
-				{ ...infoProfile, birthday: new Date('1900-01-01').toISOString() }
+				{ ...profileDataNewUser, birthday: new Date('1900-01-01').toISOString() },
+				{ ...profileDataNewUser, birthday: new Date('1900-01-01').toISOString() }
 			],
 			[
-				{ ...infoProfile, birthday: '1999-03-22' },
-				{ ...infoProfile, birthday: new Date('1999-03-22').toISOString() }
+				{ ...profileDataNewUser, birthday: '1999-03-22' },
+				{ ...profileDataNewUser, birthday: new Date('1999-03-22').toISOString() }
 			]
 		])(`put succeeds with correct payload`, async (validInputs, payload) => {
 			getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));

@@ -2,8 +2,8 @@ import { io, httpServer } from '../app';
 import { io as Client, Socket } from 'socket.io-client';
 import { loginAndPrepareUser, socketAuth } from './test_helper_fns';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser } from './test_helper';
 import { ServerToClientEvents, ClientToServerEvents } from '../types';
+import { newUser, credentialsNewUser, profileDataNewUser } from './test_helper_users';
 jest.setTimeout(5000);
 jest.mock('../services/location');
 
@@ -17,7 +17,7 @@ type AdressInfo = {
 
 const prepareTest = async () => {
 	await clearUsers();
-	userOne = await loginAndPrepareUser(newUser, loginUser);
+	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
 };
 
 describe('test socket connection', () => {

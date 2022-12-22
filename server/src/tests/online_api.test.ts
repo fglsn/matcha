@@ -1,10 +1,11 @@
 import { io, httpServer } from '../app';
 import { io as Client, Socket } from 'socket.io-client';
-import { loginAndPrepareUser, socketAuth, withTimeout } from './test_helper_fns';
-import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, maxTimeInactive } from './test_helper';
 import { updateUserOnline } from '../repositories/onlineRepository';
+import { clearUsers } from '../repositories/userRepository';
 import { ServerToClientEvents, ClientToServerEvents } from '../types';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
+import { loginAndPrepareUser, socketAuth, withTimeout } from './test_helper_fns';
+import { maxTimeInactive } from './test_helper';
 
 jest.setTimeout(3000);
 jest.mock('../services/location');
@@ -20,8 +21,8 @@ type AdressInfo = {
 
 const prepareTest = async () => {
 	await clearUsers();
-	userOne = await loginAndPrepareUser(newUser, loginUser);
-	userTwo = await loginAndPrepareUser(secondUser, loginUser2);
+	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+	userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	void userTwo;
 	void userOne;
 };

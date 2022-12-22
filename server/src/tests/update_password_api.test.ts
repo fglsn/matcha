@@ -1,7 +1,8 @@
 import supertest from 'supertest';
-import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { newUser, loginUser, newPass, defaultCoordinates, ipAddress } from './test_helper';
+import { describe, expect } from '@jest/globals';
+import { newPass, defaultCoordinates, ipAddress } from './test_helper';
+import { newUser, credentialsNewUser } from './test_helper_users';
 import { initLoggedUser } from './test_helper_fns';
 import { clearUsers, getPasswordHash } from '../repositories/userRepository';
 import { clearSessions } from '../repositories/sessionRepository';
@@ -25,7 +26,7 @@ describe('test update password access', () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		userId = getString(loginRes.body.id);
 	});
 	test('logged user can update password', async () => {
@@ -66,7 +67,7 @@ describe('test update password access', () => {
 
 		await api
 			.post('/api/login')
-			.send({ ...loginUser, ...newPass })
+			.send({ ...credentialsNewUser, ...newPass })
 			.expect(200);
 	});
 	test('should fail to relogin with old password ', async () => {
@@ -78,7 +79,7 @@ describe('test update password access', () => {
 
 		const resFromLogin = await api
 			.post('/api/login')
-			.send({ ...loginUser })
+			.send({ ...credentialsNewUser })
 			.expect(401);
 		expect(resFromLogin.body.error).toContain('Wrong password');
 	});

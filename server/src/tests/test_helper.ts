@@ -1,22 +1,4 @@
-import { Coordinates, NewUser, NewUserWithHashedPwd } from '../types';
-
-export const newUser: NewUser = {
-	username: 'matcha',
-	email: 'matcha@test.com',
-	passwordPlain: 'Test!111',
-	firstname: 'lorem',
-	lastname: 'ipsum'
-};
-
-export const secondUser: NewUser = {
-	username: 'matcha2',
-	email: 'matcha2@test.com',
-	passwordPlain: 'Test!111',
-	firstname: 'lorem',
-	lastname: 'ipsum'
-};
-
-export type LoginUser = { username: string; password: string };
+import { Coordinates, NewUserWithHashedPwd } from '../types';
 
 export type TokenAndId = { id: string; token: string };
 
@@ -44,41 +26,9 @@ export const expectedResponseFromIpLocator = {
 	lon: 24.9344
 };
 
-export const loginUser = { username: 'matcha', password: 'Test!111' };
-
-export const loginUser2 = { username: 'matcha2', password: 'Test!111' };
-
 export const newPass = { password: 'Test!2222' };
 
 export const newEmail = { email: 'tester1.hive@yahoo.com' };
-
-export const infoProfile = {
-	username: 'matcha',
-	firstname: 'lorem',
-	lastname: 'ipsum',
-	birthday: new Date('1999-03-22').toISOString(),
-	gender: 'male',
-	orientation: 'straight',
-	bio: 'born sleepy',
-	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
-	coordinates: defaultCoordinates,
-	location: 'Helsinki, Finland',
-	fameRating: 45
-};
-
-export const infoProfile2 = {
-	username: 'matcha2',
-	firstname: 'lorem',
-	lastname: 'ipsum',
-	birthday: new Date('1999-03-22').toISOString(),
-	gender: 'male',
-	orientation: 'straight',
-	bio: 'born sleepy',
-	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
-	coordinates: defaultCoordinates,
-	location: 'Helsinki, Finland',
-	fameRating: 47
-};
 
 export const infoProfilePublic = {
 	username: 'matcha',
@@ -118,6 +68,7 @@ export const completenessFalse = { complete: false };
 export const completenessTrue = { complete: true };
 
 export const maxTimeInactive = 1000 * 60 * 2;
+
 export const positionstackResponseDataAllThree = {
 	data: [
 		{

@@ -1,7 +1,8 @@
 import supertest from 'supertest';
 import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { defaultCoordinates, expectedResponseFromIpLocator, ipAddress, newUser } from './test_helper';
+import { newUser } from './test_helper_users';
+import { defaultCoordinates, expectedResponseFromIpLocator, ipAddress } from './test_helper';
 import { clearUsers, getAllUsers } from '../repositories/userRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
