@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe } from '@jest/globals';
 import { clearUsers } from '../repositories/userRepository';
 import { getAge, getDistance } from '../utils/helpers';
 import { TokenAndId } from './test_helper';
-import { api, loginAndPrepareUser } from './test_helper_fns';
+import { api, loginAndPrepareUser, putLike, twoUserLikeEachOther, userBlocksAnotherUser, userReportsAnotherUser } from './test_helper_fns';
 import {
 	newUser,
 	secondUser,
@@ -65,26 +65,16 @@ let userTen: { id: string; token: string };
 
 const prepareUsers = async () => {
 	await clearUsers();
-	//male straight - matcha - def coords
-	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
-	//male gay - matcha2 - def coords
-	userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
-	//male gay - matcha3 - 795km from def coords
-	userThree = await loginAndPrepareUser(user3, credentials3, profileData3);
-	//male bi - matcha4 - 6km
-	userFour = await loginAndPrepareUser(user4, credentials4, profileData4);
-	//female straight - matcha5 - 17km
-	userFive = await loginAndPrepareUser(user5, credentials5, profileData5);
-	//female gay - matcha6 - 94km
-	userSix = await loginAndPrepareUser(user6, credentials6, profileData6);
-	//female bi - matcha7 - 2km
-	userSeven = await loginAndPrepareUser(user7, credentials7, profileData7);
-	//male bi
-	userEight = await loginAndPrepareUser(user8, credentials8, profileData8);
-	//female gay
-	userNine = await loginAndPrepareUser(user9, credentials9, profileData9);
-	//female bi
-	userTen = await loginAndPrepareUser(user10, credentials10, profileData10);
+	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser); //male straight - matcha - def coords
+	userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser); //male gay - matcha2 - def coords
+	userThree = await loginAndPrepareUser(user3, credentials3, profileData3); //male gay - matcha3 - 795km from def coords
+	userFour = await loginAndPrepareUser(user4, credentials4, profileData4); //male bi - matcha4 - 6km
+	userFive = await loginAndPrepareUser(user5, credentials5, profileData5); //female straight - matcha5 - 17km
+	userSix = await loginAndPrepareUser(user6, credentials6, profileData6); //female gay - matcha6 - 94km
+	userSeven = await loginAndPrepareUser(user7, credentials7, profileData7); //female bi - matcha7 - 2km
+	userEight = await loginAndPrepareUser(user8, credentials8, profileData8); //male bi
+	userNine = await loginAndPrepareUser(user9, credentials9, profileData9); //female gay
+	userTen = await loginAndPrepareUser(user10, credentials10, profileData10); //female bi
 };
 
 const getSearchPage = async (user: TokenAndId) => {
@@ -95,197 +85,304 @@ const getSearchPage = async (user: TokenAndId) => {
 
 	expect(res.statusCode).toBe(200);
 	expect(res.body).toBeTruthy();
-	console.log(res.body);
+	// console.log(res.body);
 	return res.body;
 };
+describe('test initial match suggestions', () => {
+	describe('suggestions by sex preferences', () => {
+		beforeAll(async () => {
+			await prepareUsers();
+		});
 
-describe('test initial filtering (sex preferences, actions)', () => {
-	beforeAll(async () => {
-		await prepareUsers();
+		test('logged user can visit search page', async () => {
+			await getSearchPage(userOne);
+		});
+
+		test('male straight user sees only female straight and female bi', async () => {
+			const getResult = await getSearchPage(userOne);
+			expect(getResult).toEqual([
+				{
+					...publicProfile7,
+					id: userSeven.id,
+					age: getAge(profileData7.birthday),
+					distance: getDistance(profileDataNewUser.coordinates, profileData7.coordinates) //2
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileDataNewUser.coordinates, profileData10.coordinates) //17
+				},
+				{
+					...publicProfile5,
+					id: userFive.id,
+					age: getAge(profileData5.birthday),
+					distance: getDistance(profileDataNewUser.coordinates, profileData5.coordinates) //17
+				}
+			]);
+		});
+
+		test('male gay user sees only male gay and male bi', async () => {
+			const getResult = await getSearchPage(userTwo);
+			expect(getResult).toEqual([
+				{
+					...publicProfile4,
+					id: userFour.id,
+					age: getAge(profileData4.birthday),
+					distance: getDistance(profileDataSecondUser.coordinates, profileData4.coordinates) //6
+				},
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileDataSecondUser.coordinates, profileData8.coordinates) //6
+				},
+				{
+					...publicProfile3,
+					id: userThree.id,
+					age: getAge(profileData3.birthday),
+					distance: getDistance(profileDataSecondUser.coordinates, profileData3.coordinates) //794
+				}
+			]);
+		});
+
+		test('male bi user sees male gay and male bi, female straight, female bi', async () => {
+			const getResult = await getSearchPage(userFour); //#2 3 5 7 8 10
+			expect(getResult).toEqual([
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileData4.coordinates, profileData8.coordinates) //2
+				},
+				{
+					...publicProfile7,
+					id: userSeven.id,
+					age: getAge(profileData7.birthday),
+					distance: getDistance(profileData4.coordinates, profileData7.coordinates) //5
+				},
+				{
+					...publicProfile2,
+					id: userTwo.id,
+					age: getAge(profileDataSecondUser.birthday),
+					distance: getDistance(profileData4.coordinates, profileDataSecondUser.coordinates) //6
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
+				},
+				{
+					...publicProfile5,
+					id: userFive.id,
+					age: getAge(profileData5.birthday),
+					distance: getDistance(profileData4.coordinates, profileData5.coordinates) //12
+				},
+				{
+					...publicProfile3,
+					id: userThree.id,
+					age: getAge(profileData3.birthday),
+					distance: getDistance(profileData4.coordinates, profileData3.coordinates) //794
+				}
+			]);
+		});
+
+		test('female straight user sees only male straight and male bi', async () => {
+			const getResult = await getSearchPage(userFive); // # 1 4 8
+			expect(getResult).toEqual([
+				{
+					...publicProfile4,
+					id: userFour.id,
+					age: getAge(profileData4.birthday),
+					distance: getDistance(profileData5.coordinates, profileData4.coordinates) //12
+				},
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileData5.coordinates, profileData8.coordinates) //12
+				},
+				{
+					...publicProfile1,
+					id: userOne.id,
+					age: getAge(profileDataNewUser.birthday),
+					distance: getDistance(profileData5.coordinates, profileDataNewUser.coordinates) //17
+				}
+			]);
+		});
+
+		test('female gay user sees only female gay and female bi', async () => {
+			const getResult = await getSearchPage(userSix); // # 7 9 10
+			expect(getResult).toEqual([
+				{
+					...publicProfile9,
+					id: userNine.id,
+					age: getAge(profileData9.birthday),
+					distance: getDistance(profileData6.coordinates, profileData9.coordinates) //2
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileData6.coordinates, profileData10.coordinates) //92
+				},
+				{
+					...publicProfile7,
+					id: userSeven.id,
+					age: getAge(profileData7.birthday),
+					distance: getDistance(profileData6.coordinates, profileData7.coordinates) //5
+				}
+			]);
+		});
+
+		test('female bi user sees female gay and female bi, male straight, male bi', async () => {
+			const getResult = await getSearchPage(userSeven); //# 1 6 8 9 10 4
+			expect(getResult).toEqual([
+				{
+					...publicProfile1,
+					id: userOne.id,
+					age: getAge(profileDataNewUser.birthday),
+					distance: getDistance(profileData7.coordinates, profileDataNewUser.coordinates) //2
+				},
+				{
+					...publicProfile4,
+					id: userFour.id,
+					age: getAge(profileData4.birthday),
+					distance: getDistance(profileData7.coordinates, profileData4.coordinates) //5
+				},
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileData7.coordinates, profileData8.coordinates) //5
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileData7.coordinates, profileData10.coordinates) //17
+				},
+				{
+					...publicProfile6,
+					id: userSix.id,
+					age: getAge(profileData6.birthday),
+					distance: getDistance(profileData7.coordinates, profileData6.coordinates) //92
+				},
+				{
+					...publicProfile9,
+					id: userNine.id,
+					age: getAge(profileData9.birthday),
+					distance: getDistance(profileData7.coordinates, profileData9.coordinates) //92
+				}
+			]);
+		});
 	});
 
-	test('logged user can visit search page', async () => {
-		await getSearchPage(userOne);
-		console.log(userTwo, userThree, userFive, userFour, userSix, userSeven, userEight, userNine, userTen);
-	});
+	describe('suggestions by actions', () => {
+		beforeEach(async () => {
+			await prepareUsers();
+		});
 
-	test('male straight user sees only female straight and female bi', async () => {
-		const getResult = await getSearchPage(userOne);
-		expect(getResult).toEqual([
-			{
-				...publicProfile7,
-				id: userSeven.id,
-				age: getAge(profileData7.birthday),
-				distance: getDistance(profileDataNewUser.coordinates, profileData7.coordinates) //2
-			},
-			{
-				...publicProfile10,
-				id: userTen.id,
-				age: getAge(profileData10.birthday),
-				distance: getDistance(profileDataNewUser.coordinates, profileData10.coordinates) //17
-			},
-			{
-				...publicProfile5,
-				id: userFive.id,
-				age: getAge(profileData5.birthday),
-				distance: getDistance(profileDataNewUser.coordinates, profileData5.coordinates) //17
-			}
-		]);
-	});
+		test('liked users are not in the search results', async () => {
+			const res: TokenAndId[] = await getSearchPage(userOne);
+			const userToLike = res[0];
 
-	test('male gay user sees only male gay and male bi', async () => {
-		const getResult = await getSearchPage(userTwo);
-		expect(getResult).toEqual([
-			{
-				...publicProfile4,
-				id: userFour.id,
-				age: getAge(profileData4.birthday),
-				distance: getDistance(profileDataSecondUser.coordinates, profileData4.coordinates) //6
-			},
-			{
-				...publicProfile8,
-				id: userEight.id,
-				age: getAge(profileData8.birthday),
-				distance: getDistance(profileDataSecondUser.coordinates, profileData8.coordinates) //6
-			},
-			{
-				...publicProfile3,
-				id: userThree.id,
-				age: getAge(profileData3.birthday),
-				distance: getDistance(profileDataSecondUser.coordinates, profileData3.coordinates) //794
-			}
-		]);
-	});
+			await putLike(userToLike, userOne);
 
-	test('male bi user sees male gay and male bi, female straight, female bi', async () => {
-		const getResult = await getSearchPage(userFour); //#2 3 5 7 8 10
-		expect(getResult).toEqual([
-			{
-				...publicProfile8,
-				id: userEight.id,
-				age: getAge(profileData8.birthday),
-				distance: getDistance(profileData4.coordinates, profileData8.coordinates) //2
-			},
-			{
-				...publicProfile7,
-				id: userSeven.id,
-				age: getAge(profileData7.birthday),
-				distance: getDistance(profileData4.coordinates, profileData7.coordinates) //5
-			},
-			{
-				...publicProfile2,
-				id: userTwo.id,
-				age: getAge(profileDataSecondUser.birthday),
-				distance: getDistance(profileData4.coordinates, profileDataSecondUser.coordinates) //6
-			},
-			{
-				...publicProfile10,
-				id: userTen.id,
-				age: getAge(profileData10.birthday),
-				distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
-			},
-			{
-				...publicProfile5,
-				id: userFive.id,
-				age: getAge(profileData5.birthday),
-				distance: getDistance(profileData4.coordinates, profileData5.coordinates) //12
-			},
-			{
-				...publicProfile3,
-				id: userThree.id,
-				age: getAge(profileData3.birthday),
-				distance: getDistance(profileData4.coordinates, profileData3.coordinates) //794
-			}
-		]);
-	});
+			const resAfterLike: TokenAndId[] = await getSearchPage(userOne);
+			// console.log(resAfterLike);
+			expect(resAfterLike).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userToLike.id
+					})
+				])
+			);
+		});
 
-	test('female straight user sees only male straight and male bi', async () => {
-		const getResult = await getSearchPage(userFive); // # 1 4 8
-		expect(getResult).toEqual([
-			{
-				...publicProfile4,
-				id: userFour.id,
-				age: getAge(profileData4.birthday),
-				distance: getDistance(profileData5.coordinates, profileData4.coordinates) //12
-			},
-			{
-				...publicProfile8,
-				id: userEight.id,
-				age: getAge(profileData8.birthday),
-				distance: getDistance(profileData5.coordinates, profileData8.coordinates) //12
-			},
-			{
-				...publicProfile1,
-				id: userOne.id,
-				age: getAge(profileDataNewUser.birthday),
-				distance: getDistance(profileData5.coordinates, profileDataNewUser.coordinates) //17
-			}
-		]);
-	});
+		test('matched users are not in the search results', async () => {
+			const firstGetResultUserOne: TokenAndId[] = await getSearchPage(userOne);
+			expect(firstGetResultUserOne).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
 
-	test('female gay user sees only female gay and female bi', async () => {
-		const getResult = await getSearchPage(userSix); // # 7 9 10
-		expect(getResult).toEqual([
-			{
-				...publicProfile9,
-				id: userNine.id,
-				age: getAge(profileData9.birthday),
-				distance: getDistance(profileData6.coordinates, profileData9.coordinates) //2
-			},
-			{
-				...publicProfile10,
-				id: userTen.id,
-				age: getAge(profileData10.birthday),
-				distance: getDistance(profileData6.coordinates, profileData10.coordinates) //92
-			},
-			{
-				...publicProfile7,
-				id: userSeven.id,
-				age: getAge(profileData7.birthday),
-				distance: getDistance(profileData6.coordinates, profileData7.coordinates) //5
-			}
-		]);
-	});
+			const firstGetResultUserTwo: TokenAndId[] = await getSearchPage(userSeven);
+			expect(firstGetResultUserTwo).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userOne.id
+					})
+				])
+			);
 
-	test('female bi user sees female gay and female bi, male straight, male bi', async () => {
-		const getResult = await getSearchPage(userSeven); //# 1 6 8 9 10 4
-		expect(getResult).toEqual([
-			{
-				...publicProfile1,
-				id: userOne.id,
-				age: getAge(profileDataNewUser.birthday),
-				distance: getDistance(profileData7.coordinates, profileDataNewUser.coordinates) //2
-			},
-			{
-				...publicProfile4,
-				id: userFour.id,
-				age: getAge(profileData4.birthday),
-				distance: getDistance(profileData7.coordinates, profileData4.coordinates) //5
-			},
-			{
-				...publicProfile8,
-				id: userEight.id,
-				age: getAge(profileData8.birthday),
-				distance: getDistance(profileData7.coordinates, profileData8.coordinates) //5
-			},
-			{
-				...publicProfile10,
-				id: userTen.id,
-				age: getAge(profileData10.birthday),
-				distance: getDistance(profileData7.coordinates, profileData10.coordinates) //17
-			},
-			{
-				...publicProfile6,
-				id: userSix.id,
-				age: getAge(profileData6.birthday),
-				distance: getDistance(profileData7.coordinates, profileData6.coordinates) //92
-			},
-			{
-				...publicProfile9,
-				id: userNine.id,
-				age: getAge(profileData9.birthday),
-				distance: getDistance(profileData7.coordinates, profileData9.coordinates) //92
-			}
-		]);
+			await twoUserLikeEachOther(userSeven, userOne);
+
+			const secondGetResultUserOne: TokenAndId[] = await getSearchPage(userOne);
+			expect(secondGetResultUserOne).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
+
+			const secondGetResultUserTwo: TokenAndId[] = await getSearchPage(userSeven);
+			expect(secondGetResultUserTwo).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userOne.id
+					})
+				])
+			);
+		});
+
+		test('blocked users are not in the search results', async () => {
+			const res: TokenAndId[] = await getSearchPage(userOne);
+			expect(res).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
+
+			await userBlocksAnotherUser(userSeven, userOne);
+
+			const resAfterBlock: TokenAndId[] = await getSearchPage(userOne);
+			expect(resAfterBlock).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
+		});
+
+		test('reported users are not in the search results', async () => {
+			const res: TokenAndId[] = await getSearchPage(userOne);
+			expect(res).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
+
+			await userReportsAnotherUser(userSeven, userOne);
+
+			const resAfterBlock: TokenAndId[] = await getSearchPage(userOne);
+			expect(resAfterBlock).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: userSeven.id
+					})
+				])
+			);
+		});
 	});
 });

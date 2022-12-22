@@ -98,6 +98,18 @@ export const user10: NewUser = {
 	lastname: 'lorem'
 };
 
+//For login
+export const credentialsNewUser = { username: 'matcha', password: 'Test!111' };
+export const credentialsSecondUser = { username: 'matcha2', password: 'Test!111' };
+export const credentials3 = { username: 'matcha3', password: 'Test!111' };
+export const credentials4 = { username: 'matcha4', password: 'Test!111' };
+export const credentials5 = { username: 'matcha5', password: 'Test!111' };
+export const credentials6 = { username: 'matcha6', password: 'Test!111' };
+export const credentials7 = { username: 'matcha7', password: 'Test!111' };
+export const credentials8 = { username: 'matcha8', password: 'Test!111' };
+export const credentials9 = { username: 'matcha9', password: 'Test!111' };
+export const credentials10 = { username: 'matcha10', password: 'Test!111' };
+
 //Profile Data to put to new users
 export const profileDataNewUser = {
 	username: 'matcha',
