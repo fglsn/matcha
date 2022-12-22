@@ -19,7 +19,7 @@ import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repos
 import { getMatchesByUserId } from '../repositories/matchesRepository';
 import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
 import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
-import { getInitialMatchSuggestionsIds } from '../services/search';
+import { getMatchSuggestions } from '../services/search';
 
 const router = express.Router();
 
@@ -451,7 +451,8 @@ router.get(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
-		const idList = await getInitialMatchSuggestionsIds(req.session.userId);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const idList = await getMatchSuggestions(req.session.userId);
 		// console.log('From match suggestions router: ', idList); //rm later
 		res.status(200).json(idList);
 	})

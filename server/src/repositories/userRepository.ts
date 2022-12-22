@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import pool from '../db';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, Orientation, Gender } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat } from '../types';
 import { ValidationError } from '../errors';
 import { getAge, assertNever } from '../utils/helpers';
 
@@ -352,8 +354,15 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	});
 };
 
-const getInitialMatchSuggestions = async (userId: string, gender: Gender, orientation: Orientation): Promise<UserData[]> => {
+const getInitialMatchSuggestions = async (requestorData: UserData): Promise<UserData[]> => {
 
+	// SELECT calculate_distance(32.9697, -96.80322, 29.46786, -98.53506);
+	const userId = requestorData.id;
+	const gender = requestorData.gender as string;
+	const orientation = requestorData.orientation as string;
+	const lat = requestorData.coordinates.lat;
+	const lon = requestorData.coordinates.lon;
+	const tags = requestorData.tags;
 	const oppositeGender = gender === 'male' ? 'female' : 'male';
 
 	let sexualPreference;
@@ -384,8 +393,9 @@ const getInitialMatchSuggestions = async (userId: string, gender: Gender, orient
 					block_entries.blocked_user_id is null and 
 					report_entries.reported_user_id is null and (` +
 			sexualPreference +
-			')',
-		values: [userId]
+			`)
+				order by calculate_distance(users.lat, users.lon, $2, $3), count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, users.fame_rating desc`,
+		values: [userId, lat, lon, tags]
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
