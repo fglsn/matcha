@@ -452,7 +452,7 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
 		const idList = await getInitialMatchSuggestionsIds(req.session.userId);
-		console.log('From match suggestions router: ', idList);
+		// console.log('From match suggestions router: ', idList); //rm later
 		res.status(200).json(idList);
 	})
 );

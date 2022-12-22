@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import supertest from 'supertest';
@@ -12,7 +13,6 @@ import { checkLikeEntry } from '../repositories/likesRepository';
 import { getMatchesByUserId, checkMatchEntry } from '../repositories/matchesRepository';
 import { checkBlockEntry } from '../repositories/blockEntriesRepository';
 import { checkReportEntry } from '../repositories/reportEntriesRepository';
-// import { clearSessions } from '../repositories/sessionRepository';
 
 export const api = supertest(app);
 
@@ -68,6 +68,31 @@ export const loginAndPrepareUser = async (user: NewUser, loginUser: LoginUser) =
 	id = <string>JSON.parse(loginRes.text).id;
 	await Promise.all([putToProfile(id), postToPhotos(id)]);
 	return { id: id, token: loginRes.body.token };
+};
+
+export const loginAndPrepareCustomUser = async (user: NewUser, credentials: LoginUser, profileData: object) => {
+	requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
+	await createNewUser(user, ipAddress);
+	const loginData = await initLoggedUser(user.username, credentials);
+	await prepareTestUser(loginData.body, profileData);
+	return { id: loginData.body.id, token: loginData.body.token };
+};
+
+export const prepareTestUser = async (loginData: TokenAndId, profileData: object) => {
+	getLocationMock.mockReturnValue(Promise.resolve('Helsinki, Finland'));
+
+	await api
+		.put(`/api/users/${loginData.id}/profile`)
+		.set({ Authorization: `bearer ${loginData.token}` })
+		.send(profileData)
+		.expect(200);
+	
+	await api
+		.post(`/api/users/${loginData.id}/photos`)
+		.set({ Authorization: `bearer ${loginData.token}` })
+		.send({ images: [{ dataURL: DataURL }] })
+		.expect(200);
+
 };
 
 export const userVisitsAnotherUsersProfile = async (visited: TokenAndId, visitor: TokenAndId) => {
