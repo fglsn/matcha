@@ -50,7 +50,7 @@ export const infoProfilePublic2 = {
 	lastname: 'ipsum',
 	age: 23,
 	gender: 'male',
-	orientation: 'straight',
+	orientation: 'gay',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Swimming', 'Biking', 'BBQ', 'Drummer'],
 	distance: 2,
