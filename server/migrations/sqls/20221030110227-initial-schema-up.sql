@@ -130,3 +130,45 @@ create table chat_notifications (
 	sender_id bigserial not null,
 	receiver_id bigserial not null
 );
+
+create or replace function calculate_distance(lat1 double precision, lon1 double precision, lat2 double precision, lon2 double precision)
+returns int as $dist$
+	declare
+		dist double precision = 0;
+		radlat1 double precision;
+		radlat2 double precision;
+		theta double precision;
+		radtheta double precision;
+	begin
+		if lat1 = lat2 and lon1 = lon2
+			then return dist :: int;
+		else
+			radlat1 = pi() * lat1 / 180;
+			radlat2 = pi() * lat2 / 180;
+			theta = lon1 - lon2;
+			radtheta = pi() * theta / 180;
+			dist = sin(radlat1) * sin(radlat2) + cos(radlat1) * cos(radlat2) * cos(radtheta);
+
+			if dist > 1 then dist = 1; end if;
+
+			dist = acos(dist);
+			dist = dist * 180 / pi();
+			dist = dist * 60 * 1.1515 * 1.609344;
+
+			return dist::int;
+		end if;
+	end;
+$dist$ language plpgsql;
+
+create function count_array_intersect(first anyarray, second anyarray)
+	returns int as $res$
+	declare
+		res int;
+	begin
+		select array_length(array_agg(x), 1)
+		into res
+		from unnest(second) x
+		where x = any (first);
+		return coalesce(res, 0);
+	end;
+$res$ language plpgsql;
