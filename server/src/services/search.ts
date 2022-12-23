@@ -1,12 +1,20 @@
 import { getInitialMatchSuggestions, getUserDataByUserId } from '../repositories/userRepository';
-import { ProfilePublic } from '../types';
+import { FilterCriteria, ProfilePublic, SortingCriteria } from '../types';
 import { getAge, getDistance } from '../utils/helpers';
 
 export const getMatchSuggestions = async (userId: string) => {
 	const requestorData = await getUserDataByUserId(userId);
 	if (!requestorData) return [];
 
-	const matchSuggestions = await getInitialMatchSuggestions(requestorData, {sort: 'age', order: 'desc'});
+	const tempSortCriteria: SortingCriteria = { sort: 'age', order: 'asc' };
+	const tempFilterCriteria: FilterCriteria[] = [
+		{ filter: 'age', min: 23, max: 65 },
+		{ filter: 'distance', min: 30, max: 888 },
+		{ filter: 'rating', min: 45, max: 75 },
+		{ filter: 'tags', min: 1, max: 3}
+	];
+
+	const matchSuggestions = await getInitialMatchSuggestions(requestorData, tempSortCriteria, tempFilterCriteria);
 
 	const suggestedProfiles: ProfilePublic[] = matchSuggestions.map((profile) => {
 		const distance = getDistance(requestorData.coordinates, profile.coordinates);

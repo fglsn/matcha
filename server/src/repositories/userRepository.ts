@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //prettier-ignore
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, SortingCriteria, Gender, Orientation } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, SortingCriteria, Gender, Orientation, FilterCriteria } from '../types';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
 import { getAge, assertNever } from '../utils/helpers';
 import { ValidationError } from '../errors';
@@ -378,7 +378,7 @@ const generateOrderByQueryString = (sortingCriteria: SortingCriteria): string =>
 
 	switch (sort) {
 		case 'age':
-			return `extract(years from age(birthday)) ${order}, 
+			return `extract(years from age(users.birthday)) ${order}, 
 						calculate_distance(users.lat, users.lon, $2, $3), 
 						count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, 
 						users.fame_rating`;
@@ -400,14 +400,46 @@ const generateOrderByQueryString = (sortingCriteria: SortingCriteria): string =>
 	return '';
 };
 
-const getInitialMatchSuggestions = async (requestorData: UserData, sortingCriteria: SortingCriteria): Promise<UserData[]> => {
+const generateFilterQueryString = (filterCriterias: FilterCriteria[]): string => {
+	if (!filterCriterias.length) throw new Error('Empty filter list');
+	const filterStrings: string[] = filterCriterias.map((filter) => {
+		const min = filter.min;
+		const max = filter.max;
+		const filterTarget = filter.filter;
+
+		switch (filterTarget) {
+			case 'age':
+				return `(extract(years from age(users.birthday)) >= ${min} and extract(years from age(users.birthday)) <= ${max})`;
+			case 'distance':
+				return `(calculate_distance(users.lat, users.lon, $2, $3) >= ${min} and calculate_distance(users.lat, users.lon, $2, $3) <= ${max})`;
+			case 'rating':
+				return `(users.fame_rating >= ${min} and users.fame_rating <= ${max})`;
+			case 'tags':
+				return `(count_array_intersect(users.tags::varchar[], $4::varchar[]) >= ${min} and count_array_intersect(users.tags::varchar[], $4::varchar[]) <= ${max})`;
+			default:
+				assertNever(filterTarget);
+		}
+		return '';
+	});
+	return filterStrings.join(' and ');
+};
+
+const getInitialMatchSuggestions = async (
+	requestorData: UserData,
+	sortingCriteria: SortingCriteria,
+	filterCriterias: FilterCriteria[]
+): Promise<UserData[]> => {
+
 	const userId = requestorData.id;
 	const lat = requestorData.coordinates.lat;
 	const lon = requestorData.coordinates.lon;
 	const tags = requestorData.tags;
 
-	const sexualPreference = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
-	const orderBy = generateOrderByQueryString(sortingCriteria);
+	const sexualPreferenceStr = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
+	const sortingCriteriaStr = generateOrderByQueryString(sortingCriteria);
+	const filterCriteriaStr = generateFilterQueryString(filterCriterias);
+
+	// console.log(filterCriteriaStr); //rm later
 
 	const query = {
 		text:
@@ -420,10 +452,10 @@ const getInitialMatchSuggestions = async (requestorData: UserData, sortingCriter
 					likes_history.liked_user_id is null and 
 					block_entries.blocked_user_id is null and 
 					report_entries.reported_user_id is null and (` +
-			sexualPreference +
-			`)
+			sexualPreferenceStr +
+			`) and (` + filterCriteriaStr + `) 
 				order by ` +
-			orderBy,
+			sortingCriteriaStr,
 		values: [userId, lat, lon, tags]
 	};
 	const res = await pool.query(query);
