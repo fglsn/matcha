@@ -108,16 +108,16 @@ describe('test initial match suggestions', () => {
 					distance: getDistance(profileDataNewUser.coordinates, profileData7.coordinates) //2
 				},
 				{
-					...publicProfile10,
-					id: userTen.id,
-					age: getAge(profileData10.birthday),
-					distance: getDistance(profileDataNewUser.coordinates, profileData10.coordinates) //17
-				},
-				{
 					...publicProfile5,
 					id: userFive.id,
 					age: getAge(profileData5.birthday),
 					distance: getDistance(profileDataNewUser.coordinates, profileData5.coordinates) //17
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileDataNewUser.coordinates, profileData10.coordinates) //17
 				}
 			]);
 		});
@@ -168,16 +168,16 @@ describe('test initial match suggestions', () => {
 					distance: getDistance(profileData4.coordinates, profileDataSecondUser.coordinates) //6
 				},
 				{
-					...publicProfile10,
-					id: userTen.id,
-					age: getAge(profileData10.birthday),
-					distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
-				},
-				{
 					...publicProfile5,
 					id: userFive.id,
 					age: getAge(profileData5.birthday),
 					distance: getDistance(profileData4.coordinates, profileData5.coordinates) //12
+				},
+				{
+					...publicProfile10,
+					id: userTen.id,
+					age: getAge(profileData10.birthday),
+					distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
 				},
 				{
 					...publicProfile3,
