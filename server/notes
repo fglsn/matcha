@@ -1,10 +1,7 @@
+Some reference links:
 
-Username may be composed of letters, numbers, apostrophes, commas, and hyphens.
-
-Password may be composed of letters, numbers, spaces, and any of the following characters: ~ ` ! @ # $ % ^ & * ( ) - _ = + [ ] { } \ | ; : ' " , < . > / ?.
-
-Spaces before and after will be ignored.
-
-Username and password are not case sensitive.
-
-Username should begin with a letter.
+https://github.com/dicebear/dicebear/discussions/171#discussioncomment-2373173  
+https://stackoverflow.com/questions/61135374/postgresql-calculate-distance-between-two-points-without-using-postgis  
+https://www.reddit.com/r/PostgreSQL/comments/q37no1/find_intersection_between_two_arrays_sort_by/ 
+https://stackoverflow.com/a/49194571
+https://www.postgresqltutorial.com/postgresql-date-functions/postgresql-age/

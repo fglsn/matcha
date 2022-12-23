@@ -71,9 +71,7 @@ https://dev.to/steadylearner/how-to-set-up-postgresql-and-pgadmin-with-docker-51
 https://www.npmjs.com/package/db-migrate  
 https://github.com/db-migrate/node-db-migrate#readme  
 https://db-migrate.readthedocs.io/en/latest/  
-https://github.com/dicebear/dicebear/discussions/171#discussioncomment-2373173  
-https://stackoverflow.com/questions/61135374/postgresql-calculate-distance-between-two-points-without-using-postgis  
-https://www.reddit.com/r/PostgreSQL/comments/q37no1/find_intersection_between_two_arrays_sort_by/  
+
   
 **express-async-handler**  
 middleware added for handling missed errors on async functions  
