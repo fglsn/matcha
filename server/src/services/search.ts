@@ -6,7 +6,7 @@ export const getMatchSuggestions = async (userId: string) => {
 	const requestorData = await getUserDataByUserId(userId);
 	if (!requestorData) return [];
 
-	const matchSuggestions = await getInitialMatchSuggestions(requestorData);
+	const matchSuggestions = await getInitialMatchSuggestions(requestorData, {sort: 'age', order: 'desc'});
 
 	const suggestedProfiles: ProfilePublic[] = matchSuggestions.map((profile) => {
 		const distance = getDistance(requestorData.coordinates, profile.coordinates);

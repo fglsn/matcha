@@ -266,3 +266,8 @@ export type MessageNotification = {
 	senderId: string;
 	receiverId: string;
 };
+
+export type SortingCriteria = { 
+	sort: 'age' | 'distance' | 'rating' | 'tags'; 
+	order: 'desc' | 'asc';
+};

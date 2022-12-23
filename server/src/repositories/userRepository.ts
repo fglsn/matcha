@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import pool from '../db';
+//prettier-ignore
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, SortingCriteria, Gender, Orientation } from '../types';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat } from '../types';
-import { ValidationError } from '../errors';
 import { getAge, assertNever } from '../utils/helpers';
+import { ValidationError } from '../errors';
+import pool from '../db';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -354,32 +355,59 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	});
 };
 
-const getInitialMatchSuggestions = async (requestorData: UserData): Promise<UserData[]> => {
-
-	// SELECT calculate_distance(32.9697, -96.80322, 29.46786, -98.53506);
-	const userId = requestorData.id;
-	const gender = requestorData.gender as string;
-	const orientation = requestorData.orientation as string;
-	const lat = requestorData.coordinates.lat;
-	const lon = requestorData.coordinates.lon;
-	const tags = requestorData.tags;
+const generateSexualPreferencesQueryString = (gender: Gender, orientation: Orientation): string => {
 	const oppositeGender = gender === 'male' ? 'female' : 'male';
 
-	let sexualPreference;
 	switch (orientation) {
 		case 'straight':
-			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')`;
-			break;
+			return `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')`;
 		case 'gay':
-			sexualPreference = `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
-			break;
+			return `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
 		case 'bi':
-			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')
-				or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
-			break;
+			return `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')
+					or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
 		default:
 			assertNever(orientation);
 	}
+	return '';
+};
+
+const generateOrderByQueryString = (sortingCriteria: SortingCriteria): string => {
+	const order = sortingCriteria.order;
+	const sort = sortingCriteria.sort;
+
+	switch (sort) {
+		case 'age':
+			return `extract(years from age(birthday)) ${order}, 
+						calculate_distance(users.lat, users.lon, $2, $3), 
+						count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, 
+						users.fame_rating`;
+		case 'distance':
+			return `calculate_distance(users.lat, users.lon, $2, $3) ${order}, 
+						count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, 
+						users.fame_rating desc`;
+		case 'rating':
+			return `users.fame_rating ${order}, 
+					calculate_distance(users.lat, users.lon, $2, $3), 
+					count_array_intersect(users.tags::varchar[], $4::varchar[]) desc`;
+		case 'tags':
+			return `count_array_intersect(users.tags::varchar[], $4::varchar[]) ${order}, 
+					calculate_distance(users.lat, users.lon, $2, $3), 
+					users.fame_rating desc`;
+		default:
+			assertNever(sort);
+	}
+	return '';
+};
+
+const getInitialMatchSuggestions = async (requestorData: UserData, sortingCriteria: SortingCriteria): Promise<UserData[]> => {
+	const userId = requestorData.id;
+	const lat = requestorData.coordinates.lat;
+	const lon = requestorData.coordinates.lon;
+	const tags = requestorData.tags;
+
+	const sexualPreference = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
+	const orderBy = generateOrderByQueryString(sortingCriteria);
 
 	const query = {
 		text:
@@ -394,7 +422,8 @@ const getInitialMatchSuggestions = async (requestorData: UserData): Promise<User
 					report_entries.reported_user_id is null and (` +
 			sexualPreference +
 			`)
-				order by calculate_distance(users.lat, users.lon, $2, $3), count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, users.fame_rating desc`,
+				order by ` +
+			orderBy,
 		values: [userId, lat, lon, tags]
 	};
 	const res = await pool.query(query);
