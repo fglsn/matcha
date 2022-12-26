@@ -6,7 +6,7 @@ export const useRangeSlider = (
 	max: number
 ) => {
 	const [value, setValue] = useState(initialValue);
-	const minRange = 1;
+	const minRange = 0;
 
 	const onChange = (event: Event, newValue: number | number[], activeThumb: number) => {
 		if (!Array.isArray(newValue)) {
