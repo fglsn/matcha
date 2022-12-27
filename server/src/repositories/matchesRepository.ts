@@ -95,13 +95,22 @@ const checkMatchEntryWithReturn = async (matchedUserIdOne: string, matchedUserId
 	};
 	const res = await pool.query(query);
 	if (!res.rowCount) {
-		return {match: false, matchId: undefined };
+		return { match: false, matchId: undefined };
 	}
-	return {match: true, matchId: getString(res.rows[0]['match_id'])};
+	return { match: true, matchId: getString(res.rows[0]['match_id']) };
 };
 
 const clearMatches = async (): Promise<void> => {
 	await pool.query('truncate table matches');
 };
 
-export { getMatchesByUserId, addMatchEntry, removeMatchEntry, checkMatchEntry, clearMatches, getMatchByMatchId, removeMatchEntryWithReturn, checkMatchEntryWithReturn };
+export {
+	getMatchesByUserId,
+	addMatchEntry,
+	removeMatchEntry,
+	checkMatchEntry,
+	clearMatches,
+	getMatchByMatchId,
+	removeMatchEntryWithReturn,
+	checkMatchEntryWithReturn
+};

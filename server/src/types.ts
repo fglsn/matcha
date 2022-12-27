@@ -267,8 +267,8 @@ export type MessageNotification = {
 	receiverId: string;
 };
 
-export type SortingCriteria = { 
-	sort: 'age' | 'distance' | 'rating' | 'tags'; 
+export type SortingCriteria = {
+	sort: 'age' | 'distance' | 'rating' | 'tags';
 	order: 'desc' | 'asc';
 };
 

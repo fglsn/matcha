@@ -212,7 +212,7 @@ export type FilterCriteria = {
 export type Range = {
 	min: number;
 	max: number;
-}
+};
 
 export type FilterCriteriaInternal = {
 	distance: Range;

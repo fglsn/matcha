@@ -45,7 +45,7 @@ export const getDistance = (a: Coordinates, b: Coordinates) => {
 	if (distance > 1) return 2;
 
 	distance = Math.acos(distance);
-	distance = distance * 180 / Math.PI;
+	distance = (distance * 180) / Math.PI;
 	distance = distance * 60 * 1.1515 * 1.609344;
 
 	if (distance <= 2) return 2;

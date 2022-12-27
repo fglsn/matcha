@@ -429,7 +429,6 @@ const getInitialMatchSuggestions = async (
 	sortingCriteria: SortingCriteria,
 	filterCriterias: FilterCriteria[]
 ): Promise<UserData[]> => {
-
 	const userId = requestorData.id;
 	const lat = requestorData.coordinates.lat;
 	const lon = requestorData.coordinates.lon;
@@ -453,7 +452,9 @@ const getInitialMatchSuggestions = async (
 					block_entries.blocked_user_id is null and 
 					report_entries.reported_user_id is null and (` +
 			sexualPreferenceStr +
-			`) and (` + filterCriteriaStr + `) 
+			`) and (` +
+			filterCriteriaStr +
+			`) 
 				order by ` +
 			sortingCriteriaStr,
 		values: [userId, lat, lon, tags]
