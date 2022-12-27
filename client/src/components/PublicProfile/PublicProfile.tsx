@@ -147,7 +147,7 @@ const PublicProfile = ({
 						id={id}
 						username={profileData.username}
 						setIsMatch={(value) => {
-							onAction && onAction(profileData);
+							// onAction && onAction(profileData); //rm later
 							setIsMatch(value);
 						}}
 						isLiked={isLiked}
