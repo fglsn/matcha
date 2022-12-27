@@ -47,7 +47,7 @@ export default function ResponsiveDrawer() {
 	const drawer = (
 		<div style={{ flexGrow: 1 }}>
 			<Toolbar />
-			<Box sx={{ overflow: 'auto' }}>
+			<Box sx={{ overflow: 'auto', mt: 2 }}>
 				<List>
 					<ListItem disablePadding component={StyledLink} to="/">
 						<ListItemButton>
