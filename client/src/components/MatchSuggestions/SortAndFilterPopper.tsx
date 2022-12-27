@@ -1,8 +1,9 @@
 //prettier-ignore
 import { Popper, Box, ToggleButton, Paper, Grid, Slider, Typography, Checkbox, FormControlLabel, styled, ToggleButtonGroup, Button } from '@mui/material';
 import { useState } from 'react';
+import { SortAndFilter, SortingCriteria } from '../../types';
 import { useRangeSlider } from '../../hooks/useRangeSlider';
-import { useToggleButton } from '../../hooks/useToggleButton';
+import { useToggleButtonWithSetValue } from '../../hooks/useToggleButton';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
@@ -115,30 +116,100 @@ const getMaxAgeLabel = (value: number) => {
 	return `${value} yo`;
 };
 
+const setOrder = (value: string, reversed: boolean): SortingCriteria => {
+	switch (value) {
+		case 'distance':
+			if (reversed) return { sort: 'distance', order: 'desc' };
+			return { sort: 'distance', order: 'asc' };
+		case 'age':
+			if (reversed) return { sort: 'age', order: 'desc' };
+			return { sort: 'age', order: 'asc' };
+		case 'rating':
+			if (reversed) return { sort: 'rating', order: 'asc' };
+			return { sort: 'rating', order: 'desc' };
+		case 'tags':
+			if (reversed) return { sort: 'tags', order: 'asc' };
+			return { sort: 'tags', order: 'desc' };
+		default:
+			return { sort: 'distance', order: 'asc' };
+	}
+};
+
 const SortAndFilterPopper = ({
 	id,
 	open,
-	anchorEl
+	anchorEl,
+	sortAndFilter,
+	handleOnChange
 }: {
 	id: string | undefined;
 	open: boolean;
 	anchorEl: null | HTMLElement;
+	sortAndFilter: SortAndFilter;
+	handleOnChange: any;
 }) => {
-	const { reset: resetSort, ...sortBy } = useToggleButton('distance');
+	const { sort, filter } = sortAndFilter;
+	const { distance, age, rating, tags } = filter;
 
-	const { reset: resetDist, ...distanceRangeSlider } = useRangeSlider([2, 50], 2, 142);
-	const { reset: resetAge, ...ageRangeSlider } = useRangeSlider([18, 80], 18, 80);
-	const { reset: resetRat, ...ratingRangeSlider } = useRangeSlider([0, 100], 0, 100);
-	const { reset: resetTags, ...tagsRangeSlider } = useRangeSlider([0, 5], 0, 5);
+	const { setValue: setDefaultSort, ...sortBy } = useToggleButtonWithSetValue(
+		sort.sort
+	);
+	const { setValue: setDefaultDistanceRange, ...distanceRangeSlider } = useRangeSlider(
+		[distance.min, distance.max],
+		2,
+		142
+	);
+	const { setValue: setDefaultAgeRange, ...ageRangeSlider } = useRangeSlider(
+		[age.min, age.max],
+		18,
+		80
+	);
+	const { setValue: setDefaultRatingRange, ...ratingRangeSlider } = useRangeSlider(
+		[rating.min, rating.max],
+		0,
+		100
+	);
+	const { setValue: setDefaultTagsRange, ...tagsRangeSlider } = useRangeSlider(
+		[tags.min, tags.max],
+		0,
+		5
+	);
+
 	const [reverseOrder, setReverseOrder] = useState<boolean>(false);
 
-	const handleReset = () => {
-		resetSort();
+	const handleResetToDefault = () => {
+		setDefaultSort('distance');
 		setReverseOrder(false);
-		resetDist();
-		resetAge();
-		resetRat();
-		resetTags();
+		setDefaultDistanceRange([2, 50]);
+		setDefaultAgeRange([18, 140]);
+		setDefaultRatingRange([0, 100]);
+		setDefaultTagsRange([0, 5]);
+	};
+
+	const handleSubmit = (event: any) => {
+		event.preventDefault();
+		const newSortAndFilter = {
+			sort: setOrder(sortBy.value, reverseOrder),
+			filter: {
+				distance: {
+					min: distanceRangeSlider.value[0],
+					max: distanceRangeSlider.value[1]
+				},
+				age: {
+					min: ageRangeSlider.value[0],
+					max: ageRangeSlider.value[1]
+				},
+				rating: {
+					min: ratingRangeSlider.value[0],
+					max: ratingRangeSlider.value[1]
+				},
+				tags: {
+					min: tagsRangeSlider.value[0],
+					max: tagsRangeSlider.value[1]
+				}
+			}
+		};
+		handleOnChange(newSortAndFilter);
 	};
 
 	return (
@@ -290,8 +361,10 @@ const SortAndFilterPopper = ({
 						</Filter>
 					</Box>
 					<SubmitButtons>
-						<Button onClick={handleReset}>Reset all</Button>
-						<Button style={{marginLeft: '10px'}}>Sort & Filter</Button>
+						<Button onClick={handleResetToDefault}>Reset to default</Button>
+						<Button onClick={handleSubmit} style={{ marginLeft: '10px' }}>
+							Sort & Filter
+						</Button>
 					</SubmitButtons>
 				</Grid>
 			</StyledPaper>
