@@ -445,14 +445,18 @@ router.get(
 	})
 );
 
-router.get(
+router.post(
 	'/match_suggestions',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const idList = await getMatchSuggestions(req.session.userId);
+		const { sort, filter } = req.body; // todo: parse, validate!
+
+		// console.log('sort and filter: ', sort, filter);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
+		const idList = await getMatchSuggestions(req.session.userId, sort, filter);
 		// console.log('From match suggestions router: ', idList); //rm later
 		res.status(200).json(idList);
 	})
