@@ -1,22 +1,65 @@
 //prettier-ignore
 import { Popper, Box, ToggleButton, Paper, Grid, Slider, Typography, Checkbox, FormControlLabel, styled, ToggleButtonGroup, Button } from '@mui/material';
+import { useState } from 'react';
 import { useRangeSlider } from '../../hooks/useRangeSlider';
 import { useToggleButton } from '../../hooks/useToggleButton';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 const StyledPaper = styled(Paper)`
 	display: flex;
-	padding: 2.5rem;
+	padding: 2rem 2.5rem;
 	background-color: ##ffc600db;
 	overflow-y: scroll;
 	z-index: 2;
 	position: initial;
 `;
 
+const ActionTypeLabel = styled('div')`
+	color: rgba(0, 0, 0, 0.6);
+	text-align: left;
+	font-weight: 600;
+`;
+
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+	'& .MuiToggleButtonGroup-grouped': {
+		margin: '1rem 0.3rem 0.5rem 0.3rem',
+		border: 3,
+		'&.Mui-disabled': {
+			border: 3
+		},
+		'&:not(:first-of-type)': {
+			borderRadius: theme.shape.borderRadius
+		},
+		'&:first-of-type': {
+			borderRadius: theme.shape.borderRadius
+		}
+	}
+}));
+
+const Filter = styled('div')`
+	text-align: left;
+	margin-top: 1rem;
+`;
+
+const SliderLabel = styled(Typography)`
+	margin-left: 15px;
+	color: rgba(0, 0, 0, 0.5);
+	font-weight: 500;
+`;
+
+const SliderBox = styled(Box)`
+	display: flex;
+	margin: 0 0 10px 0;
+	padding: 5px 20px 0px;
+	flex-direction: column;
+	align-items: center;
+`;
+
 const StyledSlider = styled(Slider)({
 	color: 'primary',
 	height: 3,
+	marginTop: 8,
 	width: '90%',
 	textAlign: 'center',
 	'& .MuiSlider-track': {
@@ -55,47 +98,11 @@ const StyledSlider = styled(Slider)({
 	}
 });
 
-export const SliderBox = styled(Box)`
+const SubmitButtons = styled('div')`
 	display: flex;
-	border: 1px solid #a7a7a754;
-	margin: 10px 0;
-	padding: 23px 20px;
-	border-radius: 9px;
-	flex-direction: column;
-	align-items: center;
-`;
-
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-	'& .MuiToggleButtonGroup-grouped': {
-		margin: '1rem 0.3rem 0.5rem  0.3rem',
-		border: 3,
-		'&.Mui-disabled': {
-			border: 3
-		},
-		'&:not(:first-of-type)': {
-			borderRadius: theme.shape.borderRadius
-		},
-		'&:first-of-type': {
-			borderRadius: theme.shape.borderRadius
-		}
-	}
-}));
-
-const ActionTypeLabel = styled('div')`
-	color: rgba(0, 0, 0, 0.6);
-	text-align: left;
-	font-weight: 600;
-`;
-
-const SliderLabel = styled(Typography)`
-	margin-left: 15px;
-	color: rgba(0, 0, 0, 0.5);
-	font-weight: 500;
-`;
-
-const Filter = styled('div')`
-	text-align: left;
-	margin-top: 1rem;
+	justify-content: flex-end;
+	margin-top: 2rem;
+	margin-left: 1rem;
 `;
 
 const getMaxDistanceLabel = (value: number) => {
@@ -117,14 +124,17 @@ const SortAndFilterPopper = ({
 	open: boolean;
 	anchorEl: null | HTMLElement;
 }) => {
-	const sortBy = useToggleButton('distance');
+	const { reset: resetSort, ...sortBy } = useToggleButton('distance');
 
 	const { reset: resetDist, ...distanceRangeSlider } = useRangeSlider([2, 50], 2, 142);
 	const { reset: resetAge, ...ageRangeSlider } = useRangeSlider([18, 80], 18, 80);
 	const { reset: resetRat, ...ratingRangeSlider } = useRangeSlider([0, 100], 0, 100);
 	const { reset: resetTags, ...tagsRangeSlider } = useRangeSlider([0, 5], 0, 5);
+	const [reverseOrder, setReverseOrder] = useState<boolean>(false);
 
 	const handleReset = () => {
+		resetSort();
+		setReverseOrder(false);
 		resetDist();
 		resetAge();
 		resetRat();
@@ -174,6 +184,9 @@ const SortAndFilterPopper = ({
 							label="Show sort results in reverse order"
 							control={
 								<Checkbox
+									value={reverseOrder}
+									checked={reverseOrder}
+									onChange={() => setReverseOrder(!reverseOrder)}
 									icon={<RadioButtonUncheckedIcon />}
 									checkedIcon={<RadioButtonCheckedIcon />}
 								/>
@@ -218,7 +231,7 @@ const SortAndFilterPopper = ({
 											: `${ageRangeSlider.value[1]} years old`}
 									</Typography>
 								) : (
-									<Typography gutterBottom>
+									<Typography>
 										{ageRangeSlider.value[1] < 80
 											? `Between ${ageRangeSlider.value[0]} and ${ageRangeSlider.value[1]}`
 											: `From ${ageRangeSlider.value[0]} to ∞ years old`}
@@ -276,15 +289,10 @@ const SortAndFilterPopper = ({
 							</SliderBox>
 						</Filter>
 					</Box>
-					<div
-						style={{
-							display: 'flex',
-							justifyContent: 'flex-end'
-						}}
-					>
-						<Button onClick={handleReset}>Reset</Button>
-						<Button>Sort & Filter</Button>
-					</div>
+					<SubmitButtons>
+						<Button onClick={handleReset}>Reset all</Button>
+						<Button style={{marginLeft: '10px'}}>Sort & Filter</Button>
+					</SubmitButtons>
 				</Grid>
 			</StyledPaper>
 		</Popper>

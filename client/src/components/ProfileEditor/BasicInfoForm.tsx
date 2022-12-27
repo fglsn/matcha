@@ -69,8 +69,8 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const lastname = useControlledField('text', userData.lastname, validateLastname);
 	const birthday = userData.birthday ? dayjs(userData.birthday) : null;
 	const [date, setDateValue] = useState<Dayjs | null>(birthday);
-	const gender = useToggleButton(userData.gender);
-	const orientation = useToggleButton(userData.orientation);
+	const { reset: genderReset, ...gender } = useToggleButton(userData.gender);
+	const { reset, ...orientation } = useToggleButton(userData.orientation);
 	const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
 	const bio = useControlledField('text', userData.bio, validateBio);
 	const [coordinates, setCoordinates] = useState<[number, number]>([
@@ -83,19 +83,6 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const handleDateChange = (newValue: Dayjs | null) => setDateValue(newValue);
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
-
-	//rm later
-	// console.log(`
-	// 	${firstname.value} &&
-	// 	${lastname.value} &&
-	// 	${date} &&
-	// 	${gender.value} &&
-	// 	${orientation.value} &&
-	// 	${selectedTags} &&
-	// 	${bio.value} &&
-	// 	${coordinates[0]} &&
-	// 	${coordinates[1]} &&
-	// 	${locationString}`);
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
@@ -129,9 +116,9 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<StyledRow style={{marginBottom: 20}}>
+				<StyledRow style={{ marginBottom: 20 }}>
 					<LightTooltip title="Visit own profile page" placement="top-start">
-						<Typography sx= {{typography: { xs: 'h6', lg:'h5'} }} >
+						<Typography sx={{ typography: { xs: 'h6', lg: 'h5' } }}>
 							<StyledLink to={`/profile/${loggedUser?.id}`}>
 								@{loggedUser?.username.toUpperCase()}
 							</StyledLink>
