@@ -1,10 +1,6 @@
 import { useState } from 'react';
 
-export const useRangeSlider = (
-	initialValue: number[] | undefined,
-	min: number,
-	max: number
-) => {
+export const useRangeSlider = (initialValue: number[], min: number, max: number) => {
 	const [value, setValue] = useState(initialValue);
 	const minRange = 0;
 
@@ -26,10 +22,13 @@ export const useRangeSlider = (
 		}
 	};
 
+	const reset = () => setValue(initialValue);
+
 	return {
 		value,
 		onChange,
 		min,
-		max
+		max,
+		reset
 	};
 };

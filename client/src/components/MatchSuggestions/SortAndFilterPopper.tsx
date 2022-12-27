@@ -5,13 +5,64 @@ import { useToggleButton } from '../../hooks/useToggleButton';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
-export const StyledPaper = styled(Paper)`
+const StyledPaper = styled(Paper)`
 	display: flex;
 	padding: 2.5rem;
 	background-color: ##ffc600db;
 	overflow-y: scroll;
 	z-index: 2;
 	position: initial;
+`;
+
+const StyledSlider = styled(Slider)({
+	color: 'primary',
+	height: 3,
+	width: '90%',
+	textAlign: 'center',
+	'& .MuiSlider-track': {
+		border: 'none'
+	},
+	'& .MuiSlider-thumb': {
+		height: 24,
+		width: 24,
+		backgroundColor: '#fff',
+		border: '2px solid currentColor',
+		'&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+			boxShadow: 'inherit'
+		},
+		'&:before': {
+			display: 'none'
+		}
+	},
+	'& .MuiSlider-valueLabel': {
+		lineHeight: 1.2,
+		fontSize: 12,
+		background: 'unset',
+		padding: 0,
+		width: 44,
+		height: 44,
+		borderRadius: '50% 50% 50% 0',
+		backgroundColor: '#ffc600',
+		transformOrigin: 'bottom left',
+		transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+		'&:before': { display: 'none' },
+		'&.MuiSlider-valueLabelOpen': {
+			transform: 'translate(50%, -100%) rotate(-45deg) scale(1)'
+		},
+		'& > *': {
+			transform: 'rotate(45deg)'
+		}
+	}
+});
+
+export const SliderBox = styled(Box)`
+	display: flex;
+	border: 1px solid #a7a7a754;
+	margin: 10px 0;
+	padding: 23px 20px;
+	border-radius: 9px;
+	flex-direction: column;
+	align-items: center;
 `;
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
@@ -30,13 +81,30 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 	}
 }));
 
+const ActionTypeLabel = styled('div')`
+	color: rgba(0, 0, 0, 0.6);
+	text-align: left;
+	font-weight: 600;
+`;
+
+const SliderLabel = styled(Typography)`
+	margin-left: 15px;
+	color: rgba(0, 0, 0, 0.5);
+	font-weight: 500;
+`;
+
+const Filter = styled('div')`
+	text-align: left;
+	margin-top: 1rem;
+`;
+
 const getMaxDistanceLabel = (value: number) => {
-	if (value >= 200) return `${value}+ km`;
+	if (value >= 142) return `${value}+`;
 	return `${value} km`;
 };
 
 const getMaxAgeLabel = (value: number) => {
-	if (value >= 65) return `${value}+ yo`;
+	if (value >= 80) return `${value}+ yo`;
 	return `${value} yo`;
 };
 
@@ -51,10 +119,17 @@ const SortAndFilterPopper = ({
 }) => {
 	const sortBy = useToggleButton('distance');
 
-	const distanceRangeSlider = useRangeSlider([2, 50], 2, 200);
-	const ageRangeSlider = useRangeSlider([18, 65], 18, 65);
-	const ratingRangeSlider = useRangeSlider([45, 100], 1, 100);
-	const tagsRangeSlider = useRangeSlider([1, 5], 1, 5);
+	const { reset: resetDist, ...distanceRangeSlider } = useRangeSlider([2, 50], 2, 142);
+	const { reset: resetAge, ...ageRangeSlider } = useRangeSlider([18, 80], 18, 80);
+	const { reset: resetRat, ...ratingRangeSlider } = useRangeSlider([0, 100], 0, 100);
+	const { reset: resetTags, ...tagsRangeSlider } = useRangeSlider([0, 5], 0, 5);
+
+	const handleReset = () => {
+		resetDist();
+		resetAge();
+		resetRat();
+		resetTags();
+	};
 
 	return (
 		<Popper
@@ -81,7 +156,7 @@ const SortAndFilterPopper = ({
 		>
 			<StyledPaper>
 				<Grid item sm={'auto'} mt={1}>
-					<strong style={{ color: 'rgba(0, 0, 0, 0.6)' }}>Sort by</strong>
+					<ActionTypeLabel>Sort by</ActionTypeLabel>
 					<Box
 						sx={{
 							display: 'flex',
@@ -95,9 +170,7 @@ const SortAndFilterPopper = ({
 							<ToggleButton value="tags">COMMON INTERESTS</ToggleButton>
 						</StyledToggleButtonGroup>
 						<FormControlLabel
-							style={{
-								justifyContent: 'flex-end'
-							}}
+							style={{ justifyContent: 'flex-end' }}
 							label="Show sort results in reverse order"
 							control={
 								<Checkbox
@@ -107,56 +180,101 @@ const SortAndFilterPopper = ({
 							}
 						/>
 					</Box>
-					<Box
-						sx={{
-							flexDirection: 'column',
-							padding: '1rem 1.5rem 1rem 1.5rem'
-						}}
-					>
-						<strong style={{ color: 'rgba(0, 0, 0, 0.6)' }}>Filter by</strong>
-						<div
-							style={{
-								textAlign: 'left',
-								marginTop: 8
-							}}
-						>
-							<Typography gutterBottom>Distance:</Typography>
-							<Slider
-								{...distanceRangeSlider}
-								valueLabelDisplay="auto"
-								disableSwap
-								getAriaValueText={getMaxDistanceLabel}
-								valueLabelFormat={getMaxDistanceLabel}
-							/>
-						</div>
-						<div style={{ textAlign: 'left' }}>
-							<Typography gutterBottom>Age:</Typography>
-							<Slider
-								{...ageRangeSlider}
-								disableSwap
-								valueLabelDisplay="auto"
-								getAriaValueText={getMaxAgeLabel}
-								valueLabelFormat={getMaxAgeLabel}
-							/>
-						</div>
-						<div style={{ textAlign: 'left' }}>
-							<Typography gutterBottom>Rating:</Typography>
-							<Slider
-								{...ratingRangeSlider}
-								valueLabelDisplay="auto"
-								disableSwap
-							/>
-						</div>
-						<div style={{ textAlign: 'left' }}>
-							<Typography gutterBottom>
-								Number of common interests:
-							</Typography>
-							<Slider
-								{...tagsRangeSlider}
-								valueLabelDisplay="auto"
-								disableSwap
-							/>
-						</div>
+					<Box sx={{ flexDirection: 'column' }}>
+						<ActionTypeLabel>Filter by</ActionTypeLabel>
+						<Filter>
+							<SliderLabel>Distance</SliderLabel>
+							<SliderBox>
+								{distanceRangeSlider.value[1] ===
+								distanceRangeSlider.value[0] ? (
+									<Typography>
+										{distanceRangeSlider.value[1] >= 142
+											? `Over ${distanceRangeSlider.value[1]} km away`
+											: `${distanceRangeSlider.value[1]} km away`}
+									</Typography>
+								) : (
+									<Typography>
+										{distanceRangeSlider.value[1] < 142
+											? `Between ${distanceRangeSlider.value[0]} and ${distanceRangeSlider.value[1]} km away`
+											: `From ${distanceRangeSlider.value[0]} to ∞ km away`}
+									</Typography>
+								)}
+								<StyledSlider
+									{...distanceRangeSlider}
+									valueLabelDisplay="auto"
+									disableSwap
+									getAriaValueText={getMaxDistanceLabel}
+									valueLabelFormat={getMaxDistanceLabel}
+								/>
+							</SliderBox>
+						</Filter>
+						<Filter>
+							<SliderLabel>Age</SliderLabel>
+							<SliderBox>
+								{ageRangeSlider.value[1] === ageRangeSlider.value[0] ? (
+									<Typography>
+										{ageRangeSlider.value[1] >= 80
+											? `Over ${ageRangeSlider.value[1]} years old`
+											: `${ageRangeSlider.value[1]} years old`}
+									</Typography>
+								) : (
+									<Typography gutterBottom>
+										{ageRangeSlider.value[1] < 80
+											? `Between ${ageRangeSlider.value[0]} and ${ageRangeSlider.value[1]}`
+											: `From ${ageRangeSlider.value[0]} to ∞ years old`}
+									</Typography>
+								)}
+
+								<StyledSlider
+									{...ageRangeSlider}
+									disableSwap
+									valueLabelDisplay="auto"
+									getAriaValueText={getMaxAgeLabel}
+									valueLabelFormat={getMaxAgeLabel}
+								/>
+							</SliderBox>
+						</Filter>
+						<Filter>
+							<SliderLabel>Rating</SliderLabel>
+							<SliderBox>
+								{ratingRangeSlider.value[1] ===
+								ratingRangeSlider.value[0] ? (
+									<Typography>
+										{ratingRangeSlider.value[0]} points
+									</Typography>
+								) : (
+									<Typography>
+										Between {ratingRangeSlider.value[0]} and{' '}
+										{ratingRangeSlider.value[1]}
+									</Typography>
+								)}
+								<StyledSlider
+									{...ratingRangeSlider}
+									valueLabelDisplay="auto"
+									disableSwap
+								/>
+							</SliderBox>
+						</Filter>
+						<Filter>
+							<SliderLabel>Interests</SliderLabel>
+							<SliderBox>
+								{tagsRangeSlider.value[1] === tagsRangeSlider.value[0] ? (
+									<Typography>
+										{tagsRangeSlider.value[0]} tag(s) in common
+									</Typography>
+								) : (
+									<Typography>
+										Between {tagsRangeSlider.value[0]} and{' '}
+										{tagsRangeSlider.value[1]} common tags
+									</Typography>
+								)}
+								<StyledSlider
+									{...tagsRangeSlider}
+									valueLabelDisplay="auto"
+									disableSwap
+								/>
+							</SliderBox>
+						</Filter>
 					</Box>
 					<div
 						style={{
@@ -164,7 +282,7 @@ const SortAndFilterPopper = ({
 							justifyContent: 'flex-end'
 						}}
 					>
-						<Button>Reset</Button>
+						<Button onClick={handleReset}>Reset</Button>
 						<Button>Sort & Filter</Button>
 					</div>
 				</Grid>
