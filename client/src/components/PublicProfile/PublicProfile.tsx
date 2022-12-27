@@ -181,7 +181,7 @@ const PublicProfile = ({
 									textAlign: 'right'
 								}}
 							>
-								{`${profileData.age}y.o.`}
+								{profileData.age}
 							</Typography>
 						</StyledRow>
 						<Typography sx={{ mt: 0.75 }}>
