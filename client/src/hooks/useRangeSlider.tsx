@@ -22,13 +22,11 @@ export const useRangeSlider = (initialValue: number[], min: number, max: number)
 		}
 	};
 
-	const reset = () => setValue(initialValue);
-
 	return {
 		value,
 		onChange,
 		min,
 		max,
-		reset
+		setValue
 	};
 };

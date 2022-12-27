@@ -69,8 +69,8 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const lastname = useControlledField('text', userData.lastname, validateLastname);
 	const birthday = userData.birthday ? dayjs(userData.birthday) : null;
 	const [date, setDateValue] = useState<Dayjs | null>(birthday);
-	const { reset: genderReset, ...gender } = useToggleButton(userData.gender);
-	const { reset, ...orientation } = useToggleButton(userData.orientation);
+	const gender = useToggleButton(userData.gender);
+	const orientation = useToggleButton(userData.orientation);
 	const [selectedTags, setSelectedTags] = useState<string[] | undefined>(userData.tags);
 	const bio = useControlledField('text', userData.bio, validateBio);
 	const [coordinates, setCoordinates] = useState<[number, number]>([
