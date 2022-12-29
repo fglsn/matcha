@@ -7,7 +7,7 @@ export const getMatchSuggestions = async (userId: string, sortingCriteria: Sorti
 	if (!requestorData) return [];
 
 	const matchSuggestions = await getInitialMatchSuggestions(requestorData, sortingCriteria, filterCriteria);
-
+	console.log('profiles found: ', matchSuggestions.length); //rm later
 	const suggestedProfiles: ProfilePublic[] = matchSuggestions.map((profile) => {
 		const distance = getDistance(requestorData.coordinates, profile.coordinates);
 		const age = getAge(String(profile.birthday));

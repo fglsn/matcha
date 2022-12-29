@@ -116,7 +116,7 @@ const getMaxAgeLabel = (value: number) => {
 	return `${value} yo`;
 };
 
-const setOrder = (value: string, reversed: boolean): SortingCriteria => {
+const getOrder = (value: string, reversed: boolean): SortingCriteria => {
 	switch (value) {
 		case 'distance':
 			if (reversed) return { sort: 'distance', order: 'desc' };
@@ -189,7 +189,7 @@ const SortAndFilterPopper = ({
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
 		const newSortAndFilter = {
-			sort: setOrder(sortBy.value, reverseOrder),
+			sort: getOrder(sortBy.value, reverseOrder),
 			filter: {
 				distance: {
 					min: distanceRangeSlider.value[0],
@@ -209,7 +209,7 @@ const SortAndFilterPopper = ({
 				}
 			}
 		};
-		handleOnChange(newSortAndFilter);
+		handleOnChange(newSortAndFilter, reverseOrder);
 	};
 
 	return (

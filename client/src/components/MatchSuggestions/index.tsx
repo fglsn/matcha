@@ -1,20 +1,16 @@
 //prettier-ignore
+import { FilterCriteriaInternal, ProfilePublic, SortAndFilter, SortingCriteria } from '../../types';
+//prettier-ignore
 import { Alert, Box, Button, Container, styled } from '@mui/material';
 import { useState } from 'react';
+import { useStateValue } from '../../state';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getMatchSuggestions } from '../../services/search';
-import { useStateValue } from '../../state';
-import {
-	FilterCriteriaInternal,
-	ProfilePublic,
-	SortAndFilter,
-	SortingCriteria
-} from '../../types';
-import LoadingIcon from '../LoadingIcon';
-import withProfileRequired from '../ProfileRequired';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
-import SortAndFilterPopper from './SortAndFilterPopper';
 import PublicProfile from '../PublicProfile/PublicProfile';
+import SortAndFilterPopper from './SortAndFilterPopper';
+import withProfileRequired from '../ProfileRequired';
+import LoadingIcon from '../LoadingIcon';
 
 export const StyledMain = styled('div')`
 	display: flex;
@@ -49,7 +45,7 @@ const Main = () => {
 
 	const handleOnChange = (newSortAndFilter: SortAndFilter) => {
 		setSortAndFilter(newSortAndFilter);
-		setFilteredIds([]); 
+		setFilteredIds([]);
 	};
 
 	const {
@@ -89,13 +85,15 @@ const Main = () => {
 				</Box>
 			</ClickAwayListener>
 			<Container sx={{ mb: 5 }}>
-				{matchSuggestionsData.filter((profile) => filteredIds.indexOf(profile.id) < 0).map((profile) => (
-					<PublicProfile
-						profileData={profile}
-						key={profile.id}
-						onAction={(p) => setFilteredIds([...filteredIds, p.id])}
-					/>
-				))}
+				{matchSuggestionsData
+					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
+					.map((profile) => (
+						<PublicProfile
+							profileData={profile}
+							key={profile.id}
+							onAction={(p) => setFilteredIds([...filteredIds, p.id])}
+						/>
+					))}
 			</Container>
 		</StyledMain>
 	);
