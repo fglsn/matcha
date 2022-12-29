@@ -1,5 +1,5 @@
 //prettier-ignore
-import { FilterCriteriaInternal, ProfilePublic, SortAndFilter, SortingCriteria } from '../../types';
+import { FilterCriteriaInternal, ProfilePublic, SortAndFilter, SortingCriteriaInternal } from '../../types';
 //prettier-ignore
 import { Alert, Box, Button, Container, styled } from '@mui/material';
 import { useState } from 'react';
@@ -17,7 +17,10 @@ export const StyledMain = styled('div')`
 	flex-direction: column;
 `;
 
-const defaultSortCriteria: SortingCriteria = { sort: 'distance', order: 'asc' };
+const defaultSortCriteria: SortingCriteriaInternal = {
+	sort: 'distance',
+	isReversedOrder: false
+};
 
 const defaultFilterCriteria: FilterCriteriaInternal = {
 	distance: { min: 2, max: 50 },

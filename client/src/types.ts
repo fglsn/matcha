@@ -198,13 +198,15 @@ export type MessageNotification = {
 	receiverId: string;
 };
 
+export type Criterias = 'age' | 'distance' | 'rating' | 'tags';
+
 export type SortingCriteria = {
-	sort: 'age' | 'distance' | 'rating' | 'tags';
+	sort: Criterias;
 	order: 'desc' | 'asc';
 };
 
 export type FilterCriteria = {
-	filter: 'age' | 'distance' | 'rating' | 'tags';
+	filter: Criterias;
 	min: number;
 	max: number;
 };
@@ -212,6 +214,11 @@ export type FilterCriteria = {
 export type Range = {
 	min: number;
 	max: number;
+};
+
+export type SortingCriteriaInternal = {
+	sort: Criterias;
+	isReversedOrder: boolean;
 };
 
 export type FilterCriteriaInternal = {
@@ -222,6 +229,6 @@ export type FilterCriteriaInternal = {
 };
 
 export type SortAndFilter = {
-	sort: SortingCriteria;
+	sort: SortingCriteriaInternal;
 	filter: FilterCriteriaInternal;
 };

@@ -1,7 +1,7 @@
 //prettier-ignore
 import { Popper, Box, ToggleButton, Paper, Grid, Slider, Typography, Checkbox, FormControlLabel, styled, ToggleButtonGroup, Button } from '@mui/material';
 import { useState } from 'react';
-import { SortAndFilter, SortingCriteria } from '../../types';
+import { Criterias, SortAndFilter } from '../../types';
 import { useRangeSlider } from '../../hooks/useRangeSlider';
 import { useToggleButtonWithSetValue } from '../../hooks/useToggleButton';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
@@ -116,24 +116,7 @@ const getMaxAgeLabel = (value: number) => {
 	return `${value} yo`;
 };
 
-const getOrder = (value: string, reversed: boolean): SortingCriteria => {
-	switch (value) {
-		case 'distance':
-			if (reversed) return { sort: 'distance', order: 'desc' };
-			return { sort: 'distance', order: 'asc' };
-		case 'age':
-			if (reversed) return { sort: 'age', order: 'desc' };
-			return { sort: 'age', order: 'asc' };
-		case 'rating':
-			if (reversed) return { sort: 'rating', order: 'asc' };
-			return { sort: 'rating', order: 'desc' };
-		case 'tags':
-			if (reversed) return { sort: 'tags', order: 'asc' };
-			return { sort: 'tags', order: 'desc' };
-		default:
-			return { sort: 'distance', order: 'asc' };
-	}
-};
+
 
 const SortAndFilterPopper = ({
 	id,
@@ -146,7 +129,7 @@ const SortAndFilterPopper = ({
 	open: boolean;
 	anchorEl: null | HTMLElement;
 	sortAndFilter: SortAndFilter;
-	handleOnChange: any;
+	handleOnChange: (newSortAndFilter: SortAndFilter) => void;
 }) => {
 	const { sort, filter } = sortAndFilter;
 	const { distance, age, rating, tags } = filter;
@@ -175,7 +158,7 @@ const SortAndFilterPopper = ({
 		5
 	);
 
-	const [reverseOrder, setReverseOrder] = useState<boolean>(false);
+	const [reverseOrder, setReverseOrder] = useState<boolean>(sortAndFilter.sort.isReversedOrder);
 
 	const handleResetToDefault = () => {
 		setDefaultSort('distance');
@@ -189,7 +172,7 @@ const SortAndFilterPopper = ({
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
 		const newSortAndFilter = {
-			sort: getOrder(sortBy.value, reverseOrder),
+			sort: { sort: sortBy.value as Criterias, isReversedOrder: reverseOrder },
 			filter: {
 				distance: {
 					min: distanceRangeSlider.value[0],
@@ -209,7 +192,7 @@ const SortAndFilterPopper = ({
 				}
 			}
 		};
-		handleOnChange(newSortAndFilter, reverseOrder);
+		handleOnChange(newSortAndFilter);
 	};
 
 	return (
