@@ -63,6 +63,16 @@ let userEight: { id: string; token: string };
 let userNine: { id: string; token: string };
 let userTen: { id: string; token: string };
 
+const defaultSortAndFilterCriterias = {
+	sort: { sort: 'distance', order: 'asc' },
+	filter: [
+		{ filter: 'distance', min: 2, max: 50 },
+		{ filter: 'age', min: 18, max: 80 },
+		{ filter: 'rating', min: 0, max: 100 },
+		{ filter: 'tags', min: 0, max: 5 }
+	]
+};
+
 const prepareUsers = async () => {
 	await clearUsers();
 	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser); //male straight - matcha - def coords
@@ -79,8 +89,9 @@ const prepareUsers = async () => {
 
 const getSearchPage = async (user: TokenAndId) => {
 	const res = await api
-		.get(`/api/users/match_suggestions`)
+		.post(`/api/users/match_suggestions`)
 		.set({ Authorization: `bearer ${user.token}` })
+		.send(defaultSortAndFilterCriterias)
 		.expect('Content-Type', /application\/json/);
 
 	expect(res.statusCode).toBe(200);
@@ -89,7 +100,7 @@ const getSearchPage = async (user: TokenAndId) => {
 	return res.body;
 };
 describe('test initial match suggestions', () => {
-	describe('suggestions by sex preferences', () => {
+	describe('suggestions by sex preferences and default filter distance < 50km', () => {
 		beforeAll(async () => {
 			await prepareUsers();
 		});
@@ -99,8 +110,8 @@ describe('test initial match suggestions', () => {
 		});
 
 		test('male straight user sees only female straight and female bi', async () => {
-			const getResult = await getSearchPage(userOne);
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userOne);
+			expect(searchResult).toEqual([
 				{
 					...publicProfile7,
 					id: userSeven.id,
@@ -123,8 +134,14 @@ describe('test initial match suggestions', () => {
 		});
 
 		test('male gay user sees only male gay and male bi', async () => {
-			const getResult = await getSearchPage(userTwo);
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userTwo);
+			expect(searchResult).toEqual([
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileDataSecondUser.coordinates, profileData8.coordinates) //2
+				},
 				{
 					...publicProfile4,
 					id: userFour.id,
@@ -132,28 +149,22 @@ describe('test initial match suggestions', () => {
 					distance: getDistance(profileDataSecondUser.coordinates, profileData4.coordinates) //6
 				},
 				{
-					...publicProfile8,
-					id: userEight.id,
-					age: getAge(profileData8.birthday),
-					distance: getDistance(profileDataSecondUser.coordinates, profileData8.coordinates) //6
-				},
-				{
 					...publicProfile3,
 					id: userThree.id,
 					age: getAge(profileData3.birthday),
-					distance: getDistance(profileDataSecondUser.coordinates, profileData3.coordinates) //794
+					distance: getDistance(profileDataSecondUser.coordinates, profileData3.coordinates) //10
 				}
 			]);
 		});
 
 		test('male bi user sees male gay and male bi, female straight, female bi', async () => {
-			const getResult = await getSearchPage(userFour); //#2 3 5 7 8 10
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userFour); //#2 3 5 7 8 10
+			expect(searchResult).toEqual([
 				{
 					...publicProfile8,
 					id: userEight.id,
 					age: getAge(profileData8.birthday),
-					distance: getDistance(profileData4.coordinates, profileData8.coordinates) //2
+					distance: getDistance(profileData4.coordinates, profileData8.coordinates) //5
 				},
 				{
 					...publicProfile7,
@@ -168,6 +179,12 @@ describe('test initial match suggestions', () => {
 					distance: getDistance(profileData4.coordinates, profileDataSecondUser.coordinates) //6
 				},
 				{
+					...publicProfile3,
+					id: userThree.id,
+					age: getAge(profileData3.birthday),
+					distance: getDistance(profileData4.coordinates, profileData3.coordinates) //10
+				},
+				{
 					...publicProfile5,
 					id: userFive.id,
 					age: getAge(profileData5.birthday),
@@ -178,19 +195,13 @@ describe('test initial match suggestions', () => {
 					id: userTen.id,
 					age: getAge(profileData10.birthday),
 					distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
-				},
-				{
-					...publicProfile3,
-					id: userThree.id,
-					age: getAge(profileData3.birthday),
-					distance: getDistance(profileData4.coordinates, profileData3.coordinates) //794
 				}
 			]);
 		});
 
 		test('female straight user sees only male straight and male bi', async () => {
-			const getResult = await getSearchPage(userFive); // # 1 4 8
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userFive); // # 1 4 8
+			expect(searchResult).toEqual([
 				{
 					...publicProfile4,
 					id: userFour.id,
@@ -213,32 +224,33 @@ describe('test initial match suggestions', () => {
 		});
 
 		test('female gay user sees only female gay and female bi', async () => {
-			const getResult = await getSearchPage(userSix); // # 7 9 10
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userSix); // # 7 9 10
+			expect(searchResult).toEqual([
 				{
 					...publicProfile9,
 					id: userNine.id,
 					age: getAge(profileData9.birthday),
-					distance: getDistance(profileData6.coordinates, profileData9.coordinates) //2
+					distance: getDistance(profileData6.coordinates, profileData9.coordinates) //20
 				},
 				{
 					...publicProfile10,
 					id: userTen.id,
 					age: getAge(profileData10.birthday),
-					distance: getDistance(profileData6.coordinates, profileData10.coordinates) //92
+					distance: getDistance(profileData6.coordinates, profileData10.coordinates) //20
 				},
 				{
 					...publicProfile7,
 					id: userSeven.id,
 					age: getAge(profileData7.birthday),
-					distance: getDistance(profileData6.coordinates, profileData7.coordinates) //5
+					distance: getDistance(profileData6.coordinates, profileData7.coordinates) //29
 				}
 			]);
 		});
 
 		test('female bi user sees female gay and female bi, male straight, male bi', async () => {
-			const getResult = await getSearchPage(userSeven); //# 1 6 8 9 10 4
-			expect(getResult).toEqual([
+			const searchResult = await getSearchPage(userSeven); //# 1 6 8 9 10 4
+			console.log(searchResult);
+			expect(searchResult).toEqual([
 				{
 					...publicProfile1,
 					id: userOne.id,
@@ -252,22 +264,16 @@ describe('test initial match suggestions', () => {
 					distance: getDistance(profileData7.coordinates, profileData4.coordinates) //5
 				},
 				{
-					...publicProfile8,
-					id: userEight.id,
-					age: getAge(profileData8.birthday),
-					distance: getDistance(profileData7.coordinates, profileData8.coordinates) //5
+					...publicProfile6,
+					id: userSix.id,
+					age: getAge(profileData6.birthday),
+					distance: getDistance(profileData7.coordinates, profileData6.coordinates) //92
 				},
 				{
 					...publicProfile10,
 					id: userTen.id,
 					age: getAge(profileData10.birthday),
 					distance: getDistance(profileData7.coordinates, profileData10.coordinates) //17
-				},
-				{
-					...publicProfile6,
-					id: userSix.id,
-					age: getAge(profileData6.birthday),
-					distance: getDistance(profileData7.coordinates, profileData6.coordinates) //92
 				},
 				{
 					...publicProfile9,

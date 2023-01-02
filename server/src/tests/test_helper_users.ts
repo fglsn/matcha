@@ -148,7 +148,7 @@ export const profileData3 = {
 	orientation: 'gay',
 	bio: 'born sleepy',
 	tags: ['Swimming', 'Tea', 'Shisha', 'Pets'],
-	coordinates: { lat: 59.977005492196, lon: 10.615466564685324 }, //795km
+	coordinates: { lat: 60.22828798969436, lon: 25.125732421875004 }, //14km
 	location: 'Helsinki, Finland',
 	fameRating: 70
 };
@@ -190,7 +190,7 @@ export const profileData6 = {
 	orientation: 'gay',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'BBQ', 'Drummer'],
-	coordinates: { lat: 60.973107109199425, lon: 24.45473666958043 }, //94km
+	coordinates: { lat: 60.41395589336234, lon: 24.708251953125004 }, //30km
 	location: 'Helsinki, Finland',
 	fameRating: 35
 };
@@ -218,7 +218,7 @@ export const profileData8 = {
 	orientation: 'bi',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'Drummer', 'Pets', 'Cinema'],
-	coordinates: { lat: 60.2154326997618, lon: 24.954802826567956 }, //6km
+	coordinates: { lat: 60.17874561927682, lon: 24.923508597420668 }, //6km
 	location: 'Helsinki, Finland',
 	fameRating: 75
 };
@@ -232,7 +232,7 @@ export const profileData9 = {
 	orientation: 'gay',
 	bio: 'born sleepy',
 	tags: ['Sauna', 'BBQ', 'Drummer'],
-	coordinates: { lat: 60.973107109199425, lon: 24.45473666958043 }, //94km
+	coordinates: { lat: 60.44640011398113, lon: 24.367675781250004 }, //45km
 	location: 'Helsinki, Finland',
 	fameRating: 35
 };
@@ -246,7 +246,7 @@ export const profileData10 = {
 	orientation: 'bi',
 	bio: 'born sleepy',
 	tags: ['Reading', 'Singing', 'Poetry'],
-	coordinates: { lat: 60.31062731740045, lon: 25.043457884888564 }, //17km
+	coordinates: { lat: 60.44640011398113, lon: 24.367675781250004 }, //45km
 	location: 'Helsinki, Finland',
 	fameRating: 100
 };

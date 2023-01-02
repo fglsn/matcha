@@ -164,7 +164,7 @@ const SortAndFilterPopper = ({
 		setDefaultSort('distance');
 		setReverseOrder(false);
 		setDefaultDistanceRange([2, 50]);
-		setDefaultAgeRange([18, 140]);
+		setDefaultAgeRange([18, 80]);
 		setDefaultRatingRange([0, 100]);
 		setDefaultTagsRange([0, 5]);
 	};
