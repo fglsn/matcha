@@ -23,15 +23,26 @@ const getOrder = (value: string, reversed: boolean): SortingCriteria => {
 	}
 };
 
-export const getMatchSuggestions = async (sortAndFilter: SortAndFilter): Promise<any> => {
+const setDistanceRange = (min: number, max: number) => {
+	if (max >= 142) return { min, max: undefined };
+	return { min, max };
+};
 
+const setAgeRange = (min: number, max: number) => {
+	if (max >= 80) return { min, max: undefined };
+	return { min, max };
+};
+
+export const getMatchSuggestions = async (sortAndFilter: SortAndFilter): Promise<any> => {
 	const { sort, isReversedOrder } = sortAndFilter.sort;
 	const { distance, age, rating, tags } = sortAndFilter.filter;
+	const distanceRange = setDistanceRange(distance.min, distance.max);
+	const ageRange = setAgeRange(age.min, age.max);
 	const sortAndFilterCriterias = {
 		sort: getOrder(sort, isReversedOrder),
 		filter: [
-			{ filter: 'distance', min: distance.min, max: distance.max },
-			{ filter: 'age', min: age.min, max: age.max },
+			{ filter: 'distance', min: distanceRange.min, max: distanceRange.max },
+			{ filter: 'age', min: ageRange.min, max: ageRange.max },
 			{ filter: 'rating', min: rating.min, max: rating.max },
 			{ filter: 'tags', min: tags.min, max: tags.max }
 		]

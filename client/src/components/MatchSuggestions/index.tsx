@@ -24,7 +24,7 @@ const defaultSortCriteria: SortingCriteriaInternal = {
 
 const defaultFilterCriteria: FilterCriteriaInternal = {
 	distance: { min: 2, max: 50 },
-	age: { min: 18, max: 140 },
+	age: { min: 18, max: 80 },
 	rating: { min: 0, max: 100 },
 	tags: { min: 0, max: 5 }
 };

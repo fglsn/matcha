@@ -409,12 +409,16 @@ const generateFilterQueryString = (filterCriterias: FilterCriteria[]): string =>
 
 		switch (filterTarget) {
 			case 'age':
+				if (max === undefined) return `(extract(years from age(users.birthday)) >= ${min})`;
 				return `(extract(years from age(users.birthday)) >= ${min} and extract(years from age(users.birthday)) <= ${max})`;
 			case 'distance':
+				if (max === undefined) return `(calculate_distance(users.lat, users.lon, $2, $3) >= ${min})`;
 				return `(calculate_distance(users.lat, users.lon, $2, $3) >= ${min} and calculate_distance(users.lat, users.lon, $2, $3) <= ${max})`;
 			case 'rating':
+				if (max === undefined) return `(users.fame_rating >= ${min})`;
 				return `(users.fame_rating >= ${min} and users.fame_rating <= ${max})`;
 			case 'tags':
+				if (max === undefined) return `(count_array_intersect(users.tags::varchar[], $4::varchar[]) >= ${min})`;
 				return `(count_array_intersect(users.tags::varchar[], $4::varchar[]) >= ${min} and count_array_intersect(users.tags::varchar[], $4::varchar[]) <= ${max})`;
 			default:
 				assertNever(filterTarget);
@@ -459,6 +463,7 @@ const getInitialMatchSuggestions = async (
 			sortingCriteriaStr,
 		values: [userId, lat, lon, tags]
 	};
+	// console.log(query.text); //rm later
 	const res = await pool.query(query);
 	if (!res.rowCount) {
 		return [];
