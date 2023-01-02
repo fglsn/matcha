@@ -20,6 +20,7 @@ import { getMatchesByUserId } from '../repositories/matchesRepository';
 import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
 import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 import { getMatchSuggestions } from '../services/search';
+import { parseFilterCriterias, parseSortCriteria } from '../validators/sortAndFilterValidators';
 
 const router = express.Router();
 
@@ -452,13 +453,12 @@ router.post(
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const { sort, filter } = req.body; // todo: parse, validate!
-
-		// console.log('sort and filter: ', sort, filter);
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-		const idList = await getMatchSuggestions(req.session.userId, sort, filter);
+		const { sort, filter } = req.body;
+		const sortingCriteria = parseSortCriteria(sort);
+		const filterCriterias = parseFilterCriterias(filter);
+		const publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias);
 		// console.log('From match suggestions router: ', idList); //rm later
-		res.status(200).json(idList);
+		res.status(200).json(publicProfiles);
 	})
 );
 

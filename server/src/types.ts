@@ -267,13 +267,17 @@ export type MessageNotification = {
 	receiverId: string;
 };
 
+export type Criterias = 'age' | 'distance' | 'rating' | 'tags';
+
+export type Order = 'desc' | 'asc';
+
 export type SortingCriteria = {
-	sort: 'age' | 'distance' | 'rating' | 'tags';
-	order: 'desc' | 'asc';
+	sort: Criterias;
+	order: Order;
 };
 
 export type FilterCriteria = {
-	filter: 'age' | 'distance' | 'rating' | 'tags';
+	filter: Criterias;
 	min: number;
-	max: number;
+	max: number | undefined;
 };

@@ -5,6 +5,11 @@ const isString = (text: unknown): text is string => {
 const isNumber = (value: unknown): value is number => {
 	return typeof value === 'number' || value instanceof Number;
 };
+
+const isNumberOrUndefined = (value: unknown): value is number | undefined => {
+	return value === undefined || typeof value === 'number' || value instanceof Number;
+};
+
 const isDate = (date: string): boolean => {
 	return Boolean(Date.parse(date));
 };
@@ -20,6 +25,7 @@ const isStringArray = (arr: any): arr is string[] => {
 	return true;
 };
 
+
 const isStringRepresentedInteger = (string: unknown): string is string => {
 	if (typeof string !== 'string') return false;
 	const num = Number(string);
@@ -28,4 +34,4 @@ const isStringRepresentedInteger = (string: unknown): string is string => {
 	return true;
 };
 
-export { isString, isNumber, isDate, isStringArray, isStringRepresentedInteger };
+export { isString, isNumber, isNumberOrUndefined, isDate, isStringArray, isStringRepresentedInteger };
