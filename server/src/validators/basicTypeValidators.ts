@@ -25,7 +25,6 @@ const isStringArray = (arr: any): arr is string[] => {
 	return true;
 };
 
-
 const isStringRepresentedInteger = (string: unknown): string is string => {
 	if (typeof string !== 'string') return false;
 	const num = Number(string);

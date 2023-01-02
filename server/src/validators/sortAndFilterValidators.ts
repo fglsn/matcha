@@ -47,7 +47,7 @@ export const parseSortCriteria = (sortingCriteria: unknown): SortingCriteria => 
 
 export const parseFilterCriteria = (filterCriteria: unknown): FilterCriteria => {
 	if (filterCriteria && typeof filterCriteria === 'object' && 'filter' in filterCriteria && 'min' in filterCriteria) {
-		const { filter, min, max } = filterCriteria as { filter: unknown; min: unknown, max: unknown };
+		const { filter, min, max } = filterCriteria as { filter: unknown; min: unknown; max: unknown };
 		if (!isNumber(min)) throw new ValidationError(`Invalid min value in filter criteria validation.`);
 		const parsedFilterCriteria = {
 			filter: parseCriteria(filter),
