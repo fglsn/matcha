@@ -41,7 +41,7 @@ Team members: [Ilona](https://github.com/fglsn) & [Alexei](https://github.com/al
 ![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/4.png?raw=true)  
 
 ### Sort & Filter ###  
-![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/8.png?raw=true)  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/9.png?raw=true)  
   
 ### Public carousel with user's photos, bio and other profile info ###  
 ![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/5.png?raw=true)  
