@@ -8,7 +8,9 @@ https://trello.com/b/pNoT2ZPs/matcha-todos
 A team project, implemented as a part of the Hive Helsinki coding school web-branch.  
   
 A dating app allowing two potential lovers to meet, from the registration to the final encounter.  
-User will be able to register, connect, fill his/her profile, search and look into the profile of other users, like them, chat with those that “liked” back.  
+Application suggests potential matches based on age, location, common interests, rating and gender or sexual preferences.  
+User can sort and filter match suggestions, like or dislike profiles of other users, chat with those that “liked” back and be notified in real time about related activities.  
+  
 ### Stack  
 
 Backend:
@@ -22,6 +24,6 @@ Frontend:
 - React
 - Material UI  
 
-We're also taking a TDD approach on a server side.
-
+We're also taking a TDD approach with Jest on a server side.
+  
 Team members: [Ilona](https://github.com/fglsn) & [Alexei](https://github.com/alex2011576).
