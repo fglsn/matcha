@@ -52,6 +52,6 @@ Team members: [Ilona](https://github.com/fglsn) & [Alexei](https://github.com/al
 ### Chat page ###  
 ![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/7.png?raw=true)  
 
-### One out of rour statistic pages ###  
+### One out of four statistic pages ###  
 ![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/8.png?raw=true)  
 
