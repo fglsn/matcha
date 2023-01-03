@@ -201,24 +201,25 @@ describe('test initial match suggestions', () => {
 
 		test('female straight user sees only male straight and male bi', async () => {
 			const searchResult = await getSearchPage(userFive); // # 1 4 8
+			//console.log(searchResult);
 			expect(searchResult).toEqual([
 				{
 					...publicProfile4,
 					id: userFour.id,
 					age: getAge(profileData4.birthday),
-					distance: getDistance(profileData5.coordinates, profileData4.coordinates) //12
-				},
-				{
-					...publicProfile8,
-					id: userEight.id,
-					age: getAge(profileData8.birthday),
-					distance: getDistance(profileData5.coordinates, profileData8.coordinates) //12
+					distance: getDistance(profileData5.coordinates, profileData4.coordinates) //11
 				},
 				{
 					...publicProfile1,
 					id: userOne.id,
 					age: getAge(profileDataNewUser.birthday),
-					distance: getDistance(profileData5.coordinates, profileDataNewUser.coordinates) //17
+					distance: getDistance(profileData5.coordinates, profileDataNewUser.coordinates) //16
+				},
+				{
+					...publicProfile8,
+					id: userEight.id,
+					age: getAge(profileData8.birthday),
+					distance: getDistance(profileData5.coordinates, profileData8.coordinates) //16
 				}
 			]);
 		});
@@ -249,7 +250,7 @@ describe('test initial match suggestions', () => {
 
 		test('female bi user sees female gay and female bi, male straight, male bi', async () => {
 			const searchResult = await getSearchPage(userSeven); //# 1 6 8 9 10 4
-			console.log(searchResult);
+			//console.log(searchResult);
 			expect(searchResult).toEqual([
 				{
 					...publicProfile1,

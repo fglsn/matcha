@@ -39,7 +39,7 @@ export const requestCoordinatesByIp = async (ipAddress: string | undefined): Pro
 		}
 	} catch (err) {
 		if (axios.isAxiosError(err)) console.log('Response err: ', err.response?.data); //rm later
-		console.log(err); //rm later
+		//console.log(err); //rm later
 		return defaultCoordinates;
 	}
 };
@@ -64,7 +64,7 @@ export const getLocation = async (coordinates: Coordinates) => {
 
 		return neighbourhood + city + country;
 	} catch (err) {
-		console.log('Response err: ', err);
+		//console.log('Response err: ', err);
 		return '';
 	}
 };
