@@ -1,20 +1,21 @@
 import { io, httpServer } from '../app';
 import { io as Client, Socket } from 'socket.io-client';
-import { loginAndPrepareUser, putLike, removeLike, socketAuth, twoUserLikeEachOther, userVisitsAnotherUsersProfile } from './test_helper_fns';
-import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2 } from './test_helper';
 import { ServerToClientEvents, ClientToServerEvents } from '../types';
-import { clearNotifications, getNotificationsByNotifiedUserId } from '../repositories/notificationsRepository';
-import { clearLikes } from '../repositories/likesRepository';
-import { clearMatches } from '../repositories/matchesRepository';
-import { clearVisitHistory } from '../repositories/visitHistoryRepository';
+import { loginAndPrepareUser, putLike, removeLike, socketAuth, twoUserLikeEachOther, userVisitsAnotherUsersProfile } from './test_helper_fns';
 import { addNotificationsQueueEntry, getNotificationsQueueCount, removeNotificationsQueueById } from '../repositories/notificationsQueueRepository';
+import { credentialsNewUser, credentialsSecondUser, profileDataNewUser, profileDataSecondUser, newUser, secondUser } from './test_helper_users';
+import { clearNotifications, getNotificationsByNotifiedUserId } from '../repositories/notificationsRepository';
+import { clearVisitHistory } from '../repositories/visitHistoryRepository';
+import { clearMatches } from '../repositories/matchesRepository';
+import { clearLikes } from '../repositories/likesRepository';
+import { clearUsers } from '../repositories/userRepository';
 
 jest.setTimeout(5000);
 jest.mock('../services/location');
 
 let userOne: { id: string; token: string };
 let userTwo: { id: string; token: string };
+
 type AdressInfo = {
 	port: string;
 	family: string;
@@ -27,8 +28,8 @@ const prepareTest = async () => {
 	await clearLikes();
 	await clearMatches();
 	await clearVisitHistory();
-	userOne = await loginAndPrepareUser(newUser, loginUser);
-	userTwo = await loginAndPrepareUser(secondUser, loginUser2);
+	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+	userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 };
 
 function fail(message = '') {

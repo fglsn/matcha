@@ -197,3 +197,38 @@ export type MessageNotification = {
 	senderId: string;
 	receiverId: string;
 };
+
+export type Criterias = 'age' | 'distance' | 'rating' | 'tags';
+
+export type SortingCriteria = {
+	sort: Criterias;
+	order: 'desc' | 'asc';
+};
+
+export type FilterCriteria = {
+	filter: Criterias;
+	min: number;
+	max: number;
+};
+
+export type Range = {
+	min: number;
+	max: number;
+};
+
+export type SortingCriteriaInternal = {
+	sort: Criterias;
+	isReversedOrder: boolean;
+};
+
+export type FilterCriteriaInternal = {
+	distance: Range;
+	age: Range;
+	rating: Range;
+	tags: Range;
+};
+
+export type SortAndFilter = {
+	sort: SortingCriteriaInternal;
+	filter: FilterCriteriaInternal;
+};

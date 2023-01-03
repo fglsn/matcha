@@ -13,7 +13,7 @@ const StyledContainer = styled('div')({
 	maxHeight: 'calc(600px * (3/4))',
 	minHeight: '320px',
 	paddingBottom: '1rem',
-	margin: '0 auto',
+	margin: '0 auto'
 });
 
 const StyledBeforeIcon = styled(NavigateBeforeIcon)`
@@ -93,8 +93,6 @@ export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 					fontStyle: 'italic'
 				}}
 				color="secondary"
-				// sx={{ mt: 1.5, mb: 1, fontStyle: 'italic' }}
-				// variant="h5"
 			>
 				« {user.bio} »
 			</Typography>
@@ -106,10 +104,11 @@ export const ProfileInfo = ({ user }: { user: ProfilePublic }) => {
 					mb: 2,
 					display: 'flex',
 					fontSize: '1.1rem',
-					alignItems: 'center'
+					alignItems: 'center',
+					fontWeight: '400!important'
 				}}
 			>
-				Sexual preferenses:
+				Sexual preferences:
 				<OrientationIcon gender={user.gender} orientation={user.orientation} />
 			</Typography>
 			<Grid>

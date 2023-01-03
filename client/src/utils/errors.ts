@@ -21,6 +21,9 @@ export const handleAxiosError = (err: unknown): never => {
 			if (err.response.status === 401) {
 				throw new AuthError('Session expired, please login again.');
 			}
+			if (err.response.data && err.response.data.error) {
+				throw new AppError(err.response.data.error);
+			}
 		}
 	}
 	throw err;

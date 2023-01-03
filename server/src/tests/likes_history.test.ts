@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
-import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, defaultCoordinates, ipAddress, TokenAndId } from './test_helper';
-import { api, initLoggedUser, loginAndPrepareUser, putLike, removeLike, requestCoordinatesByIpMock } from './test_helper_fns';
 import { checkLikeEntry, clearLikes, getLikesByVisitedId, getLikesCount } from '../repositories/likesRepository';
+import { api, initLoggedUser, loginAndPrepareUser, putLike, removeLike, requestCoordinatesByIpMock } from './test_helper_fns';
+import { newUser, secondUser, credentialsNewUser, credentialsSecondUser, profileDataNewUser, profileDataSecondUser } from './test_helper_users';
+import { defaultCoordinates, ipAddress, TokenAndId } from './test_helper';
+import { clearUsers } from '../repositories/userRepository';
 import { createNewUser } from '../services/users';
 
 jest.setTimeout(10000);
@@ -27,8 +28,8 @@ describe('like history tests', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		await clearLikes();
-		visitor = await loginAndPrepareUser(newUser, loginUser);
-		visited = await loginAndPrepareUser(secondUser, loginUser2);
+		visitor = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		visited = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 
 	test('like value is false on GET when no like from visitor on visited profile', async () => {
@@ -175,11 +176,11 @@ describe('like fails on non-valid users', () => {
 	test('fails if user profile that tries to put like is not complete', async () => {
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		const loginRes = await initLoggedUser(newUser.username, loginUser);
+		const loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		const id = <string>JSON.parse(loginRes.text).id;
 		const token = loginRes.body.token;
 
-		visited = await loginAndPrepareUser(secondUser, loginUser2);
+		visited = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 		const likeStatusAtStart = await checkLikeEntry(visited.id, id);
 		expect(likeStatusAtStart).toBeFalsy();
 
@@ -199,11 +200,11 @@ describe('like fails on non-valid users', () => {
 	});
 
 	test('fails if user profile that is getting a like id not complete', async () => {
-		visitor = await loginAndPrepareUser(secondUser, loginUser2);
+		visitor = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		const loginRes = await initLoggedUser(newUser.username, loginUser);
+		const loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		const id = <string>JSON.parse(loginRes.text).id;
 
 		const likeStatusAtStart = await checkLikeEntry(id, visitor.id);

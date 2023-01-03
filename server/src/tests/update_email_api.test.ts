@@ -1,12 +1,13 @@
 import supertest from 'supertest';
-import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { defaultCoordinates, ipAddress, loginUser, newEmail, newUser, secondUser } from './test_helper';
-import { initLoggedUser } from './test_helper_fns';
+import { describe, expect } from '@jest/globals';
 import { clearUpdateEmailRequestsTable, findUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 import { clearUsers, findUserByEmail, findUserByUsername } from '../repositories/userRepository';
 import { createNewUser, sendUpdateEmailLink } from '../services/users';
 import { requestCoordinatesByIp } from '../services/location';
+import { defaultCoordinates, ipAddress, newEmail } from './test_helper';
+import { newUser, credentialsNewUser, secondUser } from './test_helper_users';
+import { initLoggedUser } from './test_helper_fns';
 
 const api = supertest(app);
 jest.setTimeout(100000);
@@ -35,7 +36,7 @@ describe('send email reset link on email/update request', () => {
 		await clearUpdateEmailRequestsTable();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 	});
 
 	test('logged user can request email update', async () => {
@@ -104,7 +105,7 @@ describe('update email after request has been sent', () => {
 		await clearUpdateEmailRequestsTable();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		id = <string>JSON.parse(loginRes.text).id;
 		await sendUpdateEmailLink(id, newEmail.email);
 	});

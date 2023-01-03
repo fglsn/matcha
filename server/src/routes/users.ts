@@ -10,17 +10,17 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload, parseIdList } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats, getChatUsers } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats, getChatUsers, getBlockedButNotReportedUsers } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
 import { getLikesByVisitedId, getLikesByVisitorId } from '../repositories/likesRepository';
 import { getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
 import { getMatchesByUserId } from '../repositories/matchesRepository';
-import { getBlockedUsersByBlockingUserId } from '../repositories/blockEntriesRepository';
 import { getNotificationsQueueCount } from '../repositories/notificationsQueueRepository';
 import { getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
-import { getInitialMatchSuggestionsIds } from '../services/search';
+import { getMatchSuggestions } from '../services/search';
+import { parseFilterCriterias, parseSortCriteria } from '../validators/sortAndFilterValidators';
 
 const router = express.Router();
 
@@ -229,8 +229,7 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
 		if (req.params.id !== req.session.userId) throw new AppError(`You're not authorised to see this page.`, 403);
-
-		const result = await getBlockedUsersByBlockingUserId(req.session.userId);
+		const result = await getBlockedButNotReportedUsers(req.session.userId);
 		res.status(200).json(result);
 	})
 );
@@ -293,6 +292,7 @@ router.post(
 		res.status(200).end();
 	})
 );
+
 router.post(
 	'/:id/update_email',
 	sessionExtractor,
@@ -446,15 +446,19 @@ router.get(
 	})
 );
 
-router.get(
+router.post(
 	'/match_suggestions',
 	sessionExtractor,
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
-		const idList = await getInitialMatchSuggestionsIds(req.session.userId);
-		console.log('From match suggestions router: ', idList);
-		res.status(200).json(idList);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const { sort, filter } = req.body;
+		const sortingCriteria = parseSortCriteria(sort);
+		const filterCriterias = parseFilterCriterias(filter);
+		const publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias);
+		// console.log('From match suggestions router: ', idList); //rm later
+		res.status(200).json(publicProfiles);
 	})
 );
 

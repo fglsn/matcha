@@ -22,6 +22,18 @@ const getReportEntriesByUserId = async (reportedUserId: string): Promise<ReportE
 	return res.rows.map((row) => reportEntryMapper(row));
 };
 
+const getReportEntriesByReportingUserId = async (reportingUserId: string): Promise<ReportEntry[] | undefined> => {
+	const query = {
+		text: 'select * from report_entries where reporting_user_id = $1',
+		values: [reportingUserId]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return res.rows.map((row) => reportEntryMapper(row));
+};
+
 const checkReportEntry = async (reportedUserId: string, reportingUserId: string): Promise<boolean> => {
 	const query = {
 		text: 'select * from report_entries where reported_user_id = $1 and reporting_user_id = $2',
@@ -59,4 +71,4 @@ const clearReportEntries = async (): Promise<void> => {
 	await pool.query('truncate table report_entries');
 };
 
-export { getReportEntriesByUserId, checkReportEntry, addReportEntry, getReportsCountByUserId, clearReportEntries };
+export { getReportEntriesByUserId, getReportEntriesByReportingUserId, checkReportEntry, addReportEntry, getReportsCountByUserId, clearReportEntries };

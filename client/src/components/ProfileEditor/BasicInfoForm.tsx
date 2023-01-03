@@ -84,19 +84,6 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	let eighteenYearsAgo = dayjs().subtract(18, 'year');
 
-	//rm later
-	// console.log(`
-	// 	${firstname.value} &&
-	// 	${lastname.value} &&
-	// 	${date} &&
-	// 	${gender.value} &&
-	// 	${orientation.value} &&
-	// 	${selectedTags} &&
-	// 	${bio.value} &&
-	// 	${coordinates[0]} &&
-	// 	${coordinates[1]} &&
-	// 	${locationString}`);
-
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
 			loggedUser &&
@@ -129,9 +116,9 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 	return (
 		<>
 			<Box component="form" noValidate sx={{ mt: 3, ml: 2, mr: 2 }}>
-				<StyledRow style={{marginBottom: 20}}>
+				<StyledRow style={{ marginBottom: 20 }}>
 					<LightTooltip title="Visit own profile page" placement="top-start">
-						<Typography sx= {{typography: { xs: 'h6', lg:'h5'} }} >
+						<Typography sx={{ typography: { xs: 'h6', lg: 'h5' } }}>
 							<StyledLink to={`/profile/${loggedUser?.id}`}>
 								@{loggedUser?.username.toUpperCase()}
 							</StyledLink>

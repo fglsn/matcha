@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
+import { TokenAndId } from './test_helper';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, TokenAndId } from './test_helper';
-import { api, loginAndPrepareUser, putLike, removeLike, twoUserLikeEachOther } from './test_helper_fns';
 import { clearLikes } from '../repositories/likesRepository';
 import { checkMatchEntry } from '../repositories/matchesRepository';
+import { api, loginAndPrepareUser, putLike, removeLike, twoUserLikeEachOther } from './test_helper_fns';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
 
 jest.setTimeout(10000);
 jest.mock('../services/location');
@@ -27,8 +28,8 @@ describe('test matches', () => {
 	beforeEach(async () => {
 		await clearUsers();
 		await clearLikes();
-		userOne = await loginAndPrepareUser(newUser, loginUser);
-		userTwo = await loginAndPrepareUser(secondUser, loginUser2);
+		userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 
 	test('match value is false on GET user/:id/like request when no match between users', async () => {

@@ -4,10 +4,11 @@ import supertest from 'supertest';
 import { app } from '../app';
 // import { clearSessions } from '../repositories/sessionRepository';
 import { clearUsers } from '../repositories/userRepository';
-import { createNewUser } from '../services/users';
 import { requestCoordinatesByIp } from '../services/location';
-import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
+import { createNewUser } from '../services/users';
 import { DataURL, InvDataURL, InvDataURL2, InvDataURL3 } from './test_helper_images';
+import { ipAddress, defaultCoordinates } from './test_helper';
+import { newUser, credentialsNewUser } from './test_helper_users';
 import { initLoggedUser } from './test_helper_fns';
 
 const api = supertest(app);
@@ -24,7 +25,7 @@ describe('check requests to photos', () => {
 		await clearUsers();
 		requestCoordinatesByIpMock.mockReturnValue(Promise.resolve(defaultCoordinates));
 		await createNewUser(newUser, ipAddress);
-		loginRes = await initLoggedUser(newUser.username, loginUser);
+		loginRes = await initLoggedUser(newUser.username, credentialsNewUser);
 		id = <string>JSON.parse(loginRes.text).id;
 	});
 	test('should succeed update photos', async () => {

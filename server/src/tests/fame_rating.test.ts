@@ -1,25 +1,12 @@
 import { describe, expect } from '@jest/globals';
-import { clearUsers, getFameRatingByUserId, increaseReportCount, updateFameRatingByUserId } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, infoProfile } from './test_helper';
-import {
-	api,
-	createAndLoginUser,
-	getLocationMock,
-	id,
-	loginAndPrepareUser,
-	loginRes,
-	postToPhotos,
-	putLike,
-	putToProfile,
-	removeLike,
-	twoUserLikeEachOther,
-	userBlocksAnotherUser,
-	userReportsAnotherUser,
-	userVisitsAnotherUsersProfile
-} from './test_helper_fns';
-import { clearLikes } from '../repositories/likesRepository';
-import { checkBlockEntry, clearBlockEntries } from '../repositories/blockEntriesRepository';
+//prettier-ignore
 import { DataURL } from './test_helper_images';
+//prettier-ignore
+import { api, createAndLoginUser, getLocationMock, id, loginAndPrepareUser, loginRes, postToPhotos, putLike, putToProfile, removeLike, twoUserLikeEachOther, userBlocksAnotherUser, userReportsAnotherUser, userVisitsAnotherUsersProfile } from './test_helper_fns';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
+import { clearUsers, getFameRatingByUserId, increaseReportCount, updateFameRatingByUserId } from '../repositories/userRepository';
+import { checkBlockEntry, clearBlockEntries } from '../repositories/blockEntriesRepository';
+import { clearLikes } from '../repositories/likesRepository';
 
 jest.setTimeout(10000);
 jest.mock('../services/location');
@@ -46,7 +33,7 @@ describe('test user fame rating on onboarding (setting up profile)', () => {
 		await api
 			.put(`/api/users/${userOne.id}/profile`)
 			.set({ Authorization: `bearer ${userOne.token}` })
-			.send({ ...infoProfile, tags: ['Sauna'] })
+			.send({ ...profileDataNewUser, tags: ['Sauna'] })
 			.expect(200);
 
 		fameRating = await getFameRatingByUserId(userOne.id);
@@ -68,7 +55,7 @@ describe('test user fame rating on onboarding (setting up profile)', () => {
 		await api
 			.put(`/api/users/${userOne.id}/profile`)
 			.set({ Authorization: `bearer ${userOne.token}` })
-			.send({ ...infoProfile, tags: ['Sauna'] }) //one tag
+			.send({ ...profileDataNewUser, tags: ['Sauna'] }) //one tag
 			.expect(200);
 
 		fameRating = await getFameRatingByUserId(userOne.id);
@@ -134,8 +121,8 @@ describe('test user fame rating on onboarding (setting up profile)', () => {
 describe('test how actions are affecting fame rating', () => {
 	beforeEach(async () => {
 		await Promise.all([clearUsers(), clearLikes(), clearBlockEntries()]);
-		userOne = await loginAndPrepareUser(newUser, loginUser);
-		userTwo = await loginAndPrepareUser(secondUser, loginUser2);
+		userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 
 	test('fame rating stays the same when user visits his own profile', async () => {
