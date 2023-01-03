@@ -176,3 +176,37 @@ describe('testing search results with all sort criterias', () => {
 		expect(isSortedAsc(ratings)).toBeTruthy();
 	});
 });
+
+describe('testing search resultsinvalid sort and order format', () => {
+	beforeAll(async () => {
+		await prepareUsers();
+	});
+
+	it.each([
+		[{ sort: 123, order: 'asc' }, 'Invalid format of criteria'],
+		[{ sort: 'invalid', order: 'asc' }, 'Invalid format of criteria'],
+		[{ sort: 'desc', order: 'asc' }, 'Invalid format of criteria'],
+		[{ sort: '', order: 'asc' }, 'Invalid format of criteria'],
+		[{ sort: undefined, order: 'asc' }, 'Invalid format of sorting criteria'],
+		[{ sort: null, order: 'asc' }, 'Invalid format of criteria'],
+		[{ test: 'distance', order: 'asc' }, 'Invalid format of sorting criteria'],
+		[{ sort: 'distance', order: 123 }, 'Invalid order format'],
+		[{ sort: 'distance', order: '123' }, 'Invalid order format'],
+		[{ sort: 'distance', order: undefined }, 'Invalid format of sorting criteria'],
+		[{ sort: 'distance', order: null }, 'Invalid order format'],
+		[{ sort: 'distance', test: 'asc' }, 'Invalid format of sorting criteria'],
+		[{ sort: 'distance', order: 'invalid' }, 'Invalid order format'],
+		[{ sort: 'distance' }, 'Invalid format of sorting criteria'],
+		[{ order: 'invalid' }, 'Invalid format of sorting criteria']
+	])(`Error on incorrect format of sort or order values %s %s`, async (incorrectSort, expectedErrorMessage) => {
+		const searchResult = await api
+			.post(`/api/users/match_suggestions`)
+			.set({ Authorization: `bearer ${requestor.token}` })
+			.send({ sort: incorrectSort, filter: filter })
+			.expect(400)
+			.expect('Content-Type', /application\/json/);
+
+		//console.log(searchResult.body.error);
+		expect(searchResult.body.error).toContain(expectedErrorMessage);
+	});
+});
