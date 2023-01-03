@@ -35,12 +35,6 @@ jest.setTimeout(15000);
 jest.mock('../services/location');
 
 let requestor: { id: string; token: string };
-// let userOne: { id: string; token: string };
-// let userFour: { id: string; token: string };
-// let userFive: { id: string; token: string };
-// let userSix: { id: string; token: string };
-// let userNine: { id: string; token: string };
-// let userTen: { id: string; token: string };
 
 const sortByDistance: { sort: Criterias; order: Order } = { sort: 'distance', order: 'asc' };
 const sortByDistanceReversed: { sort: Criterias; order: Order } = { sort: 'distance', order: 'desc' };
