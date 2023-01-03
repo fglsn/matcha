@@ -27,3 +27,31 @@ Frontend:
 We're also taking a TDD approach with Jest on a server side.
   
 Team members: [Ilona](https://github.com/fglsn) & [Alexei](https://github.com/alex2011576).
+
+### Signup page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/1.png?raw=true)  
+  
+ ### Sign in page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/2.png?raw=true)  
+
+### Profile editor page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/3.png?raw=true)  
+
+### Match suggestions / Main search page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/4.png?raw=true)  
+
+### Sort & Filter ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/8.png?raw=true)  
+  
+### Public carousel with user's photos, bio and other profile info ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/5.png?raw=true)  
+
+### Public profile page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/6.png?raw=true)  
+  
+### Chat page ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/7.png?raw=true)  
+
+### One out of rour statistic pages ###  
+![alt text](https://github.com/fglsn/matcha/blob/master/client/screenshots/8.png?raw=true)  
+
