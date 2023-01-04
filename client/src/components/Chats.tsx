@@ -3,8 +3,6 @@ import { Alert, Avatar, Badge, Box, Container, Divider, Grid, List, ListItem, Li
 import withProfileRequired from './ProfileRequired';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { ChatHeader, ChatMsg, UserEntryForChat } from '../types';
-// import { getMatches, getUserEntries } from '../services/stats';
-// import { useStateValue } from '../state';
 import { useServiceCall } from '../hooks/useServiceCall';
 import LoadingIcon from './LoadingIcon';
 import { Link } from 'react-router-dom';
@@ -14,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
 import { socket } from '../services/socket';
 import { useStateValue } from '../state';
-import { useStateChatReload } from './ChatReloadProvider';
+import { useStateChatReload } from './Chats/ChatReloadProvider';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -133,13 +131,6 @@ const User = ({ user, matchId, lastMsg }: { user: UserEntryForChat, matchId: str
 const ChatList: React.FC<{
 	chatEntries: ChatHeader[] | undefined;
 }> = ({ chatEntries }) => {
-	// const {
-	// 	data: userEntriesData,
-	// 	error: userEntriesError
-	// }: {
-	// 	data: UserEntry[];
-	// 	error: Error | undefined;
-	// } = useServiceCall(async () => idList && (await getUserEntries(idList)), []);
 
 	if (!chatEntries || !chatEntries.length) {
 		return (
@@ -161,7 +152,6 @@ const ChatList: React.FC<{
 };
 
 const Chats = () => {
-	// const [{ loggedUser }] = useStateValue();
     const [{ msgNotifications }] = useStateValue();
     const reload = useStateChatReload();
 	
