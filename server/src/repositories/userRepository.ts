@@ -431,7 +431,9 @@ const generateFilterQueryString = (filterCriterias: FilterCriteria[]): string =>
 const getInitialMatchSuggestions = async (
 	requestorData: UserData,
 	sortingCriteria: SortingCriteria,
-	filterCriterias: FilterCriteria[]
+	filterCriterias: FilterCriteria[],
+	page?: number,
+	pageSize?: number
 ): Promise<UserData[]> => {
 	const userId = requestorData.id;
 	const lat = requestorData.coordinates.lat;
@@ -441,7 +443,18 @@ const getInitialMatchSuggestions = async (
 	const sexualPreferenceStr = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
 	const sortingCriteriaStr = generateOrderByQueryString(sortingCriteria);
 	const filterCriteriaStr = generateFilterQueryString(filterCriterias);
+	console.log('page : ', page, ' pageSize: ', pageSize);
 
+	let offset: number;
+	let limit: number;
+	if (page && pageSize && page >= 1 && pageSize > 0) {
+		offset = (page - 1) * pageSize;
+		limit = pageSize;
+	} else {
+		offset = 0;
+		limit = 5;
+	}
+	console.log('offset : ', offset, ' limit: ', limit);
 	// console.log(filterCriteriaStr); //rm later
 
 	const query = {
@@ -460,8 +473,8 @@ const getInitialMatchSuggestions = async (
 			filterCriteriaStr +
 			`) 
 				order by ` +
-			sortingCriteriaStr,
-		values: [userId, lat, lon, tags]
+			sortingCriteriaStr + ` limit $5 offset $6`,
+		values: [userId, lat, lon, tags, limit, offset]
 	};
 	// console.log(query.text); //rm later
 	const res = await pool.query(query);

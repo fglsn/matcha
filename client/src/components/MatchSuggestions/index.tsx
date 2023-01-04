@@ -63,7 +63,8 @@ const Main = () => {
 		error: Error | undefined;
 		loading: boolean;
 	} = useServiceCall(
-		async () => loggedUser && (await getMatchSuggestions(sortAndFilter, pageNumber, 25)),
+		async () =>
+			loggedUser && (await getMatchSuggestions(sortAndFilter, pageNumber, 25)),
 		[sortAndFilter, pageNumber]
 	);
 
@@ -112,14 +113,17 @@ const Main = () => {
 				{matchSuggestionsData
 					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
 					.map((profile, i) => (
-						<PublicProfile
-							profileData={profile}
+						<Box
 							key={profile.id}
-							onAction={(p) => setFilteredIds([...filteredIds, p.id])}
 							{...(matchSuggestionsData.length === i + 1
 								? { ref: lastDisplayedProfileRef }
 								: {})}
-						/>
+						>
+							<PublicProfile
+								profileData={profile}
+								onAction={(p) => setFilteredIds([...filteredIds, p.id])}
+							/>
+						</Box>
 					))}
 			</Container>
 		</StyledMain>

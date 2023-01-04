@@ -452,28 +452,24 @@ router.post(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!(await getAndUpdateUserCompletnessById(req.session.userId))) throw new AppError('Please, complete your own profile first', 400);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const { sort, filter } = req.body;
+		const sortingCriteria = parseSortCriteria(sort);
+		const filterCriterias = parseFilterCriterias(filter);
+		let publicProfiles;
 		if (!req.query.page && !req.query.limit) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const { sort, filter } = req.body;
-			const sortingCriteria = parseSortCriteria(sort);
-			const filterCriterias = parseFilterCriterias(filter);
-			const publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias);
-			res.status(200).json(publicProfiles);
-			return;
-		}
-		if (req.query.page && req.query.limit) {
-			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit))
+			publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias);
+		} else if (req.query.page && req.query.limit) {
+			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit)) {
 				throw new ValidationError(`Limit and offset should be string represented integers`);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const { sort, filter } = req.body;
-			const sortingCriteria = parseSortCriteria(sort);
-			const filterCriterias = parseFilterCriterias(filter);
-			const publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias, req.query.page, req.query.limi);
-			// console.log('From match suggestions router: ', idList); //rm later
-			res.status(200).json(publicProfiles);
-			return;
+			}
+			publicProfiles = await getMatchSuggestions(req.session.userId, sortingCriteria, filterCriterias, Number(req.query.page), Number(req.query.limit));
+		} else {
+			throw new AppError(`This api expects page and limit query params or no params to get all messages`, 400);
 		}
-		throw new AppError(`This api expects page and limit query params or no params to get all messages`, 400);
+		// console.log('From match suggestions router: ', idList); //rm later
+		res.status(200).json(publicProfiles);
+		return;
 	})
 );
 
