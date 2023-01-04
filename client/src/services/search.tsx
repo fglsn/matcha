@@ -33,7 +33,7 @@ const setAgeRange = (min: number, max: number) => {
 	return { min, max };
 };
 
-export const getMatchSuggestions = async (sortAndFilter: SortAndFilter): Promise<any> => {
+export const getMatchSuggestions = async (sortAndFilter: SortAndFilter, page: number, limit: number): Promise<any> => {
 	const { sort, isReversedOrder } = sortAndFilter.sort;
 	const { distance, age, rating, tags } = sortAndFilter.filter;
 	const distanceRange = setDistanceRange(distance.min, distance.max);
@@ -53,7 +53,7 @@ export const getMatchSuggestions = async (sortAndFilter: SortAndFilter): Promise
 			headers: { Authorization: getAuthHeader() }
 		};
 		const response = await axios.post(
-			`${apiBaseUrl}/users/match_suggestions`,
+			`${apiBaseUrl}/users/match_suggestions?page=${page}&limit=${limit}`,
 			sortAndFilterCriterias,
 			config
 		);
