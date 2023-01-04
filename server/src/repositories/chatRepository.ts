@@ -5,6 +5,7 @@ import { ChatMsg } from '../types';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const messageEntryMapper = (row: any) => {
 	return {
+		message_id: getString(row['message_id']),
 		receiver_id: getString(row['receiver_id']),
 		sender_id: getString(row['sender_id']),
 		message_text: getString(row['message_text']),

@@ -235,6 +235,7 @@ export type Notifications = {
 };
 
 export type ChatMsg = {
+	message_id: string;
 	receiver_id: string;
 	sender_id: string;
 	message_text: string;
