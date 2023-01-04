@@ -2,7 +2,7 @@
 import { FilterCriteriaInternal, ProfilePublic, SortAndFilter, SortingCriteriaInternal } from '../../types';
 //prettier-ignore
 import { Alert, Box, Button, Container, styled } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useStateValue } from '../../state';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getMatchSuggestions } from '../../services/search';
@@ -38,6 +38,9 @@ const Main = () => {
 	});
 	const [filteredIds, setFilteredIds] = useState<string[]>([]);
 
+	const [pageNumber, setPageNumber] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
+
 	const togglePopper = (event: React.MouseEvent<HTMLElement>) =>
 		setAnchorEl(anchorEl ? null : event.currentTarget);
 
@@ -53,13 +56,31 @@ const Main = () => {
 
 	const {
 		data: matchSuggestionsData,
-		error: matchSuggestionsError
+		error: matchSuggestionsError,
+		loading: isLoading
 	}: {
 		data: ProfilePublic[];
 		error: Error | undefined;
+		loading: boolean;
 	} = useServiceCall(
-		async () => loggedUser && (await getMatchSuggestions(sortAndFilter)),
-		[sortAndFilter]
+		async () => loggedUser && (await getMatchSuggestions(sortAndFilter, pageNumber, 25)),
+		[sortAndFilter, pageNumber]
+	);
+
+	const observer = useRef<IntersectionObserver | null>(null);
+
+	const lastDisplayedProfileRef = useCallback(
+		(node) => {
+			if (isLoading) return;
+			if (observer.current) observer.current.disconnect();
+			observer.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting && hasMore) {
+					setPageNumber((prev) => prev + 1);
+				}
+			});
+			if (node) observer.current.observe(node);
+		},
+		[isLoading, hasMore]
 	);
 
 	if (matchSuggestionsError)
@@ -90,11 +111,14 @@ const Main = () => {
 			<Container sx={{ mb: 5 }}>
 				{matchSuggestionsData
 					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
-					.map((profile) => (
+					.map((profile, i) => (
 						<PublicProfile
 							profileData={profile}
 							key={profile.id}
 							onAction={(p) => setFilteredIds([...filteredIds, p.id])}
+							{...(matchSuggestionsData.length === i + 1
+								? { ref: lastDisplayedProfileRef }
+								: {})}
 						/>
 					))}
 			</Container>

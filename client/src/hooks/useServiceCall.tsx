@@ -11,7 +11,7 @@ export const useServiceCall = (
 ) => {
 	const [data, setData] = useState<any>();
 	const [error, setError] = useState<any>();
-	const [loading, setLoading] = useState<boolean>();
+	const [loading, setLoading] = useState<boolean>(false);
 	const [, dispatch] = useStateValue();
 	const { error: errorCallback } = useContext(AlertContext);
 
