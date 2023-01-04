@@ -467,6 +467,7 @@ router.post(
 		} else {
 			throw new AppError(`This api expects page and limit query params or no params to get all messages`, 400);
 		}
+		// console.log('profiles found: ', publicProfiles.length); //rm later
 		// console.log('From match suggestions router: ', idList); //rm later
 		res.status(200).json(publicProfiles);
 		return;

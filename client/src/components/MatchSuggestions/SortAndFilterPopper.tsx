@@ -116,8 +116,6 @@ const getMaxAgeLabel = (value: number) => {
 	return `${value} yo`;
 };
 
-
-
 const SortAndFilterPopper = ({
 	id,
 	open,
@@ -158,7 +156,9 @@ const SortAndFilterPopper = ({
 		5
 	);
 
-	const [reverseOrder, setReverseOrder] = useState<boolean>(sortAndFilter.sort.isReversedOrder);
+	const [reverseOrder, setReverseOrder] = useState<boolean>(
+		sortAndFilter.sort.isReversedOrder
+	);
 
 	const handleResetToDefault = () => {
 		setDefaultSort('distance');

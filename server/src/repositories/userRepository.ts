@@ -443,7 +443,7 @@ const getInitialMatchSuggestions = async (
 	const sexualPreferenceStr = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
 	const sortingCriteriaStr = generateOrderByQueryString(sortingCriteria);
 	const filterCriteriaStr = generateFilterQueryString(filterCriterias);
-	console.log('page : ', page, ' pageSize: ', pageSize);
+	// console.log('page : ', page, ' pageSize: ', pageSize); //rm later
 
 	let offset: number;
 	let limit: number;
@@ -452,10 +452,9 @@ const getInitialMatchSuggestions = async (
 		limit = pageSize;
 	} else {
 		offset = 0;
-		limit = 5;
+		limit = 4;
 	}
-	console.log('offset : ', offset, ' limit: ', limit);
-	// console.log(filterCriteriaStr); //rm later
+	// console.log('offset : ', offset, ' limit: ', limit); //rm later
 
 	const query = {
 		text:
