@@ -6,8 +6,6 @@ import userRouter from './routes/users';
 import loginRouter from './routes/login';
 import locationRouter from './routes/location';
 
-import testAuthRouter from './routes/testAuth';
-
 import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
@@ -106,8 +104,6 @@ app.use(sessionIdExtractor);
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/location', locationRouter);
-
-app.use('/api/testAuth', testAuthRouter);
 
 // Error handler for errors
 app.use(globalErrorHandler);

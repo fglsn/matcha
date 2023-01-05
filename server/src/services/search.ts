@@ -16,7 +16,7 @@ export const getMatchSuggestions = async (
 		page && limit
 			? await getInitialMatchSuggestions(requestorData, sortingCriteria, filterCriteria, page, limit)
 			: await getInitialMatchSuggestions(requestorData, sortingCriteria, filterCriteria);
-	//console.log('profiles found: ', matchSuggestions.length); //rm later
+
 	const suggestedProfiles: ProfilePublic[] = matchSuggestions.map((profile) => {
 		const distance = getDistance(requestorData.coordinates, profile.coordinates);
 		const age = getAge(String(profile.birthday));
@@ -37,6 +37,5 @@ export const getMatchSuggestions = async (
 		};
 	});
 
-	//console.log(suggestedProfiles); //rm later
 	return suggestedProfiles;
 };

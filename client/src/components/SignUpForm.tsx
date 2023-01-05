@@ -34,13 +34,11 @@ const SignUpForm = () => {
 	const addNewUser = async (newUser: NewUser) => {
 		try {
 			const addedUser = await userService.create(newUser);
-			console.log(`a new user ${addedUser.username} is added`); //rm later
 			alert.success(
 				`User ${addedUser.username} is created! Activation link is sent to email.`
 			);
 			navigate('/login');
 		} catch (err) {
-			console.log('Error in addNewUser (signup form) ' + err); //rm later
 			alert.error(
 				err.response?.data?.error || 'Unable to add a user. Please try again.'
 			);
@@ -129,10 +127,7 @@ const SignUpForm = () => {
 								<Grid item xs={12}>
 									<FormControlLabel
 										control={
-											<Checkbox
-												value="Show password"
-												color="primary"
-											/>
+											<Checkbox value="Show password" color="primary" />
 										}
 										label="Show password"
 										onChange={() => setShow(!showPassword)}

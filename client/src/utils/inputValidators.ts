@@ -4,7 +4,6 @@ export const validateUsername = (username: string) => {
 	if (username.length < 4) {
 		return 'Too short (Length: 4-21 charachters)';
 	}
-	// const usernameRegex = /^[a-zA-Z0-9_\-.]{4,21}$/;
 	const usernameRegex = /^[a-zA-Z0-9_\-.ÄÖäöÅåßÜü]{4,21}$/;
 	if (!usernameRegex.test(username)) {
 		return 'Invalid username';
@@ -16,8 +15,7 @@ export const validatePassword = (password: string) => {
 	if (password.length < 8) {
 		return 'Too short (Length: 8-42 charachters)';
 	}
-	const passwordRegex =
-		/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;
+	const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,42})/;
 	if (!passwordRegex.test(password)) {
 		return 'Password should be at least 8 charachters long, contain at least one uppercase and lowercase letter, number and symbol';
 	}
@@ -57,7 +55,6 @@ export const validateBirthday = (date: dayjs.Dayjs) => {
 		!dayjs(date).isBefore(eighteenYearsAgo) ||
 		!dayjs(date).isAfter(dayjs('01/01/1900'))
 	) {
-		console.log('Incorrect field, user should be at least 18yo'); //rm later
 		return 'Incorrect field, user should be at least 18yo';
 	}
 	return undefined;
@@ -117,7 +114,5 @@ export const validateProfileEditorForm = (
 };
 
 export const validateUpdatePasswordForm = (oldPassword: string, newPassword: string) => {
-	return !validatePassword(oldPassword) && !validatePassword(newPassword)
-		? true
-		: false;
+	return !validatePassword(oldPassword) && !validatePassword(newPassword) ? true : false;
 };

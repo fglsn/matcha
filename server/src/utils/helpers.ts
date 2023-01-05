@@ -1,16 +1,5 @@
 import { Coordinates } from '../types';
 
-export const convertUTCDateToLocalDate = (date: Date): Date => {
-	const newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-
-	const offset = date.getTimezoneOffset() / 60;
-	const hours = date.getHours();
-
-	newDate.setHours(hours - offset);
-
-	return newDate;
-};
-
 export const findDuplicates = (arr: string[]) => {
 	return arr.filter((item, index) => arr.indexOf(item) !== index);
 };

@@ -46,7 +46,6 @@ const UpdatePasswordForm = () => {
 			await profileService.updatePassword({ id, oldPassword, password });
 			successCallback(`Password was changed successfully.`);
 		} catch (err) {
-			console.log('Error in requestUpdatePassword (UpdatePasswordForm) ' + err); //rm later
 			errorCallback(
 				err.response?.data?.error ||
 					'Unable to update password address. Please try again.'
@@ -86,9 +85,7 @@ const UpdatePasswordForm = () => {
 						variant="standard"
 					/>
 					<FormControlLabel
-						control={
-							<Checkbox value="Show current password" color="primary" />
-						}
+						control={<Checkbox value="Show current password" color="primary" />}
 						label="Show current password"
 						onChange={() => setShowOldPassword(!showOldPassword)}
 					/>

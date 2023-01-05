@@ -51,9 +51,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 		setImages(updatedImages);
 	};
 
-	const onInputChange = async (
-		e: React.ChangeEvent<HTMLInputElement>
-	): Promise<void> => {
+	const onInputChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
 		await handleChange(e.target.files);
 		imageIndex > -1 && setImageIndex(-1);
 		if (inputRef.current) inputRef.current.value = '';
@@ -90,7 +88,6 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 			successCallback(`Profile photos were updated!.`);
 			setIsUploading(false);
 		} catch (err) {
-			console.log('Error in uploadPhotos (Photos on Profile) ' + err); //rm later
 			errorCallback(
 				err.response?.data?.error || 'Unable to upload photos. Please try again.'
 			);
@@ -170,9 +167,7 @@ const Photos: React.FC<{ photos: ImageType[] }> = ({ photos }) => {
 							<div>
 								<Photo
 									src={images[i + 1]?.dataURL || placeholder.img}
-									alt={`Profile pic #${i + 1} by ${
-										loggedUser?.username
-									}`}
+									alt={`Profile pic #${i + 1} by ${loggedUser?.username}`}
 									loading="lazy"
 									style={imgStyle}
 								/>

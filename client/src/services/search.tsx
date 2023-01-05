@@ -33,7 +33,11 @@ const setAgeRange = (min: number, max: number) => {
 	return { min, max };
 };
 
-export const getMatchSuggestions = async (sortAndFilter: SortAndFilter, page: number, limit: number): Promise<any> => {
+export const getMatchSuggestions = async (
+	sortAndFilter: SortAndFilter,
+	page: number,
+	limit: number
+): Promise<any> => {
 	const { sort, isReversedOrder } = sortAndFilter.sort;
 	const { distance, age, rating, tags } = sortAndFilter.filter;
 	const distanceRange = setDistanceRange(distance.min, distance.max);

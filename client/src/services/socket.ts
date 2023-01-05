@@ -19,13 +19,7 @@ interface ClientToServerEvents {
 	clear_notifications: () => void;
 	online_query: (
 		user_id: string,
-		callback: ({
-			online,
-			lastActive
-		}: {
-			online: boolean;
-			lastActive: number;
-		}) => void
+		callback: ({ online, lastActive }: { online: boolean; lastActive: number }) => void
 	) => void;
 	auth: { token: string; user_id: number };
 }

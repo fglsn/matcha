@@ -56,12 +56,8 @@ const ReportDialog: React.FC<{
 
 	return (
 		<>
-			<StyledReportButton
-				onClick={loggedUser?.id === id ? undefined : handleClickOpen}
-			>
-				<EmojiFlagsIcon
-					style={{ height: '10px', width: '10px', marginRight: 3 }}
-				/>
+			<StyledReportButton onClick={loggedUser?.id === id ? undefined : handleClickOpen}>
+				<EmojiFlagsIcon style={{ height: '10px', width: '10px', marginRight: 3 }} />
 				Report fake account
 			</StyledReportButton>
 			<Dialog
@@ -77,9 +73,9 @@ const ReportDialog: React.FC<{
 					<DialogContentText>
 						Your report is anonymous. <br />
 						Please note that this action cannot be undone.
-						<br /> This account will be hidden from your search results and
-						you won't recieve any additional notifications from this account
-						nor be able to chat if you're connected.
+						<br /> This account will be hidden from your search results and you
+						won't recieve any additional notifications from this account nor be
+						able to chat if you're connected.
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>

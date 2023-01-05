@@ -14,8 +14,6 @@ export const sessionIdExtractor = (req: any, _res: any, next: any) => {
 	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
 		const sessionId: string = authorization.substring(7);
 		req.sessionId = sessionId;
-
-		// console.log(req.sessionId); //rm later
 	}
 	next();
 };

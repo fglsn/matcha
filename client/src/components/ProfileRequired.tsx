@@ -70,9 +70,7 @@ const withProfileRequired =
 
 		if (loggedUser?.complete === true) return <Component {...(props as P)} />;
 		else if (completenessError)
-			return (
-				<Alert severity="error">Error loading page, please try again...</Alert>
-			);
+			return <Alert severity="error">Error loading page, please try again...</Alert>;
 		else return <LoadingIcon />;
 	};
 

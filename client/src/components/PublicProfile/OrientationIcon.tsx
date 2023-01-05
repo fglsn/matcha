@@ -2,13 +2,7 @@ import TransgenderIcon from '@mui/icons-material/Transgender';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 
-const OrientationIcon = ({
-	orientation,
-	gender
-}: {
-	orientation: string;
-	gender: string;
-}) => {
+const OrientationIcon = ({ orientation, gender }: { orientation: string; gender: string }) => {
 	switch (orientation) {
 		case 'straight':
 			if (gender === 'male') return <FemaleIcon color="secondary" />;

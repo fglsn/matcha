@@ -42,10 +42,6 @@ export const reducer = (state: State, action: Action): State => {
 				return {
 					...state,
 					loggedUser: action.payload
-					// loggedUser: {
-					// 	...state.loggedUser,
-					// 	[action.payload.id]: action.payload
-					// }
 				};
 			else {
 				return { ...state, loggedUser: undefined };

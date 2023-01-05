@@ -5,20 +5,13 @@ import { getCoordinates, checkIsLocationEnabled } from '../../utils/location';
 import { LightTooltip } from './BasicInfoForm';
 import profileService from '../../services/profile';
 
-const DraggableMarker = ({
-	coords,
-	setCoordinates
-}: {
-	coords: any;
-	setCoordinates: any;
-}) => {
+const DraggableMarker = ({ coords, setCoordinates }: { coords: any; setCoordinates: any }) => {
 	const markerRef = useRef(null);
 	const eventHandlers = useMemo(
 		() => ({
 			dragend() {
 				const marker: any = markerRef.current;
 				if (marker != null) {
-					console.log(marker.getLatLng()); //rm later
 					const latLng = marker.getLatLng();
 					setCoordinates([latLng.lat, latLng.lng]);
 				}
@@ -69,7 +62,8 @@ const Location = ({
 	const getGeoPosition = useCallback(
 		async (coordinates: [number, number]) => {
 			try {
-				const locationString = await profileService.requestLocation(coordinates) || '';
+				const locationString =
+					(await profileService.requestLocation(coordinates)) || '';
 				setLocationString(locationString);
 			} catch (err) {
 				console.log(err); //rm later

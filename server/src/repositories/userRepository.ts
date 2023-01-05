@@ -443,7 +443,6 @@ const getInitialMatchSuggestions = async (
 	const sexualPreferenceStr = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
 	const sortingCriteriaStr = generateOrderByQueryString(sortingCriteria);
 	const filterCriteriaStr = generateFilterQueryString(filterCriterias);
-	// console.log('page : ', page, ' pageSize: ', pageSize); //rm later
 
 	let offset: number;
 	let limit: number;
@@ -454,7 +453,6 @@ const getInitialMatchSuggestions = async (
 		offset = 0;
 		limit = 4;
 	}
-	// console.log('offset : ', offset, ' limit: ', limit); //rm later
 
 	const query = {
 		text:
@@ -472,7 +470,8 @@ const getInitialMatchSuggestions = async (
 			filterCriteriaStr +
 			`) 
 				order by ` +
-			sortingCriteriaStr + ` limit $5 offset $6`,
+			sortingCriteriaStr +
+			` limit $5 offset $6`,
 		values: [userId, lat, lon, tags, limit, offset]
 	};
 	// console.log(query.text); //rm later

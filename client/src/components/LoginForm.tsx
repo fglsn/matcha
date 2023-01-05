@@ -9,7 +9,6 @@ import { AlertContext } from './AlertProvider';
 import { useField } from '../hooks/useField';
 import userService from '../services/users';
 import loginService from '../services/login';
-// import { socket } from '../services/socket';
 
 const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
@@ -43,7 +42,6 @@ const LoginForm = () => {
 					navigate('/login');
 					alert.success('Account activated successfully!');
 				} catch (err) {
-					console.log('Error in activate account (useEffect form) ' + err); //rm later
 					alert.error(err.response?.data?.error);
 					navigate('/login');
 				}
@@ -62,20 +60,11 @@ const LoginForm = () => {
 
 		try {
 			const loggedInUser = await loginService.login(userToLogin);
-			console.log(`User ${loggedInUser.username} logged in.`); //rm later
 			alert.success(`Logged in successfuly. Welcome!`);
 			dispatch(setLoggedUser(loggedInUser));
-			// socket.auth = {
-			// 	sessionId: loggedInUser.token,
-			// 	user_id: loggedInUser.id,
-			// };
-			// socket.connect();
 			navigate('/');
 		} catch (err) {
-			console.log('Error in handle login (login form) ' + err); //rm later
-			alert.error(
-				err.response?.data?.error || 'Unable to login. Please try again.'
-			);
+			alert.error(err.response?.data?.error || 'Unable to login. Please try again.');
 		}
 	};
 
@@ -95,12 +84,7 @@ const LoginForm = () => {
 						<Typography component="h1" variant="h5">
 							Sign in
 						</Typography>
-						<Box
-							component="form"
-							noValidate
-							sx={{ mt: 1 }}
-							onSubmit={handleLogin}
-						>
+						<Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleLogin}>
 							<TextField
 								{...username}
 								margin="normal"
@@ -118,9 +102,7 @@ const LoginForm = () => {
 								autoComplete="current-password"
 							/>
 							<FormControlLabel
-								control={
-									<Checkbox value="Show password" color="primary" />
-								}
+								control={<Checkbox value="Show password" color="primary" />}
 								label="Show password"
 								onChange={() => setShow(!showPassword)}
 							/>
