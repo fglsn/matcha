@@ -1,5 +1,7 @@
 //prettier-ignore
 import { Avatar, Box, Button, TextField, FormControlLabel, Checkbox, Grid, Container, Link, Typography, Paper, styled } from '@mui/material';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 //prettier-ignore
 import { validateEmail, validateFirstame, validateLastname, validatePassword, validateUsername, validateSignUpForm } from '../utils/inputValidators';
 import { useContext, useState } from 'react';
@@ -124,13 +126,25 @@ const SignUpForm = () => {
 										autoComplete="new-password"
 									/>
 								</Grid>
-								<Grid item xs={12}>
+								<Grid item xs={12} sx={{ marginLeft: '5px' }}>
 									<FormControlLabel
-										control={
-											<Checkbox value="Show password" color="primary" />
+										label={
+											<Box component="div" fontSize={'0.9rem'}>
+												Show password
+											</Box>
 										}
-										label="Show password"
-										onChange={() => setShow(!showPassword)}
+										control={
+											<Checkbox
+												color="primary"
+												onChange={() => setShow(!showPassword)}
+												icon={
+													<VisibilityOffOutlinedIcon
+														fontSize={'small'}
+													/>
+												}
+												checkedIcon={<VisibilityOutlinedIcon />}
+											/>
+										}
 									/>
 								</Grid>
 							</Grid>
@@ -145,7 +159,7 @@ const SignUpForm = () => {
 									type="submit"
 									fullWidth
 									variant="contained"
-									sx={{ mt: 3, mb: 2 }}
+									sx={{ mt: 2, mb: 2 }}
 								>
 									Sign Up
 								</Button>
@@ -155,7 +169,7 @@ const SignUpForm = () => {
 									fullWidth
 									disabled
 									variant="contained"
-									sx={{ mt: 3, mb: 2 }}
+									sx={{ mt: 2, mb: 2 }}
 								>
 									Sign Up
 								</Button>

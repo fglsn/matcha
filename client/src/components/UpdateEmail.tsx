@@ -26,7 +26,8 @@ const UpdateEmail = () => {
 			}
 		};
 		validateUpdateToken();
-	}, [errorCallback, navigate, successCallback, updateToken]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return <></>;
 };
