@@ -393,18 +393,6 @@ const generateMessage = async (acting_user_id: string, type: string) => {
 		default:
 			return assertNever(type);
 	}
-	// switch (type) {
-	// 	case 'like':
-	// 		return { type: type, message: `@${username} liked your profile!` };
-	// 	case 'dislike':
-	// 		return { type: type, message: `@${username} disliked your profile!` };
-	// 	case 'visit':
-	// 		return { type: type, message: `@${username} visited your profile!` };
-	// 	case 'match':
-	// 		return { type: type, message: `You matched with @${username}!` };
-	// 	default:
-	// 		return assertNever(type);
-	// }
 };
 
 export const getNotifications = async (id: string): Promise<Notifications> => {
@@ -477,11 +465,6 @@ export const addChatMessage = async (matchId: string, userId: string, msg: strin
 export const getUserChats = async (userId: string): Promise<ChatHeader[]> => {
 	const matchEntries = await getMatchesByUserId(userId);
 	if (!matchEntries.length) return [];
-	// const matchUsersIds = matchEntries
-	// 	.flatMap((entry) => {
-	// 		return [entry.matchedUserIdOne, entry.matchedUserIdTwo];
-	// 	})
-	// 	.filter((id) => userId !== id);
 
 	const chats = await Promise.all(
 		matchEntries.map(async (matchEntry) => {
