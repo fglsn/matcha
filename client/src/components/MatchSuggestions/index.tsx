@@ -29,7 +29,7 @@ const defaultFilterCriteria: FilterCriteriaInternal = {
 	tags: { min: 0, max: 5 }
 };
 
-const Main = () => {
+const MatchSuggestions = () => {
 	const [{ loggedUser }] = useStateValue();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [sortAndFilter, setSortAndFilter] = useState<SortAndFilter>({
@@ -144,4 +144,4 @@ const Main = () => {
 	);
 };
 
-export default withProfileRequired(Main);
+export default withProfileRequired(MatchSuggestions);
