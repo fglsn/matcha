@@ -31,9 +31,6 @@ const UpdateEmailForm = () => {
 			await profileService.requestUpdateEmail({ id, email });
 			successCallback(`Activation link sent to new email.`);
 		} catch (err) {
-			console.log(
-				'Error in requestUpdateEmailAndHandleError (UpdateEmailForm) ' + err
-			); //rm later
 			errorCallback(
 				err.response?.data?.error ||
 					'Unable to update email address. Please try again.'
@@ -59,8 +56,8 @@ const UpdateEmailForm = () => {
 				<DialogContent>
 					<DialogContentText>
 						Activation link will be sent to the email address provided. <br />
-						Please follow the link from our message in order to set your new
-						email address.
+						Please follow the link from our message in order to set your new email
+						address.
 					</DialogContentText>
 					<TextField
 						{...email}

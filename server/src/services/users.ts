@@ -1,51 +1,32 @@
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 //prettier-ignore
 import { addPasswordResetRequest, findPasswordResetRequestByUserId, removePasswordResetRequest, removePasswordResetRequestByUserId } from '../repositories/passwordResetRequestRepository';
 //prettier-ignore
 import { addUpdateEmailRequest, findUpdateEmailRequestByUserId, removeUpdateEmailRequest, removeUpdateEmailRequestByUserId } from '../repositories/updateEmailRequestRepository';
 //prettier-ignore
-import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById, getUserEntry, getUserEntryForChat } from '../repositories/userRepository';
-import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
+import { addNewUser, findUserByActivationCode, setUserAsActive, findUserByEmail, updateUserPassword, updateUserEmail, getPasswordHash, isUserById, getCompletenessByUserId, userHasPhotos, 
+	userDataIsNotNULL, updateCompletenessByUserId, getUserDataByUserId, increaseReportCount, updateFameRatingByUserId, getFameRatingByUserId, findUsernameById, getUserEntry } from '../repositories/userRepository';
+//prettier-ignore
+import { Chat, ChatHeader, ChatMsg, EmailUpdateRequest, LikeAndMatchStatus, MessageNotification, NewUser, Notifications, PasswordResetRequest, Photo, ProfilePublic, User, UserData, UserEntry } from '../types';
+//prettier-ignore
+import { addMatchEntry, checkMatchEntry, checkMatchEntryWithReturn, getMatchByMatchId, getMatchesByUserId, removeMatchEntryWithReturn } from '../repositories/matchesRepository';
+import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
+import { addBlockEntry, checkBlockEntry, getBlockedUsersByBlockingUserId, removeBlockEntry } from '../repositories/blockEntriesRepository';
+import { addReportEntry, checkReportEntry, getReportEntriesByReportingUserId } from '../repositories/reportEntriesRepository';
+import { deleteNotificationsByMatchId, getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
 import { clearSessionsByUserId, updateSessionEmailByUserId } from '../repositories/sessionRepository';
+import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
+import { getPhotosByUserId, updatePhotoByUserId } from '../repositories/photosRepository';
+import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
+import { addMessageEntry, getMessagesByID } from '../repositories/chatRepository';
 import { addEntryToVisitHistory } from '../repositories/visitHistoryRepository';
-import {
-	Chat,
-	ChatHeader,
-	ChatMsg,
-	EmailUpdateRequest,
-	LikeAndMatchStatus,
-	MessageNotification,
-	NewUser,
-	Notifications,
-	PasswordResetRequest,
-	Photo,
-	ProfilePublic,
-	User,
-	UserData,
-	UserEntryForChat
-} from '../types';
+import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
+import { assertNever, getAge, getDistance } from '../utils/helpers';
 import { requestCoordinatesByIp } from './location';
 import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
-import { assertNever, getAge, getDistance } from '../utils/helpers';
-import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
-import {
-	addMatchEntry,
-	checkMatchEntry,
-	checkMatchEntryWithReturn,
-	getMatchByMatchId,
-	getMatchesByUserId,
-	removeMatchEntryWithReturn
-} from '../repositories/matchesRepository';
-import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
-import { addBlockEntry, checkBlockEntry, getBlockedUsersByBlockingUserId, removeBlockEntry } from '../repositories/blockEntriesRepository';
-import { addReportEntry, checkReportEntry, getReportEntriesByReportingUserId } from '../repositories/reportEntriesRepository';
-import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
 import { io } from '../app';
-import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
-import { addMessageEntry, getMessagesByID } from '../repositories/chatRepository';
-import { deleteNotificationsByMatchId, getChatNotificationsByReceiver } from '../repositories/chatNotificationsRepostiory';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 //create
 export const createHashedPassword = async (passwordPlain: string): Promise<string> => {
@@ -181,10 +162,6 @@ export const changeUserEmail = async (emailResetRequest: EmailUpdateRequest): Pr
 };
 
 export const updateUserPhotos = async (images: Photo[], userId: string) => {
-	// await dropPhotosByUserId(userId);
-	// for (let i = 0; i < images.length; i++) {
-	// 	await addPhotoByUserId(userId, images[i]);
-	// }
 	const photos = await getPhotosByUserId(userId);
 	const photosCount = photos.images ? photos.images.length : 0;
 	await updateFameRatingByUserId(userId, (-photosCount + images.length) * 2);
@@ -286,18 +263,6 @@ export const likeUser = async (profileId: string, requestorId: string): Promise<
 		};
 
 		await Promise.all([updateFameOfVisited(), updateFameOfVisitor()]);
-
-		// if ((await getFameRatingByUserId(requestorId)) >= 75) {
-		// 	await updateFameRatingByUserId(profileId, 2);
-		// } else if ((await getFameRatingByUserId(requestorId)) <= 25) {
-		// 	await updateFameRatingByUserId(profileId, -2);
-		// }
-
-		// if ((await getFameRatingByUserId(profileId)) >= 75) {
-		// 	await updateFameRatingByUserId(requestorId, 2);
-		// } else if ((await getFameRatingByUserId(profileId)) <= 25) {
-		// 	await updateFameRatingByUserId(requestorId, -2);
-		// }
 	}
 };
 
@@ -526,7 +491,7 @@ export const getUserChats = async (userId: string): Promise<ChatHeader[]> => {
 				.slice(1)
 				.find((id) => id !== userId);
 			if (!matchedUserId) throw new AppError(`Failed to identify matched user in chat`, 500);
-			const matchedUser = await getUserEntryForChat(matchedUserId);
+			const matchedUser = await getUserEntry(matchedUserId);
 			if (!matchedUser) throw new AppError(`Failed to get matched user information (in chat)`, 500);
 			const [lastMsg] = await getMessagesByID(matchedUserId, userId, 1, 1);
 			return { matchId: matchEntry.matchId, matchedUser: matchedUser, lastMessage: lastMsg };
@@ -541,7 +506,7 @@ export const getChatNotifications = async (userId: string): Promise<MessageNotif
 	return chatNotifications;
 };
 
-export const getChatUsers = async (matchId: string, userId: string): Promise<UserEntryForChat[]> => {
+export const getChatUsers = async (matchId: string, userId: string): Promise<UserEntry[]> => {
 	const match = await getMatchByMatchId(matchId);
 	if (!match) throw new AppError(`Attempt of unauthorised access to chat`, 403);
 	const matchedUsersArr = Object.values(match).slice(1);
@@ -550,7 +515,7 @@ export const getChatUsers = async (matchId: string, userId: string): Promise<Use
 
 	if (!senderId || !receiverId) throw new AppError(`Attempt of unauthorised access to chat`, 403);
 
-	const [sender, receiver] = await Promise.all([getUserEntryForChat(senderId), getUserEntryForChat(receiverId)]);
+	const [sender, receiver] = await Promise.all([getUserEntry(senderId), getUserEntry(receiverId)]);
 
 	if (!sender || !receiver) throw new AppError('Failed to get chat users data', 500);
 

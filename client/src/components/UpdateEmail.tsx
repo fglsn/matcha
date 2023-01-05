@@ -18,7 +18,6 @@ const UpdateEmail = () => {
 					successCallback('Email was successfully updated!');
 					navigate('/');
 				} catch (err) {
-					console.log(`Error in validateUpdateToken (UpdateEmail): ${err}`); //rm later
 					errorCallback('Invalid update link. Please try again.');
 					navigate('/');
 				}

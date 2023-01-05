@@ -7,9 +7,7 @@ export const useControlledField = (
 ) => {
 	let [value, setValue] = useState<string | undefined>(fetchedValue);
 
-	const onChange = (event: {
-		target: { value: SetStateAction<string | undefined> };
-	}) => {
+	const onChange = (event: { target: { value: SetStateAction<string | undefined> } }) => {
 		setValue(event.target.value);
 	};
 

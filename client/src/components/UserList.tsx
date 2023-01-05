@@ -44,9 +44,7 @@ const UserList: React.FC<{
 	} = useServiceCall(async () => idList && (await getUserEntries(idList)), []);
 
 	if (userEntriesError)
-		return (
-			<Alert severity="error">Error loading user list, please try again...</Alert>
-		);
+		return <Alert severity="error">Error loading user list, please try again...</Alert>;
 
 	if (!userEntriesData || !userEntriesData.length) {
 		return (

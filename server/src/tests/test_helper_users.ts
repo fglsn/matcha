@@ -185,11 +185,11 @@ export const profileData6 = {
 	username: 'matcha6',
 	firstname: 'lorem',
 	lastname: 'lorem',
-	birthday: new Date('1998-03-22').toISOString(),
+	birthday: new Date('1954-03-22').toISOString(),
 	gender: 'female',
 	orientation: 'gay',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'BBQ', 'Drummer'],
+	tags: ['BBQ', 'Drummer'],
 	coordinates: { lat: 60.41395589336234, lon: 24.708251953125004 }, //30km
 	location: 'Helsinki, Finland',
 	fameRating: 35
@@ -203,10 +203,10 @@ export const profileData7 = {
 	gender: 'female',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Reading', 'Singing', 'Poetry'],
+	tags: ['Reading', 'Singing', 'Poetry', 'Sauna', 'Pets'],
 	coordinates: { lat: 60.17874561927682, lon: 24.923508597420668 }, //2km
 	location: 'Helsinki, Finland',
-	fameRating: 100
+	fameRating: 47
 };
 
 export const profileData8 = {
@@ -217,7 +217,7 @@ export const profileData8 = {
 	gender: 'male',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'Drummer', 'Pets', 'Cinema'],
+	tags: ['Sauna', 'Drummer', 'Pets', 'Cinema', 'Reading'],
 	coordinates: { lat: 60.17874561927682, lon: 24.923508597420668 }, //6km
 	location: 'Helsinki, Finland',
 	fameRating: 75
@@ -227,11 +227,11 @@ export const profileData9 = {
 	username: 'matcha',
 	firstname: 'lorem',
 	lastname: 'lorem',
-	birthday: new Date('1998-03-22').toISOString(),
+	birthday: new Date('1988-03-22').toISOString(),
 	gender: 'female',
 	orientation: 'gay',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'BBQ', 'Drummer'],
+	tags: ['Sauna', 'BBQ', 'Drummer', 'Pets', 'Singing'],
 	coordinates: { lat: 60.44640011398113, lon: 24.367675781250004 }, //45km
 	location: 'Helsinki, Finland',
 	fameRating: 35
@@ -241,11 +241,11 @@ export const profileData10 = {
 	username: 'matcha10',
 	firstname: 'lorem',
 	lastname: 'lorem',
-	birthday: new Date('1998-03-22').toISOString(),
+	birthday: new Date('1978-03-22').toISOString(),
 	gender: 'female',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Reading', 'Singing', 'Poetry'],
+	tags: ['Reading', 'Singing', 'Poetry', 'Sauna', 'Pets'],
 	coordinates: { lat: 60.44640011398113, lon: 24.367675781250004 }, //45km
 	location: 'Helsinki, Finland',
 	fameRating: 100
@@ -323,9 +323,9 @@ export const publicProfile6 = {
 	gender: 'female',
 	orientation: 'gay',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'BBQ', 'Drummer'],
+	tags: ['BBQ', 'Drummer'],
 	location: 'Helsinki, Finland',
-	fameRating: 45
+	fameRating: 44
 };
 
 export const publicProfile7 = {
@@ -335,9 +335,9 @@ export const publicProfile7 = {
 	gender: 'female',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Reading', 'Singing', 'Poetry'],
+	tags: ['Reading', 'Singing', 'Poetry', 'Sauna', 'Pets'],
 	location: 'Helsinki, Finland',
-	fameRating: 45
+	fameRating: 47
 };
 
 export const publicProfile8 = {
@@ -347,9 +347,9 @@ export const publicProfile8 = {
 	gender: 'male',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'Drummer', 'Pets', 'Cinema'],
+	tags: ['Sauna', 'Drummer', 'Pets', 'Cinema', 'Reading'],
 	location: 'Helsinki, Finland',
-	fameRating: 46
+	fameRating: 47
 };
 
 export const publicProfile9 = {
@@ -359,9 +359,9 @@ export const publicProfile9 = {
 	gender: 'female',
 	orientation: 'gay',
 	bio: 'born sleepy',
-	tags: ['Sauna', 'BBQ', 'Drummer'],
+	tags: ['Sauna', 'BBQ', 'Drummer', 'Pets', 'Singing'],
 	location: 'Helsinki, Finland',
-	fameRating: 45
+	fameRating: 47
 };
 
 export const publicProfile10 = {
@@ -371,7 +371,7 @@ export const publicProfile10 = {
 	gender: 'female',
 	orientation: 'bi',
 	bio: 'born sleepy',
-	tags: ['Reading', 'Singing', 'Poetry'],
+	tags: ['Reading', 'Singing', 'Poetry', 'Sauna', 'Pets'],
 	location: 'Helsinki, Finland',
-	fameRating: 45
+	fameRating: 47
 };

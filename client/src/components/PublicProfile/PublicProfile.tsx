@@ -58,7 +58,6 @@ const SpaceBetween = styled('div')`
 	justify-content: space-between;
 `;
 
-//this shoud get profileData as props to make it reusable! (profileData: ProfilePublic)
 const PublicProfile = ({
 	profileData,
 	onAction
@@ -82,17 +81,18 @@ const PublicProfile = ({
 	const {
 		data: likeAndMatchStatusData,
 		error: likeAndMatchStatusError
-	}: { data: LikeAndMatchStatus | undefined; error: Error | undefined } =
-		useServiceCall(
-			async () => id && (await getLikeAndMatchStatus(id)),
-			[isLiked, id]
-		);
+	}: { data: LikeAndMatchStatus | undefined; error: Error | undefined } = useServiceCall(
+		async () => id && (await getLikeAndMatchStatus(id)),
+		[isLiked, id]
+	);
 
 	const {
 		data: blockStatusData,
 		error: blockStatusError
-	}: { data: { block: boolean } | undefined; error: Error | undefined } =
-		useServiceCall(async () => id && (await getBlockStatus(id)), [isBlocked, id]);
+	}: { data: { block: boolean } | undefined; error: Error | undefined } = useServiceCall(
+		async () => id && (await getBlockStatus(id)),
+		[isBlocked, id]
+	);
 
 	useEffect(() => {
 		if (likeAndMatchStatusData !== undefined) {
@@ -105,11 +105,7 @@ const PublicProfile = ({
 	}, [blockStatusData, likeAndMatchStatusData, setIsLiked, setIsMatch]);
 
 	if (photosError || likeAndMatchStatusError || blockStatusError)
-		return (
-			<Alert severity="error">
-				Error loading profile page, please try again...
-			</Alert>
-		);
+		return <Alert severity="error">Error loading profile page, please try again...</Alert>;
 
 	if (!photosData || !likeAndMatchStatusData || !blockStatusData) {
 		return <LoadingIcon />;
@@ -123,9 +119,7 @@ const PublicProfile = ({
 						<StyledAlert severity="info" color="warning">
 							<Typography variant="h6">
 								You have a match!{' '}
-								<StyledLink
-									to={`/chats/${likeAndMatchStatusData.matchId}`}
-								>
+								<StyledLink to={`/chats/${likeAndMatchStatusData.matchId}`}>
 									Open Chat
 								</StyledLink>
 							</Typography>
@@ -147,7 +141,6 @@ const PublicProfile = ({
 						id={id}
 						username={profileData.username}
 						setIsMatch={(value) => {
-							// onAction && onAction(profileData); //rm later
 							setIsMatch(value);
 						}}
 						isLiked={isLiked}

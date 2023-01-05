@@ -156,8 +156,8 @@ returns int as $dist$
 			dist = dist * 60 * 1.1515 * 1.609344;
 
 			if dist < 2 then dist = 2; end if;
-
-			return dist::int;
+			
+			return floor(dist);
 		end if;
 	end;
 $dist$ language plpgsql;

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AlertStatus } from "../types";
+import React, { useEffect, useRef, useState } from 'react';
+import { AlertStatus } from '../types';
 
 type AlertContextValue = {
 	alert: AlertStatus;
@@ -8,17 +8,15 @@ type AlertContextValue = {
 	error: (text: string) => void;
 };
 
-export const AlertContext =
-	React.createContext<AlertContextValue>({
-		alert: AlertStatus.None,
-		alertText: undefined,
-		success: () => { },
-		error: () => { }
-	});
+export const AlertContext = React.createContext<AlertContextValue>({
+	alert: AlertStatus.None,
+	alertText: undefined,
+	success: () => {},
+	error: () => {}
+});
 
 const AlertProvider = ({ children }: any) => {
-
-	const [alert, setAlert] = useState(AlertStatus.None)
+	const [alert, setAlert] = useState(AlertStatus.None);
 	const [alertText, setAlertText] = useState<string | undefined>(undefined);
 
 	const timerRef = useRef<undefined | number>(undefined);
@@ -27,7 +25,7 @@ const AlertProvider = ({ children }: any) => {
 		// Clear the interval when the component unmounts
 		return () => {
 			if (timerRef.current) {
-				window.clearTimeout(timerRef.current)
+				window.clearTimeout(timerRef.current);
 			}
 		};
 	}, []);
@@ -40,7 +38,7 @@ const AlertProvider = ({ children }: any) => {
 			setAlertText(undefined);
 			setAlert(AlertStatus.None);
 		}, 1000);
-	}
+	};
 
 	return (
 		<AlertContext.Provider
@@ -48,13 +46,11 @@ const AlertProvider = ({ children }: any) => {
 				alert,
 				alertText,
 				success: (text: string) => {
-					// window.scrollTo(0, 0);
 					setAlertText(text);
 					setAlert(AlertStatus.Success);
 					runAlert();
 				},
 				error: (text: string) => {
-					// window.scrollTo(0, 0);
 					setAlertText(text);
 					setAlert(AlertStatus.Error);
 					runAlert();
@@ -63,7 +59,7 @@ const AlertProvider = ({ children }: any) => {
 		>
 			{children}
 		</AlertContext.Provider>
-	)
-}
+	);
+};
 
 export default AlertProvider;

@@ -11,12 +11,12 @@ test('returns consistent value', () => {
 
 	const third = getDistance({ lat: 60.16218735562509, lon: 24.905147552490238 }, { lat: 0, lon: 0 });
 
-	expect(result).toBe(7025);
-	expect(second).toBe(7025);
-	expect(third).toBe(7025);
+	expect(result).toBe(7024);
+	expect(second).toBe(7024);
+	expect(third).toBe(7024);
 });
 
 test('works with negative', () => {
 	const result = getDistance({ lat: -60.16218735562509, lon: -24.905147552490238 }, { lat: 0, lon: 0 });
-	expect(result).toEqual(7025);
+	expect(result).toEqual(7024);
 });

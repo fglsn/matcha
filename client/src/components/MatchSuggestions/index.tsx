@@ -2,7 +2,7 @@
 import { FilterCriteriaInternal, ProfilePublic, SortAndFilter, SortingCriteriaInternal } from '../../types';
 //prettier-ignore
 import { Alert, Box, Button, Container, styled } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useStateValue } from '../../state';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getMatchSuggestions } from '../../services/search';
@@ -29,7 +29,7 @@ const defaultFilterCriteria: FilterCriteriaInternal = {
 	tags: { min: 0, max: 5 }
 };
 
-const Main = () => {
+const MatchSuggestions = () => {
 	const [{ loggedUser }] = useStateValue();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [sortAndFilter, setSortAndFilter] = useState<SortAndFilter>({
@@ -37,6 +37,9 @@ const Main = () => {
 		filter: defaultFilterCriteria
 	});
 	const [filteredIds, setFilteredIds] = useState<string[]>([]);
+	const [profiles, setProfiles] = useState<ProfilePublic[]>([]);
+	const [pageNumber, setPageNumber] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 
 	const togglePopper = (event: React.MouseEvent<HTMLElement>) =>
 		setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -46,21 +49,54 @@ const Main = () => {
 	const open = Boolean(anchorEl);
 	const id = open ? 'popper' : undefined;
 
-	const handleOnChange = (newSortAndFilter: SortAndFilter) => {
-		setSortAndFilter(newSortAndFilter);
-		setFilteredIds([]);
-	};
-
 	const {
 		data: matchSuggestionsData,
-		error: matchSuggestionsError
+		error: matchSuggestionsError,
+		loading: isLoading
 	}: {
 		data: ProfilePublic[];
 		error: Error | undefined;
+		loading: boolean;
 	} = useServiceCall(
-		async () => loggedUser && (await getMatchSuggestions(sortAndFilter)),
-		[sortAndFilter]
+		async () =>
+			loggedUser && (await getMatchSuggestions(sortAndFilter, pageNumber, 4)),
+		[sortAndFilter, pageNumber]
 	);
+
+	const handleOnChange = (newSortAndFilter: SortAndFilter) => {
+		setPageNumber(1);
+		setFilteredIds([]);
+		setSortAndFilter(newSortAndFilter);
+		setProfiles([]);
+	};
+
+	const observer = useRef<IntersectionObserver | null>(null);
+	const lastDisplayedProfileRef = useCallback(
+		(node) => {
+			if (isLoading) return;
+			if (observer.current) observer.current.disconnect();
+			observer.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting && hasMore) {
+					setPageNumber((prevPageNumber) => prevPageNumber + 1);
+				}
+			});
+			if (node) observer.current.observe(node);
+		},
+		[isLoading, hasMore]
+	);
+
+	useEffect(() => {
+		if (matchSuggestionsData) {
+			if (matchSuggestionsData.length === 0) {
+				setHasMore(false);
+			} else {
+				setProfiles((prevProfiles) => {
+					return [...new Set([...prevProfiles, ...matchSuggestionsData])];
+				});
+				setHasMore(matchSuggestionsData.length > 0);
+			}
+		}
+	}, [matchSuggestionsData, setProfiles]);
 
 	if (matchSuggestionsError)
 		return <Alert severity="error">Error loading page, please try again...</Alert>;
@@ -88,18 +124,24 @@ const Main = () => {
 				</Box>
 			</ClickAwayListener>
 			<Container sx={{ mb: 5 }}>
-				{matchSuggestionsData
+				{profiles
 					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
-					.map((profile) => (
-						<PublicProfile
-							profileData={profile}
-							key={profile.id}
-							onAction={(p) => setFilteredIds([...filteredIds, p.id])}
-						/>
+					.map((profile, i) => (
+						<Box
+							key={i}
+							{...(profiles.length === i + 1
+								? { ref: lastDisplayedProfileRef }
+								: {})}
+						>
+							<PublicProfile
+								profileData={profile}
+								onAction={(p) => setFilteredIds([...filteredIds, p.id])}
+							/>
+						</Box>
 					))}
 			</Container>
 		</StyledMain>
 	);
 };
 
-export default withProfileRequired(Main);
+export default withProfileRequired(MatchSuggestions);

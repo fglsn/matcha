@@ -30,14 +30,12 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
 
 		try {
 			await userService.resetPassword(token, password.value);
-			console.log('Password changed successfully!'); //rm later
 			alert.success('Password changed successfully!');
 			navigate('/login');
 		} catch (err) {
-			console.log(
-				`Error in handleResetPassword (ResetPasswordForm): ${err} `
-			); //rm later
-			alert.error(err.response?.data?.error || 'Unable to reset password. Please try again.');
+			alert.error(
+				err.response?.data?.error || 'Unable to reset password. Please try again.'
+			);
 			navigate('/forgot_password');
 		}
 	};
@@ -80,12 +78,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
 							autoComplete="current-password"
 						/>
 						<FormControlLabel
-							control={
-								<Checkbox
-									value="Show password"
-									color="primary"
-								/>
-							}
+							control={<Checkbox value="Show password" color="primary" />}
 							label="Show password"
 							onChange={() => setShow(!showPassword)}
 						/>

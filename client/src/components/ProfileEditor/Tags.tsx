@@ -229,9 +229,7 @@ const Tags = ({
 											sx={{ m: 0.4 }}
 											key={tag}
 											color="primary"
-											variant={
-												isSelected(tag) ? 'filled' : 'outlined'
-											}
+											variant={isSelected(tag) ? 'filled' : 'outlined'}
 											label={tag}
 											onClick={handleSelect(tag)}
 											onDelete={
@@ -244,9 +242,7 @@ const Tags = ({
 										<Chip
 											sx={{ m: 0.4 }}
 											key={tag}
-											color={
-												isSelected(tag) ? 'primary' : 'default'
-											}
+											color={isSelected(tag) ? 'primary' : 'default'}
 											variant="filled"
 											label={tag}
 											onDelete={

@@ -196,6 +196,8 @@ export type UserEntry = {
 	id: string;
 	username: string;
 	avatar: string;
+	firstname: string;
+	age: number;
 };
 
 export type NotificationQueue = {
@@ -248,17 +250,9 @@ export type Chat = {
 
 export type ChatCallback = ({ messages }: Chat) => void;
 
-export type UserEntryForChat = {
-	id: string;
-	username: string;
-	firstname: string;
-	age: number;
-	avatar: string;
-};
-
 export type ChatHeader = {
 	matchId: string;
-	matchedUser: UserEntryForChat;
+	matchedUser: UserEntry;
 	lastMessage: ChatMsg;
 };
 

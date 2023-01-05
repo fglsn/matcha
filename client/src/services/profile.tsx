@@ -131,10 +131,7 @@ export const unblockProfile = async (userId: string) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.delete(
-			`${apiBaseUrl}/users/${userId}/block`,
-			config
-		);
+		const response = await axios.delete(`${apiBaseUrl}/users/${userId}/block`, config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
@@ -162,10 +159,7 @@ export const checkProfileCompleteness = async (userId: string) => {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
-		const response = await axios.get(
-			`${apiBaseUrl}/users/${userId}/complete`,
-			config
-		);
+		const response = await axios.get(`${apiBaseUrl}/users/${userId}/complete`, config);
 		return response.data;
 	} catch (err) {
 		handleAxiosError(err);
@@ -183,13 +177,7 @@ export const uploadPhotos = async (userId: string, images: Images) => {
 	}
 };
 
-export const requestUpdateEmail = async ({
-	id,
-	email
-}: {
-	id: string;
-	email: string;
-}) => {
+export const requestUpdateEmail = async ({ id, email }: { id: string; email: string }) => {
 	try {
 		const config = {
 			headers: { Authorization: getAuthHeader() }
@@ -239,11 +227,7 @@ export const requestLocation = async (coordinates: number[] | undefined) => {
 		};
 		let response;
 
-		response = await axios.post<string>(
-			`${apiBaseUrl}/location`,
-			{ coordinates },
-			config
-		);
+		response = await axios.post<string>(`${apiBaseUrl}/location`, { coordinates }, config);
 
 		return response.data;
 	} catch (err) {

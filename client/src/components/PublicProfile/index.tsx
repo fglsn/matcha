@@ -8,7 +8,7 @@ import PublicProfile from './PublicProfile';
 import LoadingIcon from '../LoadingIcon';
 
 const PublicProfilePage = () => {
-	const { id } = useParams(); // <-- this to another component
+	const { id } = useParams();
 
 	const {
 		data: profileData,
@@ -19,11 +19,7 @@ const PublicProfilePage = () => {
 	);
 
 	if (profileError)
-		return (
-			<Alert severity="error">
-				Error loading profile page, please try again...
-			</Alert>
-		);
+		return <Alert severity="error">Error loading profile page, please try again...</Alert>;
 
 	if (!profileData) {
 		return <LoadingIcon />;

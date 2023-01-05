@@ -1,16 +1,5 @@
 import { Coordinates } from '../types';
 
-export const convertUTCDateToLocalDate = (date: Date): Date => {
-	const newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-
-	const offset = date.getTimezoneOffset() / 60;
-	const hours = date.getHours();
-
-	newDate.setHours(hours - offset);
-
-	return newDate;
-};
-
 export const findDuplicates = (arr: string[]) => {
 	return arr.filter((item, index) => arr.indexOf(item) !== index);
 };
@@ -42,7 +31,7 @@ export const getDistance = (a: Coordinates, b: Coordinates) => {
 	const radTheta = (Math.PI * theta) / 180;
 
 	distance = Math.sin(radlatA) * Math.sin(radlatB) + Math.cos(radlatA) * Math.cos(radlatB) * Math.cos(radTheta);
-	if (distance > 1) return 2;
+	if (distance > 1) distance = 1;
 
 	distance = Math.acos(distance);
 	distance = (distance * 180) / Math.PI;
@@ -50,7 +39,7 @@ export const getDistance = (a: Coordinates, b: Coordinates) => {
 
 	if (distance <= 2) return 2;
 
-	return Math.ceil(distance);
+	return Math.floor(distance);
 };
 
 export const assertNever = (value: string): never => {
