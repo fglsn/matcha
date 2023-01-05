@@ -10,7 +10,7 @@ import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
 import { parseNewUserPayload, parseEmail, validateToken, validatePassword, validateEmailToken, parseUserProfilePayload, parseIdList } from '../validators/userPayloadValidators';
 //prettier-ignore
-import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats, getChatUsers, getBlockedButNotReportedUsers } from '../services/users';
+import { activateAccount, createNewUser, sendActivationCode, sendResetLink, changeForgottenPassword, updatePassword, sendUpdateEmailLink, changeUserEmail, updateUserPhotos, getUserPhotosById, getAndUpdateUserCompletnessById, getPublicProfileData, likeUser, dislikeUser, getLikeAndMatchStatusOnVisitedProfile, blockUser, unblockUser, getBlockStatus, reportFakeUser, getNotifications, getNotificationsPage, getUserChats, getChatUsers, getChatMessages, getChatMessagesPage, getBlockedButNotReportedUsers } from '../services/users';
 import { getLocation } from '../services/location';
 import { parseImages } from '../validators/imgValidators';
 import { isStringRepresentedInteger } from '../validators/basicTypeValidators';
@@ -422,6 +422,28 @@ router.get(
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
 		const chats = await getUserChats(req.session.userId);
 		res.status(200).json(chats).end();
+	})
+);
+
+router.get(
+	'/chat_messages/',
+	sessionExtractor,
+	asyncHandler(async (req: CustomRequest, res) => {
+		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can get notifications`, 400);
+		if (!req.query.match || !isStringRepresentedInteger(req.query.match)) throw new AppError(`Please, provide correct match id`, 400);
+		if (!req.query.page && !req.query.limit) {
+			const messages = await getChatMessages(req.query.match, req.session.userId);
+			res.status(200).json(messages);
+			return;
+		}
+		if (req.query.page && req.query.limit) {
+			if (!isStringRepresentedInteger(req.query.page) || !isStringRepresentedInteger(req.query.limit))
+				throw new ValidationError(`Limit and offset should be string represented integers`);
+			const messages = await getChatMessagesPage(req.query.match, req.session.userId, req.query.page, req.query.limit);
+			res.status(200).json(messages);
+			return;
+		}
+		throw new AppError(`This api expects page and limit query params or no params to get all messages`, 400);
 	})
 );
 

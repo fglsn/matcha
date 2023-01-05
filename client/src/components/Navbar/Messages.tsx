@@ -9,7 +9,7 @@ import { getChatNotifications } from '../../services/chats';
 import { setMsgNotifications, useStateValue } from '../../state';
 import EmailIcon from '@mui/icons-material/Email';
 import { useNavigate } from 'react-router';
-import { useStateChatReload } from '../ChatReloadProvider';
+import { useStateChatReload } from '../ChatWindow/ChatReloadProvider';
 
 const ChatButton = () => {
 	const alert = useContext(AlertContext);

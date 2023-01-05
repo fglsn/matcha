@@ -27,8 +27,8 @@ import Matches from './components/Matches';
 import Blocks from './components/Blocks';
 import ResponsiveDrawer from './components/Drawer';
 import Chats from './components/Chats';
-import ChatWindow from './components/ChatWindow';
-import { ChatReloadProvider } from './components/ChatReloadProvider';
+import ChatWindow from './components/ChatWindow/ChatWindow';
+import { ChatReloadProvider } from './components/ChatWindow/ChatReloadProvider';
 
 const MinWidthContainer = styled.div`
 	min-width: fit-content;

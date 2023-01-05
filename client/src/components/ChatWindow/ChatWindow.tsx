@@ -1,33 +1,26 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import LabelImportantIcon from '@mui/icons-material/LabelImportant';
 import {
-	Avatar,
 	Container,
 	Grid,
 	IconButton,
 	Paper,
-	styled,
-	Typography
-} from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
-import { socket } from '../services/socket';
-import { AlertContext } from './AlertProvider';
-import { Chat, ChatCallback, ChatMsg, UserEntryForChat } from '../types';
+	styled} from '@mui/material';
+import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
+import { socket } from '../../services/socket';
+import { AlertContext } from '../AlertProvider';
+import { Chat, ChatCallback, ChatMsg, UserEntryForChat } from '../../types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useField } from '../hooks/useField';
-import { validateMsg, validateMsgForm } from '../utils/inputValidators';
-import { setOpenChats, useStateValue } from '../state';
+import { useField } from '../../hooks/useField';
+import { validateMsg, validateMsgForm } from '../../utils/inputValidators';
+import { setOpenChats, useStateValue } from '../../state';
 import { useStateChatReload } from './ChatReloadProvider';
-import { getChatUsers } from '../services/chats';
-import { useServiceCall } from '../hooks/useServiceCall';
-import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
-import CircleIcon from '@mui/icons-material/Circle';
-import LoadingIcon from './LoadingIcon';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-
-dayjs.extend(relativeTime);
+import { getChatUsers } from '../../services/chats';
+import { useServiceCall } from '../../hooks/useServiceCall';
+import LoadingIcon from '../LoadingIcon';
+import Messages from './Messages';
+import User from './UserBar';
 
 type CallbackChatSucess = ChatCallback;
 type CallbackChatTimeout = () => void;
@@ -72,167 +65,11 @@ const ChatContent = styled(Paper)`
 	overflow: hidden;
 `;
 
-const StyledLink = styled(Link)`
-	color: rgba(0, 0, 0, 0.6);
-	text-decoration: none;
-`;
-
 const TextFieldWrapper = styled(TextField)`
 	fieldset {
 		border-radius: 7px;
 	}
 `;
-
-const receivedMsg = {
-	display: 'flex',
-	flexWrap: 'wrap',
-	flexDirection: 'row',
-	justifyContent: 'flex-start',
-	alignItems: 'center',
-	textAlign: 'left',
-	pr: '50%'
-	// maxWidth: '50%'
-};
-
-const sentMsg = {
-	display: 'flex',
-	flexWrap: 'wrap',
-	flexDirection: 'row-reverse',
-	justifyContent: 'flex-start',
-	alignItems: 'center',
-	textAlign: 'left',
-	pl: '50%'
-	// maxWidth: '50%'
-};
-
-const MsgBoxStyles = {
-	display: 'flex',
-	wrap: 'nowrap',
-	flexDirection: 'row',
-	alignItems: 'flex-end',
-	bgcolor: 'primary.main',
-	border: 1,
-	borderColor: 'secondary.main',
-	p: 1,
-	borderRadius: '7px'
-};
-
-const User = ({ user }: { user: UserEntryForChat }) => {
-	const callbackSuccess: CallbackSucess = ({ online, lastActive }) => {
-		setOnline(online);
-	};
-
-	const callbackTimeout = () => {
-		setOnline(false);
-	};
-
-	const [online, setOnline] = useState(false);
-
-	// Query online status and get response in callback
-	useEffect(() => {
-		socket.emit(
-			'online_query',
-			user.id,
-			withTimeout(callbackSuccess, callbackTimeout, 2000)
-		);
-		const intervalId = setInterval(() => {
-			socket.emit(
-				'online_query',
-				user.id,
-				withTimeout(callbackSuccess, callbackTimeout, 2000)
-			);
-		}, 60000);
-		return () => clearInterval(intervalId);
-	}, [user.id]);
-
-	return (
-		<StyledLink to={`/profile/${user.id}`}>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'nowrap',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
-            >
-                <Avatar alt={`Avatar of user ${user.username}`} src={`${user.avatar}`} />
-                <Typography variant="h6" style={{ fontWeight: '400' }}>
-                    {`${user.firstname}, ${user.age}`}
-                </Typography>
-                {online ? (
-                    <CircleIcon sx={{ fontSize: 15, marginLeft: 1 }} color="success" />
-                ) : (
-                    ''
-                )}
-            </Box>
-        </StyledLink>
-	);
-};
-
-const Messages = ({
-	messages,
-	users,
-	userId
-}: {
-	messages: ChatMsg[];
-	users: UserEntryForChat[];
-	userId: string;
-}) => {
-	const [sender] = users.filter((user) => user.id === userId);
-	const [receiver] = users.filter((user) => user.id !== userId);
-
-	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column-reverse',
-				width: '100%',
-				overflowY: 'auto',
-				p: 1
-			}}
-		>
-			{messages.map((msg, i) =>
-				msg.receiver_id === userId ? (
-					<Box sx={receivedMsg} key={i}>
-						{/* <Avatar alt={`Avatar of user ${sender.username}`} src={`${sender.avatar}`} /> */}
-						<Box
-							sx={{
-								...MsgBoxStyles
-							}}
-						>
-							<Typography
-								color="secondary"
-								variant="body2"
-								sx={{ mx: 1 }}
-							>{`${msg.message_text} `}</Typography>
-							<Typography color="grey" sx={{ fontSize: '0.6rem' }}>
-								{dayjs(msg.message_time).format('HH:mm')}
-							</Typography>
-						</Box>
-					</Box>
-				) : (
-					<Box sx={sentMsg} key={i}>
-						{/* <Avatar alt={`Avatar of user ${receiver.username}`} src={`${receiver.avatar}`} /> */}
-						<Box
-							sx={{
-								...MsgBoxStyles
-							}}
-						>
-							<Typography
-								color="secondary"
-								variant="body2"
-								sx={{ mx: 1 }}
-							>{`${msg.message_text} `}</Typography>
-							<Typography color="grey" sx={{ fontSize: '0.6rem' }}>
-								{dayjs(msg.message_time).format('HH:mm')}
-							</Typography>
-						</Box>
-					</Box>
-				)
-			)}
-		</Box>
-	);
-};
 
 const MsgFormStyles = {
 	display: 'flex',
@@ -250,6 +87,7 @@ const ChatWindow = () => {
 	const [messages, setMessages] = useState<ChatMsg[]>([]);
 	const newMSG = useField('text', 'Message', validateMsg);
 	const reload = useStateChatReload();
+	const buttonRef = useRef<HTMLButtonElement | null>(null);
 
 	const {
 		data: chatUsers,
@@ -260,10 +98,12 @@ const ChatWindow = () => {
 	} = useServiceCall(async () => id && (await getChatUsers(id)), [id]);
 
 	const callbackSuccess: ChatCallback = ({ messages: initialMsgs }) => {
-		setMessages(initialMsgs);
+		void initialMsgs;
+		// setMessages([]);
+		console.log('active chat success');
 	};
 
-	const handleSubmit = async (event: any) => {
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (id) {
 			const event = {
@@ -275,6 +115,23 @@ const ChatWindow = () => {
 			newMSG.onChange(event);
 		}
 	};
+
+	useEffect(() => {
+		const listener = (event: KeyboardEvent) => {
+			if (
+				((event.code === 'Enter' && event.shiftKey) ||
+					(event.code === 'NumpadEnter' && event.shiftKey)) &&
+				buttonRef.current
+			) {
+				event.preventDefault();
+				buttonRef.current.click();
+			}
+		};
+		document.addEventListener('keydown', listener);
+		return () => {
+			document.removeEventListener('keydown', listener);
+		};
+	}, []);
 
 	useEffect(() => {
 		console.log('setting uf');
@@ -304,7 +161,11 @@ const ChatWindow = () => {
 	useEffect(() => {
 		socket.on('receive_message', (message) => {
 			setMessages((prev) => {
-				return [message, ...prev];
+				const arr = [message, ...prev];
+				return arr.filter(
+					(value, index, self) =>
+						index === self.findIndex((m) => m.message_id === value.message_id)
+				);
 			});
 		});
 
@@ -319,7 +180,7 @@ const ChatWindow = () => {
 		}
 	}, [id, navigate, reload.reason]);
 
-	if (!chatUsers || !loggedUser) {
+	if (!chatUsers || !loggedUser || !id) {
 		return <LoadingIcon />;
 	}
 
@@ -355,6 +216,8 @@ const ChatWindow = () => {
 								messages={messages}
 								users={chatUsers}
 								userId={loggedUser.id}
+								setMessages={setMessages}
+								matchId={id}
 							/>
 						</ChatContent>
 						<Box
@@ -379,6 +242,7 @@ const ChatWindow = () => {
 								<IconButton
 									color="primary"
 									type="submit"
+									ref={buttonRef}
 									sx={{
 										border: 2,
 										borderColor: 'primary.main',

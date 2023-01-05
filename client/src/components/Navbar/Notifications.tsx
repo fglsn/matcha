@@ -211,6 +211,7 @@ const NotificationsButton = () => {
 					aria-controls={open ? 'long-menu' : undefined}
 					aria-expanded={open ? 'true' : undefined}
 					aria-haspopup="true"
+					sx={{mr:0}}
 					onClick={handleClick}
 				>
 					<NotificationsActiveIcon
