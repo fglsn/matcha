@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //prettier-ignore
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, SortingCriteria, Gender, Orientation, FilterCriteria } from '../types';
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, SortingCriteria, Gender, Orientation, FilterCriteria } from '../types';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
 import { getAge, assertNever } from '../utils/helpers';
 import { ValidationError } from '../errors';
@@ -325,18 +325,6 @@ const findUsernameById = async (userId: string): Promise<string | undefined> => 
 	return getString(res.rows[0]['username']);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const userEntryMapper = (row: any): UserEntry => {
-	const photo_type = getString(row['photo_type']);
-	const photo = getString(row['photo']);
-	const image = `data:${photo_type};base64,${photo}`;
-	return {
-		id: getString(row['users_id']),
-		username: getString(row['username']),
-		avatar: image
-	};
-};
-
 const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	const query = {
 		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
@@ -353,6 +341,36 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	return res.rows.map((row) => {
 		return userEntryMapper(row);
 	});
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const userEntryMapper = (row: any): UserEntry => {
+	const birthdate = getBdDate(row['birthday']);
+	const photo_type = getString(row['photo_type']);
+	const photo = getString(row['photo']);
+	const image = `data:${photo_type};base64,${photo}`;
+	return {
+		id: getString(row['users_id']),
+		username: getString(row['username']),
+		avatar: image,
+		firstname: getString(row['firstname']),
+		age: getAge(String(birthdate))
+	};
+};
+
+const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
+	const query = {
+		text: `select distinct on (users.id) users.id as users_id, users.username, users.firstname, users.birthday, photos.photo, photos.photo_type, photos.id as photos_id
+				from users
+					join photos on users.id = photos.user_id
+				where users.id = $1`,
+		values: [id]
+	};
+	const res = await pool.query(query);
+	if (!res.rowCount) {
+		return undefined;
+	}
+	return userEntryMapper(res.rows[0]);
 };
 
 const generateSexualPreferencesQueryString = (gender: Gender, orientation: Orientation): string => {
@@ -484,51 +502,6 @@ const getInitialMatchSuggestions = async (
 	});
 };
 
-const getUserEntry = async (id: string): Promise<UserEntry | undefined> => {
-	const query = {
-		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
-				from users
-					join photos on users.id = photos.user_id
-				where users.id = $1`,
-		values: [id]
-	};
-	const res = await pool.query(query);
-	if (!res.rowCount) {
-		return undefined;
-	}
-	return userEntryMapper(res.rows[0]);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const userEntryForChatMapper = (row: any): UserEntryForChat => {
-	const photo_type = getString(row['photo_type']);
-	const photo = getString(row['photo']);
-	const image = `data:${photo_type};base64,${photo}`;
-	const birthdate = getBdDate(row['birthday']);
-	return {
-		id: getString(row['users_id']),
-		username: getString(row['username']),
-		firstname: getString(row['firstname']),
-		age: getAge(String(birthdate)),
-		avatar: image
-	};
-};
-
-const getUserEntryForChat = async (id: string): Promise<UserEntryForChat | undefined> => {
-	const query = {
-		text: `select distinct on (users.id) users.id as users_id, users.username, users.firstname, users.birthday, photos.photo, photos.photo_type, photos.id as photos_id
-				from users
-					join photos on users.id = photos.user_id
-				where users.id = $1`,
-		values: [id]
-	};
-	const res = await pool.query(query);
-	if (!res.rowCount) {
-		return undefined;
-	}
-	return userEntryForChatMapper(res.rows[0]);
-};
-
 export {
 	getAllUsers,
 	getIdList,
@@ -556,6 +529,5 @@ export {
 	getTagsByUserId,
 	getUserEntries,
 	getUserEntry,
-	getUserEntryForChat,
 	getInitialMatchSuggestions
 };
