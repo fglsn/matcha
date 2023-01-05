@@ -10,6 +10,9 @@ import { useField } from '../hooks/useField';
 import userService from '../services/users';
 import loginService from '../services/login';
 
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+
 const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	margin: '0 auto',
@@ -43,14 +46,15 @@ const LoginForm = () => {
 					alert.success('Account activated successfully!');
 				} catch (err) {
 					alert.error(
-						err.response?.data?.error || 'Unable to activate account. Please try again.'
+						err.response?.data?.error ||
+							'Unable to activate account. Please try again.'
 					);
 					navigate('/login');
 				}
 			}
 		};
 		activateAccount();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleLogin = async (event: any) => {
@@ -94,6 +98,7 @@ const LoginForm = () => {
 								required
 								fullWidth
 								autoFocus
+								InputLabelProps={{ shrink: true }}
 								autoComplete="username"
 							/>
 							<TextField
@@ -103,22 +108,31 @@ const LoginForm = () => {
 								fullWidth
 								type={showPassword ? 'text' : 'password'}
 								autoComplete="current-password"
+								InputLabelProps={{ shrink: true }}
 							/>
-							<FormControlLabel
-								control={<Checkbox value="Show password" color="primary" />}
-								label="Show password"
-								onChange={() => setShow(!showPassword)}
-							/>
-							<FormControlLabel
-								control={<Checkbox value="remember" color="primary" />}
-								label="Remember me"
-							/>
+							<Grid item xs={12} sx={{ marginLeft: '5px' }}>
+								<FormControlLabel
+									label={
+										<Box component="div" fontSize={'0.9rem'}>
+											Show password
+										</Box>
+									}
+									control={
+										<Checkbox
+											color="primary"
+											onChange={() => setShow(!showPassword)}
+											icon={<VisibilityOffOutlinedIcon fontSize={'small'}/>}
+											checkedIcon={<VisibilityOutlinedIcon />}
+										/>
+									}
+								/>
+							</Grid>
 							{validateLoginForm(username.value, password.value) ? (
 								<Button
 									type="submit"
 									fullWidth
 									variant="contained"
-									sx={{ mt: 3, mb: 2 }}
+									sx={{ mt: 2, mb: 2 }}
 								>
 									Sign In
 								</Button>
@@ -128,7 +142,7 @@ const LoginForm = () => {
 									fullWidth
 									disabled
 									variant="contained"
-									sx={{ mt: 3, mb: 2 }}
+									sx={{ mt: 2, mb: 2 }}
 								>
 									Sign In
 								</Button>
