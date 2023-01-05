@@ -412,6 +412,7 @@ export const getNotificationsPage = async (id: string, page: string, limit: stri
 };
 
 export const addLikeNotification = async (notified_user_id: string, acting_user_id: string) => {
+	if (await checkBlockEntry(acting_user_id, notified_user_id)) return;
 	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'like'), addNotificationsQueueEntry(notified_user_id)]);
 	io.to(notified_user_id).emit('notification', 'Someone liked your profile!');
 };
@@ -429,11 +430,13 @@ export const addMatchNotification = async (notified_user_id: string, acting_user
 };
 
 export const addDislikeNotification = async (notified_user_id: string, acting_user_id: string) => {
+	if (await checkBlockEntry(acting_user_id, notified_user_id)) return;
 	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'dislike'), addNotificationsQueueEntry(notified_user_id)]);
 	io.to(notified_user_id).emit('notification', 'Someone you matched disliked you ;(');
 };
 
 export const addVisitNotification = async (notified_user_id: string, acting_user_id: string) => {
+	if (await checkBlockEntry(acting_user_id, notified_user_id)) return;
 	await Promise.all([addNotificationEntry(notified_user_id, acting_user_id, 'visit'), addNotificationsQueueEntry(notified_user_id)]);
 	io.to(notified_user_id).emit('notification', 'Someone visited your profile!');
 };
