@@ -42,13 +42,16 @@ const LoginForm = () => {
 					navigate('/login');
 					alert.success('Account activated successfully!');
 				} catch (err) {
-					alert.error(err.response?.data?.error);
+					alert.error(
+						err.response?.data?.error || 'Unable to activate account. Please try again.'
+					);
 					navigate('/login');
 				}
 			}
 		};
 		activateAccount();
-	}, [activationCode, alert, navigate]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleLogin = async (event: any) => {
 		event.preventDefault();
