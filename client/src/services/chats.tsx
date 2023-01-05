@@ -38,3 +38,15 @@ export const getChatUsers = async (matchId: string): Promise<any> => {
 		handleAxiosError(err);
 	}
 };
+
+export const getChatMessages = async (matchId: string, page: number, limit: number): Promise<any> => {
+	try {
+		const config = {
+			headers: { Authorization: getAuthHeader() }
+		};
+		const response = await axios.get(`${apiBaseUrl}/users/chat_messages?match=${matchId}&page=${page}&limit=${limit}`, config);
+		return response.data;
+	} catch (err) {
+		handleAxiosError(err);
+	}
+};

@@ -457,6 +457,13 @@ export const getChatMessages = async (matchId: string, userId: string): Promise<
 	return { messages: messages };
 };
 
+export const getChatMessagesPage = async (matchId: string, userId: string, page: string, limit: string): Promise<Chat> => {
+	const match = await getMatchByMatchId(matchId);
+	if (!match || (match.matchedUserIdOne !== userId && match.matchedUserIdTwo !== userId)) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo, Number(page), Number(limit));
+	return { messages: messages };
+};
+
 export const addChatMessage = async (matchId: string, userId: string, msg: string): Promise<ChatMsg> => {
 	const match = await getMatchByMatchId(matchId);
 	if (!match) throw new AppError(`Attempt of unauthorised access to chat`, 403);

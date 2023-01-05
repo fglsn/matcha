@@ -14,10 +14,10 @@ import VisitHistory from './components/VisitHistory';
 import Matches from './components/Matches';
 import Blocks from './components/Blocks';
 import Likes from './components/Likes';
-import ChatWindow from './components/ChatWindow';
+import ChatWindow from './components/ChatWindow/ChatWindow';
 import Chats from './components/Chats';
 import Footer from './components/Footer';
-import { ChatReloadProvider } from './components/ChatReloadProvider';
+import { ChatReloadProvider } from './components/ChatWindow/ChatReloadProvider';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { Routes, Route, Navigate } from 'react-router-dom';
