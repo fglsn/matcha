@@ -1,8 +1,11 @@
-import pool from '../db';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+//prettier-ignore
+import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, SortingCriteria, Gender, Orientation, FilterCriteria } from '../types';
 import { getString, getDate, getBoolean, getStringOrUndefined, getBdDateOrUndefined, getStringArrayOrUndefined, getNumber, getBdDate } from '../dbUtils';
-import { User, NewUserWithHashedPwd, UserData, UpdateUserProfile, UserCompletness, UserEntry, UserEntryForChat, Orientation, Gender } from '../types';
-import { ValidationError } from '../errors';
 import { getAge, assertNever } from '../utils/helpers';
+import { ValidationError } from '../errors';
+import pool from '../db';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userMapper = (row: any): User => {
@@ -352,25 +355,94 @@ const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	});
 };
 
-const getInitialMatchSuggestions = async (userId: string, gender: Gender, orientation: Orientation): Promise<UserData[]> => {
-
+const generateSexualPreferencesQueryString = (gender: Gender, orientation: Orientation): string => {
 	const oppositeGender = gender === 'male' ? 'female' : 'male';
 
-	let sexualPreference;
 	switch (orientation) {
 		case 'straight':
-			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')`;
-			break;
+			return `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')`;
 		case 'gay':
-			sexualPreference = `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
-			break;
+			return `(gender = '${gender}' and orientation = 'gay') or (gender = '${gender}' and orientation = 'bi')`;
 		case 'bi':
-			sexualPreference = `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')
-				or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
-			break;
+			return `(gender = '${oppositeGender}' and orientation = 'straight') or (gender = '${oppositeGender}' and orientation = 'bi')
+					or (gender = '${gender}' and orientation = 'bi') or (gender = '${gender}' and orientation = 'gay')`;
 		default:
 			assertNever(orientation);
 	}
+	return '';
+};
+
+const generateOrderByQueryString = (sortingCriteria: SortingCriteria): string => {
+	const order = sortingCriteria.order;
+	const sort = sortingCriteria.sort;
+
+	switch (sort) {
+		case 'age':
+			return `extract(years from age(users.birthday)) ${order}, 
+						calculate_distance(users.lat, users.lon, $2, $3), 
+						count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, 
+						users.fame_rating`;
+		case 'distance':
+			return `calculate_distance(users.lat, users.lon, $2, $3) ${order}, 
+						count_array_intersect(users.tags::varchar[], $4::varchar[]) desc, 
+						users.fame_rating desc`;
+		case 'rating':
+			return `users.fame_rating ${order}, 
+					calculate_distance(users.lat, users.lon, $2, $3), 
+					count_array_intersect(users.tags::varchar[], $4::varchar[]) desc`;
+		case 'tags':
+			return `count_array_intersect(users.tags::varchar[], $4::varchar[]) ${order}, 
+					calculate_distance(users.lat, users.lon, $2, $3), 
+					users.fame_rating desc`;
+		default:
+			assertNever(sort);
+	}
+	return '';
+};
+
+const generateFilterQueryString = (filterCriterias: FilterCriteria[]): string => {
+	if (!filterCriterias.length) throw new Error('Empty filter list');
+	const filterStrings: string[] = filterCriterias.map((filter) => {
+		const min = filter.min;
+		const max = filter.max;
+		const filterTarget = filter.filter;
+
+		switch (filterTarget) {
+			case 'age':
+				if (max === undefined) return `(extract(years from age(users.birthday)) >= ${min})`;
+				return `(extract(years from age(users.birthday)) >= ${min} and extract(years from age(users.birthday)) <= ${max})`;
+			case 'distance':
+				if (max === undefined) return `(calculate_distance(users.lat, users.lon, $2, $3) >= ${min})`;
+				return `(calculate_distance(users.lat, users.lon, $2, $3) >= ${min} and calculate_distance(users.lat, users.lon, $2, $3) <= ${max})`;
+			case 'rating':
+				if (max === undefined) return `(users.fame_rating >= ${min})`;
+				return `(users.fame_rating >= ${min} and users.fame_rating <= ${max})`;
+			case 'tags':
+				if (max === undefined) return `(count_array_intersect(users.tags::varchar[], $4::varchar[]) >= ${min})`;
+				return `(count_array_intersect(users.tags::varchar[], $4::varchar[]) >= ${min} and count_array_intersect(users.tags::varchar[], $4::varchar[]) <= ${max})`;
+			default:
+				assertNever(filterTarget);
+		}
+		return '';
+	});
+	return filterStrings.join(' and ');
+};
+
+const getInitialMatchSuggestions = async (
+	requestorData: UserData,
+	sortingCriteria: SortingCriteria,
+	filterCriterias: FilterCriteria[]
+): Promise<UserData[]> => {
+	const userId = requestorData.id;
+	const lat = requestorData.coordinates.lat;
+	const lon = requestorData.coordinates.lon;
+	const tags = requestorData.tags;
+
+	const sexualPreferenceStr = generateSexualPreferencesQueryString(requestorData.gender as Gender, requestorData.orientation as Orientation);
+	const sortingCriteriaStr = generateOrderByQueryString(sortingCriteria);
+	const filterCriteriaStr = generateFilterQueryString(filterCriterias);
+
+	// console.log(filterCriteriaStr); //rm later
 
 	const query = {
 		text:
@@ -383,10 +455,15 @@ const getInitialMatchSuggestions = async (userId: string, gender: Gender, orient
 					likes_history.liked_user_id is null and 
 					block_entries.blocked_user_id is null and 
 					report_entries.reported_user_id is null and (` +
-			sexualPreference +
-			')',
-		values: [userId]
+			sexualPreferenceStr +
+			`) and (` +
+			filterCriteriaStr +
+			`) 
+				order by ` +
+			sortingCriteriaStr,
+		values: [userId, lat, lon, tags]
 	};
+	// console.log(query.text); //rm later
 	const res = await pool.query(query);
 	if (!res.rowCount) {
 		return [];

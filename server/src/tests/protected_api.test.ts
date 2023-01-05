@@ -1,11 +1,12 @@
 import supertest from 'supertest';
-import { describe, expect } from '@jest/globals';
 import { app } from '../app';
-import { newUser, loginUser, ipAddress, defaultCoordinates } from './test_helper';
+import { describe, expect } from '@jest/globals';
+import { ipAddress, defaultCoordinates } from './test_helper';
 import { clearSessions, findSessionsByUserId } from '../repositories/sessionRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
+import { newUser, credentialsNewUser } from './test_helper_users';
 
 const api = supertest(app);
 
@@ -34,7 +35,7 @@ describe('visit protected page', () => {
 
 		const res = await api
 			.post('/api/login')
-			.send(loginUser)
+			.send(credentialsNewUser)
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
@@ -77,7 +78,7 @@ describe('visit protected page', () => {
 
 		const res = await api
 			.post('/api/login')
-			.send(loginUser)
+			.send(credentialsNewUser)
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 

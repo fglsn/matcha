@@ -1,4 +1,3 @@
-import * as turf from '@turf/turf';
 import { Coordinates } from '../types';
 
 export const convertUTCDateToLocalDate = (date: Date): Date => {
@@ -33,10 +32,24 @@ export const getAge = (dateString: string): number => {
 };
 
 export const getDistance = (a: Coordinates, b: Coordinates) => {
-	const from = turf.point([a.lon, a.lat]);
-	const to = turf.point([b.lon, b.lat]);
-	const distance = turf.distance(from, to);
+	let distance;
+
+	if (a.lat === b.lat && a.lon === b.lon) return 2;
+
+	const radlatA = (Math.PI * a.lat) / 180;
+	const radlatB = (Math.PI * b.lat) / 180;
+	const theta = a.lon - b.lon;
+	const radTheta = (Math.PI * theta) / 180;
+
+	distance = Math.sin(radlatA) * Math.sin(radlatB) + Math.cos(radlatA) * Math.cos(radlatB) * Math.cos(radTheta);
+	if (distance > 1) return 2;
+
+	distance = Math.acos(distance);
+	distance = (distance * 180) / Math.PI;
+	distance = distance * 60 * 1.1515 * 1.609344;
+
 	if (distance <= 2) return 2;
+
 	return Math.ceil(distance);
 };
 

@@ -20,10 +20,11 @@ const StyledReportButton = styled('div')`
 	border-bottom: 1px solid #80808070;
 `;
 
-const ReportDialog: React.FC<{ id: string | undefined; username: string }> = ({
-	id,
-	username
-}) => {
+const ReportDialog: React.FC<{
+	id: string | undefined;
+	username: string;
+	setIsBlocked: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ id, username, setIsBlocked }) => {
 	const { success: successCallback, error: errorCallback } = useContext(AlertContext);
 	const [open, setOpen] = useState<boolean>(false);
 	const theme = useTheme();
@@ -35,6 +36,7 @@ const ReportDialog: React.FC<{ id: string | undefined; username: string }> = ({
 		try {
 			await reportProfile(id);
 			successCallback('Thank you, account is reported.');
+			setIsBlocked(true);
 			navigate('/');
 		} catch (e) {
 			errorCallback(e.message);

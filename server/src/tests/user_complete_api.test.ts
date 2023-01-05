@@ -2,12 +2,13 @@ import pool from '../db';
 import supertest from 'supertest';
 import { app } from '../app';
 import { describe, expect } from '@jest/globals';
-import { newUser, loginUser, defaultCoordinates, ipAddress, completenessFalse, completenessTrue, infoProfile } from './test_helper';
+import { defaultCoordinates, ipAddress, completenessFalse, completenessTrue } from './test_helper';
+import { newUser, credentialsNewUser, profileDataNewUser } from './test_helper_users';
 import { getLocationMock } from './test_helper_fns';
+import { DataURL } from './test_helper_images';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { DataURL } from './test_helper_images';
 
 const api = supertest(app);
 jest.setTimeout(10000);
@@ -21,7 +22,7 @@ export const initLoggedUser = async () => {
 	const user = await findUserByUsername(newUser.username);
 	const activationCode = user?.activationCode;
 	await api.post(`/api/users/activate/${activationCode}`);
-	const res = await api.post('/api/login').send(loginUser).expect(200);
+	const res = await api.post('/api/login').send(credentialsNewUser).expect(200);
 	return res;
 };
 
@@ -30,7 +31,7 @@ export const putToProfile = async () => {
 	await api
 		.put(`/api/users/${id}/profile`)
 		.set({ Authorization: `bearer ${loginRes.body.token}` })
-		.send(infoProfile)
+		.send(profileDataNewUser)
 		.expect(200);
 	// if (res.body.error)
 	// 	console.log(res.body.error);

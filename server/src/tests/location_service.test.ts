@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { getLocation, requestCoordinatesByIp } from '../services/location';
 //prettier-ignore
 import { defaultCoordinates, ipAddress, positionstackResponseDataAllThree, positionstackResponseDataOnlyCountry, positionstackResponseNoNeighbourhood } from './test_helper';
+import { getLocation, requestCoordinatesByIp } from '../services/location';
 
 jest.setTimeout(10000);
 

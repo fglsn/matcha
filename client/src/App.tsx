@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import Main from './components/Main';
+import Main from './components/MatchSuggestions';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import ForgotPassword from './components/ForgotPassword/index';

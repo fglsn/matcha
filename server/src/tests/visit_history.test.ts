@@ -3,10 +3,11 @@
 import supertest from 'supertest';
 import { app } from '../app';
 import { describe, expect } from '@jest/globals';
-import { clearVisitHistory, getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, TokenAndId } from './test_helper';
+import { clearVisitHistory, getVisitHistoryByVisitedId, getVisitHistoryByVisitorId } from '../repositories/visitHistoryRepository';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
 import { loginAndPrepareUser, userVisitsAnotherUsersProfile } from './test_helper_fns';
+import { TokenAndId } from './test_helper';
 
 const api = supertest(app);
 jest.setTimeout(10000);
@@ -28,8 +29,8 @@ const checkVisitHistoryStats = async (owner: TokenAndId) => {
 describe('visit history tests', () => {
 	beforeAll(async () => {
 		await clearUsers();
-		visitor = await loginAndPrepareUser(newUser, loginUser);
-		visited = await loginAndPrepareUser(secondUser, loginUser2);
+		visitor = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		visited = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 
 	beforeEach(async () => {

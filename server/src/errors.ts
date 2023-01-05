@@ -21,7 +21,7 @@ export class ValidationError extends AppError {
 export const globalErrorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
 	if (err instanceof AppError) {
 		res.status(err.statusCode).json({
-			error: `${err.name}: ${err.message}`
+			error: `${err.message}`
 		});
 		return;
 	}

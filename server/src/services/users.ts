@@ -30,10 +30,17 @@ import { sendMail } from '../utils/mailer';
 import { AppError } from '../errors';
 import { assertNever, getAge, getDistance } from '../utils/helpers';
 import { addLikeEntry, checkLikeEntry, removeLikeEntry } from '../repositories/likesRepository';
-import { addMatchEntry, checkMatchEntry, checkMatchEntryWithReturn, getMatchByMatchId, getMatchesByUserId, removeMatchEntryWithReturn } from '../repositories/matchesRepository';
+import {
+	addMatchEntry,
+	checkMatchEntry,
+	checkMatchEntryWithReturn,
+	getMatchByMatchId,
+	getMatchesByUserId,
+	removeMatchEntryWithReturn
+} from '../repositories/matchesRepository';
 import { addUserOnline, getOnlineUser } from '../repositories/onlineRepository';
-import { addBlockEntry, checkBlockEntry, removeBlockEntry } from '../repositories/blockEntriesRepository';
-import { addReportEntry } from '../repositories/reportEntriesRepository';
+import { addBlockEntry, checkBlockEntry, getBlockedUsersByBlockingUserId, removeBlockEntry } from '../repositories/blockEntriesRepository';
+import { addReportEntry, checkReportEntry, getReportEntriesByReportingUserId } from '../repositories/reportEntriesRepository';
 import { addNotificationEntry, getNotificationsByNotifiedUserId, getNotificationsPageByNotifiedUserId } from '../repositories/notificationsRepository';
 import { io } from '../app';
 import { addNotificationsQueueEntry } from '../repositories/notificationsQueueRepository';
@@ -248,13 +255,14 @@ export const getLikeAndMatchStatusOnVisitedProfile = async (profileId: string, r
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
 	const matchCheck = await checkMatchEntryWithReturn(profileId, requestorId);
-	return { like: await checkLikeEntry(profileId, requestorId), ...matchCheck};
+	return { like: await checkLikeEntry(profileId, requestorId), ...matchCheck };
 };
 
 export const likeUser = async (profileId: string, requestorId: string): Promise<void> => {
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	if (await checkReportEntry(profileId, requestorId)) throw new AppError('This account reported as fake, cannot be liked.', 400);
 
 	if (await addLikeEntry(profileId, requestorId)) {
 		await addLikeNotification(profileId, requestorId);
@@ -335,6 +343,7 @@ export const unblockUser = async (profileId: string, requestorId: string): Promi
 	const completeness = await Promise.all([getAndUpdateUserCompletnessById(requestorId), getAndUpdateUserCompletnessById(profileId)]);
 	if (!completeness[0].complete) throw new AppError('Please, complete your own profile first', 400);
 	if (!completeness[1].complete) throw new AppError('Profile you are looking for is not complete. Try again later!', 400);
+	if (await checkReportEntry(profileId, requestorId)) throw new AppError('This account reported as fake, cannot be unblocked.', 400);
 	if (await removeBlockEntry(profileId, requestorId)) {
 		await updateFameRatingByUserId(profileId, 2);
 	}
@@ -353,6 +362,21 @@ export const reportFakeUser = async (profileId: string, requestorId: string): Pr
 			await updateFameRatingByUserId(profileId, -100);
 		}
 	}
+};
+
+export const getBlockedButNotReportedUsers = async (userId: string) => {
+	const blockedUsers = await getBlockedUsersByBlockingUserId(userId);
+
+	const reportedUsers = await getReportEntriesByReportingUserId(userId);
+	if (reportedUsers) {
+		const result = blockedUsers.filter((entry) => {
+			if (!reportedUsers.some((e) => e.reportedUserId === entry.blockedUserId)) return entry;
+			return;
+		});
+
+		return result;
+	}
+	return blockedUsers;
 };
 
 export const updateOnlineUsers = async (user_id: string) => {
@@ -523,14 +547,11 @@ export const getChatUsers = async (matchId: string, userId: string): Promise<Use
 	const matchedUsersArr = Object.values(match).slice(1);
 	const senderId = matchedUsersArr.find((element) => element === userId);
 	const receiverId = matchedUsersArr.find((element) => element !== userId);
-	
+
 	if (!senderId || !receiverId) throw new AppError(`Attempt of unauthorised access to chat`, 403);
-	
-	const [sender, receiver] = await Promise.all([
-		getUserEntryForChat(senderId),
-		getUserEntryForChat(receiverId)
-	]);
-	
+
+	const [sender, receiver] = await Promise.all([getUserEntryForChat(senderId), getUserEntryForChat(receiverId)]);
+
 	if (!sender || !receiver) throw new AppError('Failed to get chat users data', 500);
 
 	return [sender, receiver];

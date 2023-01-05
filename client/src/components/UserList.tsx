@@ -14,23 +14,19 @@ export const StyledLink = styled(Link)`
 const User = ({ user }: { user: UserEntry }) => {
 	return (
 		<>
-			<ListItem disablePadding>
-				<ListItemButton>
-					<ListItemAvatar>
-						<Avatar
-							alt={`Avatar of user ${user.username}`}
-							src={`${user.avatar}`}
-						/>
-					</ListItemAvatar>
-					<ListItemText
-						primary={
-							<StyledLink to={`/profile/${user.id}`}>
-								{user.username}
-							</StyledLink>
-						}
-					/>
-				</ListItemButton>
-			</ListItem>
+			<StyledLink to={`/profile/${user.id}`}>
+				<ListItem disablePadding>
+					<ListItemButton>
+						<ListItemAvatar>
+							<Avatar
+								alt={`Avatar of user ${user.username}`}
+								src={`${user.avatar}`}
+							/>
+						</ListItemAvatar>
+						<ListItemText primary={user.username} />
+					</ListItemButton>
+				</ListItem>
+			</StyledLink>
 			<Divider />
 		</>
 	);

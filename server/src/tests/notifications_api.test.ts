@@ -1,8 +1,9 @@
-import { loginAndPrepareUser, api } from './test_helper_fns';
-import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2 } from './test_helper';
-import { addNotificationEntry, clearNotifications } from '../repositories/notificationsRepository';
 import { NotificationMessage } from '../types';
+import { clearUsers } from '../repositories/userRepository';
+import { addNotificationEntry, clearNotifications } from '../repositories/notificationsRepository';
+import { newUser, credentialsNewUser, profileDataNewUser, secondUser, credentialsSecondUser, profileDataSecondUser } from './test_helper_users';
+import { loginAndPrepareUser, api } from './test_helper_fns';
+
 jest.setTimeout(3000);
 jest.mock('../services/location');
 
@@ -11,8 +12,8 @@ let userTwo: { id: string; token: string };
 
 const prepareUsers = async () => {
 	await clearUsers();
-	userOne = await loginAndPrepareUser(newUser, loginUser);
-	userTwo = await loginAndPrepareUser(secondUser, loginUser2);
+	userOne = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+	userTwo = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	void userTwo;
 	void userOne;
 };

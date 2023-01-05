@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, expect } from '@jest/globals';
 import { clearUsers } from '../repositories/userRepository';
-import { newUser, loginUser, secondUser, loginUser2, infoProfilePublic, infoProfilePublic2, TokenAndId } from './test_helper';
+import { newUser, secondUser, credentialsNewUser, credentialsSecondUser, profileDataNewUser, profileDataSecondUser } from './test_helper_users';
+import { infoProfilePublic, infoProfilePublic2, TokenAndId } from './test_helper';
 import { api, loginAndPrepareUser, putLike, twoUserLikeEachOther, userBlocksAnotherUser } from './test_helper_fns';
 import { clearLikes, getLikesByVisitorId } from '../repositories/likesRepository';
 import { checkMatchEntry } from '../repositories/matchesRepository';
@@ -33,8 +34,8 @@ describe('test block user functionality', () => {
 		await clearUsers();
 		await clearLikes();
 		await clearVisitHistory();
-		userThatBlocks = await loginAndPrepareUser(newUser, loginUser);
-		userToBlock = await loginAndPrepareUser(secondUser, loginUser2);
+		userThatBlocks = await loginAndPrepareUser(newUser, credentialsNewUser, profileDataNewUser);
+		userToBlock = await loginAndPrepareUser(secondUser, credentialsSecondUser, profileDataSecondUser);
 	});
 
 	test('user can block another user', async () => {

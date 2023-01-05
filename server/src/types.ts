@@ -267,3 +267,18 @@ export type MessageNotification = {
 	senderId: string;
 	receiverId: string;
 };
+
+export type Criterias = 'age' | 'distance' | 'rating' | 'tags';
+
+export type Order = 'desc' | 'asc';
+
+export type SortingCriteria = {
+	sort: Criterias;
+	order: Order;
+};
+
+export type FilterCriteria = {
+	filter: Criterias;
+	min: number;
+	max: number | undefined;
+};

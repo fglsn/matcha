@@ -4,9 +4,11 @@ import { describe, expect } from '@jest/globals';
 import { findPasswordResetRequestByUserId, clearPasswordResetRequestsTable } from '../repositories/passwordResetRequestRepository';
 import { clearUsers, findUserByUsername } from '../repositories/userRepository';
 import { findSessionsByUserId } from '../repositories/sessionRepository';
-import { defaultCoordinates, ipAddress, newUser } from './test_helper';
+import { defaultCoordinates, ipAddress } from './test_helper';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
+import { newUser } from './test_helper_users';
+
 const api = supertest(app);
 
 jest.setTimeout(100000);
@@ -72,7 +74,7 @@ describe('send password reset link on forgot pwd request', () => {
 			.send({ email: 'wrong.com' })
 			.expect(400)
 			.expect('Content-Type', /application\/json/);
-		expect(res.body.error).toContain('ValidationError: Invalid email');
+		expect(res.body.error).toContain('Invalid email');
 	});
 
 	test('fails with valid but not existing email', async () => {

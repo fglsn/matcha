@@ -1,12 +1,11 @@
-import { describe, expect } from '@jest/globals';
 import supertest from 'supertest';
-
 import { app } from '../app';
-// import bcrypt from 'bcrypt';
+import { describe, expect } from '@jest/globals';
 import { clearUsers, findUserByUsername, setUserAsActive } from '../repositories/userRepository';
 import { requestCoordinatesByIp } from '../services/location';
 import { createNewUser } from '../services/users';
-import { defaultCoordinates, ipAddress, newUser } from './test_helper';
+import { defaultCoordinates, ipAddress } from './test_helper';
+import { newUser } from './test_helper_users';
 
 const api = supertest(app);
 
