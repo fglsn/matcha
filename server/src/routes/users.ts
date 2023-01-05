@@ -4,7 +4,7 @@ import { AppError, ValidationError } from '../errors';
 import { findUpdateEmailRequestByToken } from '../repositories/updateEmailRequestRepository';
 import { findPasswordResetRequestByToken } from '../repositories/passwordResetRequestRepository';
 //prettier-ignore
-import { getAllUsers, getTagsByUserId, getUserDataByUserId, getUserEntries, updateFameRatingByUserId, updateUserDataByUserId } from '../repositories/userRepository';
+import { getTagsByUserId, getUserDataByUserId, getUserEntries, updateFameRatingByUserId, updateUserDataByUserId } from '../repositories/userRepository';
 import { CustomRequest } from '../types';
 import { sessionExtractor } from '../utils/middleware';
 //prettier-ignore
@@ -24,15 +24,6 @@ import { parseFilterCriterias, parseSortCriteria } from '../validators/sortAndFi
 
 const router = express.Router();
 
-router.get(
-	'/',
-	asyncHandler(async (_req, res) => {
-		const result = await getAllUsers();
-		res.send(result);
-	})
-); //rm later
-
-// create user
 router.post(
 	'/',
 	asyncHandler(async (req, res) => {
@@ -45,7 +36,6 @@ router.post(
 	})
 );
 
-//activate
 router.post(
 	'/activate/:id',
 	asyncHandler(async (req, res) => {
@@ -54,7 +44,6 @@ router.post(
 	})
 );
 
-//forgot pwd request from email form
 router.post(
 	'/forgot_password',
 	asyncHandler(async (req, res) => {
@@ -100,8 +89,6 @@ router.post(
 	})
 );
 
-//get profile page
-//check user by
 router.get(
 	'/:id/profile',
 	sessionExtractor,
@@ -111,11 +98,9 @@ router.get(
 		}
 		const result = await getUserDataByUserId(req.session.userId);
 		res.status(200).json(result);
-		// return;
 	})
 );
 
-//update basic user data on profile page
 router.put(
 	'/:id/profile',
 	sessionExtractor,
@@ -156,7 +141,6 @@ router.get(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Please log in first`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
-		// if (req.session.userId === req.params.id) throw new AppError(`You cannot like own profile`, 400);
 		const result = await getLikeAndMatchStatusOnVisitedProfile(req.params.id, req.session.userId);
 		res.status(200).json(result);
 	})
@@ -251,7 +235,6 @@ router.get(
 	asyncHandler(async (req: CustomRequest, res) => {
 		if (!req.session || !req.session.userId) throw new AppError(`Only logged in users can see profiles`, 400);
 		if (!req.params.id || !isStringRepresentedInteger(req.params.id)) throw new AppError(`Id path parameter is requried to find profile`, 400);
-		// if (req.session.userId === req.params.id) throw new AppError(`You cannot block own profile`, 400);
 		const result = await getBlockStatus(req.params.id, req.session.userId);
 		res.status(200).json(result);
 	})
@@ -467,8 +450,6 @@ router.post(
 		} else {
 			throw new AppError(`This api expects page and limit query params or no params to get all messages`, 400);
 		}
-		// console.log('profiles found: ', publicProfiles.length); //rm later
-		// console.log('From match suggestions router: ', idList); //rm later
 		res.status(200).json(publicProfiles);
 		return;
 	})

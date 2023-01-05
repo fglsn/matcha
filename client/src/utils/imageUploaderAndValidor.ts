@@ -53,8 +53,7 @@ export const getValidImages = async (
 		}
 	}
 
-	if (validImages.length < files.length)
-		return [validImages, 'File must be a valid image'];
+	if (validImages.length < files.length) return [validImages, 'File must be a valid image'];
 
 	return [validImages, undefined];
 };

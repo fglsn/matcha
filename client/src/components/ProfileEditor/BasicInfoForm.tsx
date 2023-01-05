@@ -86,11 +86,9 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	const updateUserData = async (newUserData: NewUserData) => {
 		try {
-			loggedUser &&
-				(await profileService.updateProfile(loggedUser.id, newUserData));
+			loggedUser && (await profileService.updateProfile(loggedUser.id, newUserData));
 			successCallback(`Profile settings were updated!.`);
 		} catch (err) {
-			console.log('Error in updateUserData (BasicInfoSection on Profile) ' + err); //rm later
 			errorCallback(
 				err.response?.data?.error ||
 					'Unable to update profile settings. Please try again.'
@@ -190,10 +188,7 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 						</Box>
 					</Grid>
 					<Grid container>
-						<Tags
-							selectedTags={selectedTags}
-							setSelectedTags={setSelectedTags}
-						/>
+						<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
 					</Grid>
 					<Grid item xs={12}>
 						<strong>Bio*</strong>
@@ -217,12 +212,7 @@ const BasicInfoForm: React.FC<{ userData: UserData }> = ({ userData }) => {
 				selectedTags.length &&
 				bio.value &&
 				coordinates &&
-				validateProfileEditorForm(
-					firstname.value,
-					lastname.value,
-					date,
-					bio.value
-				) ? (
+				validateProfileEditorForm(firstname.value, lastname.value, date, bio.value) ? (
 					<Button
 						type="submit"
 						onClick={handleUserDataUpdate}

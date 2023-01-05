@@ -37,10 +37,7 @@ const VisitHistory = () => {
 	}: {
 		data: [VisitEntry[], VisitEntry[]] | undefined;
 		error: Error | undefined;
-	} = useServiceCall(
-		async () => loggedUser && (await getVisitHistory(loggedUser.id)),
-		[]
-	);
+	} = useServiceCall(async () => loggedUser && (await getVisitHistory(loggedUser.id)), []);
 
 	if (visitHistoryError)
 		return (

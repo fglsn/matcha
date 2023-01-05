@@ -1,13 +1,13 @@
 import { Paper, styled, Container, Grid, Alert } from '@mui/material';
-import { useServiceCall } from '../../hooks/useServiceCall';
 import { getPhotos, getProfile } from '../../services/profile';
+import { useServiceCall } from '../../hooks/useServiceCall';
 import { useStateValue } from '../../state';
 import { Images, UserData } from '../../types';
 import withAuthRequired from '../AuthRequired';
-import LoadingIcon from '../LoadingIcon';
-import UpdateEmailForm from './UpdateEmailForm';
 import UpdatePasswordForm from './UpdatePasswordForm';
+import UpdateEmailForm from './UpdateEmailForm';
 import BasicInfoForm from './BasicInfoForm';
+import LoadingIcon from '../LoadingIcon';
 import Photos from './Photos';
 
 const Item = styled(Paper)(({ theme }) => ({

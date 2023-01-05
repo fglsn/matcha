@@ -17,12 +17,12 @@ const ForgotPasswordForm = () => {
 
 		try {
 			await userService.requestPasswordReset(email.value);
-			console.log('Reset link sent!'); //rm later
 			alert.success('Reset link sent! Please check your inbox.');
 			navigate('/login');
 		} catch (err) {
-			console.log(`Error in handleForgotPwdRequest (ForgotPasswordForm): ${err}`); //rm later
-			alert.error(err.response?.data?.error || 'Unable to send a link. Please try again.');
+			alert.error(
+				err.response?.data?.error || 'Unable to send a link. Please try again.'
+			);
 			navigate('/forgot_password');
 		}
 	};

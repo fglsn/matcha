@@ -48,13 +48,11 @@ const AlertProvider = ({ children }: any) => {
 				alert,
 				alertText,
 				success: (text: string) => {
-					// window.scrollTo(0, 0);
 					setAlertText(text);
 					setAlert(AlertStatus.Success);
 					runAlert();
 				},
 				error: (text: string) => {
-					// window.scrollTo(0, 0);
 					setAlertText(text);
 					setAlert(AlertStatus.Error);
 					runAlert();
