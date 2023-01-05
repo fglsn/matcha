@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
 import { socket } from '../services/socket';
 import { useStateValue } from '../state';
-import { useStateChatReload } from './Chats/ChatReloadProvider';
+import { useStateChatReload } from './ChatWindow/ChatReloadProvider';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',

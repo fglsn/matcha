@@ -1,6 +1,4 @@
-import {
-	Typography
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Chat, ChatMsg, UserEntryForChat } from '../../types';
 import Box from '@mui/material/Box';
@@ -68,7 +66,7 @@ const Messages = ({
 	// const [receiver] = users.filter((user) => user.id !== userId);
 	const [pageNum, setPageNum] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-    const date = useRef<dayjs.Dayjs>(dayjs());
+	// const date = useRef<dayjs.Dayjs>(dayjs());
 
 	const {
 		data: chatMsgs,
@@ -115,32 +113,36 @@ const Messages = ({
 		},
 		[isLoading, hasMore]
 	);
-
-    // let dateRef = dayjs().format('D MMM YY');
-    // const messagesCopy = messages.map(m => m);
-    // for (let i = 0; i < messagesCopy.length; i++) {
-    //     if (dayjs(messagesCopy[i].message_time).format('D MMM YY') !== dateRef) {
-    //         const TimeBar = {
-    //             message_id: `-${i}`,
-    //             receiver_id: '0',
-    //             sender_id: '0',
-    //             message_text: dateRef,
-    //             message_time: messagesCopy[i-1].message_time
-    //         };
-    //         messagesCopy.splice(i - 1, 0, TimeBar);
-    //         dateRef = dayjs(messagesCopy[i].message_time).format('D MMM YY');
-    //     }
-    //     if (i === messagesCopy.length - 1){
-    //         const TimeBar = {
-    //             message_id: `-${i}`,
-    //             receiver_id: '0',
-    //             sender_id: '0',
-    //             message_text: dateRef,
-    //             message_time: messagesCopy[i-1].message_time
-    //         };
-    //         messagesCopy.splice(i, 0, TimeBar);
-    //     }
-    // }
+	
+	const messagesCopy: ChatMsg[] = [];
+	if (messages.length !== 0){
+		let dateRef = dayjs(messages[0].message_time).format('D MMM YY');
+		for (let i = 0; i < messages.length; i++) {
+			messagesCopy.push(messages[i]);
+			if (messages.length !== (i + 1) && dayjs(messages[i + 1].message_time).format('D MMM YY') !== dateRef) {
+				const TimeBar = {
+					message_id: `-${i}`,
+					receiver_id: '0',
+					sender_id: '0',
+					message_text: dateRef,
+					message_time: messages[i].message_time
+				};
+				messagesCopy.push(TimeBar);
+				dateRef = dayjs(messages[i + 1].message_time).format('D MMM YY');
+			
+			} 
+			if (messages.length === (i + 1)) {
+				const TimeBar = {
+					message_id: `-${i}`,
+					receiver_id: '0',
+					sender_id: '0',
+					message_text: dateRef,
+					message_time: messages[i].message_time
+				};
+				messagesCopy.push(TimeBar);
+			}
+		}
+	}
 
 	return (
 		<Box
@@ -148,12 +150,14 @@ const Messages = ({
 				display: 'flex',
 				flexDirection: 'column-reverse',
 				width: '100%',
-				overflowY: 'auto',
+				overflow:'hidden',
+				overflowY: 'scroll',
+				height: '100%',
 				perspective: '1px',
 				p: 1
 			}}
 		>
-			{messages.map((msg, i) =>
+			{/* {messages.map((msg, i) =>
                         <Box
                             sx={msg.receiver_id === userId ? receivedMsg : sentMsg}
                             {...(messages.length === i + 1
@@ -176,7 +180,38 @@ const Messages = ({
                                 </Typography>
                             </Box>
                         </Box>
-            )}
+            )} */}
+			{messagesCopy.map((msg, i) =>
+				msg.receiver_id === '0' ? (
+					<div 
+						key={msg.message_id}
+						{...(messagesCopy.length === i + 1 ? { ref: lastMsgElementRef } : {})}
+					>
+							{msg.message_text}
+					</div>
+				) : (
+					<Box
+						sx={msg.receiver_id === userId ? receivedMsg : sentMsg}
+						{...(messagesCopy.length === i + 1 ? { ref: lastMsgElementRef } : {})}
+						key={msg.message_id}
+					>
+						<Box
+							sx={{
+								...MsgBoxStyles
+							}}
+						>
+							<Typography
+								color="secondary"
+								variant="body2"
+								sx={{ mx: 1, wordBreak: 'break-word' }}
+							>{`${msg.message_text} `}</Typography>
+							<Typography color="grey" sx={{ fontSize: '0.6rem' }}>
+								{dayjs(msg.message_time).format('HH:mm')}
+							</Typography>
+						</Box>
+					</Box>
+				)
+			)}
 			<div>{chatMsgsError && 'Error loading more messages...'}</div>
 			<div>{isLoading && 'Loading...'}</div>
 		</Box>
