@@ -10,9 +10,9 @@ import { globalErrorHandler, unknownEndpoint } from './errors';
 import { sessionExtractorSocket, sessionIdExtractor } from './utils/middleware';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom, ChatCallback, Chat, ChatMsg } from './types';
+import { CallbackSucess, ClientToServerEvents, ServerToClientEvents, SocketCustom, ChatCallback, ChatMsg } from './types';
 import { socketErrorHandler } from './errorsSocket';
-import { addChatMessage, getChatMessages, queryOnlineUsers, updateOnlineUsers } from './services/users';
+import { addChatMessage, authChatActivation, queryOnlineUsers, updateOnlineUsers } from './services/users';
 import { removeNotificationsQueueById } from './repositories/notificationsQueueRepository';
 import { addChatNotificationsEntry, deleteNotificationsByMatchAndReceiver } from './repositories/chatNotificationsRepostiory';
 
@@ -49,10 +49,10 @@ io.on(
 			socketErrorHandler(async (match_id: string, cb: ChatCallback) => {
 				if (!socket.session) return;
 				//session id is used to check that user accessing api has rights to access
-				const chat: Chat = await getChatMessages(match_id, socket.session.userId);
-				//add here notifications queue cleaner for notifs where matchId, receiverId
+				const isAuth = await authChatActivation(match_id, socket.session.userId);
 				await socket.join(match_id);
-				cb(chat);
+				cb(isAuth);
+				//add here notifications queue cleaner for notifs where matchId, receiverId
 				await deleteNotificationsByMatchAndReceiver(match_id, socket.session.userId);
 			})
 		);

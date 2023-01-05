@@ -463,6 +463,11 @@ export const getChatMessagesPage = async (matchId: string, userId: string, page:
 	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo, Number(page), Number(limit));
 	return { messages: messages };
 };
+export const authChatActivation = async (matchId: string, userId: string): Promise<boolean> => {
+	const match = await getMatchByMatchId(matchId);
+	if (!match || (match.matchedUserIdOne !== userId && match.matchedUserIdTwo !== userId)) throw new AppError(`Attempt of unauthorised access to chat`, 403);
+	return true;
+};
 
 export const addChatMessage = async (matchId: string, userId: string, msg: string): Promise<ChatMsg> => {
 	const match = await getMatchByMatchId(matchId);
