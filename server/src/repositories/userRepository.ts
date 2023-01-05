@@ -327,7 +327,7 @@ const findUsernameById = async (userId: string): Promise<string | undefined> => 
 
 const getUserEntries = async (idList: string[]): Promise<UserEntry[]> => {
 	const query = {
-		text: `select distinct on (users.id) users.id as users_id, users.username, photos.photo, photos.photo_type, photos.id as photos_id
+		text: `select distinct on (users.id) users.id as users_id, users.username, users.firstname, users.birthday, photos.photo, photos.photo_type, photos.id as photos_id
 				from users
 					join photos on users.id = photos.user_id
 				where users.id = any ($1 :: int[])
