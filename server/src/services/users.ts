@@ -450,17 +450,10 @@ export const addVisitNotification = async (notified_user_id: string, acting_user
 	io.to(notified_user_id).emit('notification', 'Someone visited your profile!');
 };
 
-export const getChatMessages = async (matchId: string, userId: string): Promise<Chat> => {
+export const getChatMessagesPage = async (matchId: string, userId: string, page?: number, limit?: number): Promise<Chat> => {
 	const match = await getMatchByMatchId(matchId);
 	if (!match || (match.matchedUserIdOne !== userId && match.matchedUserIdTwo !== userId)) throw new AppError(`Attempt of unauthorised access to chat`, 403);
-	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo);
-	return { messages: messages };
-};
-
-export const getChatMessagesPage = async (matchId: string, userId: string, page: string, limit: string): Promise<Chat> => {
-	const match = await getMatchByMatchId(matchId);
-	if (!match || (match.matchedUserIdOne !== userId && match.matchedUserIdTwo !== userId)) throw new AppError(`Attempt of unauthorised access to chat`, 403);
-	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo, Number(page), Number(limit));
+	const messages = await getMessagesByID(match.matchedUserIdOne, match.matchedUserIdTwo, page, limit);
 	return { messages: messages };
 };
 export const authChatActivation = async (matchId: string, userId: string): Promise<boolean> => {
