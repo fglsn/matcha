@@ -121,7 +121,9 @@ const LoginForm = () => {
 										<Checkbox
 											color="primary"
 											onChange={() => setShow(!showPassword)}
-											icon={<VisibilityOffOutlinedIcon fontSize={'small'}/>}
+											icon={
+												<VisibilityOffOutlinedIcon fontSize="small" />
+											}
 											checkedIcon={<VisibilityOutlinedIcon />}
 										/>
 									}
