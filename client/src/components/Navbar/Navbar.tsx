@@ -1,5 +1,5 @@
 import { Button, AppBar, Toolbar, Box } from '@mui/material';
-import { StateContext, useStateValue } from '../../state';
+import { useStateValue } from '../../state';
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoggedUser } from '../../types';
@@ -54,7 +54,7 @@ const Navbar = ({
 	mobileOpen: boolean;
 }) => {
 	const [, dispatch] = useStateValue();
-	const loggedUser = useContext(StateContext);
+	const [{ loggedUser }] = useStateValue();
 	const navigate = useNavigate();
 	const alert = useContext(AlertContext);
 
@@ -99,7 +99,7 @@ const Navbar = ({
 					aria-label="open drawer"
 					edge="start"
 					onClick={handleDrawerToggle}
-					sx={{ mr: 2, ml: 0.5, display: { md: 'none' } }}
+					sx={{ mr: 2, ml: 0.5, display: !loggedUser ? 'none' : { md: 'none' } }}
 				>
 					<MenuIcon />
 				</IconButton>
@@ -125,11 +125,10 @@ const Navbar = ({
 					</div>
 					<BrightnessAutoIcon style={{ marginTop: '4px' }} color="primary" />
 				</Box>
-
 				<div>
-					{loggedUser[0].loggedUser !== undefined ? (
+					{loggedUser ? (
 						<LoggedInUserButtons
-							loggedUser={loggedUser[0].loggedUser}
+							loggedUser={loggedUser}
 							handleLogout={handleLogout}
 						/>
 					) : (
