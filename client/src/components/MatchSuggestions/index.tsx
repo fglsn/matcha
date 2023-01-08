@@ -7,7 +7,7 @@ import { useStateValue } from '../../state';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getMatchSuggestions } from '../../services/search';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
-import PublicProfile from '../PublicProfile/PublicProfile';
+import PublicProfile from '../PublicProfile';
 import SortAndFilterPopper from './SortAndFilterPopper';
 import withProfileRequired from '../ProfileRequired';
 import LoadingIcon from '../LoadingIcon';
