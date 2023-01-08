@@ -1,7 +1,6 @@
 //prettier-ignore
 import { Alert, Avatar, Badge, Box, Container, Divider, Grid, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Paper, styled, Typography} from '@mui/material';
 import withProfileRequired from './ProfileRequired';
-import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { ChatHeader, ChatMsg, UserEntryForChat } from '../types';
 import { useServiceCall } from '../hooks/useServiceCall';
 import LoadingIcon from './LoadingIcon';
@@ -13,6 +12,7 @@ import { CallbackSucess, withTimeout } from './PublicProfile/OnlineIndicator';
 import { socket } from '../services/socket';
 import { useStateValue } from '../state';
 import { useStateChatReload } from './ChatWindow/ChatReloadProvider';
+import InboxIcon from '@mui/icons-material/Inbox';
 
 export const StatisticItem = styled(Paper)(({ theme }) => ({
 	height: '750px',
@@ -195,7 +195,7 @@ const Chats = () => {
 					sm={6}
 				>
 					<StatisticItem>
-						<LoyaltyIcon />
+						<InboxIcon />
 						<Typography variant="h6" style={{ fontWeight: '400' }}>
 							Chats
 						</Typography>

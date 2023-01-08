@@ -9,7 +9,7 @@ import {
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import { socket } from '../../services/socket';
 import { AlertContext } from '../AlertProvider';
-import { Chat, ChatCallback, ChatMsg, UserEntryForChat } from '../../types';
+import { ChatCallback, ChatMsg, UserEntryForChat } from '../../types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useField } from '../../hooks/useField';
@@ -38,7 +38,7 @@ export const withTimeoutChat = (
 		onTimeout();
 	}, timeout);
 
-	return (...args: [Chat]) => {
+	return (...args: [boolean]) => {
 		if (called) return;
 		called = true;
 		clearTimeout(timer);
@@ -97,8 +97,8 @@ const ChatWindow = () => {
 		error: Error | undefined;
 	} = useServiceCall(async () => id && (await getChatUsers(id)), [id]);
 
-	const callbackSuccess: ChatCallback = ({ messages: initialMsgs }) => {
-		void initialMsgs;
+	const callbackSuccess: ChatCallback = (isAuth) => {
+		void isAuth;
 		// setMessages([]);
 		console.log('active chat success');
 	};

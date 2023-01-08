@@ -177,7 +177,7 @@ export type Chat = {
 	messages: ChatMsg[];
 };
 
-export type ChatCallback = ({ messages }: Chat) => void;
+export type ChatCallback = (isAuth: boolean) => void;
 
 export type UserEntryForChat = {
 	id: string;

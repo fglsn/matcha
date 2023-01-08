@@ -49,6 +49,27 @@ const MsgBoxStyles = {
 	// wordWrap: 'break-word'
 };
 
+const ScrollContainer = {
+	display: 'flex',
+	flexDirection: 'column-reverse',
+	width: '100%',
+	overflow:'auto',
+	height: '100%',
+	maxHeight: '100%',
+	perspective: '1px',
+	p: 1
+}
+const ScrollContainerLoading = {
+	display: 'flex',
+	flexDirection: 'column-reverse',
+	width: '100%',
+	overflow:'hidden',
+	height: '100%',
+	maxHeight: '100%',
+	perspective: '1px',
+	p: 1
+}
+
 const Messages = ({
 	messages,
 	matchId,
@@ -66,7 +87,6 @@ const Messages = ({
 	// const [receiver] = users.filter((user) => user.id !== userId);
 	const [pageNum, setPageNum] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	// const date = useRef<dayjs.Dayjs>(dayjs());
 
 	const {
 		data: chatMsgs,
@@ -94,12 +114,13 @@ const Messages = ({
 							self.findIndex((m) => m.message_id === value.message_id)
 					);
 				});
+				// let element = document.getElementById(`${pageNum}`);
+				// element && element.scrollIntoView({ behavior: "auto", block: "nearest" });
 			}
 		}
 	}, [chatMsgs, setMessages]);
 
 	const observer = useRef<IntersectionObserver | null>(null);
-
 	const lastMsgElementRef = useCallback(
 		(node) => {
 			if (isLoading) return;
@@ -131,7 +152,7 @@ const Messages = ({
 				dateRef = dayjs(messages[i + 1].message_time).format('D MMM YY');
 			
 			} 
-			if (messages.length === (i + 1)) {
+			if (messages.length === (i + 1) && !hasMore) {
 				const TimeBar = {
 					message_id: `-${i}`,
 					receiver_id: '0',
@@ -146,53 +167,23 @@ const Messages = ({
 
 	return (
 		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column-reverse',
-				width: '100%',
-				overflow:'hidden',
-				overflowY: 'scroll',
-				height: '100%',
-				perspective: '1px',
-				p: 1
-			}}
+			sx={!isLoading ? ScrollContainer : ScrollContainerLoading}
+			// sx={ScrollContainer}
 		>
-			{/* {messages.map((msg, i) =>
-                        <Box
-                            sx={msg.receiver_id === userId ? receivedMsg : sentMsg}
-                            {...(messages.length === i + 1
-                                ? { ref: lastMsgElementRef }
-                                : {})}
-                            key={msg.message_id}
-                        >
-                            <Box
-                                sx={{
-                                    ...MsgBoxStyles
-                                }}
-                            >
-                                <Typography
-                                    color="secondary"
-                                    variant="body2"
-                                    sx={{ mx: 1, wordBreak: 'break-word' }}
-                                >{`${msg.message_text} `}</Typography>
-                                <Typography color="grey" sx={{ fontSize: '0.6rem' }}>
-                                    {dayjs(msg.message_time).format('HH:mm')}
-                                </Typography>
-                            </Box>
-                        </Box>
-            )} */}
 			{messagesCopy.map((msg, i) =>
 				msg.receiver_id === '0' ? (
 					<div 
 						key={msg.message_id}
-						{...(messagesCopy.length === i + 1 ? { ref: lastMsgElementRef } : {})}
+						{...(messagesCopy.length === i + 1 && !isLoading ? { ref: lastMsgElementRef, id: `${pageNum}` } : {})}
+						// {...(messagesCopy.length === i + 1 && !isLoading ? {id: `${pageNum}` } : {})}
 					>
 							{msg.message_text}
 					</div>
 				) : (
 					<Box
-						sx={msg.receiver_id === userId ? receivedMsg : sentMsg}
-						{...(messagesCopy.length === i + 1 ? { ref: lastMsgElementRef } : {})}
+						sx={msg.receiver_id === userId  ? receivedMsg : sentMsg}
+						{...(messagesCopy.length === i + 1 && !isLoading ? { ref: lastMsgElementRef, id: `${pageNum}` } : {})}
+						// {...(messagesCopy.length === i + 1 && !isLoading ? {id: `${pageNum}` } : {})}
 						key={msg.message_id}
 					>
 						<Box

@@ -1,11 +1,21 @@
 //prettier-ignore
-import { Avatar, Box, Button, CssBaseline, TextField, Grid, Container, Link, Typography } from '@mui/material';
+import { Avatar, Box, Button, TextField, Grid, Container, Link, Typography, Paper, styled } from '@mui/material';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useField } from '../../hooks/useField';
 import { validateEmail } from '../../utils/inputValidators';
 import { AlertContext } from '../AlertProvider';
 import userService from '../../services/users';
+
+const Item = styled(Paper)(({ theme }) => ({
+	...theme.typography.body2,
+	margin: '0 auto',
+	padding: '1rem 2.5rem 4rem 2.5rem',
+	minWidth: '320px',
+	maxWidth: '420px',
+	textAlign: 'left',
+	color: theme.palette.text.secondary
+}));
 
 const ForgotPasswordForm = () => {
 	const email = useField('text', 'Email', validateEmail);
@@ -28,69 +38,71 @@ const ForgotPasswordForm = () => {
 	};
 
 	return (
-		<Box>
+		<Box sx={{ mt: 5, mb: 8 }}>
 			<Container component="main" maxWidth="xs">
-				<CssBaseline />
-				<Box
-					sx={{
-						marginTop: 8,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center'
-					}}
-				>
-					<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
-					<Typography component="h1" variant="h5">
-						Get Reset Link
-					</Typography>
+				<Item>
 					<Box
-						component="form"
-						noValidate
-						sx={{ mt: 1 }}
-						onSubmit={handleForgotPwdRequest}
+						sx={{
+							marginTop: 6,
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center'
+						}}
 					>
-						<TextField
-							{...email}
-							margin="normal"
-							required
-							fullWidth
-							autoFocus
-							type="text"
-							autoComplete="username"
-						/>
-						{validateEmail(email.value) === undefined ? (
-							<Button
-								type="submit"
+						<Avatar sx={{ m: 1, bgcolor: '#e3dee1' }} />
+						<Typography component="h1" variant="h5">
+							Reset Password
+						</Typography>
+						<Box
+							component="form"
+							noValidate
+							sx={{ mt: 1 }}
+							onSubmit={handleForgotPwdRequest}
+						>
+							<TextField
+								{...email}
+								margin="normal"
+								required
 								fullWidth
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Send
-							</Button>
-						) : (
-							<Button
-								fullWidth
-								disabled
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Send
-							</Button>
-						)}
-						<Grid container>
-							<Grid item xs>
-								<Link href="/login" variant="body2">
-									Back to sign in
-								</Link>
+								autoFocus
+								type="text"
+								autoComplete="username"
+								InputLabelProps={{ shrink: true }}
+							/>
+							{validateEmail(email.value) === undefined ? (
+								<Button
+									type="submit"
+									fullWidth
+									variant="contained"
+									sx={{ mt: 2, mb: 2 }}
+								>
+									Send
+								</Button>
+							) : (
+								<Button
+									fullWidth
+									disabled
+									variant="contained"
+									sx={{ mt: 2, mb: 2 }}
+								>
+									Send
+								</Button>
+							)}
+							<Grid container>
+								<Grid item xs>
+									<Link href="/login" variant="body2">
+										Back to sign in
+									</Link>
+								</Grid>
+								<Grid item>
+									<Link href="/signup" variant="body2">
+										Sign Up
+									</Link>
+								</Grid>
 							</Grid>
-							<Grid item>
-								<Link href="/signup" variant="body2">
-									Sign Up
-								</Link>
-							</Grid>
-						</Grid>
+						</Box>
 					</Box>
-				</Box>
+				</Item>
 			</Container>
 		</Box>
 	);
