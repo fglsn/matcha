@@ -34,7 +34,7 @@ export const requestCoordinatesByIp = async (ipAddress: string | undefined): Pro
 		if (parsedPayload.status === 'success') {
 			return { lat: parsedPayload.lat, lon: parsedPayload.lon };
 		} else {
-			console.log('Unexpected response from IP API (requestLocationByIp)', ipAddress, response.data);
+			//console.log('Unexpected response from IP API (requestLocationByIp)', ipAddress, response.data);
 			return defaultCoordinates;
 		}
 	} catch (err) {

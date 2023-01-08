@@ -83,12 +83,12 @@ io.on(
 			})
 		);
 
-		socket.on('connect_error', (err: { message: string }) => {
-			console.log(`connect_error due to ${err.message}`);
+		socket.on('connect_error', (_err: { message: string }) => {
+			//console.log(`connect_error due to ${err.message}`);
 		});
 
-		socket.on('disconnect', (reason: string) => {
-			console.log('client disconnected: ', socket.id, reason);
+		socket.on('disconnect', (_reason: string) => {
+			//console.log('client disconnected: ', socket.id, reason);
 		});
 	})
 );
