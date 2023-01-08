@@ -32,7 +32,7 @@ io.on(
 		if (!socket.session) return;
 		await updateOnlineUsers(socket.session.userId);
 		await socket.join(socket.session.userId);
-		console.log('client connected: ', socket.id);
+		// console.log('client connected: ', socket.id);
 
 		// Online query
 		socket.on(
@@ -40,7 +40,7 @@ io.on(
 			socketErrorHandler(async (user_id: string, callback: CallbackSucess) => {
 				const onlineStatus = await queryOnlineUsers(user_id);
 				callback(onlineStatus);
-				console.log(`online_query: ${onlineStatus.online}`);
+				// console.log(`online_query: ${onlineStatus.online}`);
 			})
 		);
 

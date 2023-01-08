@@ -100,7 +100,7 @@ const ChatWindow = () => {
 	const callbackSuccess: ChatCallback = (isAuth) => {
 		void isAuth;
 		// setMessages([]);
-		console.log('active chat success');
+		// console.log('active chat success');
 	};
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -134,7 +134,7 @@ const ChatWindow = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log('setting uf');
+		// console.log('setting uf');
 
 		const callbackTimeout: CallbackChatTimeout = () => {
 			alert.error('Failed to load chat');
