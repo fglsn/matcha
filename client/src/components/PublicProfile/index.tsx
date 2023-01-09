@@ -20,7 +20,8 @@ const Item = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(2),
 	textAlign: 'left',
 	color: theme.palette.text.secondary,
-	maxWidth: '100%'
+	maxWidth: '600px',
+	width: '100%'
 }));
 
 const StyledContainer = styled(Container)({
@@ -33,12 +34,14 @@ const UserInfo = styled('div')`
 	display: flex;
 	align-items: flex-end;
 	flex-direction: column;
+	flex-wrap: wrap;
 `;
 
 export const StyledRow = styled('div')`
 	display: flex;
 	flex-direction: row;
-	align-items: baseline;
+	flex-wrap: wrap;
+	align-items: flex-end;
 `;
 
 const StyledAlert = styled(Alert)`
@@ -59,7 +62,6 @@ const SpaceBetween = styled('div')`
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-
 `;
 
 const PublicProfile = ({
@@ -116,8 +118,8 @@ const PublicProfile = ({
 	}
 
 	return (
-		<StyledContainer className='pubStyledContainer' sx={{ mt: 4, mb: 8 }}>
-			<Item className='pubItem' >
+		<StyledContainer className="pubStyledContainer" sx={{ mt: 4, mb: 8 }}>
+			<Item className="pubItem">
 				{isMatch && (
 					<StyledAlert severity="info" color="warning">
 						<Typography variant="h6">
@@ -156,15 +158,16 @@ const PublicProfile = ({
 				/>
 				<UserInfo sx={{ mt: 3 }}>
 					<OnlineIndicator user_id={profileData.id} />
-					<StyledRow sx={{ mt: 0.75 }}>
+					<StyledRow sx={{ mt: 0.75, justifyContent: 'flex-end' }}>
 						<GenderIcon gender={profileData.gender} />
 						<Typography
 							variant="h5"
-							noWrap
 							sx={{
 								ml: 0.75,
 								maxWidth: 'fit-content',
-								textAlign: 'right'
+								textAlign: 'right',
+								wordBreak: 'break-word',
+								fontSize: { xs: '15px', sm: '15px' }
 							}}
 						>
 							{profileData.firstname} {profileData.lastname},
@@ -174,6 +177,7 @@ const PublicProfile = ({
 							variant="h5"
 							sx={{
 								ml: 0.75,
+								fontSize: { xs: '15px', sm: '15px' },
 								textAlign: 'right'
 							}}
 						>

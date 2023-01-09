@@ -184,7 +184,7 @@ describe('test initial match suggestions', () => {
 					id: userThree.id,
 					age: getAge(profileData3.birthday),
 					distance: getDistance(profileData4.coordinates, profileData3.coordinates) //10
-				},
+				}
 				// {
 				// 	...publicProfile5,
 				// 	id: userFive.id,
@@ -276,7 +276,7 @@ describe('test initial match suggestions', () => {
 					id: userTen.id,
 					age: getAge(profileData10.birthday),
 					distance: getDistance(profileData7.coordinates, profileData10.coordinates) //17
-				},
+				}
 				// {
 				// 	...publicProfile9,
 				// 	id: userNine.id,
