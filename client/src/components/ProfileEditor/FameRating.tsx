@@ -5,7 +5,7 @@ const FameRating: React.FC<{ fameRating: number }> = ({ fameRating }) => {
 	const value = (5 / 100) * fameRating;
 	return (
 		<Tooltip title={`Fame rating score: ${fameRating}/100`} arrow placement="bottom">
-			<Box display="inline-block">
+			<Box sx={{mr:2}} display="inline-block">
 				<Rating
 					name="size-small"
 					value={value}

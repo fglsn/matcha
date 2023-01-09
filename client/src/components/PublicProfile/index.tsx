@@ -19,11 +19,12 @@ const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	padding: theme.spacing(2),
 	textAlign: 'left',
-	color: theme.palette.text.secondary
+	color: theme.palette.text.secondary,
+	maxWidth: '100%'
 }));
 
 const StyledContainer = styled(Container)({
-	maxWidth: 'auto',
+	maxWidth: '100%',
 	display: 'flex',
 	justifyContent: 'center'
 });
@@ -55,7 +56,10 @@ const StyledLink = styled(Link)`
 
 const SpaceBetween = styled('div')`
 	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: space-between;
+
 `;
 
 const PublicProfile = ({
@@ -112,8 +116,8 @@ const PublicProfile = ({
 	}
 
 	return (
-		<StyledContainer maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-			<Item>
+		<StyledContainer className='pubStyledContainer' sx={{ mt: 4, mb: 8 }}>
+			<Item className='pubItem' >
 				{isMatch && (
 					<StyledAlert severity="info" color="warning">
 						<Typography variant="h6">
