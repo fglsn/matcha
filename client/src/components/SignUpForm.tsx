@@ -15,7 +15,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	margin: '0 auto',
 	padding: '1rem 2.5rem 4rem 2.5rem',
-	minWidth: '320px',
+	// minWidth: '320px',
 	maxWidth: '420px',
 	textAlign: 'left',
 	color: theme.palette.text.secondary
@@ -61,7 +61,7 @@ const SignUpForm = () => {
 
 	return (
 		<Box sx={{ mt: 5, mb: 6 }}>
-			<Container component="main" maxWidth="sm">
+			<Container component="main" sx={{ maxWidth: "100%" }}>
 				<Item>
 					<Box
 						sx={{

@@ -14,6 +14,7 @@ const StyledPaper = styled(Paper)`
 	overflow-y: scroll;
 	z-index: 2;
 	position: initial;
+	max-width: '90%';
 `;
 
 const ActionTypeLabel = styled('div')`
@@ -24,7 +25,6 @@ const ActionTypeLabel = styled('div')`
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 	'& .MuiToggleButtonGroup-grouped': {
-		margin: '1rem 0.3rem 0.5rem 0.3rem',
 		border: 3,
 		'&.Mui-disabled': {
 			border: 3
@@ -131,6 +131,8 @@ const SortAndFilterPopper = ({
 }) => {
 	const { sort, filter } = sortAndFilter;
 	const { distance, age, rating, tags } = filter;
+	// console.log('render');
+	
 
 	const { setValue: setDefaultSort, ...sortBy } = useToggleButtonWithSetValue(sort.sort);
 	const { setValue: setDefaultDistanceRange, ...distanceRangeSlider } = useRangeSlider(
@@ -200,7 +202,7 @@ const SortAndFilterPopper = ({
 			anchorEl={anchorEl}
 			disablePortal={true}
 			placement="bottom-start"
-			style={{ zIndex: '5', maxWidth: '100%' }}
+			style={{ zIndex: '5', maxWidth: '90%'}}
 			modifiers={[
 				{
 					name: 'preventOverflow',
@@ -217,7 +219,7 @@ const SortAndFilterPopper = ({
 			]}
 		>
 			<StyledPaper>
-				<Grid item sm={'auto'} mt={1} style={{ maxWidth: '100%' }}>
+				<Grid item sm={'auto'} mt={1} style={{ maxWidth: '100%!important' }}>
 					<ActionTypeLabel>Sort by</ActionTypeLabel>
 					<Box
 						sx={{
@@ -228,7 +230,7 @@ const SortAndFilterPopper = ({
 						}}
 					>
 						<StyledToggleButtonGroup
-							sx={{ flexWrap: 'wrap', justifyContent: 'center' }}
+							sx={{ flexWrap: 'wrap', justifyContent: 'center', flexDirection: {xs: 'column', sm: 'row'}, m: {xs: 0, sm: '1rem 0.3rem 0.5rem 0.3rem'} }}
 							exclusive
 							{...sortBy}
 						>

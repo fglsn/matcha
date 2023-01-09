@@ -11,7 +11,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	...theme.typography.body2,
 	margin: '0 auto',
 	padding: '1rem 2.5rem 4rem 2.5rem',
-	minWidth: '320px',
+	// minWidth: '320px',
 	maxWidth: '420px',
 	textAlign: 'left',
 	color: theme.palette.text.secondary
@@ -39,7 +39,7 @@ const ForgotPasswordForm = () => {
 
 	return (
 		<Box sx={{ mt: 5, mb: 8 }}>
-			<Container component="main" maxWidth="xs">
+			<Container component="main" sx={{ maxWidth: "100%" }}>
 				<Item>
 					<Box
 						sx={{

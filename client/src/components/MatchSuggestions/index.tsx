@@ -65,7 +65,7 @@ const MatchSuggestions = () => {
 			loggedUser && (await getMatchSuggestions(sortAndFilter, pageNumber, 4)),
 		[sortAndFilter, pageNumber]
 	);
-
+	
 	const handleOnChange = (newSortAndFilter: SortAndFilter) => {
 		setPageNumber(1);
 		setFilteredIds([]);
