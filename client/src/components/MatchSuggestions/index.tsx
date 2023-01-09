@@ -13,8 +13,11 @@ import withProfileRequired from '../ProfileRequired';
 import LoadingIcon from '../LoadingIcon';
 
 export const StyledMain = styled('div')`
-	display: flex;
-	flex-direction: column;
+	// display: flex;
+	// flex-direction: column;
+	// max-width: 100%;
+	// padding-left: 1rem;
+	// padding-right: 1rem;
 `;
 
 const defaultSortCriteria: SortingCriteriaInternal = {
@@ -123,11 +126,12 @@ const MatchSuggestions = () => {
 					) : null}
 				</Box>
 			</ClickAwayListener>
-			<Container sx={{ mb: 5 }}>
+			<Container sx={{ mb: 5, maxWidth: '100%'}}>
 				{profiles
 					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
 					.map((profile, i) => (
 						<Box
+							sx={{maxWidth: '100%'}}
 							key={i}
 							{...(profiles.length === i + 1
 								? { ref: lastDisplayedProfileRef }

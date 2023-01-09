@@ -23,7 +23,7 @@ const User = ({ user }: { user: UserEntry }) => {
 								src={`${user.avatar}`}
 							/>
 						</ListItemAvatar>
-						<ListItemText primary={user.username} />
+						<ListItemText primary={user.firstname} />
 					</ListItemButton>
 				</ListItem>
 			</StyledLink>

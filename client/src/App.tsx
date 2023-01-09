@@ -29,7 +29,8 @@ import { StateContext } from './state';
 
 const MinWidthContainer = styled.div`
 	display: flex;
-	min-width: fit-content;
+	max-width: 100%;
+	min-width: 300px;
 `;
 
 const StyledBox = styled(Box)`
@@ -37,6 +38,8 @@ const StyledBox = styled(Box)`
 	flex-grow: 1;
 	position: relative;
 	top: 5rem;
+	max-width: 100%;
+	min-width: 320px;
 `;
 
 function ErrorFallback({

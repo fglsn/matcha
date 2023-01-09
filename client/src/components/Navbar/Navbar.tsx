@@ -72,6 +72,7 @@ const Navbar = ({
 			sx={{
 				ml: { sm: `${drawerWidth}px` },
 				mb: 5,
+				maxWidth: '100%',
 				zIndex: (theme) => theme.zIndex.drawer + 1,
 				justifyContent: 'space-between',
 				'& .MuiAppBar-root': {
