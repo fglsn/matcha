@@ -46,8 +46,8 @@ export const sessionExtractorSocket = (socket: any, next: any) => {
 			socket.session = session;
 			next();
 		})
-		.catch((error) => {
-			console.log(error);
+		.catch((_error) => {
+			//console.log(error);
 			const err = new Error('Error: No sessions found or expired');
 			return next(err);
 		});

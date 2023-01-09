@@ -19,7 +19,7 @@ const StyledPaper = styled(Paper)`
 const ActionTypeLabel = styled('div')`
 	color: rgba(0, 0, 0, 0.6);
 	text-align: left;
-	font-weight: 600;
+	font-weight: 700;
 `;
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
@@ -132,9 +132,7 @@ const SortAndFilterPopper = ({
 	const { sort, filter } = sortAndFilter;
 	const { distance, age, rating, tags } = filter;
 
-	const { setValue: setDefaultSort, ...sortBy } = useToggleButtonWithSetValue(
-		sort.sort
-	);
+	const { setValue: setDefaultSort, ...sortBy } = useToggleButtonWithSetValue(sort.sort);
 	const { setValue: setDefaultDistanceRange, ...distanceRangeSlider } = useRangeSlider(
 		[distance.min, distance.max],
 		2,
@@ -202,7 +200,7 @@ const SortAndFilterPopper = ({
 			anchorEl={anchorEl}
 			disablePortal={true}
 			placement="bottom-start"
-			style={{ zIndex: '5' }}
+			style={{ zIndex: '5', maxWidth: '100%' }}
 			modifiers={[
 				{
 					name: 'preventOverflow',
@@ -219,22 +217,28 @@ const SortAndFilterPopper = ({
 			]}
 		>
 			<StyledPaper>
-				<Grid item sm={'auto'} mt={1}>
+				<Grid item sm={'auto'} mt={1} style={{ maxWidth: '100%' }}>
 					<ActionTypeLabel>Sort by</ActionTypeLabel>
 					<Box
 						sx={{
+							flexWrap: 'wrap',
+							maxWidth: '100%',
 							display: 'flex',
 							flexDirection: 'column'
 						}}
 					>
-						<StyledToggleButtonGroup exclusive {...sortBy}>
+						<StyledToggleButtonGroup
+							sx={{ flexWrap: 'wrap', justifyContent: 'center' }}
+							exclusive
+							{...sortBy}
+						>
 							<ToggleButton value="distance">DISTANCE</ToggleButton>
 							<ToggleButton value="age">AGE</ToggleButton>
 							<ToggleButton value="rating">RATING</ToggleButton>
 							<ToggleButton value="tags">COMMON INTERESTS</ToggleButton>
 						</StyledToggleButtonGroup>
 						<FormControlLabel
-							style={{ justifyContent: 'flex-end' }}
+							style={{ justifyContent: 'flex-end', margin: '15px 0' }}
 							label="Show sort results in reverse order"
 							control={
 								<Checkbox
@@ -304,8 +308,7 @@ const SortAndFilterPopper = ({
 						<Filter>
 							<SliderLabel>Rating</SliderLabel>
 							<SliderBox>
-								{ratingRangeSlider.value[1] ===
-								ratingRangeSlider.value[0] ? (
+								{ratingRangeSlider.value[1] === ratingRangeSlider.value[0] ? (
 									<Typography>
 										{ratingRangeSlider.value[0]} points
 									</Typography>

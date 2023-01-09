@@ -1,7 +1,7 @@
 //prettier-ignore
 import { Alert, Avatar, Badge, Box, Container, Divider, Grid, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Paper, styled, Typography} from '@mui/material';
 import withProfileRequired from './ProfileRequired';
-import { ChatHeader, ChatMsg, UserEntryForChat } from '../types';
+import { ChatHeader, ChatMsg, UserEntry } from '../types';
 import { useServiceCall } from '../hooks/useServiceCall';
 import LoadingIcon from './LoadingIcon';
 import { Link } from 'react-router-dom';
@@ -37,92 +37,104 @@ export const StyledLink = styled(Link)`
 	text-decoration: none;
 `;
 
-const User = ({ user, matchId, lastMsg }: { user: UserEntryForChat, matchId: string, lastMsg: ChatMsg }) => {
-	
-    const getMessageCut = () => {
-        if (!lastMsg) 
-            return 'New Match, Say Hello!';
+const User = ({
+	user,
+	matchId,
+	lastMsg
+}: {
+	user: UserEntry;
+	matchId: string;
+	lastMsg: ChatMsg;
+}) => {
+	const getMessageCut = () => {
+		if (!lastMsg) return 'New Match, Say Hello!';
 
-        if (lastMsg.message_text.length > 45) {
-            const string = lastMsg.message_text.slice(0,45);
-            const substrings = string.split(' ');
-            const stringCut = substrings.length === 1 
-            ? string
-            : substrings.slice(0, -1).join(' ');
-            return `${stringCut}...`;
-        }
-       
-        return lastMsg.message_text;
-    }
+		if (lastMsg.message_text.length > 45) {
+			const string = lastMsg.message_text.slice(0, 45);
+			const substrings = string.split(' ');
+			const stringCut =
+				substrings.length === 1 ? string : substrings.slice(0, -1).join(' ');
+			return `${stringCut}...`;
+		}
 
-    const callbackSuccess: CallbackSucess = ({online, lastActive}) => {
+		return lastMsg.message_text;
+	};
+
+	const callbackSuccess: CallbackSucess = ({ online, lastActive }) => {
 		setOnline(online);
 	};
 
-    const callbackTimeout = () => {
+	const callbackTimeout = () => {
 		setOnline(false);
 	};
 
 	const [online, setOnline] = useState(false);
-    const [{ msgNotifications }] = useStateValue();
+	const [{ msgNotifications }] = useStateValue();
 
-    // Query online status and get response in callback
+	// Query online status and get response in callback
 	useEffect(() => {
-		socket.emit('online_query', user.id, withTimeout(callbackSuccess, callbackTimeout, 2000));
+		socket.emit(
+			'online_query',
+			user.id,
+			withTimeout(callbackSuccess, callbackTimeout, 2000)
+		);
 		const intervalId = setInterval(() => {
-			socket.emit('online_query', user.id, withTimeout(callbackSuccess, callbackTimeout, 2000));
+			socket.emit(
+				'online_query',
+				user.id,
+				withTimeout(callbackSuccess, callbackTimeout, 2000)
+			);
 		}, 60000);
 		return () => clearInterval(intervalId);
 	}, [user.id]);
 
+	const counter = msgNotifications.filter((msg) => msg.matchId === matchId).length;
+	// const [counter, setCounter] = useState<number>(0);
 
-    const counter = msgNotifications.filter(msg => msg.matchId === matchId).length;
-    // const [counter, setCounter] = useState<number>(0);
-    
-    return (
+	return (
 		<>
-
 			<StyledLink to={`/chats/${matchId}`}>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemAvatar>
-                            <Badge
-                                badgeContent={counter}
-                                max={999}
-                                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                                // overlap="circular"
-                                color="error"
-			                >
-                                <Avatar
-                                    alt={`Avatar of user ${user.username}`}
-                                    src={`${user.avatar}`}
-                                />
-                            </Badge>
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={
-                                <Box  sx={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-                                {`${user.firstname}, ${user.age}`}
-                                {online ? <CircleIcon sx={{ fontSize: 15, marginLeft: 1 }} color="success" /> : ''}
-                                </Box>
-                            }
-                            secondary={
-                                <>
-                                    {/* <Typography
-                                        sx={{ display: 'inline' }}
-                                        component="span"
-                                        variant="body2"
-                                        color="text.primary"
-                                    >
-                                        to Scott, Alex, Jennifer
-                                    </Typography> */}
-                                    {` - ${getMessageCut()}`}
-                                </>
-                            }
-                        />
-                    </ListItemButton>
-                </ListItem>
-            </StyledLink>
+				<ListItem disablePadding>
+					<ListItemButton>
+						<ListItemAvatar>
+							<Badge
+								badgeContent={counter}
+								max={999}
+								anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+								// overlap="circular"
+								color="error"
+							>
+								<Avatar
+									alt={`Avatar of user ${user.username}`}
+									src={`${user.avatar}`}
+								/>
+							</Badge>
+						</ListItemAvatar>
+						<ListItemText
+							primary={
+								<Box
+									sx={{
+										display: 'flex',
+										flexWrap: 'nowrap',
+										alignItems: 'center'
+									}}
+								>
+									{`${user.firstname}, ${user.age}`}
+									{online ? (
+										<CircleIcon
+											sx={{ fontSize: 15, marginLeft: 1 }}
+											color="success"
+										/>
+									) : (
+										''
+									)}
+								</Box>
+							}
+							secondary={<>{` - ${getMessageCut()}`}</>}
+						/>
+					</ListItemButton>
+				</ListItem>
+			</StyledLink>
 			<Divider />
 		</>
 	);
@@ -131,7 +143,6 @@ const User = ({ user, matchId, lastMsg }: { user: UserEntryForChat, matchId: str
 const ChatList: React.FC<{
 	chatEntries: ChatHeader[] | undefined;
 }> = ({ chatEntries }) => {
-
 	if (!chatEntries || !chatEntries.length) {
 		return (
 			<Typography variant="h6" color="rgba(0, 0, 0, 0.6)" textAlign="center">
@@ -144,7 +155,12 @@ const ChatList: React.FC<{
 		chatEntries && (
 			<List style={{ width: '100%' }}>
 				{chatEntries.map((entry) => (
-					<User key={entry.matchId} user={entry.matchedUser} matchId={entry.matchId} lastMsg={entry.lastMessage} />
+					<User
+						key={entry.matchId}
+						user={entry.matchedUser}
+						matchId={entry.matchId}
+						lastMsg={entry.lastMessage}
+					/>
 				))}
 			</List>
 		)
@@ -152,10 +168,10 @@ const ChatList: React.FC<{
 };
 
 const Chats = () => {
-    const [{ msgNotifications }] = useStateValue();
-    const reload = useStateChatReload();
-	
-    const {
+	const [{ msgNotifications }] = useStateValue();
+	const reload = useStateChatReload();
+
+	const {
 		data: chatsData,
 		error: chatsError
 	}: {

@@ -6,9 +6,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OrientationIcon from './OrientationIcon';
 
 const StyledContainer = styled('div')({
-	width: '100vw',
+	width: '100%',
 	maxWidth: '600px',
-	minWidth: '320px',
 	height: 'calc(600px * (3/4))',
 	maxHeight: 'calc(600px * (3/4))',
 	minHeight: '320px',
@@ -18,7 +17,7 @@ const StyledContainer = styled('div')({
 
 const StyledBeforeIcon = styled(NavigateBeforeIcon)`
 	position: absolute;
-	top: 93%;
+	top: 90%;
 	left: 5px;
 	z-index: 1;
 	cursor: pointer;
@@ -34,7 +33,7 @@ const StyledBeforeIcon = styled(NavigateBeforeIcon)`
 
 const StyledNextIcon = styled(NavigateNextIcon)`
 	position: absolute;
-	top: 93%;
+	top: 90%;
 	right: 5px;
 	z-index: 1;
 	cursor: pointer;

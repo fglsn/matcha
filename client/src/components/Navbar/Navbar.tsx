@@ -2,7 +2,6 @@ import { Button, AppBar, Toolbar, Box } from '@mui/material';
 import { useStateValue } from '../../state';
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LoggedUser } from '../../types';
 import { AlertContext } from '../AlertProvider';
 import { logoutUser } from '../../services/logout';
 import { socket } from '../../services/socket';
@@ -13,13 +12,7 @@ import NotificationsButton from './Notifications';
 import ChatButton from './Messages';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
-const LoggedInUserButtons = ({
-	loggedUser,
-	handleLogout
-}: {
-	loggedUser: LoggedUser;
-	handleLogout: any;
-}) => {
+const LoggedInUserButtons = ({ handleLogout }: { handleLogout: any }) => {
 	return (
 		<Box sx={{ pr: 0 }}>
 			<ChatButton />
@@ -79,6 +72,7 @@ const Navbar = ({
 			sx={{
 				ml: { sm: `${drawerWidth}px` },
 				mb: 5,
+				maxWidth: '100%',
 				zIndex: (theme) => theme.zIndex.drawer + 1,
 				justifyContent: 'space-between',
 				'& .MuiAppBar-root': {
@@ -109,7 +103,7 @@ const Navbar = ({
 					sx={{
 						textDecoration: 'none',
 						ml: 1,
-						display: { xs: 'none', sm: 'none', md: 'flex' },
+						display: !loggedUser ? 'flex' : { xs: 'none', sm: 'none', md: 'flex' },
 						alignItems: 'center'
 					}}
 				>
@@ -127,10 +121,7 @@ const Navbar = ({
 				</Box>
 				<div>
 					{loggedUser ? (
-						<LoggedInUserButtons
-							loggedUser={loggedUser}
-							handleLogout={handleLogout}
-						/>
+						<LoggedInUserButtons handleLogout={handleLogout} />
 					) : (
 						<LoggedOutButtons />
 					)}

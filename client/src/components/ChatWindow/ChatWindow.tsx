@@ -1,15 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import LabelImportantIcon from '@mui/icons-material/LabelImportant';
-import {
-	Container,
-	Grid,
-	IconButton,
-	Paper,
-	styled} from '@mui/material';
+import withProfileRequired from '../ProfileRequired';
+import { Container, Grid, IconButton, Paper, styled } from '@mui/material';
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import { socket } from '../../services/socket';
 import { AlertContext } from '../AlertProvider';
-import { ChatCallback, ChatMsg, UserEntryForChat } from '../../types';
+import { ChatCallback, ChatMsg, UserEntry } from '../../types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useField } from '../../hooks/useField';
@@ -93,14 +89,14 @@ const ChatWindow = () => {
 		data: chatUsers,
 		error: chatUsersError
 	}: {
-		data: UserEntryForChat[] | undefined;
+		data: UserEntry[] | undefined;
 		error: Error | undefined;
 	} = useServiceCall(async () => id && (await getChatUsers(id)), [id]);
 
 	const callbackSuccess: ChatCallback = (isAuth) => {
 		void isAuth;
 		// setMessages([]);
-		console.log('active chat success');
+		// console.log('active chat success');
 	};
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -134,8 +130,6 @@ const ChatWindow = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log('setting uf');
-
 		const callbackTimeout: CallbackChatTimeout = () => {
 			alert.error('Failed to load chat');
 			navigate('/chats');
@@ -205,11 +199,8 @@ const ChatWindow = () => {
 					sm={6}
 				>
 					<BackgroundPaper>
-						{/* <LoyaltyIcon /> */}
 						<User
-							user={
-								chatUsers.filter((user) => user.id !== loggedUser.id)[0]
-							}
+							user={chatUsers.filter((user) => user.id !== loggedUser.id)[0]}
 						/>
 						<ChatContent>
 							<Messages
@@ -274,4 +265,4 @@ const ChatWindow = () => {
 	);
 };
 
-export default ChatWindow;
+export default withProfileRequired(ChatWindow);

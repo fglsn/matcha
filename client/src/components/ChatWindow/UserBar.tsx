@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { socket } from '../../services/socket';
-import { UserEntryForChat } from '../../types';
+import { UserEntry } from '../../types';
 import Box from '@mui/material/Box';
 import { CallbackSucess, withTimeout } from '../PublicProfile/OnlineIndicator';
 import CircleIcon from '@mui/icons-material/Circle';
@@ -16,7 +16,7 @@ const StyledLink = styled(Link)`
 	text-decoration: none;
 `;
 
-const User = ({ user }: { user: UserEntryForChat }) => {
+const User = ({ user }: { user: UserEntry }) => {
 	const callbackSuccess: CallbackSucess = ({ online, lastActive }) => {
 		setOnline(online);
 	};

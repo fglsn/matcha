@@ -9,7 +9,7 @@ import ProfileEditor from './components/ProfileEditor';
 import UpdateEmail from './components/UpdateEmail';
 import AlertProvider from './components/AlertProvider';
 import AlertSnackBar from './components/AlertSnackBar';
-import PublicProfile from './components/PublicProfile';
+import PublicProfilePage from './components/PublicProfile/PublicProfilePage';
 import VisitHistory from './components/VisitHistory';
 import Matches from './components/Matches';
 import Blocks from './components/Blocks';
@@ -29,7 +29,8 @@ import { StateContext } from './state';
 
 const MinWidthContainer = styled.div`
 	display: flex;
-	min-width: fit-content;
+	max-width: 100%;
+	min-width: 300px;
 `;
 
 const StyledBox = styled(Box)`
@@ -37,6 +38,8 @@ const StyledBox = styled(Box)`
 	flex-grow: 1;
 	position: relative;
 	top: 5rem;
+	max-width: 100%;
+	min-width: 320px;
 `;
 
 function ErrorFallback({
@@ -107,7 +110,7 @@ const App = () => {
 										}
 									/>
 									<Route path="/profile" element={<ProfileEditor />} />
-									<Route path="/profile/:id" element={<PublicProfile />} />
+									<Route path="/profile/:id" element={<PublicProfilePage />} />
 									<Route path="/update_email" element={<UpdateEmail />} />
 									<Route path="/visit_history" element={<VisitHistory />} />
 									<Route path="/likes" element={<Likes />} />

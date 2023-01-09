@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-import { useContext } from "react";
+import React, { useState } from 'react';
+import { useContext } from 'react';
 
 type ChatReloadContextValue = {
 	reason: string | undefined;
-    initReload: (matchId: string | undefined) => void;
+	initReload: (matchId: string | undefined) => void;
 };
 
-export const ChatReloadContext =
-	React.createContext<ChatReloadContextValue>({
-		reason: undefined,
-		initReload: () => { },
-	});
+export const ChatReloadContext = React.createContext<ChatReloadContextValue>({
+	reason: undefined,
+	initReload: () => {}
+});
 
 export const ChatReloadProvider = ({ children }: any) => {
-
 	const [reason, setReason] = useState<string | undefined>(undefined);
 
 	return (
@@ -27,7 +25,7 @@ export const ChatReloadProvider = ({ children }: any) => {
 		>
 			{children}
 		</ChatReloadContext.Provider>
-	)
-}
+	);
+};
 
-export const  useStateChatReload = () => useContext(ChatReloadContext);
+export const useStateChatReload = () => useContext(ChatReloadContext);

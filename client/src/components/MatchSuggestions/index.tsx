@@ -7,14 +7,17 @@ import { useStateValue } from '../../state';
 import { useServiceCall } from '../../hooks/useServiceCall';
 import { getMatchSuggestions } from '../../services/search';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
-import PublicProfile from '../PublicProfile/PublicProfile';
+import PublicProfile from '../PublicProfile';
 import SortAndFilterPopper from './SortAndFilterPopper';
 import withProfileRequired from '../ProfileRequired';
 import LoadingIcon from '../LoadingIcon';
 
 export const StyledMain = styled('div')`
-	display: flex;
-	flex-direction: column;
+	// display: flex;
+	// flex-direction: column;
+	// max-width: 100%;
+	// padding-left: 1rem;
+	// padding-right: 1rem;
 `;
 
 const defaultSortCriteria: SortingCriteriaInternal = {
@@ -91,7 +94,12 @@ const MatchSuggestions = () => {
 				setHasMore(false);
 			} else {
 				setProfiles((prevProfiles) => {
-					return [...new Set([...prevProfiles, ...matchSuggestionsData])];
+					// return [...new Set([...prevProfiles, ...matchSuggestionsData])];
+					const arrTemp = [...prevProfiles, ...matchSuggestionsData];
+					return arrTemp.filter(
+						(value, index, self) =>
+							index === self.findIndex((user) => user.id === value.id)
+					);
 				});
 				setHasMore(matchSuggestionsData.length > 0);
 			}
@@ -123,11 +131,12 @@ const MatchSuggestions = () => {
 					) : null}
 				</Box>
 			</ClickAwayListener>
-			<Container sx={{ mb: 5 }}>
+			<Container sx={{ mb: 5, maxWidth: '100%'}}>
 				{profiles
 					.filter((profile) => filteredIds.indexOf(profile.id) < 0)
 					.map((profile, i) => (
 						<Box
+							sx={{maxWidth: '100%'}}
 							key={i}
 							{...(profiles.length === i + 1
 								? { ref: lastDisplayedProfileRef }

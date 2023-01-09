@@ -49,7 +49,7 @@ export const getValidImages = async (
 				dataURL: await getBase64(files[i])
 			});
 		} catch (e) {
-			console.log('Error decoding image', e);
+			//console.log('Error decoding image', e);
 		}
 	}
 

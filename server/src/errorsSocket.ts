@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const socketErrorHandler = (handler: any) => {
 	const handleError = (err: any) => {
-		// if (err.message === 'No record of this user being active'){ 
+		// if (err.message === 'No record of this user being active'){
 		// 	console.log('never online');
 		// } else {
 		// 	console.error('please handle me', err);

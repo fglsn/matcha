@@ -2,10 +2,13 @@ import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 import { Images, NewUserData } from '../types';
 import { handleAxiosError } from '../utils/errors';
+import { AppError } from '../utils/errors';
 import getAuthHeader from './auth';
 
 export const getPublicProfile = async (userId: string) => {
 	try {
+		if (!Number(userId) || Number(userId) <= 0) throw new AppError('User does not exists');
+
 		const config = {
 			headers: { Authorization: getAuthHeader() }
 		};
