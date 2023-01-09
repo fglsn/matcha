@@ -94,7 +94,12 @@ const MatchSuggestions = () => {
 				setHasMore(false);
 			} else {
 				setProfiles((prevProfiles) => {
-					return [...new Set([...prevProfiles, ...matchSuggestionsData])];
+					// return [...new Set([...prevProfiles, ...matchSuggestionsData])];
+					const arrTemp = [...prevProfiles, ...matchSuggestionsData];
+					return arrTemp.filter(
+						(value, index, self) =>
+							index === self.findIndex((user) => user.id === value.id)
+					);
 				});
 				setHasMore(matchSuggestionsData.length > 0);
 			}
