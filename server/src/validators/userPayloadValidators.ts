@@ -196,8 +196,8 @@ export const parseBio = (bio: unknown): string => {
 		throw new ValidationError(`Expected bio to be string, got: ${typeof bio}`);
 	}
 	const trimmedBio = bio.trim().replace(/\s\s+/g, ' ');
-	if (trimmedBio.length > 255 || trimmedBio.length < 10) {
-		throw new ValidationError(`Invalid bio format: min 10, max 255 chars`);
+	if (trimmedBio.length > 100 || trimmedBio.length < 10) {
+		throw new ValidationError(`Invalid bio format: min 10, max 100 chars`);
 	}
 	return trimmedBio;
 };
