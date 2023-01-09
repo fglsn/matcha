@@ -9,7 +9,7 @@ import {
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import { socket } from '../../services/socket';
 import { AlertContext } from '../AlertProvider';
-import { ChatCallback, ChatMsg, UserEntryForChat } from '../../types';
+import { ChatCallback, ChatMsg, UserEntry } from '../../types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useField } from '../../hooks/useField';
@@ -93,7 +93,7 @@ const ChatWindow = () => {
 		data: chatUsers,
 		error: chatUsersError
 	}: {
-		data: UserEntryForChat[] | undefined;
+		data: UserEntry[] | undefined;
 		error: Error | undefined;
 	} = useServiceCall(async () => id && (await getChatUsers(id)), [id]);
 
@@ -134,8 +134,6 @@ const ChatWindow = () => {
 	}, []);
 
 	useEffect(() => {
-		// console.log('setting uf');
-
 		const callbackTimeout: CallbackChatTimeout = () => {
 			alert.error('Failed to load chat');
 			navigate('/chats');
@@ -205,7 +203,6 @@ const ChatWindow = () => {
 					sm={6}
 				>
 					<BackgroundPaper>
-						{/* <LoyaltyIcon /> */}
 						<User
 							user={
 								chatUsers.filter((user) => user.id !== loggedUser.id)[0]

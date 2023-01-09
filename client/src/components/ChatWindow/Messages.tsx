@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Chat, ChatMsg, UserEntryForChat } from '../../types';
+import { Chat, ChatMsg, UserEntry } from '../../types';
 import Box from '@mui/material/Box';
 import { getChatMessages } from '../../services/chats';
 import { useServiceCall } from '../../hooks/useServiceCall';
@@ -79,7 +79,7 @@ const Messages = ({
 }: {
 	messages: ChatMsg[];
 	matchId: string;
-	users: UserEntryForChat[];
+	users: UserEntry[];
 	userId: string;
 	setMessages: React.Dispatch<React.SetStateAction<ChatMsg[]>>;
 }) => {

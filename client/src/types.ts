@@ -102,12 +102,6 @@ export enum AlertStatus {
 	Error = 'ERROR'
 }
 
-export type UserEntry = {
-	id: string;
-	username: string;
-	avatar: string;
-};
-
 export type VisitEntry = {
 	visitedUserId: string;
 	visitorUserId: string;
@@ -179,7 +173,7 @@ export type Chat = {
 
 export type ChatCallback = (isAuth: boolean) => void;
 
-export type UserEntryForChat = {
+export type UserEntry = {
 	id: string;
 	username: string;
 	firstname: string;
@@ -189,7 +183,7 @@ export type UserEntryForChat = {
 
 export type ChatHeader = {
 	matchId: string;
-	matchedUser: UserEntryForChat;
+	matchedUser: UserEntry;
 	lastMessage: ChatMsg;
 };
 
