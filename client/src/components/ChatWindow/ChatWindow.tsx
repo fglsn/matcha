@@ -1,11 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import LabelImportantIcon from '@mui/icons-material/LabelImportant';
-import {
-	Container,
-	Grid,
-	IconButton,
-	Paper,
-	styled} from '@mui/material';
+import withProfileRequired from '../ProfileRequired';
+import { Container, Grid, IconButton, Paper, styled } from '@mui/material';
 import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import { socket } from '../../services/socket';
 import { AlertContext } from '../AlertProvider';
@@ -204,9 +200,7 @@ const ChatWindow = () => {
 				>
 					<BackgroundPaper>
 						<User
-							user={
-								chatUsers.filter((user) => user.id !== loggedUser.id)[0]
-							}
+							user={chatUsers.filter((user) => user.id !== loggedUser.id)[0]}
 						/>
 						<ChatContent>
 							<Messages
@@ -271,4 +265,4 @@ const ChatWindow = () => {
 	);
 };
 
-export default ChatWindow;
+export default withProfileRequired(ChatWindow);
