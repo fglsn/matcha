@@ -100,7 +100,7 @@ const getSearchPage = async (user: TokenAndId) => {
 	return res.body;
 };
 describe('test initial match suggestions', () => {
-	describe('suggestions by sex preferences and default filter distance < 50km', () => {
+	describe('suggestions by sex preferences and default filter distance < 50km, limited by 4 profiles', () => {
 		beforeAll(async () => {
 			await prepareUsers();
 		});
@@ -159,6 +159,7 @@ describe('test initial match suggestions', () => {
 
 		test('male bi user sees male gay and male bi, female straight, female bi', async () => {
 			const searchResult = await getSearchPage(userFour); //#2 3 5 7 8 10
+			//console.log(searchResult);
 			expect(searchResult).toEqual([
 				{
 					...publicProfile8,
@@ -184,18 +185,18 @@ describe('test initial match suggestions', () => {
 					age: getAge(profileData3.birthday),
 					distance: getDistance(profileData4.coordinates, profileData3.coordinates) //10
 				},
-				{
-					...publicProfile5,
-					id: userFive.id,
-					age: getAge(profileData5.birthday),
-					distance: getDistance(profileData4.coordinates, profileData5.coordinates) //12
-				},
-				{
-					...publicProfile10,
-					id: userTen.id,
-					age: getAge(profileData10.birthday),
-					distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
-				}
+				// {
+				// 	...publicProfile5,
+				// 	id: userFive.id,
+				// 	age: getAge(profileData5.birthday),
+				// 	distance: getDistance(profileData4.coordinates, profileData5.coordinates) //12
+				// },
+				// {
+				// 	...publicProfile10,
+				// 	id: userTen.id,
+				// 	age: getAge(profileData10.birthday),
+				// 	distance: getDistance(profileData4.coordinates, profileData10.coordinates) //12
+				// }
 			]);
 		});
 
@@ -276,12 +277,12 @@ describe('test initial match suggestions', () => {
 					age: getAge(profileData10.birthday),
 					distance: getDistance(profileData7.coordinates, profileData10.coordinates) //17
 				},
-				{
-					...publicProfile9,
-					id: userNine.id,
-					age: getAge(profileData9.birthday),
-					distance: getDistance(profileData7.coordinates, profileData9.coordinates) //92
-				}
+				// {
+				// 	...publicProfile9,
+				// 	id: userNine.id,
+				// 	age: getAge(profileData9.birthday),
+				// 	distance: getDistance(profileData7.coordinates, profileData9.coordinates) //92
+				// }
 			]);
 		});
 	});

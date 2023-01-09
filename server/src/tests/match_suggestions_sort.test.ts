@@ -90,7 +90,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by distance asc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByDistance, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const distances = searchResult.map((profile: { distance: number }) => profile.distance);
 		//console.log('sort by distance asc: ', distances);
@@ -99,7 +99,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by distance desc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByDistanceReversed, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const distances = searchResult.map((profile: { distance: number }) => profile.distance);
 		//console.log('sort by distance desc: ', distances);
@@ -108,7 +108,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by age asc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByAge, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const ages = searchResult.map((profile: { age: number }) => profile.age);
 		// console.log('sort by age asc: ', ages);
@@ -117,7 +117,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by age desc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByAgeReversed, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const ages = searchResult.map((profile: { age: number }) => profile.age);
 		// console.log('sort by age desc: ', ages);
@@ -126,7 +126,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by tags asc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByTagsReversed, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const tags = searchResult.map((profile: { tags: string[] }) => profile.tags);
 
@@ -140,7 +140,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by tags desc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByTags, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const tags = searchResult.map((profile: { tags: string[] }) => profile.tags);
 		const amountOfCommonTags = tags.map((tagArr: string | string[]) => {
@@ -154,7 +154,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by rating desc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByRating, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const ratings = searchResult.map((profile: { fameRating: number }) => profile.fameRating);
 		// console.log('sort by rating asc: ', ratings);
@@ -163,7 +163,7 @@ describe('testing search results with all sort criterias', () => {
 
 	test('sorted properly by rating asc order', async () => {
 		const searchResult = await getSearchPage(requestor, { sort: sortByRatingReversed, filter: filter });
-		expect(searchResult.length).toBe(5);
+		expect(searchResult.length).toBe(4);
 
 		const ratings = searchResult.map((profile: { fameRating: number }) => profile.fameRating);
 		// console.log('sort by rating desc: ', ratings);
