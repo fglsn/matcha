@@ -7,7 +7,7 @@ const Footer = () => {
 			{'© '}
 			<Link color="inherit" href="/">
 				Matcha
-			</Link>{'  by Ilona Shakurova & Alexei Shatalov  '}
+			</Link>{'  by Ilona Shakurova & Aleksei Shatalov  '}
 			{new Date().getFullYear()}.
 		</Typography>
 	);
