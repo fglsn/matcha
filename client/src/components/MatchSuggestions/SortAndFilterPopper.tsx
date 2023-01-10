@@ -202,7 +202,7 @@ const SortAndFilterPopper = ({
 			anchorEl={anchorEl}
 			disablePortal={true}
 			placement="bottom-start"
-			style={{ zIndex: '5', maxWidth: '90%'}}
+			style={{ zIndex: '5', maxWidth: '90%' }}
 			modifiers={[
 				{
 					name: 'preventOverflow',
@@ -216,8 +216,7 @@ const SortAndFilterPopper = ({
 						marginLeft: 8
 					}
 				}
-			]}
-		>
+			]} onResize={undefined} onResizeCapture={undefined}		>
 			<StyledPaper>
 				<Grid item sm={'auto'} mt={1} style={{ maxWidth: '100%!important' }}>
 					<ActionTypeLabel>Sort by</ActionTypeLabel>
