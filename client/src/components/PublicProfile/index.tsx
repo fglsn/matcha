@@ -161,21 +161,20 @@ const PublicProfile = ({
 					<StyledRow sx={{ mt: 0.75, justifyContent: 'flex-end' }}>
 						<GenderIcon gender={profileData.gender} />
 						<Typography
-							variant="h5"
 							sx={{
+								typography: { lg: 'h5', md: 'h6', sm: 'body1', xs: 'body2' }, 
 								ml: 0.75,
 								maxWidth: 'fit-content',
 								textAlign: 'right',
 								wordBreak: 'break-word',
-								fontSize: { xs: '15px', sm: '15px' }
 							}}
 						>
 							{profileData.firstname} {profileData.lastname},
 						</Typography>
 
 						<Typography
-							variant="h5"
 							sx={{
+								typography: { lg: 'h5', md: 'h6', sm: 'body1', xs: 'body2' }, 
 								ml: 0.75,
 								fontSize: { xs: '15px', sm: '15px' },
 								textAlign: 'right'

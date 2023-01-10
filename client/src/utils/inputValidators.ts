@@ -40,7 +40,7 @@ export const validateFirstame = (firstname: string) => {
 };
 
 export const validateLastname = (lastname: string) => {
-	const nameRegex = /^[a-zA-Z'\-ÄÖäöÅåßÜü\s]{1,42}$/;
+	const nameRegex = /^[a-zA-Z'\-ÄÖäöÅåßÜü\s]{1,41}$/;
 	if (!nameRegex.test(lastname)) {
 		return 'Incorrect field';
 	}
