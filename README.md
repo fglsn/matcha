@@ -1,5 +1,4 @@
 # Matcha
-**-ongoing project-**  
   
 Our workflow, current TO-DOs, project subject and current state can be found here:  
 https://trello.com/b/pNoT2ZPs/matcha-todos
