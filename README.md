@@ -34,7 +34,8 @@ Frontend:
 - Material UI  
 
 We were also taking a Test Driven Development approach with Jest on a server side.  
-  
+    <img width="372" alt="tests" src="https://user-images.githubusercontent.com/40247953/213561860-acce8704-63c8-4af0-9ad7-af249ed3e3fe.png">  
+    
 ## Restrictions and rules of the assignment  
 - No security breaches allowed 
 - Code cannot produce any errors, warnings or notices either from the server or the client side in the web console.
@@ -77,7 +78,7 @@ We were also taking a Test Driven Development approach with Jest on a server sid
 &emsp; `npm run migrate:test`  
 2. Run test suit:  
 &emsp; `npm run test`  
-  
+
 <i>to run one test, use for.ex:</i>  
 &emsp; `npm test -- tests/login_api.test.js`  
 
